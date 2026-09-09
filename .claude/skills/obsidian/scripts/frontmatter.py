@@ -125,6 +125,17 @@ def as_number(value: Any) -> float | None:
     text = str(value).strip()
     if not text:
         return None
+    # Strip only KNOWN units and hedges. Anything else stays and makes the parse
+    # fail, so "1990er" is reported as unreadable instead of silently becoming 1990.
+    for prefix in ("ca.", "ca", "~", "rund", "etwa", "ab", "circa"):
+        if text.lower().startswith(prefix):
+            text = text[len(prefix):].strip()
+            break
+    for suffix in ("m²/a", "kwh/m²a", "kwh/m2a", "kwh", "m²", "m2", "qm",
+                   "quadratmeter", "eur", "euro", "€", "%", "p.a.", "p. a.",
+                   "pro jahr", "jahre", "jahr", "zimmer", "zi.", "monat"):
+        while text.lower().endswith(suffix):
+            text = text[: -len(suffix)].strip()
     text = text.replace("€", "").replace("EUR", "").replace("%", "").strip()
     text = text.replace(" ", "").replace(" ", "")
     if "," in text and "." in text:  # 485.000,50 -> 485000.50

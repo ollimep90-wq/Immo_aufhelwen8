@@ -74,6 +74,14 @@ python3 .claude/skills/obsidian/scripts/vault_profile.py "$VAULT" \
 Whatever the profile does not map, **ask about — never guess.** A field that has
 no equivalent in their vault is a question, not a default.
 
+**If the user hands over loose notes to be rebuilt** (rather than pointing at a
+live vault), use `scripts/migrate_vault.py <quelle> <ziel>`. It classifies each
+note, maps the frontmatter onto canonical names, files everything into the
+structure, renames object notes while keeping the old name as an alias, rewrites
+the wikilinks, and writes `MIGRATION.md`. **Read that report and walk the user
+through its "Bitte prüfen" section** — those are the notes it could not place
+with confidence. Never present a migration as finished without it.
+
 **Only if the vault is empty:** offer the structure in
 `references/vault-structure.md` via `scripts/init_vault.py`. That script refuses
 to run in a vault that already has notes of its own, and that refusal is correct —
@@ -216,6 +224,7 @@ Read the one you need; do not preload all of them.
 | `scripts/vault_profile.py` | Read an existing vault and propose how to map it onto this skill. Read-only unless `--write`. |
 | `scripts/vault_scan.py` | Index all property notes → table / JSON / summary. Cheap context loading. Honours `--profile`. |
 | `scripts/property_calc.py` | All purchase and financing math. Deterministic, shows its formulas. |
+| `scripts/migrate_vault.py` | Rebuild loose notes into a clean vault: classify, normalise frontmatter, rename, relink, and write a migration report. Source is read-only. |
 | `scripts/init_vault.py` | Scaffold folders, Suchprofil and dashboards — **empty vaults only**. |
 
 Run them with `python3`. They only need the standard library (PyYAML is used if

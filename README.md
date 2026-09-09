@@ -89,6 +89,7 @@ Objekt.
 └── scripts/
     ├── frontmatter.py           Frontmatter und Vault-Profil lesen
     ├── vault_profile.py         bestehenden Vault analysieren, Feldzuordnung
+    ├── migrate_vault.py         lose Notizen in ein sauberes Vault überführen
     ├── vault_scan.py            alle Objekte als Tabelle/JSON
     ├── property_calc.py         Kauf-, Finanzierungs- und Renditerechnung
     └── init_vault.py            Grundgerüst — nur für leere Vaults
