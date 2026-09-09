@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from frontmatter import as_number, read_note  # noqa: E402
+from frontmatter import as_number, field, load_profile, read_note  # noqa: E402
 
 # Grunderwerbsteuer per Bundesland, in percent.
 # Stand: model knowledge as of May 2026 — VERIFY before relying on it.
@@ -210,29 +210,34 @@ TEXT_FIELDS = {"bundesland", "property_type", "usage_intent"}
 
 def collect(args: argparse.Namespace) -> Inputs:
     data = Inputs()
+    profile = load_profile(args.profile)
 
     if args.note:
         fm, _ = read_note(args.note)
-        if fm.get("type") not in (None, "objekt"):
-            data.warn(f"Notiz hat type: {fm.get('type')!r}, erwartet wurde 'objekt'.")
+        known_types = set(profile.get("object_type_values") or []) | {"objekt"}
+        if fm.get("type") is not None and fm.get("type") not in known_types:
+            data.warn(f"Notiz hat type: {fm.get('type')!r}, erwartet wurde eines von "
+                      f"{sorted(known_types)}.")
         label = f"Objektnotiz ({Path(args.note).name})"
-        for key, field in NOTE_FIELDS.items():
-            raw = fm.get(field)
+        for key, canonical in NOTE_FIELDS.items():
+            raw = field(fm, canonical, profile)
             value = raw if key in TEXT_FIELDS else as_number(raw)
             data.set(key, value, label)
-        data.set("id", fm.get("id"), label)
-        data.set("title", fm.get("title"), label)
-        data.set("data_asof", fm.get("data_asof"), label)
+        for key in ("id", "title", "data_asof"):
+            data.set(key, field(fm, key, profile), label)
+        if profile:
+            data.notes.append(f"Vault-Profil verwendet: {profile.get('_path')}")
 
     if args.scenario:
         fm, _ = read_note(args.scenario)
+        fm = {k: v for k, v in fm.items()}
         label = f"Szenario ({Path(args.scenario).name})"
-        for field in SCENARIO_FIELDS:
-            if field not in fm:
+        for name in SCENARIO_FIELDS:
+            if name not in fm:
                 continue
-            raw = fm.get(field)
+            raw = fm.get(name)
             value = raw if isinstance(raw, bool) else as_number(raw)
-            data.set(field, value, label)
+            data.set(name, value, label)
         data.set("scenario_name", fm.get("name"), label)
 
     cli = {
@@ -614,6 +619,8 @@ def main() -> int:
         epilog=__doc__)
     p.add_argument("note", nargs="?", help="Pfad zur Objektnotiz (type: objekt)")
     p.add_argument("--scenario", help="Pfad zur Finanzierungs-Szenario-Notiz")
+    p.add_argument("--profile", help="Pfad zum Vault-Profil (Feldnamen des Nutzers); "
+                                     "ohne Angabe wird automatisch gesucht")
     p.add_argument("--price", type=float, help="Kaufpreis (überschreibt die Notiz)")
     p.add_argument("--area", type=float, help="Wohnfläche in m²")
     p.add_argument("--bundesland")

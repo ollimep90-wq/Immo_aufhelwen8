@@ -56,6 +56,24 @@ def main() -> int:
         print("# Hinweis: kein .obsidian/ — den Ordner in Obsidian noch als Vault "
               "öffnen ('Open folder as vault').", file=sys.stderr)
 
+    # Any note that lives outside the folders this script creates means the vault
+    # already has a structure of its own. Adding a second one next to it is the
+    # worst possible outcome, so refuse unless the user insists.
+    own_folders = {f.split("/")[0] for f in FOLDERS}
+    foreign = [q for q in root.rglob("*.md")
+               if not {".obsidian", ".trash", ".git"} & set(q.parts)
+               and q.relative_to(root).parts[0] not in own_folders]
+    if foreign and not args.force and not args.dry_run:
+        sample = ", ".join(str(q.relative_to(root)) for q in foreign[:3])
+        raise SystemExit(
+            f"Der Vault enthält bereits {len(foreign)} Notiz(en) außerhalb der "
+            f"Skill-Ordner\n(z. B. {sample}).\n"
+            "init_vault.py ist für einen leeren Vault gedacht und würde hier eine "
+            "Parallelstruktur\nneben der bestehenden anlegen.\n\n"
+            "Für einen bestehenden Vault stattdessen:\n"
+            "    python3 vault_profile.py <vault>\n\n"
+            "Wenn die Struktur wirklich zusätzlich entstehen soll: --force.")
+
     actions: list[str] = []
 
     for folder in FOLDERS:

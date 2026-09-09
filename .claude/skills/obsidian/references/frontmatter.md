@@ -141,6 +141,33 @@ Defaults are conventional planning values, not law — see
 
 ---
 
+## `type: vault-profil` — the adopted vault's own conventions
+
+Written by `scripts/vault_profile.py`, confirmed by the user, read by the other
+scripts via `--profile`. It is what makes the skill work in a vault that never
+heard of this schema.
+
+| Key | Meaning |
+|---|---|
+| `vault_path` | the vault this profile describes |
+| `generated` | when it was produced — regenerate after restructuring |
+| `objects_folder` | folder holding the property notes, vault-relative (`""` = vault root) |
+| `templates_folder` / `attachments_folder` | taken from Obsidian's own settings |
+| `dataview` | whether the Dataview plugin is installed |
+| `object_type_values` | the `type:` values that mark a property note in this vault |
+| `object_tags` | tags that mark one |
+| `field_map` | `canonical_field: name_in_this_vault`, one line each |
+
+A note counts as a property note if it sits under `objects_folder`, **or** carries
+one of `object_type_values`, **or** one of `object_tags`.
+
+`field(fm, key, profile)` in `scripts/frontmatter.py` resolves a canonical name
+through `field_map` and falls back to the canonical name — so a vault that
+already uses this schema works with or without a profile.
+
+Canonical fields missing from `field_map` do not exist in that vault. **Ask;
+never substitute a default.**
+
 ## Other note types
 
 `type: besichtigung` (`object`, `date`, `attendees`, `weather`, `verdict`),

@@ -20,7 +20,8 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from frontmatter import as_number, read_note  # noqa: E402
+from frontmatter import (as_number, field, load_profile, note_tags,  # noqa: E402
+                         read_note)
 
 SKIP_DIRS = {".obsidian", ".trash", ".git", "node_modules", ".smart-env",
              "Vorlagen", "Templates", "_templates"}  # Vorlagen sind keine Objekte
@@ -37,7 +38,23 @@ def iter_notes(root: Path):
         yield path
 
 
-def load(root: Path) -> list[dict[str, Any]]:
+def is_object(rel: str, fm: dict[str, Any], tags: set[str],
+              profile: dict[str, Any]) -> bool:
+    """Does this note describe a property? With a profile, the vault's own
+    conventions decide; without one, the skill's `type: objekt`."""
+    if not profile:
+        return fm.get("type") == "objekt"
+    folder = profile.get("objects_folder")
+    if folder is not None and (folder == "" or rel.startswith(str(folder) + "/")):
+        return True
+    if fm.get("type") in set(profile.get("object_type_values") or []):
+        return True
+    if tags & set(profile.get("object_tags") or []):
+        return True
+    return fm.get("type") == "objekt"
+
+
+def load(root: Path, profile: dict[str, Any]) -> list[dict[str, Any]]:
     records = []
     for path in iter_notes(root):
         try:
@@ -45,27 +62,32 @@ def load(root: Path) -> list[dict[str, Any]]:
         except (OSError, UnicodeDecodeError) as exc:
             print(f"# übersprungen: {path} ({exc})", file=sys.stderr)
             continue
-        if not fm.get("type"):
+        rel = str(path.relative_to(root))
+        tags = note_tags(fm, body[:4000])
+        if not fm.get("type") and not is_object(rel, fm, tags, profile):
             continue
-        fm["_path"] = str(path.relative_to(root))
+        fm["_path"] = rel
+        fm["_is_object"] = is_object(rel, fm, tags, profile)
         fm["_open_tasks"] = body.count("- [ ]")
         fm["_archived"] = path.parts[len(root.parts)].startswith("99")
         records.append(fm)
     return records
 
 
-def derived(rec: dict[str, Any]) -> dict[str, Any]:
-    price = as_number(rec.get("price_agreed") or rec.get("price_offered")
-                      or rec.get("price_asking"))
-    area = as_number(rec.get("living_area_m2"))
-    rent = as_number(rec.get("rent_cold_month"))
+def derived(rec: dict[str, Any], profile: dict[str, Any] | None = None
+            ) -> dict[str, Any]:
+    price = as_number(field(rec, "price_agreed", profile)
+                      or field(rec, "price_offered", profile)
+                      or field(rec, "price_asking", profile))
+    area = as_number(field(rec, "living_area_m2", profile))
+    rent = as_number(field(rec, "rent_cold_month", profile))
     out = {
         "price": price,
         "area": area,
         "eur_m2": price / area if price and area else None,
         "rent": rent,
         "factor": price / (rent * 12) if price and rent else None,
-        "missing": [f for f in CRITICAL if rec.get(f) in (None, "")],
+        "missing": [f for f in CRITICAL if field(rec, f, profile) in (None, "")],
     }
     return out
 
@@ -83,16 +105,17 @@ def fmt(value: Any, width: int, decimals: int = 0, align: str = ">") -> str:
     return f"{text:{align}{width}}"
 
 
-def table(objects: list[dict[str, Any]]) -> str:
+def table(objects: list[dict[str, Any]], profile: dict[str, Any] | None = None) -> str:
     head = (f"{'ID':<14}{'Status':<14}{'Ort':<18}{'Preis':>11}{'m²':>7}"
             f"{'€/m²':>8}{'Miete':>8}{'Faktor':>8}{'Lücken':>8}{'ToDo':>6}")
     rows = [head, "-" * len(head)]
     for rec in objects:
-        d = derived(rec)
+        d = derived(rec, profile)
         rows.append(
-            fmt(rec.get("id"), 14, align="<")
-            + fmt(rec.get("status"), 14, align="<")
-            + fmt(rec.get("city") or rec.get("title"), 18, align="<")
+            fmt(field(rec, "id", profile) or Path(rec["_path"]).stem, 14, align="<")
+            + fmt(field(rec, "status", profile), 14, align="<")
+            + fmt(field(rec, "city", profile) or field(rec, "title", profile), 18,
+                  align="<")
             + fmt(d["price"], 11)
             + fmt(d["area"], 7)
             + fmt(d["eur_m2"], 8)
@@ -103,10 +126,12 @@ def table(objects: list[dict[str, Any]]) -> str:
     return "\n".join(rows)
 
 
-def long_form(rec: dict[str, Any]) -> str:
-    d = derived(rec)
-    lines = [f"### {rec.get('id')} — {rec.get('title') or rec.get('_path')}",
+def long_form(rec: dict[str, Any], profile: dict[str, Any] | None = None) -> str:
+    d = derived(rec, profile)
+    label = field(rec, "id", profile) or Path(rec["_path"]).stem
+    lines = [f"### {label} — {field(rec, 'title', profile) or rec['_path']}",
              f"Datei: {rec['_path']}"]
+    shown: set[str] = set()
     for key in ("status", "data_asof", "property_type", "usage_intent", "street",
                 "zip", "city", "district", "bundesland", "living_area_m2",
                 "plot_area_m2", "rooms", "year_built", "condition",
@@ -114,8 +139,16 @@ def long_form(rec: dict[str, Any]) -> str:
                 "heating_year", "price_asking", "price_offered", "price_agreed",
                 "commission_pct", "hausgeld_month", "grundsteuer_year",
                 "rent_cold_month", "rented", "sources"):
-        if rec.get(key) not in (None, ""):
-            lines.append(f"  {key}: {rec[key]}")
+        value = field(rec, key, profile)
+        if value not in (None, ""):
+            mapped = (profile or {}).get("field_map", {}).get(key)
+            shown.add(mapped or key)
+            origin = f"  [{mapped}]" if mapped and mapped != key else ""
+            lines.append(f"  {key}: {value}{origin}")
+    extra = [k for k in rec
+             if not k.startswith("_") and k not in shown and k != "type"]
+    if extra:
+        lines.append(f"  weitere Felder in der Notiz: {', '.join(sorted(extra))}")
     if d["eur_m2"]:
         lines.append(f"  → €/m²: {d['eur_m2']:,.0f}".replace(",", "."))
     if d["factor"]:
@@ -136,6 +169,8 @@ def main() -> int:
     p.add_argument("--status", help="nur dieser Status")
     p.add_argument("--id", help="nur dieses Objekt (impliziert --long)")
     p.add_argument("--include-archived", action="store_true")
+    p.add_argument("--profile", help="Pfad zum Vault-Profil; ohne Angabe wird "
+                                     "im Vault und in ~/.config/claude-obsidian gesucht")
     p.add_argument("--table", action="store_true", help="Tabelle (Standard)")
     p.add_argument("--long", action="store_true", help="alle Felder je Objekt")
     p.add_argument("--json", action="store_true")
@@ -148,18 +183,27 @@ def main() -> int:
         print(f"# Hinweis: {root} enthält kein .obsidian/ — sicher der Vault?",
               file=sys.stderr)
 
-    records = load(root)
-    if args.type != "alle":
+    profile = load_profile(args.profile, vault=root)
+    if profile:
+        print(f"# Vault-Profil: {profile.get('_path')}", file=sys.stderr)
+
+    records = load(root, profile)
+    if args.type == "objekt":
+        records = [r for r in records if r.get("_is_object")]
+    elif args.type != "alle":
         records = [r for r in records if r.get("type") == args.type]
     if args.status:
-        records = [r for r in records if r.get("status") == args.status]
+        records = [r for r in records
+                   if field(r, "status", profile) == args.status]
     if args.id:
-        records = [r for r in records if r.get("id") == args.id]
+        records = [r for r in records
+                   if field(r, "id", profile) == args.id
+                   or Path(r["_path"]).stem == args.id]
         args.long = True
     if not args.include_archived and not args.id:
         records = [r for r in records if not r.get("_archived")]
 
-    records.sort(key=lambda r: str(r.get("id") or r.get("_path")))
+    records.sort(key=lambda r: str(field(r, "id", profile) or r.get("_path")))
 
     if args.json:
         print(json.dumps(records, indent=2, ensure_ascii=False, default=str))
@@ -168,18 +212,19 @@ def main() -> int:
         print("Keine passenden Notizen gefunden.")
         return 0
     if args.long:
-        print("\n\n".join(long_form(r) for r in records))
+        print("\n\n".join(long_form(r, profile) for r in records))
         return 0
 
-    print(table(records))
+    print(table(records, profile))
     print()
     by_status: dict[str, int] = {}
     for rec in records:
-        by_status[str(rec.get("status") or "ohne Status")] = \
-            by_status.get(str(rec.get("status") or "ohne Status"), 0) + 1
+        key = str(field(rec, "status", profile) or "ohne Status")
+        by_status[key] = by_status.get(key, 0) + 1
     print(f"{len(records)} Objekte — "
           + ", ".join(f"{k}: {v}" for k, v in sorted(by_status.items())))
-    gaps = [r.get("id") for r in records if derived(r)["missing"]]
+    gaps = [field(r, "id", profile) or Path(r["_path"]).stem
+            for r in records if derived(r, profile)["missing"]]
     if gaps:
         print("Unvollständige Datensätze (Spalte 'Lücken'): " + ", ".join(map(str, gaps)))
         print("→ Vor jeder Bewertung die fehlenden Angaben klären.")

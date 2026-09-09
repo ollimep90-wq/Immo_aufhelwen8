@@ -30,6 +30,28 @@ mkdir -p ~/.claude/skills
 cp -r .claude/skills/obsidian ~/.claude/skills/
 ```
 
+### Bestehender Vault
+
+Der Skill passt sich an einen vorhandenen Vault an, statt ihn umzubauen. Einmalig:
+
+```bash
+# nur lesen, nichts ändern — Vorschlag ansehen
+python3 .claude/skills/obsidian/scripts/vault_profile.py "$OBSIDIAN_VAULT"
+
+# nach Prüfung als Profil speichern
+python3 .claude/skills/obsidian/scripts/vault_profile.py "$OBSIDIAN_VAULT" \
+  --write ~/.config/claude-obsidian/vault-profile.md
+```
+
+Das Profil hält fest, in welchem Ordner die Objektnotizen liegen, woran sie
+erkennbar sind und wie die Frontmatter-Felder dort tatsächlich heißen
+(`kaufpreis` statt `price_asking` usw.). `vault_scan.py` und `property_calc.py`
+lesen es über `--profile`. Bestehende Notizen und Ordner werden nicht umbenannt
+oder verschoben; `init_vault.py` verweigert den Dienst in einem Vault, der
+bereits eigene Notizen hat.
+
+### Vault-Pfad hinterlegen
+
 Vault-Pfad einmalig hinterlegen (sonst fragt der Skill danach):
 
 ```bash
@@ -39,7 +61,7 @@ mkdir -p ~/.config/claude-obsidian
 echo "$HOME/Dokumente/Immobilien" > ~/.config/claude-obsidian/vault-path
 ```
 
-Leeren Vault einrichten:
+**Leeren** Vault einrichten:
 
 ```bash
 python3 .claude/skills/obsidian/scripts/init_vault.py "$OBSIDIAN_VAULT"
@@ -65,10 +87,11 @@ Objekt.
 │   └── rest-api.md              Local REST API (optionale Stufe 2)
 ├── assets/templates/            10 Notizvorlagen
 └── scripts/
-    ├── frontmatter.py           YAML-Frontmatter lesen (PyYAML optional)
+    ├── frontmatter.py           Frontmatter und Vault-Profil lesen
+    ├── vault_profile.py         bestehenden Vault analysieren, Feldzuordnung
     ├── vault_scan.py            alle Objekte als Tabelle/JSON
     ├── property_calc.py         Kauf-, Finanzierungs- und Renditerechnung
-    └── init_vault.py            Vault-Grundgerüst anlegen
+    └── init_vault.py            Grundgerüst — nur für leere Vaults
 ```
 
 Die Skripte brauchen nur Python 3.9+ und die Standardbibliothek; PyYAML wird

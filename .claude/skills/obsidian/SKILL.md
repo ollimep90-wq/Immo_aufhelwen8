@@ -38,11 +38,46 @@ Resolve the vault root in this order and stop at the first hit:
    `find <dir> -maxdepth 4 -type d -name .obsidian 2>/dev/null`
 5. Ask the user. Do not guess, and do not create a vault in a random location.
 
-If the vault does not exist yet, offer to scaffold it —
-see `references/vault-structure.md` and `scripts/init_vault.py`.
-
 Remember the resolved path for the rest of the session. If a later path looks like
 a *different* vault, stop and ask.
+
+## Step 0.5 — adopt the vault as it is
+
+**The vault belongs to the user. This skill adapts to it, never the reverse.**
+Never rename, move or restructure notes and folders that already exist, and never
+create a second structure next to theirs.
+
+Check for a vault profile — `~/.config/claude-obsidian/vault-profile.md`, or
+`Vault-Profil.md` inside the vault. It records the vault's real folders and the
+user's own frontmatter field names.
+
+**If a profile exists:** pass it to every script (`--profile <pfad>`) and use the
+user's field names in everything you write.
+
+**If there is none and the vault already has notes:**
+
+```bash
+python3 .claude/skills/obsidian/scripts/vault_profile.py "$VAULT"
+```
+
+This only reads. It reports the folders that look property-related, the `type`
+values and tags in use, and a proposed mapping from this skill's canonical fields
+onto the user's actual ones. **Show the user the proposal and let them correct it
+before saving** — especially the lines marked as ambiguous or conflicting, where
+one of their fields matched two skill fields. Then:
+
+```bash
+python3 .claude/skills/obsidian/scripts/vault_profile.py "$VAULT" \
+    --write ~/.config/claude-obsidian/vault-profile.md
+```
+
+Whatever the profile does not map, **ask about — never guess.** A field that has
+no equivalent in their vault is a question, not a default.
+
+**Only if the vault is empty:** offer the structure in
+`references/vault-structure.md` via `scripts/init_vault.py`. That script refuses
+to run in a vault that already has notes of its own, and that refusal is correct —
+do not `--force` past it without the user explicitly asking.
 
 ## Step 1 — load the background (before answering anything substantive)
 
@@ -50,15 +85,18 @@ Do not answer a question about a property, a price, a comparison or a decision
 without loading context first:
 
 ```bash
-python3 .claude/skills/obsidian/scripts/vault_scan.py "$VAULT" --table
+python3 .claude/skills/obsidian/scripts/vault_scan.py "$VAULT" --table \
+    --profile ~/.config/claude-obsidian/vault-profile.md
 ```
 
 That prints one row per property note with the key figures. Then read, as relevant:
 
-- `90-Meta/Suchprofil.md` — the buying criteria, budget ceiling and K.O. criteria.
-  **Required for any comparison, scoring or recommendation.** If it is missing,
-  create it with the user first (template: `assets/templates/suchprofil.md`).
-- `90-Meta/Finanzierungsrahmen.md` — equity, income, bank feedback, stress assumptions.
+- The **Suchprofil** — buying criteria, budget ceiling, K.O. criteria.
+  **Required for any comparison, scoring or recommendation.** In an adopted vault
+  it may live anywhere and be called something else; the profile note or the user
+  will say where. If it does not exist, create it with them first (template:
+  `assets/templates/suchprofil.md`), in *their* folder.
+- The **Finanzierungsrahmen** — equity, income, bank feedback, stress assumptions.
 - The full note of every property under discussion, plus its `Besichtigungen/`,
   `Dokumente/` and `Finanzierung/` subfolders.
 
@@ -92,6 +130,11 @@ It computes Kaufnebenkosten, Gesamtinvestition, €/m², Kaufpreisfaktor, gross 
 net yield, the annuity, the balance left at the end of the Zinsbindung, cashflow,
 and a rate-stress case. Quote its output; do not round it into something prettier.
 
+**The user's structure wins.** Their folder names, note names and field names are
+the convention; this skill's schema is the fallback for what does not exist yet.
+Adding a new field to their notes is fine — say that you are doing it. Renaming
+or moving what is already there is not.
+
 **Edits are surgical and non-destructive.** Read a note before editing it. Preserve
 frontmatter keys you do not understand, preserve the user's own prose, and never
 delete a section to "clean up". Prefer appending to `## Verlauf`.
@@ -103,13 +146,18 @@ Notar, Steuerberater, Gutachter or Energieberater.
 ## Workflows
 
 ### New property (Exposé, link or the user describing one)
-1. Assign the next free id: `OBJ-<year>-<NNN>` (check existing ids in the scan).
-2. Create `10-Objekte/OBJ-YYYY-NNN <Straße Hausnr, Ort>/OBJ-YYYY-NNN.md`
-   from `assets/templates/objekt.md`.
-3. Fill only what is actually sourced. Everything else → `## Offene Fragen`.
-4. Run `property_calc.py`; put the output in `## Wirtschaftlichkeit`.
-5. Check the K.O. criteria from the Suchprofil and set `status` accordingly.
-6. Tell the user what is missing before this can be judged.
+1. **Follow the vault's existing conventions** — the folder from the profile's
+   `objects_folder`, the naming pattern of the notes already there, and the
+   field names from `field_map`. The scheme below is only for a vault that has
+   no convention yet.
+2. Assign the next free id: `OBJ-<year>-<NNN>` (check existing ids in the scan);
+   skip ids entirely if the vault names notes by address.
+3. Create the note from `assets/templates/objekt.md`, translated into the
+   vault's field names, and add fields it does not have yet only after saying so.
+4. Fill only what is actually sourced. Everything else → `## Offene Fragen`.
+5. Run `property_calc.py`; put the output in `## Wirtschaftlichkeit`.
+6. Check the K.O. criteria from the Suchprofil and set `status` accordingly.
+7. Tell the user what is missing before this can be judged.
 
 ### Before a viewing
 Create `Besichtigungen/YYYY-MM-DD Besichtigung.md` from
@@ -138,7 +186,7 @@ Read the one you need; do not preload all of them.
 
 | File | Read it when |
 |---|---|
-| `references/vault-structure.md` | Setting up or reorganising the vault |
+| `references/vault-structure.md` | Setting up a NEW vault, or understanding the default layout |
 | `references/frontmatter.md` | Writing or validating any note's frontmatter — the full field schema |
 | `references/obsidian-syntax.md` | Wikilinks, embeds, tags, callouts, Properties, folder notes |
 | `references/dataview.md` | Building dashboards and queries over the objects |
@@ -151,9 +199,10 @@ Read the one you need; do not preload all of them.
 
 | Script | Purpose |
 |---|---|
-| `scripts/vault_scan.py` | Index all property notes → table / JSON / summary. Cheap context loading. |
+| `scripts/vault_profile.py` | Read an existing vault and propose how to map it onto this skill. Read-only unless `--write`. |
+| `scripts/vault_scan.py` | Index all property notes → table / JSON / summary. Cheap context loading. Honours `--profile`. |
 | `scripts/property_calc.py` | All purchase and financing math. Deterministic, shows its formulas. |
-| `scripts/init_vault.py` | Scaffold folder structure, Suchprofil and dashboards in an empty vault. |
+| `scripts/init_vault.py` | Scaffold folders, Suchprofil and dashboards — **empty vaults only**. |
 
 Run them with `python3`. They only need the standard library (PyYAML is used if
 present, otherwise a built-in flat-YAML parser handles the schema).

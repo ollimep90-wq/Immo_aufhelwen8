@@ -141,3 +141,67 @@ def as_number(value: Any) -> float | None:
         return float(text)
     except ValueError:
         return None
+
+
+# --------------------------------------------------------------------------- #
+# vault profile: the user's own field names, produced by vault_profile.py
+# --------------------------------------------------------------------------- #
+DEFAULT_PROFILE_PATHS = [
+    Path.home() / ".config" / "claude-obsidian" / "vault-profile.md",
+]
+
+
+def load_profile(path: str | Path | None = None,
+                 vault: str | Path | None = None) -> dict[str, Any]:
+    """Load a vault profile. Explicit path wins; otherwise look in the vault
+    (Vault-Profil.md) and in ~/.config/claude-obsidian/. Returns {} if none."""
+    candidates: list[Path] = []
+    if path:
+        candidates.append(Path(path).expanduser())
+    if vault:
+        root = Path(vault).expanduser()
+        candidates += [root / "Vault-Profil.md", root / "90-Meta" / "Vault-Profil.md"]
+    candidates += DEFAULT_PROFILE_PATHS
+
+    for candidate in candidates:
+        try:
+            if candidate.is_file():
+                profile = parse_frontmatter(candidate.read_text(encoding="utf-8"))
+                if profile:
+                    profile["_path"] = str(candidate)
+                    return profile
+        except (OSError, UnicodeDecodeError):
+            continue
+    if path:
+        target = Path(path).expanduser()
+        if not target.is_file():
+            raise SystemExit(f"Profil nicht gefunden: {target}")
+        raise SystemExit(f"Profil enthält kein lesbares Frontmatter: {target}")
+    return {}
+
+
+def field(fm: dict[str, Any], key: str, profile: dict[str, Any] | None = None) -> Any:
+    """Read a canonical field, honouring the profile's field_map.
+
+    Falls back to the canonical name so a vault that already uses the skill's
+    names keeps working with or without a profile."""
+    if profile:
+        mapping = profile.get("field_map") or {}
+        mapped = mapping.get(key)
+        if mapped and fm.get(mapped) not in (None, ""):
+            return fm.get(mapped)
+    return fm.get(key)
+
+
+def note_tags(fm: dict[str, Any], body: str = "") -> set[str]:
+    tags: set[str] = set()
+    raw = fm.get("tags")
+    if isinstance(raw, str):
+        tags.update(t.strip().lstrip("#") for t in raw.split(",") if t.strip())
+    elif isinstance(raw, list):
+        tags.update(str(t).lstrip("#") for t in raw)
+    if body:
+        import re as _re
+        tags.update(_re.findall(
+            r"(?<![\w/#])#([A-Za-zÄÖÜäöüß][\w/\-äöüÄÖÜß]*)", body))
+    return tags

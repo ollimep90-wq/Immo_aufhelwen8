@@ -1,5 +1,10 @@
 # Vault structure
 
+> **This layout is a proposal for a NEW vault.** If the user already has one,
+> it is not the target: run `scripts/vault_profile.py`, adopt the folders and
+> field names that are there, and use this page only to fill genuine gaps.
+> Nothing existing gets renamed or moved.
+
 Numbered folders so the sort order in Obsidian's file explorer stays meaningful.
 Folder names are German (vault-facing content); the numbering makes them stable
 even if the user renames them later — always resolve folders by their number
@@ -47,13 +52,44 @@ prefix (`10-*`), not by the exact German word.
 - **Do not put figures only in the folder name or the filename.** Everything
   queryable lives in frontmatter.
 
+## Adopting an existing vault
+
+```bash
+python3 .claude/skills/obsidian/scripts/vault_profile.py "$VAULT"
+```
+
+Read-only. It reports:
+
+- the folders whose notes look property-related, ranked by how many notes hit the
+  domain vocabulary (Kaufpreis, Hausgeld, Teilungserklärung, Grunderwerbsteuer …)
+- the `type` values and tags actually in use, so object notes can be recognised
+  the way the vault already marks them
+- Obsidian's own settings: template folder, attachment folder, whether Dataview is
+  installed
+- a proposed `field_map` from this skill's canonical fields onto the user's real
+  frontmatter keys, plus everything it could **not** map
+
+Go through the proposal with the user — in particular the conflicts, where one of
+their keys matched two skill fields (`stand` fits both `data_asof` and `status`;
+only one can be right). Then save it:
+
+```bash
+python3 .claude/skills/obsidian/scripts/vault_profile.py "$VAULT" \
+    --write ~/.config/claude-obsidian/vault-profile.md
+```
+
+`vault_scan.py` and `property_calc.py` take `--profile` and then read the vault in
+its own vocabulary. Re-run the analysis after the vault's structure changes.
+
 ## Scaffolding an empty vault
 
 ```bash
 python3 .claude/skills/obsidian/scripts/init_vault.py "$VAULT"
 ```
 
-Creates the folders, `90-Meta/Suchprofil.md`, `90-Meta/Finanzierungsrahmen.md`,
+Refuses to run when the vault already contains notes outside these folders —
+that refusal is the point, not an obstacle. Creates the folders,
+`90-Meta/Suchprofil.md`, `90-Meta/Finanzierungsrahmen.md`,
 `90-Meta/Dashboard.md` and copies the templates into `90-Meta/Vorlagen/`.
 It never overwrites an existing file (`--force` to allow it).
 
