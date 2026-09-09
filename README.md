@@ -97,6 +97,18 @@ Objekt.
 Die Skripte brauchen nur Python 3.9+ und die Standardbibliothek; PyYAML wird
 genutzt, wenn vorhanden.
 
+## Maximalgebot statt Angebotspreis
+
+```bash
+python3 .claude/skills/obsidian/scripts/property_calc.py --max-price \
+  --price 800000 --bundesland Nordrhein-Westfalen --commission 3.57 \
+  --rent 3200 --area 210 --equity 200000 --rate 3.7 \
+  --target-cashflow 0 --target-factor 22
+```
+
+Löst für jede gesetzte Grenze den Kaufpreis, bei dem sie greift, und nennt die
+strengste. Ergebnis wird abgerundet.
+
 ## Schnelltest ohne Vault
 
 ```bash

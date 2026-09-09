@@ -98,6 +98,20 @@ Maximalgebot = der Kaufpreis, bei dem entweder
                — je nachdem, was zuerst greift.
 ```
 
+Das Skript rechnet das rückwärts aus — jede gesetzte Grenze wird einzeln gelöst,
+die strengste bindet:
+
+```bash
+python3 property_calc.py --max-price \
+    --price 800000 --bundesland Nordrhein-Westfalen --commission 3.57 \
+    --rent 3200 --area 210 --equity 200000 --rate 3.7 \
+    --target-cashflow 0 --target-factor 22 --max-total 900000
+```
+
+`--target-cashflow 0` fragt: bis zu welchem Preis trägt sich das Objekt selbst?
+`--target-factor` und `--max-total` setzen die Grenzen aus dem Suchprofil. Das
+Ergebnis wird **abgerundet** — bei einer Obergrenze ist das die sichere Richtung.
+
 Vor dem ersten Gespräch aufschreiben, mit Datum, in der Objektnotiz. Danach nicht
 mehr nach oben korrigieren, außer es ändern sich **Fakten** (nicht Gefühle,
 nicht ein Konkurrent). Argumente für einen Abschlag sind belegte Mängel,

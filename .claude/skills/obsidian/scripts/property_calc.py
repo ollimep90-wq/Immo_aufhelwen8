@@ -177,6 +177,15 @@ class Inputs:
         if message not in self.warnings:
             self.warnings.append(message)
 
+    def clone_with_price(self, price: float) -> "Inputs":
+        """A throwaway copy for solving — warnings are discarded, not repeated."""
+        copy = Inputs()
+        copy.values = dict(self.values)
+        copy.origin = dict(self.origin)
+        copy.values["price_override"] = price
+        copy.origin["price_override"] = "Suchlauf"
+        return copy
+
 
 NOTE_FIELDS = {
     "price_asking": "price_asking",
@@ -497,6 +506,124 @@ def compute(data: Inputs) -> dict[str, Any]:
 
 
 # --------------------------------------------------------------------------- #
+# solving for the maximum price
+# --------------------------------------------------------------------------- #
+def metric_at(data: Inputs, price: float, name: str) -> float | None:
+    """Evaluate one metric at a hypothetical purchase price."""
+    result = compute(data.clone_with_price(price))
+    if name == "total_investment":
+        return result["costs"]["total_investment"]
+    if name == "factor":
+        return result["rental"]["factor"] if result["rental"] else None
+    if name == "cashflow_month":
+        rental, fin = result["rental"], result["financing"]
+        if not rental or not fin:
+            return None
+        # Below the equity line there is no loan and therefore no debt service —
+        # the cashflow is simply the net operating income. Keeps the curve
+        # monotonic across the whole search range.
+        if fin.get("no_loan"):
+            return rental["noi"] / 12.0
+        return rental.get("cashflow_month")
+    if name == "monthly_payment":
+        fin = result["financing"]
+        if not fin:
+            return None
+        return 0.0 if fin.get("no_loan") else fin["monthly_payment"]
+    raise ValueError(name)
+
+
+def solve_price(data: Inputs, name: str, target: float,
+                lo: float = 10_000.0, hi: float = 5_000_000.0) -> float | None:
+    """Bisect for the price at which `name` hits `target`. All four metrics are
+    monotonic in the price, so a sign change between the bounds is the answer."""
+    try:
+        f_lo = metric_at(data, lo, name)
+        f_hi = metric_at(data, hi, name)
+    except SystemExit:
+        return None
+    if f_lo is None or f_hi is None:
+        return None
+    f_lo -= target
+    f_hi -= target
+    if f_lo == 0:
+        return lo
+    if f_lo * f_hi > 0:
+        return None  # the constraint never binds inside the search range
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        f_mid = metric_at(data, mid, name)
+        if f_mid is None:
+            return None
+        f_mid -= target
+        if f_lo * f_mid <= 0:
+            hi, f_hi = mid, f_mid
+        else:
+            lo, f_lo = mid, f_mid
+        if hi - lo < 5:
+            break
+    # A maximum is rounded DOWN — the conservative direction for a ceiling.
+    return float(int((lo + hi) / 2 / 100) * 100)
+
+
+def max_price_report(data: Inputs, args: argparse.Namespace) -> str:
+    constraints: list[tuple[str, str, float]] = []
+    if args.max_total is not None:
+        constraints.append(("total_investment", args.max_total,
+                            f"Gesamtinvestition ≤ {eur(args.max_total)}"))
+    if args.target_factor is not None:
+        constraints.append(("factor", args.target_factor,
+                            f"Kaufpreisfaktor ≤ {num(args.target_factor)}"))
+    if args.target_cashflow is not None:
+        constraints.append(("cashflow_month", args.target_cashflow,
+                            f"Cashflow ≥ {eur(args.target_cashflow, 2)}/Monat"))
+    if args.max_burden is not None:
+        constraints.append(("monthly_payment", args.max_burden,
+                            f"Rate ≤ {eur(args.max_burden, 2)}/Monat"))
+    # the tuples above are (metric, target, label) — reorder for readability
+    constraints = [(m, label, target) for m, target, label in constraints]
+
+    if not constraints:
+        raise SystemExit(
+            "--max-price braucht mindestens eine Grenze:\n"
+            "  --max-total EUR         maximale Gesamtinvestition\n"
+            "  --target-factor N       höchster akzeptierter Kaufpreisfaktor\n"
+            "  --target-cashflow EUR   mindestens dieser Cashflow pro Monat\n"
+            "  --max-burden EUR        höchste monatliche Rate")
+
+    lines = ["Maximalgebot — aus den eigenen Zahlen, nicht aus dem Angebotspreis", ""]
+    results: list[tuple[str, float | None]] = []
+    for metric, label, target in constraints:
+        price = solve_price(data, metric, target)
+        results.append((label, price))
+        if price is None:
+            lines.append(f"- {label}: nicht bestimmbar "
+                         "(fehlende Eingaben oder Grenze wird nie erreicht)")
+        else:
+            lines.append(f"- {label}  →  Kaufpreis bis **{eur(price)}**")
+
+    valid = [(label, price) for label, price in results if price is not None]
+    lines.append("")
+    if valid:
+        label, price = min(valid, key=lambda r: r[1])
+        lines.append(f"**Bindende Grenze: {label} → Maximalgebot {eur(price)}**")
+        if args.price is not None:
+            delta = args.price - price
+            if delta > 0:
+                lines.append(f"Gefordert werden {eur(args.price)} — das sind "
+                             f"{eur(delta)} über der eigenen Grenze "
+                             f"({pct(delta / price * 100, 1)}).")
+            else:
+                lines.append(f"Gefordert werden {eur(args.price)} — das liegt "
+                             f"{eur(-delta)} unter der eigenen Grenze.")
+    else:
+        lines.append("Keine Grenze war berechenbar — fehlende Eingaben ergänzen.")
+    lines += ["", "Vor dem ersten Gespräch mit Datum in der Objektnotiz festhalten "
+              "und danach nur bei geänderten **Fakten** korrigieren."]
+    return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------- #
 # reporting
 # --------------------------------------------------------------------------- #
 def render(result: dict[str, Any], markdown: bool) -> str:
@@ -636,15 +763,29 @@ def main() -> int:
     p.add_argument("--hausgeld", type=float, help="Hausgeld pro Monat (gesamt)")
     p.add_argument("--hausgeld-nonapportionable", type=float,
                    help="nicht umlagefähiger Hausgeld-Anteil pro Monat")
+    p.add_argument("--max-price", action="store_true",
+                   help="rückwärts rechnen: welcher Kaufpreis passt zu den Grenzen?")
+    p.add_argument("--max-total", type=float, help="Grenze: Gesamtinvestition")
+    p.add_argument("--target-factor", type=float, help="Grenze: Kaufpreisfaktor")
+    p.add_argument("--target-cashflow", type=float,
+                   help="Grenze: Cashflow pro Monat (0 = kostenneutral)")
+    p.add_argument("--max-burden", type=float, help="Grenze: Monatsrate")
     p.add_argument("--json", action="store_true", help="Rohdaten als JSON ausgeben")
     p.add_argument("--markdown", action="store_true",
                    help="Ausgabe mit Überschriften, zum Einfügen in die Notiz")
     args = p.parse_args()
 
-    if not args.note and args.price is None:
+    if not args.note and args.price is None and not args.max_price:
         p.error("Entweder eine Objektnotiz oder --price angeben.")
 
-    result = compute(collect(args))
+    data = collect(args)
+    if args.max_price:
+        print(max_price_report(data, args))
+        if args.price is None and args.note is None:
+            return 0
+        print("\n" + "-" * 62 + "\n")
+
+    result = compute(data)
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
     else:

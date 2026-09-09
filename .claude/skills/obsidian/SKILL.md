@@ -174,6 +174,20 @@ Filter by K.O. criteria first, then score against the weighted criteria from the
 Suchprofil (`references/decision-framework.md`), then show the economics side by
 side. Present the ranking *and* what would change it.
 
+### Before making an offer
+Derive the ceiling from the user's own figures, never from the asking price:
+
+```bash
+python3 .claude/skills/obsidian/scripts/property_calc.py --max-price \
+    --price <geforderter Preis> --bundesland … --commission … --rent … --area … \
+    --equity … --rate … --target-cashflow 0 --target-factor 22 --max-total …
+```
+
+It solves for the price at which each limit binds and names the strictest one.
+Record that number, with the date, in the property note **before** the first
+negotiation. Afterwards it moves only when a *fact* changes — not when a
+competing bidder appears. See `references/decision-framework.md`.
+
 ### Decision (bid, walk away, sign)
 Write a decision note in `60-Entscheidungen/` from
 `assets/templates/entscheidung.md`: context, options considered, decision,
