@@ -210,7 +210,7 @@ SCENARIO_FIELDS = [
     "equity", "price_override", "interest_rate_pct", "repayment_pct",
     "fixed_years", "stress_rate_pct", "finance_side_costs", "renovation_cost",
     "grunderwerbsteuer_pct", "notary_pct", "land_register_pct", "commission_pct",
-    "rent_used_month", "vacancy_pct", "maintenance_eur_m2a",
+    "rent_used_month", "vacancy_pct", "maintenance_eur_m2a", "living_area_m2",
     "management_eur_month", "hausgeld_non_apportionable_month",
 ]
 

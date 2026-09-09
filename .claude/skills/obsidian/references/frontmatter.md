@@ -130,6 +130,7 @@ scenarios per object are normal (`Szenario-Basis`, `Szenario-Stress`,
 | `notary_pct` | `1.5` | Notar incl. Vollzug |
 | `land_register_pct` | `0.5` | Grundbuchamt |
 | `commission_pct` | from the note | buyer's share incl. USt |
+| `living_area_m2` | from the note | override only when the scenario assumes an extension — maintenance scales with it |
 | `rent_used_month` | from the note | which rent the calculation uses |
 | `vacancy_pct` | `3.0` | Mietausfallwagnis |
 | `maintenance_eur_m2a` | `12.0` | non-apportionable Instandhaltung |
