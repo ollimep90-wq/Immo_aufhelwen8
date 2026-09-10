@@ -80,6 +80,9 @@ def kennzahlen(modell) -> dict[str, float]:
 def betraege(vault: pathlib.Path) -> list[tuple[float, pathlib.Path, int, str]]:
     gefunden = []
     for pfad in sorted(vault.rglob("*.md")):
+        # Das Archiv ist per Definition überholt — es zu prüfen erzeugt nur Rauschen.
+        if "99-Archiv" in pfad.parts:
+            continue
         for nr, zeile in enumerate(pfad.read_text(encoding="utf-8").splitlines(), 1):
             for treffer in EURO.finditer(zeile):
                 ganz = treffer.group(1).replace(".", "")
