@@ -386,6 +386,10 @@ def compute(data: Inputs) -> dict[str, Any]:
 
             remaining = plan["remaining_balance"]
             payoff_months = plan["payoff_months"]
+            # A Volltilger repays within the fixed-rate period: there is no
+            # follow-up financing at all, so the rate stress test does not apply.
+            # A rounding residual well under a percent of the loan counts as repaid.
+            fully_repaid = remaining <= max(1000.0, loan * 0.005)
             if payoff_months:
                 remaining_months = max(payoff_months - fixed_years * 12, 12)
             else:
@@ -395,6 +399,7 @@ def compute(data: Inputs) -> dict[str, Any]:
                               if remaining > 0 else 0.0)
 
             financing = {
+                "fully_repaid_at_fix_end": fully_repaid,
                 "equity": equity, "loan": loan, "ltv_pct": ltv,
                 "interest_rate_pct": rate, "repayment_pct": repayment,
                 "fixed_years": fixed_years,
@@ -466,8 +471,11 @@ def compute(data: Inputs) -> dict[str, Any]:
             rental["break_even_rent_month"] = (
                 (financing["annuity_year"] + operating)
                 / (1 - float(use("vacancy_pct")) / 100.0) / 12.0)
-            stress_cashflow = noi - financing["stress_monthly_payment"] * 12.0
-            rental["stress_cashflow_month"] = stress_cashflow / 12.0
+            if financing.get("fully_repaid_at_fix_end"):
+                rental["stress_cashflow_month"] = rental["cashflow_month"]
+            else:
+                stress_cashflow = noi - financing["stress_monthly_payment"] * 12.0
+                rental["stress_cashflow_month"] = stress_cashflow / 12.0
     out["rental"] = rental
 
     # --- own use ----------------------------------------------------------- #
@@ -682,11 +690,16 @@ def render(result: dict[str, Any], markdown: bool) -> str:
                       "(ohne Sondertilgung, bei gleichbleibendem Zins)"]
         else:
             lines += ["- Vollständige Tilgung wird bei diesen Konditionen nicht erreicht."]
-        sign = "+" if f["stress_delta"] >= 0 else "-"
-        lines += [f"- Stresstest Anschluss zu {pct(f['stress_rate_pct'], 1)}: Rate "
-                  f"**{eur(f['stress_monthly_payment'], 2)}** "
-                  f"({sign}{eur(abs(f['stress_delta']), 2)}/Monat), Restschuld "
-                  f"getilgt über {f['stress_months'] // 12} Jahre"]
+        if f.get("fully_repaid_at_fix_end"):
+            lines += ["- **Keine Anschlussfinanzierung**: das Darlehen ist am Ende "
+                      "der Zinsbindung vollständig getilgt. Ein Zinsänderungsrisiko "
+                      "besteht nicht."]
+        else:
+            sign = "+" if f["stress_delta"] >= 0 else "-"
+            lines += [f"- Stresstest Anschluss zu {pct(f['stress_rate_pct'], 1)}: Rate "
+                      f"**{eur(f['stress_monthly_payment'], 2)}** "
+                      f"({sign}{eur(abs(f['stress_delta']), 2)}/Monat), Restschuld "
+                      f"getilgt über {f['stress_months'] // 12} Jahre"]
         lines += [""]
 
     if r:
@@ -707,15 +720,17 @@ def render(result: dict[str, Any], markdown: bool) -> str:
                 lines += [f"- Eigenkapitalrendite: {pct(r['roe_pct'])}"]
             lines += [f"- Break-even-Miete (Cashflow 0): "
                       f"{eur(r['break_even_rent_month'])}/Monat"]
-            lines += [f"- Cashflow im Zins-Stressfall: "
-                      f"{eur(r['stress_cashflow_month'], 2)}/Monat"]
+            if not (f or {}).get("fully_repaid_at_fix_end"):
+                lines += [f"- Cashflow im Zins-Stressfall: "
+                          f"{eur(r['stress_cashflow_month'], 2)}/Monat"]
         lines += [""]
 
     if o:
         lines += [f"{h1}Eigennutzung", ""]
         lines += [f"- Monatliche Belastung: **{eur(o['monthly_burden'], 2)}** "
                   f"({' + '.join(o['parts'])})"]
-        lines += [f"- Im Zins-Stressfall: {eur(o['stress_burden'], 2)}/Monat"]
+        if not (f or {}).get("fully_repaid_at_fix_end"):
+            lines += [f"- Im Zins-Stressfall: {eur(o['stress_burden'], 2)}/Monat"]
         lines += [""]
 
     if result["warnings"]:
