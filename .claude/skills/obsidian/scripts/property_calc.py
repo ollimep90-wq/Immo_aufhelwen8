@@ -50,6 +50,27 @@ GREST_RATES: dict[str, float] = {
 }
 GREST_ASOF = "Kenntnisstand Mai 2026 — Satz vor Verwendung prüfen"
 
+# Common abbreviations. Without these a note saying "NW" silently produced a
+# 0 % rate, and the resulting purchase costs looked plausible.
+GREST_ALIASES: dict[str, str] = {
+    "bw": "baden-württemberg", "baden-wuerttemberg": "baden-württemberg",
+    "by": "bayern", "be": "berlin", "bb": "brandenburg", "hb": "bremen",
+    "hh": "hamburg", "he": "hessen",
+    "mv": "mecklenburg-vorpommern",
+    "ni": "niedersachsen", "nds": "niedersachsen",
+    "nw": "nordrhein-westfalen", "nrw": "nordrhein-westfalen",
+    "rp": "rheinland-pfalz", "sl": "saarland", "sn": "sachsen",
+    "st": "sachsen-anhalt", "sachsen anhalt": "sachsen-anhalt",
+    "sh": "schleswig-holstein", "th": "thüringen", "thueringen": "thüringen",
+}
+
+
+def grest_rate(bundesland: str) -> float | None:
+    """Rate for a Bundesland, accepting full names and usual abbreviations."""
+    key = str(bundesland).strip().lower()
+    key = GREST_ALIASES.get(key, key)
+    return GREST_RATES.get(key)
+
 DEFAULTS = {
     "notary_pct": 1.5,
     "land_register_pct": 0.5,
@@ -304,7 +325,7 @@ def compute(data: Inputs) -> dict[str, Any]:
     if grest is None:
         bundesland = data.get("bundesland")
         if bundesland:
-            grest = GREST_RATES.get(str(bundesland).strip().lower())
+            grest = grest_rate(bundesland)
             if grest is None:
                 data.warn(f"Bundesland {bundesland!r} unbekannt — "
                           "Grunderwerbsteuer bitte mit --grest setzen.")
@@ -654,7 +675,11 @@ def render(result: dict[str, Any], markdown: bool) -> str:
              "price_offered": "abgegebenes Gebot", "price_asking": "Angebotspreis"}
     lines += [f"{h1}Kaufpreis und Nebenkosten", ""]
     lines += [f"- Kaufpreis ({basis[result['price_basis']]}): **{eur(c['price'])}**"]
-    lines += [f"- Grunderwerbsteuer {pct(c['grest_pct'], 1)}: {eur(c['grest_eur'])}"]
+    if c["grest_pct"]:
+        lines += [f"- Grunderwerbsteuer {pct(c['grest_pct'], 1)}: {eur(c['grest_eur'])}"]
+    else:
+        lines += ["- Grunderwerbsteuer: **unbekannt, mit 0 € gerechnet** — "
+                  "bundesland setzen oder --grest angeben"]
     lines += [f"- Notar {pct(c['notary_pct'], 1)}: {eur(c['notary_eur'])}"]
     lines += [f"- Grundbuch {pct(c['land_register_pct'], 1)}: {eur(c['land_register_eur'])}"]
     lines += [f"- Maklerprovision {pct(c['commission_pct'])}: {eur(c['commission_eur'])}"]
