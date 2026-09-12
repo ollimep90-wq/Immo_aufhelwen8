@@ -61,7 +61,7 @@ tags: [immobilie, finanzierung, strategie, vertraulich]
 
 | Position | Betrag |
 |---|---|
-| Kaufpreis (Zielpreis; Obergrenze 800.000 €) | 740.000 € |
+| Kaufpreis (Kalkulationsbasis) | 740.000 € |
 | Kaufnebenkosten 8,5 % | 62.900 € |
 | Gesamtbedarf | 802.900 € |
 | Bankdarlehen (95 % des Kaufpreises) | 703.000 € |
@@ -72,7 +72,8 @@ tags: [immobilie, finanzierung, strategie, vertraulich]
 |---|---|
 | Rate | 3.789 €/Monat |
 | Zins / Tilgung Jahr 1 | 38.132 € / 7.340 € |
-| Miete | 5.374 €/Monat |
+| Miete Anbau — **vertraglich belegt** | 3.924 €/Monat |
+| Miete Altbestand — **noch zu vereinbaren**, Korridor 8,78–10,00 €/m² | 1.273–1.450 €/Monat |
 | **Cashflow** | **7.421 € p.a. = 618 €/Monat** |
 | Faktor 11,5 · Bruttorendite 8,71 % · Nettorendite 6,59 % | |
 
@@ -244,6 +245,10 @@ sondern ihre Voraussetzung.**
 
 ### Die Falle
 
+> [!danger] Diese Tabelle verlässt die Datei nie — auch nicht gegenüber der Bank
+> Sie zeigt nicht nur, dass das Objekt die Obergrenze trägt, sondern wie weit
+> darüber hinaus. Wer sie kennt, verhandelt gegen dich.
+
 | Verkäuferdarlehen | tragbarer Kaufpreis | Hebel |
 |---|---|---|
 | — | 888.900 € | — |
@@ -277,10 +282,13 @@ Zwei Punkte zur Konstruktion:
   eingetragen ist, und ob eine Erbengemeinschaft besteht. Bei mehreren Verkäufern
   ändert sich die Dimensionierung (pro Kopf klein halten) und der Kreis der
   Vorkaufsberechtigten nach § 577 BGB.
-- Die Verkäufer bauen gleichzeitig neu und sind **finanziell gestreckt** —
-  [[Haus-A-Sanierungsplan]] weist beim Thema Kaution darauf hin. Das macht ein
-  Verkäuferdarlehen für sie weniger attraktiv und ist ein Grund, es nicht groß
-  zu dimensionieren.
+- Die Verkäufer **bauen gleichzeitig neu** (belegt). *Schlussfolgerung,
+  unbelegt:* Daraus folgt vermutlich begrenzte Liquidität — was ein
+  Verkäuferdarlehen für sie weniger attraktiv macht und ein Grund wäre, es
+  nicht groß zu dimensionieren. [[Haus-A-Sanierungsplan]] zieht denselben
+  Schluss beim Thema Kaution. **Die Annahme ist nicht geprüft und darf im
+  Gespräch nie als Argument auftauchen** — eine Einschätzung über die
+  Finanzlage der Gegenseite beschädigt ein Verhältnis per Du dauerhaft.
 
 ### Was steuerlich gilt
 
@@ -442,22 +450,44 @@ und riskiert die AfA.
 **Vor dem Notartermin:**
 
 1. **Wüstenrot fragen, worauf sich die 95 % beziehen** — Kaufpreis oder
-   Beleihungswert mit Sicherheitsabschlag. Das ist die neue, wichtigste Frage.
-   Bei derselben Gelegenheit die drei Mietvertrag-Fragen aus
-   [[Finanzierung-und-Sensitivitaet]] und die Frage nach dem Sondertilgungsrecht.
+   Beleihungswert. Das ist die neue, wichtigste Frage.
+   > [!warning] Blank stellen
+   > Die Rechnung, dass dasselbe Darlehen bei 10 % Abschlag 105,6 % ergäbe und
+   > „so nicht darstellbar" wäre, darf die Frage **nicht** begleiten. Wer der
+   > Bank mitteilt, dass die eigene Architektur bei ihrer Methode zusammenbricht,
+   > bekommt die Methode, die sie zusammenbrechen lässt.
+
+   Die versandfertige Fassung dieser und aller weiteren Bankfragen steht in
+   [[2026-09-12-Fragen-an-die-Bank]].
 2. **Verkäuferdarlehen sondieren, ohne den Zweck zu nennen.** Erst die Bank
-   fragen, ob sie es akzeptiert, dann die Verkäufer — spät im Gespräch, Zins
-   nicht proaktiv. Größenordnung 20.000–50.000 €.
+   fragen, ob sie es akzeptiert, dann die Verkäufer. **Früh im Prozess, spät im
+   Gespräch** — nicht als Einstieg. Den Zins nicht proaktiv ansprechen, und
+   keine Spanne zuerst nennen: wer die erste Zahl nennt, ankert. Frag, was für
+   sie vorstellbar wäre. *(Interner Korridor: 20.000–50.000 €.)*
 3. **Grundschuldhöhe** bewusst entscheiden.
 4. **Kaufpreisaufteilung in die Urkunde** — für AfA und Zinsabzug. Mit dem Notar
    klären, wie sich das mit der separaten Regelung eines Verkäuferdarlehens
    verträgt.
-5. **Räumung der Nebengebäude zum Auszug** im Kaufvertrag regeln, bis dahin
-   separater kündbarer Mietvertrag. *(Nicht zur Übergabe — das widerspräche dem
-   unbefristeten Wohnrecht.)*
-6. **Die Miethöhe im Mietvertrag mit den Verkäufern** durchrechnen: Sie trägt
+5. **Mietgegenstand positiv definieren**, nicht negativ. Also: „die Wohnung
+   im Altbestand mit den Räumen X, Y, Z, dem Kellerabteil und dem
+   Carport-Stellplatz" — statt aufzuzählen, was *nicht* mitvermietet wird.
+   Rechtlich identisch (was nicht benannt ist, ist nicht vermietet), aber eine
+   Negativliste mit Dachboden, Garagen und Partyraum legt die drei
+   Entwicklungsflächen nebeneinander auf den Tisch. Der Dachboden ist dabei der
+   teuerste Verrat.
+   Für die Nebengebäude bis zum Auszug genügt ein separater Vertrag — ohne auf
+   Kündbarkeit zu bestehen, Garagenmietverträge sind ohnehin frei kündbar.
+   *(Die Räumung selbst ist unverdächtig: zugesagt am 2026-09-10, zum Auszug.
+   Nicht zur Übergabe — das widerspräche dem unbefristeten Wohnrecht.)*
+6. **Die Miethöhe im Mietvertrag mit den Verkäufern** durchrechnen — sie trägt
    27 % des Cashflows und bestimmt über § 10 Abs. 1 BelWertV womöglich den
    Beleihungswert.
+   > [!danger] Nur intern
+   > Der Verkäufer ist hier zugleich der künftige Mieter. Erfährt er, dass an
+   > seiner Miethöhe ein Viertel deines Cashflows hängt, hat er einen Hebel, den
+   > er gegen den Kaufpreis tauschen kann — und sein eigenes Interesse zeigt
+   > ohnehin nach unten. Im Gespräch wird die Miete als schlichter Marktwert
+   > verhandelt, nicht als etwas, das du brauchst.
 
 **Zeitnah:**
 
@@ -509,18 +539,44 @@ vom 2026-09-10 („zum Auszug").
 
 ## Offene Fragen
 
-### An Wüstenrot — vor dem Notartermin
+> [!warning] Die Formulierungen hier sind Rohmaterial
+> Klammerzusätze, Beträge und Begründungen sind **interne Notizen**. Keine
+> dieser Zeilen wird so verschickt. Die versandfertigen Fassungen stehen in
+> [[2026-09-12-Fragen-an-die-Bank]] und gehören für die Verkäuferseite in
+> [[Fragen-an-den-Verkaeufer]] — nicht hierher dupliziert, sonst wird
+> irgendwann die falsche Fassung versendet.
 
-- [ ] **Beziehen sich die 95 % auf den Kaufpreis oder auf einen Beleihungswert
-      mit Sicherheitsabschlag?** *(neu — gehört ins Entscheidungsregister)*
-- [ ] Wird ein **Verkäuferdarlehen** akzeptiert, unter welchen Bedingungen?
-- [ ] Empfohlene **Grundschuldhöhe** für eine spätere Aufstockung?
-- [ ] **Sondertilgungsrecht** beim Volltilger? *(bereits offen in
-      [[Finanzierung-und-Sensitivitaet]], dort im überholten Block)*
-- [ ] Werden **Garagen- und Partyraummieten** im Ertragswert als nachhaltig
-      angesetzt? *(neu — entscheidet über die 46.400 €)*
-- [ ] *(bereits offen)* Mietvertrag mit den Verkäufern im Ertragswert
-      anerkannt? Vertragsmiete oder Kappung?
+### An Wüstenrot
+
+Versandfertig in [[2026-09-12-Fragen-an-die-Bank]]. Was dort **nicht** steht und
+auch nicht hingehört, aber intern der Grund für die Fragen ist:
+
+- Die Bezugsgröße der 95 % entscheidet die gesamte Architektur — bei 10 %
+  Abschlag wären es 105,6 %. **Diese Rechnung begleitet die Frage nicht.**
+- An der Frage, ob Garagenmieten als nachhaltig angesetzt werden, hängen rund
+  46.400 € Beleihungskapazität. **Auch das nennt die Frage nicht** — wer zeigt,
+  wie viel an einer Antwort hängt, lädt zur vorsichtigen Antwort ein.
+- Die Frage nach der Mietbewertung ist bewusst als **Methodenfrage** gestellt,
+  nicht als Frage zum Mietvertrag mit den Verkäufern. Wer auf den einen
+  verwundbaren Vertrag zeigt und das Stichwort „Kappung" mitliefert, bekommt
+  genau dort geprüft — und verliert die Anrechnung von 1.450 €/Monat.
+
+### An die Verkäufer
+
+Alle drei Fragen stehen bereits in [[Fragen-an-den-Verkaeufer]] (Grundbuch als
+Priorität 1, Nebengebäude als Priorität 3, Verkäuferdarlehen als Priorität 4).
+**Dort pflegen, nicht hier duplizieren.** Drei Anmerkungen dazu:
+
+- Die Frage nach den Nebengebäuden muss **alle sechs** umfassen — Hofgaragen,
+  Außengaragen, Wohnmobilgarage, Partyraum. Wer nur nach Partyraum und
+  Wohnmobilgarage fragt, greift genau die beiden ertragsstärksten heraus und
+  signalisiert damit, dass er gerechnet hat.
+- **Keine Begründung, keine Beträge.** Dass zwei der sechs die Hälfte des
+  Ertrags tragen, ist eine interne Zahl.
+- [[Fragen-an-den-Verkaeufer]] **siezt** durchgehend und ist auf einen
+  Adressaten im Singular geschrieben. Beides widerspricht der Sprachregelung und
+  dem offenen Eigentümerstand — vor dem Versand auf du/ihr umstellen und die
+  Mehrzahl prüfen.
 
 ### An den Steuerberater — nur falls Option 3 wiederkommt
 
@@ -540,15 +596,6 @@ vom 2026-09-10 („zum Auszug").
       stößt.
 - [ ] *(bereits offen)* Wie lang ist der Bewilligungszeitraum **konkret**?
       Die 36 Monate sind eine Annahme.
-
-### An die Verkäufer — spät, ohne Begründung
-
-- [ ] Verkäuferdarlehen denkbar? *(steht bereits als Priorität 4 in
-      [[Fragen-an-den-Verkaeufer]] — angesichts der Zeitkritik ggf. hochziehen)*
-- [ ] *(bereits offen)* Wer ist im Grundbuch eingetragen — Erbengemeinschaft?
-- [ ] *(bereits offen)* Werden **Partyraum** und **Wohnmobilgarage** genutzt
-      oder vermietet? **Die beiden tragen 180 € von 350 €/Monat** — also die
-      Hälfte des Nebengebäude-Ertrags.
 
 ### Für `annahmen.json`
 
