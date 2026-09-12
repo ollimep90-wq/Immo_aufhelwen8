@@ -83,6 +83,11 @@ Der verbindliche Stand steht im Vault in `Strategie-und-Verhandlung.md` und in
 `Reihenfolge-der-Optimierungen.md`. Kurz:
 
 - Erwerb **privat**, PV ebenfalls privat gewerblich
+- Finanzierung: **Volltilger über 34 Jahre zu 5,45 %** (reales Angebot der
+  Wüstenrot). Kein Annuitätendarlehen mit Zinsbindung — es gibt keine
+  Anschlussfinanzierung und kein Zinsänderungsrisiko. Der Beleihungsauslauf
+  ist in `annahmen.json` mit 95 % **des Kaufpreises** angesetzt; ob die Bank
+  so rechnet oder auf einen Beleihungswert, ist offen
 - Verkäufer bleiben **unbefristet** wohnen, Absicherung über **Indexmiete**
 - **Ein** Förderantrag für beide Hausteile, Umsetzung gebündelt nach dem Auszug
 - Wärmepumpe plus Heizkörpertausch zuerst, Fußbodenheizung bei Mieterwechsel

@@ -42,6 +42,7 @@ PARAMETER = {
     "beg_hoechst_we_2_6":   15_000,
     "beg_hoechst_ab_we_7":   8_000,
     "beg_hoechst_erste_we_alt": 30_000,   # Projektstand vor dem 21.07.2026
+    "beg_effizienzbonus_alt_pct":   5,   # entfallen zum 21.07.2026
 }
 
 
@@ -116,15 +117,25 @@ def basis(modell, a, kp):
     hoch = m["haus_a_verkaeufermiete_eur_m2"]
     tief = m["haus_a_bestandsniveau_eur_m2"]
     flaeche = a["objekt"]["wohnflaeche_haus_a_m2"]
-    print(f"    Altbestand {hoch} EUR/m2 x {flaeche:.0f} m2    {eur(hoch * flaeche):>10} /Monat"
-          f"  <- annahmen.json: UNBELEGT")
-    r_tief = modell.rechne(kp, a=a, vk_miete_eur_m2=tief)
-    print(f"\n    {'Verkaeufermiete':<22} {'Miete/Monat':>13} {'Cashflow p.a.':>15} {'/Monat':>10}")
-    for label, rr in [(f"{hoch:.2f} EUR/m2 (Ziel)", r), (f"{tief:.2f} EUR/m2 (Bestand)", r_tief)]:
-        print(f"    {label:<22} {eur(rr['miete_monat']):>13} {eur(rr['cashflow']):>15} "
+    print(f"    Altbestand — noch zu vereinbaren, Korridor belegt,"
+          f" Punkt darin nicht")
+    korridor = m.get("haus_a_korridor_eur_m2", [tief, hoch])
+    lo, hi = min(korridor), max(korridor)
+    mitte = (lo + hi) / 2
+    print(f"\n    {'Verkaeufermiete':<26} {'Miete/Monat':>13} {'Cashflow p.a.':>15} {'/Monat':>10}")
+    ergebnisse = []
+    for label, satz in [(f"{lo:.2f} EUR/m2 (untere Ecke)", lo),
+                        (f"{mitte:.2f} EUR/m2 (Mitte)", mitte),
+                        (f"{hi:.2f} EUR/m2 (obere Ecke)", hi)]:
+        rr = modell.rechne(kp, a=a, vk_miete_eur_m2=satz)
+        ergebnisse.append(rr)
+        print(f"    {label:<26} {eur(rr['miete_monat']):>13} {eur(rr['cashflow']):>15} "
               f"{eur(rr['cashflow_monat']):>10}")
-    d = r["cashflow"] - r_tief["cashflow"]
-    print(f"    Differenz: {eur(d)} p.a. = {d / r['cashflow'] * 100:.1f} % des Cashflows")
+    d = ergebnisse[-1]["cashflow"] - ergebnisse[0]["cashflow"]
+    print(f"    Spanne: {eur(d)} p.a. = {d / ergebnisse[-1]['cashflow'] * 100:.0f} % des Cashflows")
+    print(f"    Bandbreite der Miete bei {flaeche:.0f} m2: "
+          f"{eur(lo * flaeche)} bis {eur(hi * flaeche)} EUR/Monat")
+    print(f"    (Flaeche selbst ist 140-150 m2, nie exakt gemessen)")
     print()
     print("  ! Der Beleihungsauslauf bezieht sich hier auf den KAUFPREIS. Ob die Bank")
     print("    so rechnet oder auf einen Beleihungswert mit Sicherheitsabschlag, ist")
@@ -158,7 +169,14 @@ def option1(modell, a, r, kp):
     anzahl = sum(n for _, n, _ in nb)
     brutto = sum(n * m * 12 for _, n, m in nb)
     print(f"  a) Nebengebäude separat vermieten (Reihenfolge-der-Optimierungen, Rang 1)")
-    print(f"     {anzahl} Einheiten, Investition 0 EUR, Bruttomiete {eur(brutto)} p.a.")
+    print(f"     {anzahl} freie Einheiten, Investition 0 EUR, Bruttomiete {eur(brutto)} p.a.")
+    for name, n, mo in nb:
+        print(f"       {name:<28} {n} x {mo:>3} EUR")
+    nicht = a["ausbau"].get("nebengebaeude_nicht_hebbar", [])
+    if nicht:
+        print(f"     Nicht hebbar:")
+        for name, grund in nicht:
+            print(f"       {name:<28} {grund}")
     print()
     print(f"     ACHTUNG: Der Vault führt die {eur(brutto)} in einer Spalte 'Netto/Jahr',")
     print(f"     rechnet die Nachbarzeilen dort aber echt netto (WE 8: 7.200 brutto")
@@ -308,13 +326,17 @@ def foerderung(a):
     print(f"\n  annahmen.json führt hoechstgrenze_ein_gebaeude: "
           f"{eur(fo['hoechstgrenze_ein_gebaeude'])} — zu korrigieren auf {eur(grenze(we, neu))}.")
 
-    alt_satz = fo["grundfoerderung_pct"] + fo["effizienzbonus_pct"]
     neu_satz = P["beg_grundfoerderung_pct"]
+    alt_satz = neu_satz + P["beg_effizienzbonus_alt_pct"]
+    ist = fo["grundfoerderung_pct"] + fo["effizienzbonus_pct"]
     print(f"\n  Die einzige Änderung mit echter Euro-Wirkung ist der Effizienzbonus:")
-    print(f"    annahmen.json {alt_satz} % (30 + {fo['effizienzbonus_pct']}): "
-          f"{eur(paket * alt_satz / 100)} Zuschuss")
-    print(f"    ab 21.07.2026 {neu_satz} % (Bonus entfallen):  {eur(paket * neu_satz / 100)} Zuschuss")
+    print(f"    Projektstand vor dem 21.07.2026, {alt_satz} % (30 + "
+          f"{P['beg_effizienzbonus_alt_pct']}): {eur(paket * alt_satz / 100)} Zuschuss")
+    print(f"    ab 21.07.2026, {neu_satz} % (Bonus entfallen):      "
+          f"{eur(paket * neu_satz / 100)} Zuschuss")
     print(f"    entgangene Chance: {eur(paket * (alt_satz - neu_satz) / 100)}")
+    stand = "korrigiert" if ist == neu_satz else f"NOCH NICHT korrigiert ({ist} %)"
+    print(f"    annahmen.json: {stand}")
     print(f"\n    ABER: Der Vault-Eigenanteil von {eur(paket * (1 - neu_satz / 100))} EUR ist bereits")
     print(f"    mit {neu_satz} % gerechnet. Der Wegfall ändert ihn NICHT — er nimmt nur")
     print(f"    den besseren Fall. Und der Bonus galt ohnehin nur 'bei passender")
