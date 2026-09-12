@@ -5,7 +5,7 @@ title: Drei Finanzierungsoptionen — Nachbeleihung, Verkäuferdarlehen, WEG-Tei
 date: 2026-09-12
 decision: offen
 review_on: 2026-10-15
-tags: [immobilie, finanzierung, strategie]
+tags: [immobilie, finanzierung, strategie, vertraulich]
 ---
 
 # Drei Finanzierungsoptionen
@@ -13,39 +13,55 @@ tags: [immobilie, finanzierung, strategie]
 [[OBJ-2026-001|← Zurück zum Objekt]] · [[Strategie-und-Verhandlung]] ·
 [[Reihenfolge-der-Optimierungen]] · [[Entscheidungsregister]]
 
+> [!danger] Vertraulich — nichts davon geht an die Verkäufer
+> Diese Notiz nennt Verhandlungsspielraum, Puffergrößen und den tragbaren
+> Kaufpreis. Bevor auch nur ein Absatz in eine Mail an die Verkäufer oder an
+> Wüstenrot wandert: `aussenwirkung-pruefer`.
+
 > [!success] Zahlenstand
-> Alle Beträge sind mit `modell.py` aus `annahmen.json` (Stand 2026-09-10)
-> gerechnet. Nachvollziehbar mit:
+> Kaufpreis, Finanzierung, Mieten, Investitionen und Bewirtschaftung kommen aus
+> `annahmen.json` (Stand 2026-09-10); alle Finanzmathematik aus `modell.py`.
+> Förderrecht, Mietrecht und drei Bankannahmen kommen **nicht** von dort —
+> sie stehen unten in der Annahmenliste.
 >
 > ```
 > python3 analysen/finanzierungsoptionen.py --strategie <Objekt>/Strategie
 > ```
->
-> Das Skript rechnet nichts selbst, was `modell.py` kann — es importiert es.
-> Was es hinzufügt, sind die drei Auswertungen zu diesen Optionen.
 
-> [!danger] Korrekturen gegenüber den früheren Fassungen dieser Notiz
-> Die ersten beiden Fassungen entstanden **ohne Vault-Zugriff** und mussten
-> Bankkonditionen annehmen. Mit `annahmen.json` fällt das Wichtigste davon weg.
-> Die Fehler stehen hier, statt stillschweigend ersetzt zu werden:
+> [!warning] Korrekturen — auch an dieser Fassung
+> Die ersten beiden Fassungen entstanden ohne Vault-Zugriff. Die dritte hatte
+> mit den echten Zahlen eigene Fehler, die die Prüfagenten gefunden haben.
+> Alles steht hier, statt stillschweigend ersetzt zu werden.
 >
-> | vorher | jetzt | warum |
-> |---|---|---|
-> | Beleihungsauslauf **102,79 %** des Beleihungswerts, „das Darlehen liegt über dem Beleihungswert" | **95 % des Kaufpreises**, Darlehen 703.000 € | Die 102,79 % waren die Folge eines von mir angenommenen Sicherheitsabschlags von 10 %. `annahmen.json` setzt `beleihungsauslauf_max_pct: 95` auf den **Kaufpreis** an. Meine Zahl war eine Konstruktion, keine Feststellung. |
-> | Eigenkapital geht vollständig auf, keine Restliquidität | **20.100 € Restliquidität** | folgt aus derselben Korrektur |
-> | „Nachbeleihungsspielraum erst ab 9,4 Jahren" | **ab Jahr 1 rechnerisch vorhanden**, aber zunächst winzig (7.340 €) | ebenso |
-> | Zins 3,8 % / Tilgung 2 % / 10 Jahre Zinsbindung (1. Fassung) | Volltilger 34 J zu 5,45 % | reales Wüstenrot-Angebot |
-> | Maklerprovision als offene Frage (1. Fassung) | Privatverkauf ohne Makler | steht im Entscheidungsregister |
-> | Mehrmiete-Schwellen auf Basis geschätzter Marktmieten | **echte Mieten**: 5.374 €/Monat | `annahmen.json` |
+> **Aus Fassung 1 und 2 (ohne Vault):**
 >
-> Was sich **nicht** geändert hat: die Bewertung der drei Optionen. Sie fällt
-> mit den echten Zahlen sogar deutlicher aus.
+> | vorher | jetzt |
+> |---|---|
+> | Beleihungsauslauf **102,79 %**, „das Darlehen liegt über dem Beleihungswert" | **95 % des Kaufpreises**. Die 102,79 % folgten aus einem von mir angenommenen Sicherheitsabschlag **und** aus dem aufgerufenen Preis statt dem Zielpreis — eine doppelte Konstruktion. |
+> | Eigenkapital geht vollständig auf | **20.100 € Restliquidität** |
+> | „Spielraum erst ab 9,4 Jahren" | rechnerisch ab Jahr 1, praktisch später |
+> | Zins 3,8 % / Tilgung 2 % / 10 J Zinsbindung | Volltilger 34 J zu 5,45 % |
+> | Maklerprovision als offene Frage | Privatverkauf ohne Makler. **Das war kein Vault-Problem** — die Frage war seit 2026-09-10 abgehakt und steht in den Projektregeln als wiederholter Fehler. |
+>
+> **Aus Fassung 3 (mit Vault, aber fehlerhaft):**
+>
+> | vorher | jetzt |
+> |---|---|
+> | „Räumung der Garagen **zum Übergabetermin** in den Kaufvertrag" | **zum Auszug** — so steht es abgehakt in [[Fragen-an-den-Verkaeufer]] und im [[Entscheidungsregister]]. Meine Fassung widersprach dem unbefristeten Wohnrecht. |
+> | Nebengebäude wirken „sofort" | **erst ab dem Auszug.** Das verschiebt den einzigen echten Nachbeleihungshebel um Jahre — und der Auszug ist bewusst nicht erzwingbar. |
+> | 47.880 € Beleihungskapazität | **rund 46.400 €**, und das ist eine Spanne. Die 4.200 €/Jahr sind eine **Brutto**miete; der Vault führt sie in einer Spalte „Netto/Jahr", rechnet die Nachbarzeilen dort aber echt netto. |
+> | Heizungspaket 87.500 € / 61.250 € | **103.500 € / 72.450 €** — der Planwert des Vaults. Ich hatte die Fußbodenheizung im Altbestand weggelassen. |
+> | „Netto-Spielraum −33.650 €" | **−46.230 €**. Zwei Fehler: das falsche Paket und ein Methodenbruch (95 % in der einen Spalte, nicht in der anderen). |
+> | „Jeder Euro hebt den Preis um 7,70 €" | **7,41 €** — 1/0,135, nicht 1/0,13. |
+> | „Die Frage nach der 95-%-Bezugsgröße steht schon in [[Finanzierung-und-Sensitivitaet]]" | **Sie steht nirgends im Vault.** Sie ist neu — und nach meiner eigenen Einschätzung die wichtigste. |
+> | „echte Mieten: 5.374 €/Monat" | 3.924 € belegt **+ 1.450 € unbelegt**. `annahmen.json` markiert die Verkäufermiete selbst als „UNBELEGT". Sie trägt 27 % des Cashflows. |
+> | Höchstgrenzen-Absenkung „−2.000 € / −4.000 €" | **0 €.** Das Planpaket liegt unter jedem Deckel. |
 
 ## Ausgangslage
 
 | Position | Betrag |
 |---|---|
-| Kaufpreis (Zielpreis) | 740.000 € |
+| Kaufpreis (Zielpreis; Obergrenze 800.000 €) | 740.000 € |
 | Kaufnebenkosten 8,5 % | 62.900 € |
 | Gesamtbedarf | 802.900 € |
 | Bankdarlehen (95 % des Kaufpreises) | 703.000 € |
@@ -55,27 +71,46 @@ tags: [immobilie, finanzierung, strategie]
 | Volltilger 34 Jahre zu 5,45 %, Annuität 6,468 % | |
 |---|---|
 | Rate | 3.789 €/Monat |
-| Zins Jahr 1 / Tilgung Jahr 1 | 38.132 € / 7.340 € |
+| Zins / Tilgung Jahr 1 | 38.132 € / 7.340 € |
 | Miete | 5.374 €/Monat |
-| NOI | 52.893 € p.a. |
 | **Cashflow** | **7.421 € p.a. = 618 €/Monat** |
 | Faktor 11,5 · Bruttorendite 8,71 % · Nettorendite 6,59 % | |
 
-> [!warning] Die eine Annahme, die alles trägt
+> [!warning] Die Miete ist zu 27 % unbelegt
+> Die 5.374 € bestehen aus **3.924 € Anbau** (bestätigt 2026-09-10) und
+> **1.450 € Altbestand** = 145 m² × 10,00 €/m². Dieser zweite Teil ist kein
+> Vertrag, sondern eine Zielannahme — `annahmen.json` markiert sie selbst als
+> „UNBELEGT", und [[Haus-A-Sanierungsplan]] empfiehlt, die Übergangsmiete am
+> **Bestandsniveau** von 8,78 €/m² anzusetzen.
+>
+> | | 10,00 €/m² | 8,78 €/m² |
+> |---|---|---|
+> | Cashflow p.a. | 7.421 € | **5.362 €** |
+>
+> Das sind 2.059 € oder **27,7 % des Cashflows**, die an einer Zahl hängen, die
+> noch verhandelt wird. Die Miethöhe im Mietvertrag mit den Verkäufern ist
+> damit keine Nebensache.
+
+> [!danger] Die wichtigste offene Frage — und sie ist neu
 > `beleihungsauslauf_max_pct: 95` bezieht sich in `modell.py` auf den
 > **Kaufpreis**. Rechnet Wüstenrot stattdessen auf einen Beleihungswert mit
-> Sicherheitsabschlag, sieht alles anders aus: Bei 10 % Abschlag entspräche
-> dasselbe Darlehen **105,6 %** statt 95 %.
+> Sicherheitsabschlag, entspräche dasselbe Darlehen bei 10 % Abschlag
+> **105,6 %** — und wäre so nicht darstellbar.
 >
-> Das ist genau die Frage, die in [[Finanzierung-und-Sensitivitaet]] schon
-> offen steht. Sie ist mit einem Anruf zu klären und entscheidet mehr als alles
-> in diesem Dokument.
+> Ich hatte geschrieben, die Frage stehe schon in
+> [[Finanzierung-und-Sensitivitaet]]. **Das stimmt nicht.** Dort stehen drei
+> andere Bankfragen (ob der Mietvertrag mit den Verkäufern im Ertragswert
+> anerkannt und ob die Vertragsmiete gekappt wird). Eine Volltextsuche über den
+> Vault findet keine Stelle, an der die **Bezugsgröße** der 95 % hinterfragt
+> wird — [[Reihenfolge-der-Optimierungen]] und [[Rechenweg-Cashflow]] setzen
+> „95 % des Kaufpreises" als gegeben.
+>
+> **Diese Frage gehört ins Entscheidungsregister unter „Was noch offen ist",
+> blockiert die gesamte Finanzierungsarchitektur, fällig vor dem Notartermin.**
 
 ## Option 1 — Nachbeleihung
 
 ### Wann Spielraum entsteht
-
-Spielraum = 95 % des Werts minus Restschuld:
 
 | Jahr | Restschuld | Wert +0 % | Wert +5 % | Wert +10 % | Wert +15 % |
 |---|---|---|---|---|---|
@@ -85,89 +120,129 @@ Spielraum = 95 % des Werts minus Restschuld:
 | 7 | 642.158 € | 60.842 € | 95.992 € | 131.142 € | 166.292 € |
 | 10 | 608.104 € | 94.896 € | 130.046 € | 165.196 € | 200.346 € |
 
-Weil das Darlehen bei 95 % startet und nicht darüber, ist rechnerisch ab Jahr 1
-etwas da. Aber 7.340 € sind kein Finanzierungsbaustein. Aus **Tilgung allein**
-kommt frühestens ab Jahr 5 bis 7 ein nennenswerter Betrag zusammen — die
-Anfangstilgung liegt bei 1,04 %.
+Aus **Tilgung allein** kommt frühestens ab Jahr 5 bis 7 ein Betrag zusammen,
+mit dem sich etwas anfangen lässt — die Anfangstilgung liegt bei 1,04 %.
 
 ### Der Test, auf den es ankommt
 
 > Eine Maßnahme schafft Nachbeleihungsspielraum nur, wenn sie den Wert um mehr
 > hebt, als sie die Schuld erhöht.
 
-Und hier zeigt der Vault etwas, das die ursprüngliche Überlegung nicht auf dem
-Schirm hatte — die Antwort steht schon in
-[[Reihenfolge-der-Optimierungen]]:
+**a) Nebengebäude separat vermieten** — Rang 1 in
+[[Reihenfolge-der-Optimierungen]], sechs Einheiten, **null Euro Investition**.
 
-| | Nebengebäude vermieten | Heizungspaket |
+Die Höhe ist allerdings zu klären:
+
+| Ansatz | netto p.a. | Beleihungskapazität |
 |---|---|---|
-| Investition | **0 €** | 87.500 € brutto |
-| nach 30 % Förderung | — | 61.250 € Mehrschuld |
-| Mehrertrag p.a. | 4.200 € | 2.300 € Umlage |
-| Wertzuwachs bei Faktor 12 | 50.400 € | 27.600 € |
-| davon 95 % beleihbar | **47.880 €** | 26.220 € |
-| **Netto-Spielraum** | **+47.880 €** | **−33.650 €** |
+| brutto, ohne jeden Abzug (so im Vault) | 4.200 € | 47.880 € |
+| − Mietausfallwagnis 3 % | 4.074 € | **46.444 €** |
+| − zusätzlich Verwaltung 30 €/Einheit | 1.914 € | 21.820 € |
 
-**Die Nebengebäude sind der einzige echte Nachbeleihungshebel im Objekt.**
-4.200 €/Jahr für null Euro Einsatz — das hebt den Ertragswert, ohne die Schuld
-anzufassen. Rang 1 der Optimierungsliste ist damit nicht nur die beste
-Cashflow-Maßnahme, sondern auch die einzige, die Option 1 überhaupt trägt.
+Der Vault führt die 4.200 € in einer Spalte **„Netto/Jahr"**, rechnet die
+Nachbarzeilen dort aber echt netto: Rang 4 (WE 8) kommt von 7.200 € brutto über
+Ausfallwagnis, Instandhaltung und Verwaltung auf exakt die 5.904 €, die in der
+Tabelle stehen. Für Rang 1 fehlt dieser Schritt. Der mittlere Ansatz ist
+plausibel — Garagen brauchen kaum Verwaltung und keine Instandhaltungsrücklage
+nach Wohnfläche —, aber das ist eine Einschätzung, keine Rechnung.
 
-**Das Heizungspaket verbraucht Spielraum**, statt welchen zu schaffen — um rund
-33.650 €. Das ist kein Argument dagegen (es ist ohnehin Pflicht, nicht Kür),
-aber es widerlegt die Erwartung, energetische Sanierung erzeuge
-Beleihungswert.
+**b) Heizungspaket** — der Planwert aus
+[[Heizung-und-Energetische-Sanierung]], alle sechs Positionen einschließlich
+Fußbodenheizung im Altbestand:
 
-### Zwei Sperren, die in der Ausgangsüberlegung fehlten
+| | |
+|---|---|
+| Kosten brutto | 103.500 € |
+| − 30 % Grundförderung = **Mehrschuld** | 72.450 € |
+| Modernisierungsumlage | 2.300 € p.a. |
+| Wertzuwachs bei Faktor 12 | 27.600 € |
+| davon 95 % beleihbar | 26.220 € |
+| **Netto-Spielraum** | **−46.230 €** |
 
-**1. Der Bestand ist eingefroren.** Fünf Wohnungen wurden 2025 um 20 % erhöht,
-eine 2026. Die Kappungsgrenze des § 558 Abs. 3 BGB ist damit ausgeschöpft —
-die nächste Erhöhung ist **frühestens 2028 bzw. 2029** möglich
-([[Mietstruktur]]). Mietwachstum im Bestand als Treiber einer Neubewertung
-fällt für die nächsten zwei bis drei Jahre aus.
+Und die härtere Zahl, die in den früheren Fassungen ganz fehlte:
 
-**2. Die Indexmiete im Altbestand sperrt weniger, als ich zunächst vermutet
-hatte — hilft aber trotzdem kaum.** Details unten unter „Modernisierungsumlage".
+| Kapitaldienst des Pakets | |
+|---|---|
+| Modernisierungsdarlehen 5,5 % / 15 J, Annuität 9,805 % | 7.104 € p.a. |
+| − Modernisierungsumlage | 2.300 € p.a. |
+| **= Cashflow-Belastung** | **4.804 € p.a.** |
+| bei einem Gesamtcashflow von | 7.421 € p.a. |
+
+**Das Heizungspaket kostet fast zwei Drittel des Cashflows.** Das ist kein
+Argument dagegen — es ist Pflicht, nicht Kür — aber es ist der Grund, warum die
+Reihenfolge aus [[Reihenfolge-der-Optimierungen]] eingehalten werden muss.
+
+*(Nebenbefund: [[Reihenfolge-der-Optimierungen]] misst Rang 3 am
+Ausbaudarlehen mit 8,255 % statt am Modernisierungsdarlehen mit 9,805 %. Für
+eine Modernisierung ist der zweite Block der richtige — das macht die Maßnahme
+um 1,55 Prozentpunkte teurer als dort gerechnet.)*
+
+### Drei Sperren
+
+**1. Der Bestand ist eingefroren.** Fünf Wohnungen 2025 um 20 % erhöht, eine
+2026 — die Kappungsgrenze des § 558 Abs. 3 BGB ist ausgeschöpft, nächste
+Erhöhung frühestens **2028 bzw. 2029** ([[Mietstruktur]]).
+
+**2. Die Nebengebäude sind erst ab dem Auszug frei.** In
+[[Fragen-an-den-Verkaeufer]] steht abgehakt: *„Werden die Garagen geräumt
+übergeben? — ja, **zum Auszug der Verkäufer**. Bis dahin nutzen sie sie weiter,
+gegebenenfalls über einen separaten Mietvertrag."* Der Auszug ist für Herbst
+2027 geplant, aber nach der Entscheidung **unbefristet und nicht erzwingbar**.
+Der einzige echte Nachbeleihungshebel steht damit unter einem Zeitvorbehalt,
+den man bewusst akzeptiert hat.
+
+**3. Die Indexmiete im Altbestand** — siehe unten, sperrt weniger als vermutet,
+hilft aber kaum.
+
+> [!note] Ein Vorbehalt, der auch für die Nebengebäude gilt
+> Ich argumentiere gegen Option 3, die Bank rechne nach BelWertV über den
+> kapitalisierten Reinertrag, eine Teilungserklärung ändere daran nichts.
+> Dasselbe Argument trifft die 46.444 €: Auch dort wird aus einer Mehrmiete über
+> einen Faktor Beleihungskapazität. Ob Wüstenrot Garagen- und Partyraummieten
+> als nachhaltig ansetzt, ist offen — und eine Neubewertung kostet Geld und
+> braucht einen Anlass. Der Faktor 12 liegt zudem über dem objekteigenen
+> Faktor 11,5.
 
 ### Was daraus für heute folgt
 
-- **Grundschuldhöhe** bewusst entscheiden: höher bestellen als das Darlehen
-  spart bei einer späteren Aufstockung Notar- und Grundbuchkosten. Kehrseite:
-  Sie bleibt Sicherheit dieser Bank.
-- **Sondertilgungsrecht** — ein Volltilger hat davon meist wenig. Das steht
-  bereits als offener Punkt in [[Finanzierung-und-Sensitivitaet]].
+- **Grundschuldhöhe** bewusst entscheiden — höher bestellen spart bei einer
+  späteren Aufstockung Notar- und Grundbuchkosten.
+- **Sondertilgungsrecht** — ein Volltilger hat davon meist wenig. *(Steht
+  bereits als offener Punkt in [[Finanzierung-und-Sensitivitaet]], dort
+  allerdings unter der Überschrift „Die alte Annahme (überholt)" — der Punkt
+  selbst ist gültig und gehört herausgezogen.)*
 - **§ 489 Abs. 1 Nr. 2 BGB**: Nach zehn Jahren ist das Darlehen mit sechs
-  Monaten Frist kündbar, ohne Vorfälligkeitsentschädigung. Eine Umschuldung
-  mit Nachbeleihung ist ab Jahr 10 also kostenfrei möglich — das ist der
-  natürliche Termin für Option 1, und er ist bereits gesichert.
+  Monaten Frist kündbar, ohne Vorfälligkeitsentschädigung. Das ist der
+  natürliche Termin für eine Umschuldung mit Nachbeleihung — und er ist
+  bereits gesichert.
 
 ## Option 2 — Verkäuferdarlehen
 
 ### Es wirkt anders, als die Frage unterstellt
 
 Das Bankdarlehen ist bei 95 % des Kaufpreises **gedeckelt**. Ein
-Verkäuferdarlehen kann es also nicht in eine günstigere Zinsscheibe schieben —
-es ersetzt **Eigenkapital**:
+Verkäuferdarlehen kann es nicht in eine günstigere Zinsscheibe schieben — es
+ersetzt **Eigenkapital**:
 
-| Verkäuferdarlehen | EK benötigt | Restliquidität | VD-Zins 4 % | Cashflow danach |
+| Verkäuferdarlehen | EK benötigt | Restliquidität | Zins 4 % | Cashflow danach |
 |---|---|---|---|---|
 | — | 99.900 € | 20.100 € | — | 7.421 € |
 | 20.000 € | 79.900 € | 40.100 € | 800 € | 6.621 € |
 | 50.000 € | 49.900 € | 70.100 € | 2.000 € | 5.421 € |
-| 100.000 € | −100 € | 120.100 € | 4.000 € | 3.421 € |
 
-Das ist ein **Liquiditätsinstrument**, kein Zinsinstrument. Und gemessen an der
-Regel aus [[Reihenfolge-der-Optimierungen]] — der Puffer darf nie unter zwei
-Monatsmieten, rund 10.700 €, fallen — ist das der wertvollste Effekt: Die
-20.100 € Startpuffer sind knapp. Sie sind der Grund, warum in
-[[Reihenfolge-der-Optimierungen]] alles vor 2028 verboten ist, was Geld kostet.
+Über 99.900 € hinaus bringt es nichts — mehr Eigenkapital als nötig ersetzt es
+nicht. Und die Rechnung unterstellt ein **tilgungsfreies** Darlehen: Die
+Restliquidität ist gestreckt, nicht geschenkt.
 
-Ein Verkäuferdarlehen von 20.000 bis 50.000 € würde diesen Engpass lösen — und
-zwar genau in den Jahren, in denen das Objekt sonst handlungsunfähig ist.
+**Warum das der wertvollste der drei Effekte ist:** Die 20.100 € Startpuffer
+sind knapp. Sie sind der Grund, warum in [[Reihenfolge-der-Optimierungen]] vor
+2028 alles verboten ist, was Geld kostet, und die Regel lautet, nie unter zwei
+Monatsmieten (rund 10.700 €) zu fallen. Und weil Option 1 erst ab dem Auszug
+wirkt — der nicht erzwingbar ist —, muss der Puffer genau diese unbestimmte
+Zeit überbrücken. **Option 2 ist damit nicht die Alternative zu Option 1,
+sondern ihre Voraussetzung.**
 
 ### Die Falle
-
-`max_kaufpreis_ek()` zeigt, was passiert, wenn man es falsch nutzt:
 
 | Verkäuferdarlehen | tragbarer Kaufpreis | Hebel |
 |---|---|---|
@@ -175,292 +250,352 @@ zwar genau in den Jahren, in denen das Objekt sonst handlungsunfähig ist.
 | 20.000 € | 1.037.000 € | +148.100 € |
 | 50.000 € | 1.259.300 € | +370.400 € |
 
-**Jeder Euro hebt den tragbaren Preis um rund 7,70 €**, weil nur 5 %
-Eigenanteil plus 8,5 % Nebenkosten aus Eigenkapital kommen müssen.
+**Jeder Euro hebt den tragbaren Preis um 7,41 €** — aus Eigenkapital kommen nur
+8,5 % Nebenkosten plus 5 % Eigenanteil, zusammen 13,5 %.
 
-Das ist kein Argument, mehr zu bieten. Der Zielpreis von 740.000 € steht im
-[[Entscheidungsregister]] und ist aus zwei unabhängigen Wegen hergeleitet — der
-Summe der belegbaren Mängel und der nötigen Restliquidität. Was die Bank noch
-mitmacht, war nie das Kriterium. **Ein Verkäuferdarlehen ist ein Mittel, den
-Zielpreis zu halten und Puffer zu gewinnen, nicht ein Grund, höher zu gehen.**
+Das ist kein Argument, mehr zu bieten. Zielpreis 740.000 €, Obergrenze
+800.000 € — beides steht im [[Entscheidungsregister]] und ist aus belegbaren
+Mängeln und nötiger Restliquidität hergeleitet, nicht aus dem, was die Bank
+mitmacht. Ein höherer Preis erhöht dauerhaft Grunderwerbsteuer, Restschuld und
+den Betrag, den ein späterer Verkauf erst wieder einspielen muss.
 
-Wenn Stephan es als Gegenleistung für einen höheren Preis anbietet, ist das
-rechnerisch fast immer schlechter: Der Preisaufschlag erhöht dauerhaft
-Grunderwerbsteuer, Restschuld und den Betrag, den ein späterer Verkauf erst
-wieder einspielen muss.
+### Wie man es anspricht
+
+> [!important] Ohne Begründung fragen
+> Das [[Entscheidungsregister]] hält fest: *„Fragen ohne Begründung stellen.
+> Wer erklärt, wofür er eine Auskunft braucht, verrät seine Pläne."* Den
+> Verkäufern mitzuteilen, dass die Restliquidität knapp ist, wäre die denkbar
+> schlechteste Eröffnung einer Preisverhandlung.
+>
+> Also: sondieren, ohne den Zweck zu nennen; den Zins nicht proaktiv ansprechen;
+> **spät platzieren**, nicht als Einstieg.
+
+Zwei Punkte zur Konstruktion:
+
+- **Wer sind „die Verkäufer"?** Die Eigentümerfrage ist offen — in
+  [[Fragen-an-den-Verkaeufer]] steht als Priorität-1-Frage, wer im Grundbuch
+  eingetragen ist, und ob eine Erbengemeinschaft besteht. Bei mehreren Verkäufern
+  ändert sich die Dimensionierung (pro Kopf klein halten) und der Kreis der
+  Vorkaufsberechtigten nach § 577 BGB.
+- Die Verkäufer bauen gleichzeitig neu und sind **finanziell gestreckt** —
+  [[Haus-A-Sanierungsplan]] weist beim Thema Kaution darauf hin. Das macht ein
+  Verkäuferdarlehen für sie weniger attraktiv und ist ein Grund, es nicht groß
+  zu dimensionieren.
 
 ### Was steuerlich gilt
 
-- **Grunderwerbsteuer fällt voll an.** Der gestundete Kaufpreisteil gehört zur
-  Gegenleistung (§ 9 Abs. 1 Nr. 1 GrEStG).
-- **Ein zinsloses Verkäuferdarlehen ist steuerlich vermutlich stumm.** Der BFH
-  hat am 24.03.2026 (VIII R 30/24) seine bisherige Rechtsprechung aufgegeben:
-  zinslose Stundung = unentgeltliche Stundung, kein Zinsanteil nach
-  § 12 Abs. 3 BewG. Kein Kapitalertrag bei Stephan — aber auch **kein
-  Werbungskostenabzug** bei dir. *Vorbehalt:* entschieden wurde ein
-  Angehörigenfall; ob die Verwaltung folgt, ist offen.
-- **Ein verzinsliches Verkäuferdarlehen** bringt den Zinsabzug nach
-  § 9 Abs. 1 S. 3 Nr. 1 EStG — aber nur bei sauberer Zuordnung. Die
-  **Kaufpreisaufteilung muss in die notarielle Urkunde**, die Valuta getrennt
-  fließen (BFH IX R 44/95 u. a., IX R 35/08). Das lässt sich danach nicht mehr
-  reparieren und berührt direkt [[Kaufpreisaufteilung-und-AfA]].
-
-### Ein Punkt zur Verhandlung
-
-Stephan bleibt ohnehin als Mieter im Haus und baut gleichzeitig neu — er ist
-finanziell gestreckt ([[Haus-A-Sanierungsplan]] weist darauf beim Thema Kaution
-hin). Das schneidet in beide Richtungen: Es macht ein Verkäuferdarlehen für ihn
-weniger attraktiv, und es ist ein Grund, es nicht zu groß zu dimensionieren.
+- **Grunderwerbsteuer fällt voll an** (§ 9 Abs. 1 Nr. 1 GrEStG).
+- **Ein zinsloses Verkäuferdarlehen ist steuerlich vermutlich stumm** — BFH
+  24.03.2026, VIII R 30/24: zinslose Stundung = unentgeltliche Stundung. Kein
+  Kapitalertrag bei den Verkäufern, aber auch **kein Werbungskostenabzug** bei
+  dir. *Vorbehalt:* entschieden wurde ein Angehörigenfall.
+- **Ein verzinsliches** bringt den Zinsabzug (§ 9 Abs. 1 S. 3 Nr. 1 EStG) — aber
+  nur bei sauberer Zuordnung: **Kaufpreisaufteilung in die notarielle Urkunde**,
+  Valuta getrennt (BFH IX R 44/95, IX R 35/08). Berührt
+  [[Kaufpreisaufteilung-und-AfA]].
+- **Spannung, die dem Notar vorzulegen ist:** [[Due-Diligence-Status]] rät,
+  ein Verkäuferdarlehen **separat** zu regeln und nicht im Notarvertrag zu
+  verankern. Der Zinsabzug verlangt aber die Kaufpreisaufteilung in der Urkunde.
+  Beides muss zusammengehen.
 
 ## Option 3 — WEG-Teilung
 
-| Aufschlag | Wert | 95 % davon | − Restschuld J3 | − 15.000 € Kosten |
+| Aufschlag | Wert | 95 % davon | − Restschuld J3 | − 15.000 € |
 |---|---|---|---|---|
 | 0 % | 740.000 € | 703.000 € | 23.273 € | 8.273 € |
 | 5 % | 777.000 € | 738.150 € | 58.423 € | 43.423 € |
 | 10 % | 814.000 € | 773.300 € | 93.573 € | 78.573 € |
 | 20 % | 888.000 € | 843.600 € | 163.873 € | 148.873 € |
 
-Auf den ersten Blick trägt sich das ab etwa 2 % Aufschlag. Drei Dinge sprechen
-trotzdem dagegen, und das dritte ist ein K.-o.
+Die Spalte „− Restschuld" zählt die ohnehin erfolgte Tilgung mit und sieht
+deshalb günstiger aus, als die Maßnahme ist. **Inkrementell** gerechnet muss der
+Aufschlag 2,13 % erreichen, damit allein die Teilungskosten hereinkommen — und
+rund **8,7 %**, um so viel zu bringen wie die Nebengebäude.
 
-**1. Es gibt einen besseren Weg zum selben Ziel.** Die Nebengebäude bringen
-47.880 € Beleihungskapazität — für null Euro, ohne Teilung, ohne Wartezeit, ohne
-Steuerrisiko. Das entspricht der WEG-Teilung bei gut 5 % Aufschlag nach Kosten.
-**Wer Nachbeleihungsspielraum will, fängt dort an.**
+Drei Dinge sprechen dagegen, das dritte ist ein K.-o.
 
-**2. Der Aufschlag ist ein Selbstnutzerpreis.** Er entsteht beim Einzelverkauf
-an Leute, die selbst einziehen. Für sechs vermietete Einheiten im Anbau und die
-unbefristet an Stephan vermietete Einheit im Altbestand ist er nicht erzielbar.
-Ob die Bank ihn im **Beleihungswert** überhaupt nachvollzieht, während alle
-Einheiten gehalten und vermietet werden, ist ohnehin offen — und in
-[[Finanzierung-und-Sensitivitaet]] steht bereits, dass Wüstenrot
+**1. Es gibt einen billigeren Weg zum selben Ziel.** Die Nebengebäude bringen
+rund 46.400 € für null Euro und ohne Steuerrisiko. Beide wirken allerdings erst
+ab dem Auszug — der Zeitvorteil, den ich der Nebengebäude-Lösung in der letzten
+Fassung zugeschrieben hatte, besteht nicht.
+
+**2. Der Aufschlag ist ein Selbstnutzerpreis** — für sechs vermietete Einheiten
+im Anbau und die unbefristet vermietete Einheit im Altbestand nicht erzielbar.
+Und [[Finanzierung-und-Sensitivitaet]] hält fest, dass Wüstenrot
 voraussichtlich nach BelWertV rechnet, also über die nachhaltig erzielbare
 Miete. Die ändert eine Teilungserklärung um null Euro.
 
-**3. Die Drei-Objekt-Grenze — und hier wird es ernst.**
+**3. Die Drei-Objekt-Grenze.** Das Objekt hat **7 Einheiten**, im Zielzustand 9.
+Nach BMF 26.03.2004 (BStBl I S. 434) und BFH GrS 1/98 ist jede WEG-Einheit ein
+eigenes Objekt. Die Aufteilung selbst gilt als **Indiz** für
+Veräußerungsabsicht. Bei Umqualifizierung: **Gewerbesteuer**, **keine AfA**
+(Umlaufvermögen), **§ 23 EStG entfällt**. Das kollidiert mit „Erwerb privat" —
+und ist derselbe Mechanismus, der im [[Entscheidungsregister]] schon die
+PV-GmbH ausgeschlossen hat.
 
-Das Objekt hat **7 Einheiten**, im Zielzustand 9. Nach dem BMF-Schreiben vom
-26.03.2004 (BStBl I S. 434) und BFH GrS 1/98 ist **jede WEG-Einheit ein eigenes
-Objekt**. Aus einem Objekt würden sieben bis neun. Die Aufteilung selbst gilt
-als **Indiz** für Veräußerungsabsicht; die Gegenindizien müsstest du liefern.
-
-Bei einer Umqualifizierung zum gewerblichen Grundstückshandel treffen drei
-Folgen gleichzeitig:
-
-- **Gewerbesteuer** auf Veräußerungsgewinne
-- **Umlaufvermögen statt Anlagevermögen → keine AfA.** Die AfA ist in
-  [[Kaufpreisaufteilung-und-AfA]] Teil der Rendite.
-- **§ 23 EStG wird gegenstandslos** — die Zehnjahresfrist schützt nur im
-  Privatvermögen.
-
-Das kollidiert frontal mit der Entscheidung **„Erwerb privat"**. Und es ist
-derselbe Mechanismus, der im [[Entscheidungsregister]] bereits die
-PV-GmbH-Variante ausgeschlossen hat: Betriebsvermögen, § 23 EStG entfällt.
-
-> [!success] Zwei Entwarnungen, die auch dazugehören
-> - **§ 250 BauGB greift in Nettersheim nicht.** Die Norm gilt bundesrechtlich
->   weiter, wirkt aber nur über eine Landesverordnung — **NRW hat keine
->   Umwandlungsverordnung erlassen** (DNotI-Übersicht, Stand 20.01.2026:
->   nur Bayern, Berlin, Hamburg, Hessen, Niedersachsen).
+> [!success] Zwei Entwarnungen
+> - **§ 250 BauGB greift in Nettersheim nicht.** NRW hat keine
+>   Umwandlungsverordnung erlassen (DNotI-Übersicht, Stand 20.01.2026).
 > - **Keine verlängerte Kündigungssperrfrist.** Die Mieterschutzverordnung NRW
->   vom 28.01.2025 verlängert sie auf acht Jahre, aber nur in 57 Kommunen.
->   Nettersheim ist nicht dabei — aus dem Kreis Euskirchen nur Weilerswist.
->   Es gilt die Regelsperrfrist von drei Jahren (§ 577a BGB). **Dort steht auch,
->   dass Nettersheim keine Mietpreisbremse hat** — das beantwortet nebenbei
->   eine offene Frage aus [[Mietstruktur]].
+>   vom 28.01.2025 gilt in 57 Kommunen; Nettersheim ist nicht dabei, aus dem
+>   Kreis Euskirchen nur Weilerswist. Es gilt die Regelsperrfrist von drei
+>   Jahren (§ 577a BGB) — **und keine Mietpreisbremse.** Das bestätigt, was
+>   [[Haus-A-Sanierungsplan]] bereits als Faktum führt und [[Mietstruktur]] noch
+>   als „zu bestätigen" offenhält.
 >
-> Was bleibt: **§ 577 BGB** gibt Stephan ein **Vorkaufsrecht**, wenn nach der
-> Überlassung an ihn Wohnungseigentum begründet und seine Einheit an einen
-> Dritten verkauft wird. Genau diese Zeitfolge läge vor.
+> Was bleibt: **§ 577 BGB** gibt den Verkäufern ein **Vorkaufsrecht**, wenn nach
+> der Überlassung an sie Wohnungseigentum begründet und ihre Einheit an einen
+> Dritten verkauft wird.
 
 ## Zwei Befunde außer der Reihe
 
-Beide kamen bei der Rechtsprüfung heraus, betreffen nicht die drei Optionen,
-sind aber geldwert und zeitkritisch.
+### 1. Die Förderannahmen sind überholt — aber weniger schlimm als gedacht
 
-### 1. Die Förderannahmen sind überholt
+Die BEG-EM-Richtlinie vom 17.07.2026 gilt seit 21.07.2026.
 
-Die BEG-EM-Richtlinie vom 17.07.2026 gilt seit 21.07.2026. Zwei Änderungen
-treffen dieses Projekt:
+| | Deckel alt | Deckel neu | Zuschuss alt | Zuschuss neu |
+|---|---|---|---|---|
+| Ein Wohngebäude, 7 WE | 113.000 € | 111.000 € | 31.050 € | 31.050 € |
+| Zwei Wohngebäude (6+1) | 135.000 € | 131.000 € | 31.050 € | 31.050 € |
 
-| | Projektstand | ab 21.07.2026 | Differenz |
-|---|---|---|---|
-| Fördersatz Kapitalanleger | 30 % + 5 % Effizienzbonus | **30 %, Bonus entfallen** | −4.375 € auf das 87.500-€-Paket |
-| Höchstgrenze, ein Wohngebäude 7 WE | 113.000 € | **111.000 €** | −2.000 € |
-| Höchstgrenze, zwei Wohngebäude (6+1) | 135.000 € | **131.000 €** | −4.000 € |
+**Das Planpaket von 103.500 € liegt unter jedem dieser Deckel. Die Absenkung
+der Höchstgrenze kostet damit 0 €** — und dasselbe gilt für die offene Frage
+„ein oder zwei Wohngebäude", solange der Umfang nicht wächst. *(In der letzten
+Fassung hatte ich −2.000 € und −4.000 € als Einbuße ausgewiesen. Das war
+falsch: Deckeländerungen sind keine Euro-Wirkung, solange das Paket darunter
+liegt.)*
 
-Zu ändern: `annahmen.json` → `foerderung.effizienzbonus_pct` von 5 auf **0**
-und `hoechstgrenze_ein_gebaeude` von 113000 auf **111000**. Dazu die Passage in
-[[Heizung-und-Energetische-Sanierung]], die „30 %, mit Effizienzbonus 35 %"
-sagt. Danach `python3 build.py`.
+Die einzige Änderung mit echter Wirkung ist der **Effizienzbonus**:
 
-> [!danger] Und eine Zielkollision, die bisher nicht beziffert ist
-> Der Förderhöchstbetrag der ersten Wohneinheit **sinkt ab 01.02.2027
-> halbjährlich um 750 €**. Maßgeblich ist der **Zeitpunkt der Antragstellung**.
+| Fördersatz auf 103.500 € | Zuschuss |
+|---|---|
+| `annahmen.json`: 35 % (30 + 5) | 36.225 € |
+| ab 21.07.2026: 30 % | 31.050 € |
+| **entgangene Chance** | **5.175 €** |
+
+**Aber:** Der Vault-Eigenanteil von 72.450 € ist bereits mit 30 % gerechnet. Der
+Wegfall ändert ihn **nicht** — er nimmt nur den besseren Fall. Und der Bonus
+galt laut [[Heizung-und-Energetische-Sanierung]] ohnehin nur „bei passender
+Technik", war also nie gesichert.
+
+> [!note] Keine Zielkollision mit dem Auszug
+> Der Höchstbetrag der ersten WE sinkt ab 01.02.2027 halbjährlich um 750 €.
+> Maßgeblich ist der **Antragszeitpunkt** — und der liegt im Vaultplan bei
+> Mitte 2027, die Umsetzung bei Winter 2027/28.
 >
-> Die Entscheidung „Umsetzung gebündelt nach dem Auszug" (Herbst 2027) läuft
-> damit gegen eine Kostenuhr. Das ist kein Grund, sie umzuwerfen — der
-> gebündelte Antrag bringt laut [[Heizung-und-Energetische-Sanierung]] das
-> Mehrfache dessen, was die Absenkung kostet. Aber der Preis gehört gerechnet,
-> sobald der Antragszeitpunkt feststeht. **Wichtig: Der Antrag ist an den
-> Antragszeitpunkt gebunden, nicht an die Umsetzung** — es könnte also möglich
-> sein, früher zu beantragen als zu bauen. Der Bewilligungszeitraum beträgt
-> 36 Monate. Das ist mit dem Energieberater zu klären.
+> In der letzten Fassung hatte ich daraus eine Kollision mit „Umsetzung
+> gebündelt nach dem Auszug" konstruiert. Das war falsch und hätte Druck auf
+> einen Auszugstermin erzeugt, den die Entscheidung bewusst offenlässt. Beim
+> Planpaket, das unter jedem Deckel liegt, ist die Wirkung ohnehin **0 €**.
 
-### 2. Die Modernisierungsumlage steht gegen eine Kappung, die im Vault fehlt
+### 2. Die Modernisierungsumlage ist zu niedrig angesetzt
 
-**§ 559e BGB** ist für den **geförderten** Heizungstausch die speziellere Norm
-gegenüber § 559: 10 % der Kosten abzüglich Drittmittel, **gekappt bei
-0,50 €/m² in sechs Jahren**.
+**§ 559e BGB** ist für den **geförderten** Heizungstausch die speziellere Norm:
+**10 %** der Kosten abzüglich Drittmittel, gekappt bei **0,50 €/m²** in sechs
+Jahren.
 
-| | Kappungsgrenze | annahmen.json | |
-|---|---|---|---|
-| Anbau, 450 m² | 2.700 €/Jahr | 2.300 €/Jahr = 0,426 €/m² | liegt darunter, plausibel |
-| Altbestand, 145 m² | 870 €/Jahr | — | |
+[[Heizung-und-Energetische-Sanierung]] leitet die 2.300 € aus **§ 559 mit 8 %**
+auf rund 28.750 € umlagefähige Kosten ab. Nach der eigenen Rechtsanalyse dieser
+Notiz gilt aber § 559e:
 
-Die angesetzten 2.300 € halten also. Für den Altbestand gilt die **Indexmiete**
-— und hier muss ich meine eigene frühere Vermutung korrigieren:
+| | Anbau, 450 m² |
+|---|---|
+| § 559 (8 %) — so im Vault | 2.300 € p.a. |
+| § 559e (10 %) | 2.875 € p.a. |
+| Kappung 0,50 €/m² | 2.700 € p.a. |
+| **maßgeblich** | **2.700 € p.a.** |
 
-> [!warning] Korrektur einer Vermutung
-> Ich hatte vermutet, eine Indexmiete schließe die Modernisierungsumlage aus.
-> Das ist **für den Heizungstausch falsch**: § 557b Abs. 2 S. 2 BGB enthält eine
-> **Rückausnahme für Maßnahmen nach § 555b Nr. 1a** (Heizungseinbau). Die
-> Wärmepumpe ist also auch bei Indexmiete umlagefähig.
+Das sind **400 € p.a. mehr** als angesetzt. `annahmen.json` sollte 2.700 €
+führen.
+
+> [!warning] Und die Kappung steht im Vault falsch
+> [[Heizung-und-Energetische-Sanierung]] nennt „bequem innerhalb der
+> Kappungsgrenze von **3 €/m²** in sechs Jahren" — das ist § 559 Abs. 3a. Nach
+> § 559e sind es **0,50 €/m²**, also ein Sechstel. Der Abstand zwischen 0,426
+> und 0,50 €/m² ist deutlich enger als der zu 3 €/m². Dort steht außerdem
+> „0,45 €/m²", richtig sind 0,426 €/m².
 >
-> Nur bringt das wenig: gekappt bei **870 €/Jahr** für den Altbestand. Und für
-> alles jenseits der Heizungsanlage — Dämmung, Fußbodenheizung, PV — bleibt es
-> dabei, dass die Indexmiete die Umlage sperrt. Die **Fußbodenheizung** bei
-> Mieterwechsel ist davon nicht betroffen, weil bei Neuvermietung ohnehin neu
-> verhandelt wird.
->
-> Offen: Zählt der **Heizkörpertausch Typ 33** noch zur Heizungsanlage im Sinne
-> von § 555b Nr. 1a? Daran hängen 20.000 € Investition. Frage an den
-> Fachanwalt.
+> *(In der letzten Fassung schrieb ich, die Kappung „fehle im Vault". Sie fehlt
+> nicht — sie steht falsch da. Das ist eine Korrektur, kein Lückenschluss.)*
+
+Für den **Altbestand** gilt die Indexmiete: § 557b Abs. 2 S. 2 BGB enthält eine
+**Rückausnahme für § 555b Nr. 1a** (Heizungseinbau), die Wärmepumpe ist also
+umlagefähig — gekappt bei **870 €/Jahr**. Alles jenseits der Heizungsanlage
+(Dämmung) bleibt gesperrt. Offen: Zählt der **Heizkörpertausch Typ 33** noch
+dazu? Daran hängen 20.000 €.
 
 ## Wie die drei zusammenhängen
 
 | | wirkt | Voraussetzung |
 |---|---|---|
-| **Option 2** Verkäuferdarlehen | beim Kauf | Bank akzeptiert es; Stephan macht mit |
-| **Option 1** Nachbeleihung | ab Jahr 5–7 aus Tilgung; **sofort** über die Nebengebäude | Grundschuld heute richtig bestellt |
-| **Option 3** WEG-Teilung | frühestens nach Abgeschlossenheitsprüfung | Steuerberater zuerst |
+| **Option 2** Verkäuferdarlehen | beim Kauf | Bank akzeptiert es; Verkäufer machen mit |
+| **Option 1** Nachbeleihung | ab Jahr 5–7 aus Tilgung; über die Nebengebäude **ab dem Auszug** | Grundschuld heute richtig bestellt |
+| **Option 3** WEG-Teilung | frühestens nach Steuerberatung | Drei-Objekt-Grenze geklärt |
 
-Die eigentliche Einsicht: **Option 1 und Option 3 zielen beide auf mehr
-Beleihungskapazität — und die billigste Quelle dafür steht schon als Rang 1 in
-der Optimierungsliste.** Die Nebengebäude bringen 47.880 € für null Euro. Erst
-danach lohnt es, über teurere Wege nachzudenken.
-
-Und: **Nur Option 2 ist zeitkritisch.** Sie ist die einzige, die durch Nichtstun
-verfällt — mit dem Kaufvertrag.
+**Die Reihenfolge ergibt sich von selbst:** Option 1 wirkt erst ab dem Auszug,
+der nicht erzwingbar ist. Bis dahin muss der Puffer von 20.100 € halten — und
+genau den hebt Option 2. Option 3 zielt auf dasselbe wie Option 1, kostet mehr
+und riskiert die AfA.
 
 ## Was ich empfehle
 
 **Vor dem Notartermin:**
 
-1. **Wüstenrot fragen**, worauf sich die 95 % beziehen: Kaufpreis oder
-   Beleihungswert mit Sicherheitsabschlag? Das ist die Frage, die in
-   [[Finanzierung-und-Sensitivitaet]] schon steht und mehr entscheidet als
-   alles hier. Bei derselben Gelegenheit: die drei Mietvertrag-Fragen von dort.
-2. **Verkäuferdarlehen sondieren** — 20.000 bis 50.000 €, mit dem erklärten
-   Zweck, den Startpuffer von 20.100 € auf eine tragfähige Größe zu bringen.
-   Erst die Bank fragen, ob sie es akzeptiert, dann Stephan.
-3. **Grundschuldhöhe und Sondertilgungsrecht** bewusst entscheiden.
-4. **Kaufpreisaufteilung in die Urkunde** — für AfA und Zinsabzug.
-5. **Räumung der Garagen zum Übergabetermin in den Kaufvertrag.** Das steht
-   schon in [[Reihenfolge-der-Optimierungen]] — mit dem Befund oben wird es
-   wichtiger: Diese Klausel ist der Zugang zu 47.880 € Beleihungskapazität.
+1. **Wüstenrot fragen, worauf sich die 95 % beziehen** — Kaufpreis oder
+   Beleihungswert mit Sicherheitsabschlag. Das ist die neue, wichtigste Frage.
+   Bei derselben Gelegenheit die drei Mietvertrag-Fragen aus
+   [[Finanzierung-und-Sensitivitaet]] und die Frage nach dem Sondertilgungsrecht.
+2. **Verkäuferdarlehen sondieren, ohne den Zweck zu nennen.** Erst die Bank
+   fragen, ob sie es akzeptiert, dann die Verkäufer — spät im Gespräch, Zins
+   nicht proaktiv. Größenordnung 20.000–50.000 €.
+3. **Grundschuldhöhe** bewusst entscheiden.
+4. **Kaufpreisaufteilung in die Urkunde** — für AfA und Zinsabzug. Mit dem Notar
+   klären, wie sich das mit der separaten Regelung eines Verkäuferdarlehens
+   verträgt.
+5. **Räumung der Nebengebäude zum Auszug** im Kaufvertrag regeln, bis dahin
+   separater kündbarer Mietvertrag. *(Nicht zur Übergabe — das widerspräche dem
+   unbefristeten Wohnrecht.)*
+6. **Die Miethöhe im Mietvertrag mit den Verkäufern** durchrechnen: Sie trägt
+   27 % des Cashflows und bestimmt über § 10 Abs. 1 BelWertV womöglich den
+   Beleihungswert.
 
-**Zeitnah, unabhängig davon:**
+**Zeitnah:**
 
-6. `annahmen.json` auf die neuen Fördersätze umstellen und `build.py` laufen
-   lassen.
-7. Antragszeitpunkt BEG gegen die halbjährliche Absenkung rechnen — und klären,
-   ob Antrag und Umsetzung zeitlich getrennt werden können.
+7. `annahmen.json` korrigieren (Liste unten), dann `build.py` und
+   `kennzahlen.py`.
 
 **Später:**
 
-8. Nachbeleihung ab Jahr 10 vorsehen: § 489 Abs. 1 Nr. 2 BGB macht den
+8. Nachbeleihung ab Jahr 10 vorsehen — § 489 Abs. 1 Nr. 2 BGB macht den
    Ausstieg dann kostenfrei.
-9. **WEG-Teilung zurückstellen.** Erst die Nebengebäude heben, dann neu
-   bewerten. Wenn die Frage wieder aufkommt: zuerst Steuerberater
-   (Drei-Objekt-Grenze, ggf. verbindliche Auskunft nach § 89 Abs. 2 AO), dann
-   Abgeschlossenheit, dann Bank. In dieser Reihenfolge, weil die
-   steuerliche Frage die einzige ist, die das Objekt dauerhaft beschädigen
-   kann.
+9. **WEG-Teilung zurückstellen.** Falls die Frage wiederkommt: zuerst
+   Steuerberater (Drei-Objekt-Grenze, ggf. verbindliche Auskunft nach
+   § 89 Abs. 2 AO), dann Abgeschlossenheit, dann Bank.
+
+## Was im Vault nachzuziehen ist
+
+Die Prüfung hat vier Stellen gefunden, an denen eine alte Fassung weiterlebt.
+Keine davon stammt aus dieser Notiz, alle betreffen Zahlen, die Entscheidungen
+tragen.
+
+**1. Die Restliquidität von 4.500 € lebt an sechs Stellen weiter.** Korrigiert
+auf 20.100 € sind [[Reihenfolge-der-Optimierungen]], [[Rechenweg-Cashflow]],
+Finanzierungsrahmen und [[OBJ-2026-001]]. Weiterhin 4.500 € führen
+[[Due-Diligence-Status]], [[Heizung-und-Energetische-Sanierung]],
+[[Startpaket-WP-und-PV]] und [[Vorbereitung-vor-dem-Verkaeufergespraech]].
+**In der Heizungsnotiz trägt die alte Zahl ein Argument**: Sie entscheidet dort
+„praktisch allein" gegen „beide Wärmepumpen gleichzeitig". Mit 20.100 € ist zu
+prüfen, ob die Begründung noch trägt — die Entscheidung selbst (gemeinsamer
+Antrag, gebündelte Umsetzung) ist davon unberührt.
+
+**2. Die Förderkorrektur betrifft mehr als zwei Stellen.** Neben
+`annahmen.json` sind in [[Heizung-und-Energetische-Sanierung]] betroffen: der
+Effizienzbonus-Eintrag, die Höchstgrenzen 113.000/135.000, die Zuschussspannen,
+der Planwert-Block und die Wiederholung im Fragenteil. Dazu der Eigenanteil
+72.450 €, der über [[Rechenweg-Cashflow]] in den Cashflow ab 2028 wandert.
+
+**3. [[Finanzierung-und-Sensitivitaet]] rechnet noch mit 3.952 € Miete.**
+[[Mietstruktur]] behauptet, „alle Rechnungen im Vault sind auf 3.924 €
+umgestellt" — das stimmt nicht: Die Sensitivitätstabellen laufen mit 5.225 €
+und 6.452 € Gesamtmiete. Die Notiz steht zudem auf einer überholten
+Finanzierungsarchitektur (Modernisierungskredit im Kaufdarlehen, Gesamtdarlehen
+bis 910.000 €), die [[Rechenweg-Cashflow]] bereits verworfen hat. Ich verweise
+in dieser Notiz mehrfach darauf — die Verweise gelten den dort **offenen
+Fragen**, nicht den Rechnungen.
+
+**4. Die Garagenfrage.** [[Reihenfolge-der-Optimierungen]] trägt noch „Räumung
+zum Übergabetermin" und „sofort nach Übergabe" — beides steht vor der Antwort
+vom 2026-09-10 („zum Auszug").
 
 ## Offene Fragen
 
 ### An Wüstenrot — vor dem Notartermin
 
-- [ ] Beziehen sich die 95 % auf den **Kaufpreis** oder auf einen
-      Beleihungswert mit Sicherheitsabschlag? Wie hoch ist der Abschlag?
-- [ ] Wird ein **Verkäuferdarlehen** akzeptiert, und wenn ja, unter welchen
-      Bedingungen (qualifizierter Rangrücktritt)?
-- [ ] Empfohlene **Grundschuldhöhe** im Hinblick auf spätere Aufstockung?
-- [ ] **Sondertilgungsrecht** beim Volltilger — was ist möglich?
-- [ ] Rechnet ihr nach **BelWertV**? Mit welchem Kapitalisierungszinssatz?
-- [ ] *(bereits offen in [[Finanzierung-und-Sensitivitaet]])* Wird der
-      Mietvertrag mit dem Verkäufer im Ertragswert anerkannt, und wird die
-      Vertragsmiete angesetzt oder gekappt?
+- [ ] **Beziehen sich die 95 % auf den Kaufpreis oder auf einen Beleihungswert
+      mit Sicherheitsabschlag?** *(neu — gehört ins Entscheidungsregister)*
+- [ ] Wird ein **Verkäuferdarlehen** akzeptiert, unter welchen Bedingungen?
+- [ ] Empfohlene **Grundschuldhöhe** für eine spätere Aufstockung?
+- [ ] **Sondertilgungsrecht** beim Volltilger? *(bereits offen in
+      [[Finanzierung-und-Sensitivitaet]], dort im überholten Block)*
+- [ ] Werden **Garagen- und Partyraummieten** im Ertragswert als nachhaltig
+      angesetzt? *(neu — entscheidet über die 46.400 €)*
+- [ ] *(bereits offen)* Mietvertrag mit den Verkäufern im Ertragswert
+      anerkannt? Vertragsmiete oder Kappung?
 
-### An den Steuerberater — nur falls Option 3 wieder aufkommt
+### An den Steuerberater — nur falls Option 3 wiederkommt
 
-- [ ] Drei-Objekt-Grenze bei 7 bis 9 WEG-Einheiten. Verbindliche Auskunft nach
+- [ ] Drei-Objekt-Grenze bei 7 bis 9 WEG-Einheiten; verbindliche Auskunft nach
       § 89 Abs. 2 AO erwägen.
 
 ### An den Fachanwalt für Mietrecht
 
 - [ ] Zählt der **Heizkörpertausch Typ 33** zur Heizungsanlage nach
-      § 555b Nr. 1a BGB? Daran hängen 20.000 € Investition und die Frage, ob
-      sie im Altbestand umlagefähig ist.
+      § 555b Nr. 1a BGB? *(20.000 € Investition)*
+- [ ] Gilt für den geförderten Heizungstausch § 559e statt § 559? *(400 €/Jahr)*
 
 ### An den Energieberater
 
-- [ ] Können **Antragstellung und Umsetzung** zeitlich getrennt werden, um der
-      halbjährlichen Absenkung ab 01.02.2027 zu entgehen?
-- [ ] *(bereits offen)* Ein oder zwei Wohngebäude im Förderrecht? Die Differenz
-      beträgt jetzt 111.000 € gegen 131.000 €.
+- [ ] *(bereits offen)* Ein oder zwei Wohngebäude im Förderrecht? **Beim
+      Planpaket wirkungslos** — erst relevant, wenn der Umfang an den Deckel
+      stößt.
+- [ ] *(bereits offen)* Wie lang ist der Bewilligungszeitraum **konkret**?
+      Die 36 Monate sind eine Annahme.
 
-### Für annahmen.json
+### An die Verkäufer — spät, ohne Begründung
+
+- [ ] Verkäuferdarlehen denkbar? *(steht bereits als Priorität 4 in
+      [[Fragen-an-den-Verkaeufer]] — angesichts der Zeitkritik ggf. hochziehen)*
+- [ ] *(bereits offen)* Wer ist im Grundbuch eingetragen — Erbengemeinschaft?
+- [ ] *(bereits offen)* Werden **Partyraum** und **Wohnmobilgarage** genutzt
+      oder vermietet? **Die beiden tragen 180 € von 350 €/Monat** — also die
+      Hälfte des Nebengebäude-Ertrags.
+
+### Für `annahmen.json`
 
 - [ ] `foerderung.effizienzbonus_pct`: 5 → **0**
 - [ ] `foerderung.hoechstgrenze_ein_gebaeude`: 113000 → **111000**
-- [ ] Danach `python3 build.py` und `kennzahlen.py` zum Abgleich
+- [ ] `modernisierungsfinanzierung.modernisierungsumlage_haus_b_jahr`:
+      2300 → **2700** (nach Klärung von § 559e)
+- [ ] Danach `build.py` und `kennzahlen.py`
 
 ## Annahmen, auf denen diese Analyse beruht
 
-**Aus `annahmen.json` (Stand 2026-09-10)** — Kaufpreis, Eigenkapital,
-Nebenkosten, Sollzins, Laufzeit, Beleihungsauslauf, Mieten,
-Bewirtschaftungskosten, Investitionen, Modernisierungsumlage.
+**Aus `annahmen.json` und `modell.py`** — Kaufpreis, Eigenkapital, Nebenkosten,
+Sollzins, Laufzeit, Beleihungsauslauf, Mieten, Bewirtschaftung, Investitionen,
+sämtliche Finanzmathematik.
 
-**Aus dem Vault** — Nebengebäude 4.200 €/Jahr und Faktor 12
-([[Reihenfolge-der-Optimierungen]]), Mietstopp bis 2028/29
-([[Mietstruktur]]), Zielpreis und Erwerbsstruktur ([[Entscheidungsregister]]).
+**Aus dem Vault** — Nebengebäude-Ansätze und Faktor 12, Mietstopp bis 2028/29,
+Zielpreis und Erwerbsstruktur, Puffer-Regel, Heizungs-Planwert 103.500 €.
 
-**Annahme dieser Notiz** — nur drei, alle im Skript unter `PARAMETER`:
+**Unbelegt oder Annahme** — vollständig, nicht nur drei:
 
-| Größe | Annahme | woher der echte Wert kommt |
+| Größe | Klasse | woher der echte Wert kommt |
 |---|---|---|
-| Zins Verkäuferdarlehen | 4,0 % | Verhandlung |
-| Teilungskosten | 15.000 € | Angebot Architekt/Notar |
-| Wertzuwachs-Stufen (+5/10/15 %) | Rechenstützstellen | — |
+| **Verkäufermiete 10,00 €/m²** (1.450 €/Monat) | `annahmen.json`: **UNBELEGT** | Mietvertrag; Korridor 8,78–10,00 |
+| **Nebengebäude-Ansätze** (350 €/Monat) | `annahmen.json`: „geschätzt, am Markt zu prüfen" | Marktvergleich; zwei von sechs Einheiten ungeklärt |
+| Faktor 12 | Vault-Ansatz, über dem objekteigenen 11,5 | Bewertung |
+| Sicherheitsabschlag 10 % | Annahme, nur für die Gegenrechnung | Bank |
+| Zins Verkäuferdarlehen 4 %, tilgungsfrei | Annahme | Verhandlung |
+| Teilungskosten 15.000 € | Annahme | Angebot Architekt/Notar |
+| BEG-Staffel 28.000/15.000/8.000 €, Absenkung 750 €/Halbjahr | **Recherche 2026-09-12** | KfW-Merkblatt 458, vor Antragstellung bestätigen |
+| Bewilligungszeitraum 36 Monate | Recherche, im Vault als offen geführt | Energieberater |
 
-**Rechtsstand** — geprüft am 2026-09-12. `gesetze-im-internet.de` war nicht
-erreichbar; alle Zitate von dejure.org und buzer.de mit Änderungsfußnoten.
-Eine verbreitete Fundstelle führte § 557b Abs. 2 BGB noch in der Fassung vor
-2024. Vor bindender Verwendung gegen die amtliche Fassung prüfen.
+**Rechtsstand** — geprüft 2026-09-12. `gesetze-im-internet.de` war nicht
+erreichbar; Zitate von dejure.org und buzer.de mit Änderungsfußnoten. Eine
+verbreitete Fundstelle führte § 557b Abs. 2 BGB noch in der Fassung vor 2024.
+Vor bindender Verwendung gegen die amtliche Fassung prüfen.
 
 ## Was diese Analyse umkehren würde
 
-- **Wüstenrot rechnet auf einen Beleihungswert mit Sicherheitsabschlag** statt
-  auf den Kaufpreis → die gesamte Finanzierungsarchitektur ändert sich, und
-  zwar zum Schlechteren.
-- **Die Garagen sind nicht frei vermietbar** (Stellplatzsatzung,
-  Stellplatznachweis für den Bestand) → der einzige echte
-  Nachbeleihungshebel entfällt, und Option 3 wird wieder diskutabel.
-- **Die Marktmiete von 10 €/m² ist nicht erzielbar** → sie ist in
-  `annahmen.json` ausdrücklich als unbelegt markiert und trägt den gesamten
-  Entwicklungsteil.
+- **Wüstenrot rechnet auf einen Beleihungswert statt auf den Kaufpreis** → die
+  gesamte Finanzierungsarchitektur ändert sich, zum Schlechteren.
+- **Die Verkäufermiete wird bei 8,78 €/m² vereinbart** → Cashflow 5.362 € statt
+  7.421 €, der Puffer wird knapper, Option 2 wird zwingend.
+- **Partyraum und Wohnmobilgarage sind nicht frei vermietbar** → die
+  Nebengebäude bringen statt 350 € nur 170 €/Monat, und der einzige echte
+  Nachbeleihungshebel halbiert sich.
+- **Die Stellplatzsatzung verlangt die Garagen für den Bestand** → derselbe
+  Effekt, vollständig.
+- **Die Bank setzt Garagenmieten nicht als nachhaltig an** → ebenso.
 - **Der Steuerberater sieht die Drei-Objekt-Grenze anders** → Option 3 verliert
   ihren K.-o.-Punkt.
