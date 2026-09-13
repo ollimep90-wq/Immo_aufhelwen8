@@ -77,13 +77,30 @@ def kennzahlen(modell) -> dict[str, float]:
     return werte
 
 
+TAG = re.compile(r"<[^>]+>")
+
+
+def _zeilen(pfad: pathlib.Path) -> list[str]:
+    """Zeilen einer Notiz oder eines erzeugten Dokuments.
+
+    HTML wird mitgeprüft, weil die aus build.py erzeugten Dokumente genau der
+    Ort sind, an dem hartkodierte Beträge eine Annahmenänderung überleben —
+    und weil ein Fehler dort in einem Dokument steht, das nach außen geht.
+    """
+    text = pfad.read_text(encoding="utf-8")
+    if pfad.suffix == ".html":
+        text = TAG.sub(" ", text).replace("&nbsp;", " ").replace("&rarr;", "->")
+    return text.splitlines()
+
+
 def betraege(vault: pathlib.Path) -> list[tuple[float, pathlib.Path, int, str]]:
     gefunden = []
-    for pfad in sorted(vault.rglob("*.md")):
+    pfade = sorted(list(vault.rglob("*.md")) + list(vault.rglob("*.html")))
+    for pfad in pfade:
         # Das Archiv ist per Definition überholt — es zu prüfen erzeugt nur Rauschen.
         if "99-Archiv" in pfad.parts:
             continue
-        for nr, zeile in enumerate(pfad.read_text(encoding="utf-8").splitlines(), 1):
+        for nr, zeile in enumerate(_zeilen(pfad), 1):
             for treffer in EURO.finditer(zeile):
                 ganz = treffer.group(1).replace(".", "")
                 nach = treffer.group(2) or "0"

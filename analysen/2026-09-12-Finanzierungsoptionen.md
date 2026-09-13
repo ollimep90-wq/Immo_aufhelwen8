@@ -54,7 +54,7 @@ tags: [immobilie, finanzierung, strategie, vertraulich]
 > | „Netto-Spielraum −33.650 €" | **−46.230 €**. Zwei Fehler: das falsche Paket und ein Methodenbruch (95 % in der einen Spalte, nicht in der anderen). |
 > | „Jeder Euro hebt den Preis um 7,70 €" | **7,41 €** — 1/0,135, nicht 1/0,13. |
 > | „Die Frage nach der 95-%-Bezugsgröße steht schon in [[Finanzierung-und-Sensitivitaet]]" | **Sie steht nirgends im Vault.** Sie ist neu — und nach meiner eigenen Einschätzung die wichtigste. |
-> | „echte Mieten: 5.374 €/Monat" | 3.924 € belegt **+ 1.450 € unbelegt**. `annahmen.json` markiert die Verkäufermiete selbst als „UNBELEGT". Sie trägt 27 % des Cashflows. |
+> | „echte Mieten: 5.374 €/Monat" | 3.924 € belegt **+ 1.450 € unbelegt**. `annahmen.json` markiert die Verkäufermiete selbst als „UNBELEGT". Sie trägt 27 % der Miete und 29 % des Cashflows. |
 > | Höchstgrenzen-Absenkung „−2.000 € / −4.000 €" | **0 €.** Das Planpaket liegt unter jedem Deckel. |
 >
 > **Aus Fassung 4 — nach den Angaben des Nutzers vom 2026-09-12:**
@@ -92,7 +92,8 @@ tags: [immobilie, finanzierung, strategie, vertraulich]
 > **1.450 € Altbestand** = 145 m² × 10,00 €/m². Dieser zweite Teil ist kein
 > Vertrag, sondern eine Zielannahme — `annahmen.json` markiert sie selbst als
 > „UNBELEGT", und [[Haus-A-Sanierungsplan]] empfiehlt, die Übergangsmiete am
-> **Bestandsniveau** von 8,78 €/m² anzusetzen.
+> **Bestandsniveau** anzusetzen — dort steht noch 8,78 €/m², richtig sind
+> **8,72 €/m²** (die Notiz gehört nachgezogen).
 >
 > | | 10,00 €/m² | 9,36 €/m² | 8,72 €/m² |
 > |---|---|---|---|
@@ -413,7 +414,7 @@ Die einzige Änderung mit echter Wirkung ist der **Effizienzbonus**:
 
 | Fördersatz auf 103.500 € | Zuschuss |
 |---|---|
-| `annahmen.json`: 35 % (30 + 5) | 36.225 € |
+| Projektstand vor dem 21.07.2026: 35 % (30 + 5) | 36.225 € |
 | ab 21.07.2026: 30 % | 31.050 € |
 | **entgangene Chance** | **5.175 €** |
 
@@ -544,11 +545,12 @@ Die Prüfung hat vier Stellen gefunden, an denen eine alte Fassung weiterlebt.
 Keine davon stammt aus dieser Notiz, alle betreffen Zahlen, die Entscheidungen
 tragen.
 
-**1. Die Restliquidität von 4.500 € lebt an sechs Stellen weiter.** Korrigiert
-auf 20.100 € sind [[Reihenfolge-der-Optimierungen]], [[Rechenweg-Cashflow]],
-Finanzierungsrahmen und [[OBJ-2026-001]]. Weiterhin 4.500 € führen
+**1. Die Restliquidität von 4.500 € lebt an fünf Stellen weiter:**
 [[Due-Diligence-Status]], [[Heizung-und-Energetische-Sanierung]],
-[[Startpaket-WP-und-PV]] und [[Vorbereitung-vor-dem-Verkaeufergespraech]].
+[[Startpaket-WP-und-PV]], [[Vorbereitung-vor-dem-Verkaeufergespraech]] — und
+**[[OBJ-2026-001]] an zwei Stellen**, obwohl die Notiz dort andernorts bereits
+auf 20.100 € korrigiert ist. Korrigiert sind [[Reihenfolge-der-Optimierungen]],
+[[Rechenweg-Cashflow]] und der Finanzierungsrahmen.
 **In der Heizungsnotiz trägt die alte Zahl ein Argument**: Sie entscheidet dort
 „praktisch allein" gegen „beide Wärmepumpen gleichzeitig". Mit 20.100 € ist zu
 prüfen, ob die Begründung noch trägt — die Entscheidung selbst (gemeinsamer
@@ -571,7 +573,30 @@ Fragen**, nicht den Rechnungen.
 
 **4. Die Garagenfrage.** [[Reihenfolge-der-Optimierungen]] trägt noch „Räumung
 zum Übergabetermin" und „sofort nach Übergabe" — beides steht vor der Antwort
-vom 2026-09-10 („zum Auszug").
+vom 2026-09-10 („zum Auszug"). Schwerer wiegt: In
+[[Fragen-an-den-Verkaeufer]] ist **abgehakt**, die „Garagen nutzen die
+Eigentümer selbst". Das ist durch die Angabe vom 13.09. falsch geworden — eine
+falsch abgehakte Frage wird nicht mehr gelesen und ist damit gegen Nachprüfung
+immunisiert. Sie gehört wieder geöffnet.
+
+**5. Das Bestandsniveau 8,78 €/m² lebt an sechs Stellen weiter** —
+[[Mietstruktur]], [[Haus-A-Sanierungsplan]] (dreimal),
+[[Fragen-an-den-Verkaeufer]], [[OBJ-2026-001]] und [[Nettersheim]] — dazu die
+daraus abgeleiteten 1.273 €/Monat und 5.197 € Gesamtmiete.
+
+**6. Die alte Nebengebäude-Rechnung (4.200 €/Jahr, 350 €/Monat)** steht in
+[[Reihenfolge-der-Optimierungen]], [[Strategie-und-Verhandlung]] und — am
+schwersten — im [[Entscheidungsregister]]: Dort ist die Entscheidung
+„Reihenfolge: Nebengebäude zuerst" mit „4.200 €/Jahr für null Investition"
+begründet. Tatsächlich sind es **1.921 €**. Die Entscheidung selbst trägt
+weiter (Rang 1 bleibt Rang 1, null Investition bleibt null), aber ihre
+Begründungszahl ist um Faktor 2,2 zu hoch. Nach der Registerregel wird die
+Zeile nicht überschrieben, sondern durchgestrichen und neu eingetragen.
+
+**7. [[OBJ-2026-001]]** nennt „95 % der **Gesamtkosten** (Kaufpreis +
+Modernisierung)" statt des Kaufpreises — das ist die verworfene Architektur —
+und führt die **Maklerfrage** als offen, obwohl sie seit dem 10.09. beantwortet
+ist.
 
 ## Offene Fragen
 
@@ -651,9 +676,8 @@ Priorität 1, Nebengebäude als Priorität 3, Verkäuferdarlehen als Priorität 
 - [x] ~~`foerderung.hoechstgrenze_ein_gebaeude`: 113000 → **111000**~~ — erledigt
 - [x] ~~`mieten.haus_a_bestandsniveau_eur_m2`: 8,78 → **8,72**~~ — erledigt; die
       8,78 hingen an der alten Miete von 3.952 €
-- [x] ~~`ausbau.nebengebaeude`: auf die vier freien Einheiten~~ — erledigt; die
-      zwei nicht hebbaren stehen jetzt separat als
-      `nebengebaeude_nicht_hebbar`
+- [x] ~~`ausbau.nebengebaeude`: auf die **drei** freien Einheiten~~ — erledigt; die
+      **drei** nicht hebbaren stehen separat als `nebengebaeude_nicht_hebbar`
 - [ ] `modernisierungsfinanzierung.modernisierungsumlage_haus_b_jahr`:
       2300 → **2700** — **bewusst noch nicht geändert**, weil § 559e erst vom
       Fachanwalt zu bestätigen ist. Der Hinweis steht in der Datei.

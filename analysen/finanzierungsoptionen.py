@@ -322,8 +322,13 @@ def foerderung(a):
     print(f"\n  -> Das Planpaket liegt unter JEDEM dieser Deckel. Die Absenkung der")
     print(f"     Höchstgrenze kostet damit 0 EUR, solange der Umfang nicht wächst.")
     print(f"     Erst ab {eur(grenze(we, neu))} Maßnahmenumfang wird sie spürbar.")
-    print(f"\n  annahmen.json führt hoechstgrenze_ein_gebaeude: "
-          f"{eur(fo['hoechstgrenze_ein_gebaeude'])} — zu korrigieren auf {eur(grenze(we, neu))}.")
+    ist_grenze = fo["hoechstgrenze_ein_gebaeude"]
+    soll_grenze = grenze(we, neu)
+    if abs(ist_grenze - soll_grenze) > 1:
+        print(f"\n  annahmen.json führt hoechstgrenze_ein_gebaeude: {eur(ist_grenze)}"
+              f" — zu korrigieren auf {eur(soll_grenze)}.")
+    else:
+        print(f"\n  annahmen.json führt hoechstgrenze_ein_gebaeude: {eur(ist_grenze)} — korrekt.")
 
     neu_satz = P["beg_grundfoerderung_pct"]
     alt_satz = neu_satz + P["beg_effizienzbonus_alt_pct"]
