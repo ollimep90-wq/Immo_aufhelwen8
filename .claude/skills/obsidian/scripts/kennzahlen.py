@@ -70,17 +70,43 @@ def kennzahlen(modell) -> dict[str, float]:
               + inv["entsorgung_kessel_tanks"])
     basis = min(waerme, fo["hoechstgrenze_ein_gebaeude"])
     werte["Wärmepaket"] = waerme
-    werte["Zuschuss 30 %"] = basis * fo["grundfoerderung_pct"] / 100
-    werte["Zuschuss 35 %"] = basis * (fo["grundfoerderung_pct"] + fo["effizienzbonus_pct"]) / 100
+    # Die Bonuszeile nur dann, wenn es einen Bonus gibt. Sonst stuenden hier zwei
+    # identische Betraege unter verschiedenen Prozentsaetzen -- und ein Leser
+    # schloesse daraus, der Bonus sei noch eingerechnet.
+    satz = fo["grundfoerderung_pct"]
+    bonus = fo["effizienzbonus_pct"]
+    werte["Zuschuss %g %%" % satz] = basis * satz / 100
+    if bonus:
+        werte["Zuschuss %g %% inkl. Bonus" % (satz + bonus)] = basis * (satz + bonus) / 100
     werte["PV inkl. Zählerplatz"] = (inv["pv_40_kwp"]
                                      + inv["zaehlerplatzumbau_je_we"] * o["einheiten"])
     return werte
 
 
+TAG = re.compile(r"<[^>]+>")
+
+
+def _zeilen(pfad: pathlib.Path) -> list[str]:
+    """Zeilen einer Notiz oder eines erzeugten Dokuments.
+
+    HTML wird mitgeprüft, weil die aus build.py erzeugten Dokumente genau der
+    Ort sind, an dem hartkodierte Beträge eine Annahmenänderung überleben —
+    und weil ein Fehler dort in einem Dokument steht, das nach außen geht.
+    """
+    text = pfad.read_text(encoding="utf-8")
+    if pfad.suffix == ".html":
+        text = TAG.sub(" ", text).replace("&nbsp;", " ").replace("&rarr;", "->")
+    return text.splitlines()
+
+
 def betraege(vault: pathlib.Path) -> list[tuple[float, pathlib.Path, int, str]]:
     gefunden = []
-    for pfad in sorted(vault.rglob("*.md")):
-        for nr, zeile in enumerate(pfad.read_text(encoding="utf-8").splitlines(), 1):
+    pfade = sorted(list(vault.rglob("*.md")) + list(vault.rglob("*.html")))
+    for pfad in pfade:
+        # Das Archiv ist per Definition überholt — es zu prüfen erzeugt nur Rauschen.
+        if "99-Archiv" in pfad.parts:
+            continue
+        for nr, zeile in enumerate(_zeilen(pfad), 1):
             for treffer in EURO.finditer(zeile):
                 ganz = treffer.group(1).replace(".", "")
                 nach = treffer.group(2) or "0"
