@@ -20,7 +20,7 @@ tags: [immobilie, finanzierung, strategie, vertraulich]
 
 > [!success] Zahlenstand
 > Kaufpreis, Finanzierung, Mieten, Investitionen und Bewirtschaftung kommen aus
-> `annahmen.json` (Stand 2026-09-10); alle Finanzmathematik aus `modell.py`.
+> `annahmen.json` (Stand 2026-09-13); alle Finanzmathematik aus `modell.py`.
 > Förderrecht, Mietrecht und drei Bankannahmen kommen **nicht** von dort —
 > sie stehen unten in der Annahmenliste.
 >
@@ -61,7 +61,9 @@ tags: [immobilie, finanzierung, strategie, vertraulich]
 >
 > | vorher | jetzt |
 > |---|---|
-> | 6 Nebengebäude, 350 €/Monat, rund 46.400 € Kapazität | **4 freie Einheiten, 265 €/Monat, rund 35.200 €.** Die hintere Garage links ist **bereits vermietet** (kein neues Potenzial), die hintere Garage rechts ist **Fahrradraum**. |
+> | 6 Nebengebäude, 350 €/Monat, rund 46.400 € Kapazität | **3 freie Einheiten, 165 €/Monat, rund 21.900 €** (Stand 13.09.). Nicht hebbar: hintere Garage links (**bereits vermietet**), hintere Garage rechts (**Fahrradraum für die Mieter**), Partyraum (**aktuell nicht vermietbar**). |
+> | Mietansätze 80/45/40/100 € als Vault-Ansatz geführt | **unbelegt.** Sie stammen aus einer frühen Projektfassung, nicht vom Nutzer. Belegt ist nur, *welche* Einheiten frei sind. |
+> | Miete der hinteren Garage links als „vermutlich enthalten" behandelt | **nicht in den 3.924 € enthalten** (Nutzerangabe 13.09.). Es fließen Mieteinnahmen, die in keiner Rechnung des Vaults stehen. |
 > | Bestandsniveau 8,78 €/m² | **8,72 €/m².** Die 8,78 stammten aus der alten Miete von 3.952 € und hatten deren Korrektur überlebt — genau der Fehlertyp, den das Projekt fürchtet. |
 > | Verkäufermiete als Punktwert 10,00 €/m² | **Korridor 8,72–10,00 €/m²**, Fläche 140–150 m². Der Cashflow schwankt dadurch zwischen **5.261 € und 7.421 €** p.a. |
 
@@ -141,32 +143,41 @@ mit dem sich etwas anfangen lässt — die Anfangstilgung liegt bei 1,04 %.
 > hebt, als sie die Schuld erhöht.
 
 **a) Nebengebäude separat vermieten** — Rang 1 in
-[[Reihenfolge-der-Optimierungen]], **vier freie Einheiten**, null Euro
-Investition. *(Die Rangliste dort rechnet noch mit sechs Einheiten und 350 €/Monat.)*
+[[Reihenfolge-der-Optimierungen]], **drei freie Garagen**, null Euro Investition.
+*(Die Rangliste dort rechnet noch mit sechs Einheiten und 350 €/Monat.)*
 
 Die Höhe ist allerdings zu klären:
 
 | Ansatz | netto p.a. | Beleihungskapazität |
 |---|---|---|
-| brutto, ohne jeden Abzug | 3.180 € | 36.252 € |
-| − Mietausfallwagnis 3 % | 3.085 € | **35.164 €** |
-| − zusätzlich Verwaltung 30 €/Einheit | 1.645 € | 18.748 € |
-
-Welche vier Einheiten das sind (Nutzerangabe 2026-09-12):
+| brutto, ohne jeden Abzug | 1.980 € | 22.572 € |
+| − Mietausfallwagnis 3 % | 1.921 € | **21.895 €** |
+| − zusätzlich Verwaltung 30 €/Einheit | 841 € | 9.583 € |
 
 | frei verfügbar | Ansatz | nicht hebbar | Grund |
 |---|---|---|---|
-| Wohnmobilgarage (im Haus) | 80 € | hintere Garage links | **bereits vermietet** |
-| Garage Auto (im Haus) | 45 € | hintere Garage rechts | Fahrradraum |
-| Garage klein (im Haus) | 40 € | | |
-| Partyraum | 100 € | | |
+| Wohnmobilgarage (im Haus) | 80 € | Partyraum | **aktuell nicht vermietbar** |
+| Garage Auto (im Haus) | 45 € | hintere Garage links | **bereits vermietet** |
+| Garage klein (im Haus) | 40 € | hintere Garage rechts | Fahrradraum für die Mieter |
 
-Der Vault führt die 4.200 € in einer Spalte **„Netto/Jahr"**, rechnet die
+> [!warning] Die Ansätze sind unbelegt
+> Auf die Frage, woher 80/45/40 € stammen, lautet die Antwort des Nutzers:
+> **„Sind von dir. Nicht von mir."** Sie stammen aus einer frühen Fassung dieses
+> Projekts und sind nie am Markt geprüft worden. Belegt ist ausschließlich,
+> *welche* Einheiten frei sind — nicht, was sie bringen.
+>
+> Damit steht die gesamte Zahl auf einer Schätzung, die niemand verantwortet.
+> `annahmen.json` führt das jetzt so (`_quelle_nebengebaeude`).
+
+Der Vault führte den Betrag in einer Spalte **„Netto/Jahr"**, rechnete die
 Nachbarzeilen dort aber echt netto: Rang 4 (WE 8) kommt von 7.200 € brutto über
 Ausfallwagnis, Instandhaltung und Verwaltung auf exakt die 5.904 €, die in der
-Tabelle stehen. Für Rang 1 fehlt dieser Schritt. Der mittlere Ansatz ist
-plausibel — Garagen brauchen kaum Verwaltung und keine Instandhaltungsrücklage
-nach Wohnfläche —, aber das ist eine Einschätzung, keine Rechnung.
+Tabelle stehen — für Rang 1 fehlte dieser Schritt.
+
+**Behoben am 13.09.:** `build.py` rechnet die Zeile jetzt netto, die PDFs sind
+neu erzeugt. Der mittlere Ansatz ist plausibel — Garagen brauchen kaum
+Verwaltung und keine Instandhaltungsrücklage nach Wohnfläche —, aber das ist
+eine Einschätzung, keine Rechnung.
 
 **b) Heizungspaket** — der Planwert aus
 [[Heizung-und-Energetische-Sanierung]], alle sechs Positionen einschließlich
@@ -219,7 +230,7 @@ hilft aber kaum.
 > [!note] Ein Vorbehalt, der auch für die Nebengebäude gilt
 > Ich argumentiere gegen Option 3, die Bank rechne nach BelWertV über den
 > kapitalisierten Reinertrag, eine Teilungserklärung ändere daran nichts.
-> Dasselbe Argument trifft die 46.444 €: Auch dort wird aus einer Mehrmiete über
+> Dasselbe Argument trifft die 21.895 €: Auch dort wird aus einer Mehrmiete über
 > einen Faktor Beleihungskapazität. Ob Wüstenrot Garagen- und Partyraummieten
 > als nachhaltig ansetzt, ist offen — und eine Neubewertung kostet Geld und
 > braucht einen Anlass. Der Faktor 12 liegt zudem über dem objekteigenen
@@ -334,19 +345,21 @@ Zwei Punkte zur Konstruktion:
 | 0 % | 740.000 € | 703.000 € | 23.273 € | 8.273 € |
 | 5 % | 777.000 € | 738.150 € | 58.423 € | 43.423 € |
 | 10 % | 814.000 € | 773.300 € | 93.573 € | 78.573 € |
+| 15 % | 851.000 € | 808.450 € | 128.723 € | 113.723 € |
 | 20 % | 888.000 € | 843.600 € | 163.873 € | 148.873 € |
 
 Die Spalte „− Restschuld" zählt die ohnehin erfolgte Tilgung mit und sieht
 deshalb günstiger aus, als die Maßnahme ist. **Inkrementell** gerechnet muss der
 Aufschlag 2,13 % erreichen, damit allein die Teilungskosten hereinkommen — und
-rund **7,1 %**, um so viel zu bringen wie die Nebengebäude. *(Die Schwelle ist
+rund **5,2 %**, um so viel zu bringen wie die Nebengebäude. *(Die Schwelle ist
 gesunken, weil der Nebengebäude-Hebel kleiner geworden ist — nicht, weil die
-Teilung besser wurde.)*
+Teilung besser wurde. Die Drei-Objekt-Grenze bleibt ihr K.-o.)*
 
 Drei Dinge sprechen dagegen, das dritte ist ein K.-o.
 
-**1. Es gibt einen billigeren Weg zum selben Ziel.** Die Nebengebäude bringen
-rund 35.200 € für null Euro und ohne Steuerrisiko. Beide wirken allerdings erst
+**1. Es gibt einen billigeren Weg zum selben Ziel** — aber er ist deutlich
+schmaler geworden. Die Nebengebäude bringen noch rund 21.900 € für null Euro und
+ohne Steuerrisiko. Beide wirken allerdings erst
 ab dem Auszug — der Zeitvorteil, den ich der Nebengebäude-Lösung in einer
 früheren Fassung zugeschrieben hatte, besteht nicht.
 
@@ -503,11 +516,11 @@ und riskiert die AfA.
    *(Die Räumung selbst ist unverdächtig: zugesagt am 2026-09-10, zum Auszug.
    Nicht zur Übergabe — das widerspräche dem unbefristeten Wohnrecht.)*
 6. **Die Miethöhe im Mietvertrag mit den Verkäufern** durchrechnen — sie trägt
-   27 % des Cashflows und bestimmt über § 10 Abs. 1 BelWertV womöglich den
+   29 % des Cashflows und bestimmt über § 10 Abs. 1 BelWertV womöglich den
    Beleihungswert.
    > [!danger] Nur intern
    > Der Verkäufer ist hier zugleich der künftige Mieter. Erfährt er, dass an
-   > seiner Miethöhe ein Viertel deines Cashflows hängt, hat er einen Hebel, den
+   > seiner Miethöhe fast ein Drittel deines Cashflows hängt, hat er einen Hebel, den
    > er gegen den Kaufpreis tauschen kann — und sein eigenes Interesse zeigt
    > ohnehin nach unten. Im Gespräch wird die Miete als schlichter Marktwert
    > verhandelt, nicht als etwas, das du brauchst.
@@ -577,7 +590,7 @@ auch nicht hingehört, aber intern der Grund für die Fragen ist:
 - Die Bezugsgröße der 95 % entscheidet die gesamte Architektur — bei 10 %
   Abschlag wären es 105,6 %. **Diese Rechnung begleitet die Frage nicht.**
 - An der Frage, ob Garagenmieten als nachhaltig angesetzt werden, hängen rund
-  35.200 € Beleihungskapazität. **Auch das nennt die Frage nicht** — wer zeigt,
+  21.900 € Beleihungskapazität. **Auch das nennt die Frage nicht** — wer zeigt,
   wie viel an einer Antwort hängt, lädt zur vorsichtigen Antwort ein.
 - Die Frage nach der Mietbewertung ist bewusst als **Methodenfrage** gestellt,
   nicht als Frage zum Mietvertrag mit den Verkäufern. Wer auf den einen
@@ -586,26 +599,28 @@ auch nicht hingehört, aber intern der Grund für die Fragen ist:
 
 ### An die Verkäufer
 
-> [!danger] Eine neue Frage mit unklarer Geldwirkung
-> Die **hintere Garage links ist bereits vermietet** (Nutzerangabe
-> 2026-09-12, Miethöhe unbekannt). Offen ist, ob diese Miete in den
-> **3.924 €** des Anbaus enthalten ist.
+> [!danger] Beantwortet — und die Antwort kostet Klarheit
+> Die **hintere Garage links ist vermietet, und ihre Miete ist NICHT in den
+> 3.924 € enthalten** (Nutzerangabe 2026-09-13).
 >
-> Wenn nein, fließen heute Mieteinnahmen, die in **keiner** Rechnung des Vaults
-> stehen — weder im Cashflow noch im Kaufpreisfaktor. Das ist mit den
-> Mietverträgen zu klären, nicht durch Nachfragen beim Verkäufer: Die
-> Unterlagenanforderung deckt es ohnehin ab.
+> Damit fließen heute Mieteinnahmen, die in **keiner** Rechnung dieses Vaults
+> stehen — weder im Cashflow noch im Kaufpreisfaktor noch in der Bruttorendite.
+> Die Höhe ist unbekannt. Aus den Mietverträgen zu ermitteln; die
+> Unterlagenanforderung deckt das ab.
+>
+> Für die Bewertung heißt das: Der Cashflow von 7.421 € ist um diesen Betrag
+> **zu niedrig** angesetzt. Das ist die einzige der offenen Zahlen, die in die
+> günstige Richtung wirkt.
 
 Alle drei Fragen stehen bereits in [[Fragen-an-den-Verkaeufer]] (Grundbuch als
 Priorität 1, Nebengebäude als Priorität 3, Verkäuferdarlehen als Priorität 4).
 **Dort pflegen, nicht hier duplizieren.** Drei Anmerkungen dazu:
 
-- Die Frage nach den Nebengebäuden muss **alle sechs** umfassen — Hofgaragen,
-  Außengaragen, Wohnmobilgarage, Partyraum. Wer nur nach Partyraum und
-  Wohnmobilgarage fragt, greift genau die beiden ertragsstärksten heraus und
-  signalisiert damit, dass er gerechnet hat.
-- **Keine Begründung, keine Beträge.** Dass zwei der sechs die Hälfte des
-  Ertrags tragen, ist eine interne Zahl.
+- Die Frage nach den Nebengebäuden muss **alle** umfassen — die drei Garagen im
+  Haus, die beiden hinteren Garagen und den Partyraum. Wer nur die
+  ertragsstärksten herausgreift, signalisiert, dass er gerechnet hat.
+- **Keine Begründung, keine Beträge.** Welche Einheit wieviel trägt, ist eine
+  interne Zahl — und obendrein eine unbelegte.
 - [[Fragen-an-den-Verkaeufer]] **siezt** durchgehend und ist auf einen
   Adressaten im Singular geschrieben. Beides widerspricht der Sprachregelung und
   dem offenen Eigentümerstand — vor dem Versand auf du/ihr umstellen und die
@@ -658,8 +673,9 @@ Zielpreis und Erwerbsstruktur, Puffer-Regel, Heizungs-Planwert 103.500 €.
 
 | Größe | Klasse | woher der echte Wert kommt |
 |---|---|---|
-| **Verkäufermiete 10,00 €/m²** (1.450 €/Monat) | `annahmen.json`: **UNBELEGT** | Mietvertrag; Korridor 8,78–10,00 |
-| **Nebengebäude-Ansätze** (350 €/Monat) | `annahmen.json`: „geschätzt, am Markt zu prüfen" | Marktvergleich; zwei von sechs Einheiten ungeklärt |
+| **Verkäufermiete** — Punkt im Korridor 8,72–10,00 €/m² | Korridor belegt (Nutzer 12.09.), Punkt darin offen | Mietvertrag |
+| **Nebengebäude-Ansätze** (165 €/Monat) | **unbelegt** — stammen aus einer frühen Projektfassung, nicht vom Nutzer | Marktvergleich |
+| **Miete der hinteren Garage links** | vermietet, Höhe unbekannt, **nicht in den 3.924 €** | Mietvertrag |
 | Faktor 12 | Vault-Ansatz, über dem objekteigenen 11,5 | Bewertung |
 | Sicherheitsabschlag 10 % | Annahme, nur für die Gegenrechnung | Bank |
 | Zins Verkäuferdarlehen 4 %, tilgungsfrei | Annahme | Verhandlung |
@@ -676,11 +692,11 @@ Vor bindender Verwendung gegen die amtliche Fassung prüfen.
 
 - **Wüstenrot rechnet auf einen Beleihungswert statt auf den Kaufpreis** → die
   gesamte Finanzierungsarchitektur ändert sich, zum Schlechteren.
-- **Die Verkäufermiete wird bei 8,78 €/m² vereinbart** → Cashflow 5.362 € statt
-  7.421 €, der Puffer wird knapper, Option 2 wird zwingend.
-- **Der Partyraum ist nicht frei vermietbar** (Nutzung, Brandschutz,
-  Stellplatznachweis) → er trägt 100 € von 265 €/Monat, der Hebel schrumpft um
-  mehr als ein Drittel.
+- **Die Verkäufermiete wird an der unteren Korridorecke vereinbart** (8,72 €/m²)
+  → Cashflow 5.261 € statt 7.421 €, der Puffer wird knapper, Option 2 wird
+  zwingend.
+- **Die Mietansätze halten nicht.** Sie sind unbelegt; schon 20 € weniger je
+  Garage kosten rund 7.960 € Kapazität — bei diesem Hebel mehr als ein Drittel.
 - **Die Stellplatzsatzung verlangt die Garagen für den Bestand** → derselbe
   Effekt, vollständig.
 - **Die Bank setzt Garagenmieten nicht als nachhaltig an** → ebenso.

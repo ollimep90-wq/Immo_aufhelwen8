@@ -178,10 +178,9 @@ def option1(modell, a, r, kp):
         for name, grund in nicht:
             print(f"       {name:<28} {grund}")
     print()
-    print(f"     ACHTUNG: Der Vault führt die {eur(brutto)} in einer Spalte 'Netto/Jahr',")
-    print(f"     rechnet die Nachbarzeilen dort aber echt netto (WE 8: 7.200 brutto")
-    print(f"     ./. Ausfallwagnis, Instandhaltung, Verwaltung = 5.904). Für die")
-    print(f"     Nebengebäude fehlt dieser Schritt. Deshalb hier eine Spanne:")
+    print(f"     Die Mietansätze sind UNBELEGT — sie stammen aus einer frühen")
+    print(f"     Projektfassung, nicht vom Nutzer (annahmen.json, _quelle_nebengebaeude).")
+    print(f"     Belegt ist nur, WELCHE Einheiten frei sind. Deshalb eine Spanne:")
     print()
     print(f"     {'Ansatz':<38} {'netto p.a.':>11} {'Kapazität':>12}")
     ausfall = brutto * b["mietausfallwagnis_pct"] / 100
