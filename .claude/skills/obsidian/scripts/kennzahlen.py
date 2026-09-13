@@ -70,8 +70,14 @@ def kennzahlen(modell) -> dict[str, float]:
               + inv["entsorgung_kessel_tanks"])
     basis = min(waerme, fo["hoechstgrenze_ein_gebaeude"])
     werte["Wärmepaket"] = waerme
-    werte["Zuschuss 30 %"] = basis * fo["grundfoerderung_pct"] / 100
-    werte["Zuschuss 35 %"] = basis * (fo["grundfoerderung_pct"] + fo["effizienzbonus_pct"]) / 100
+    # Die Bonuszeile nur dann, wenn es einen Bonus gibt. Sonst stuenden hier zwei
+    # identische Betraege unter verschiedenen Prozentsaetzen -- und ein Leser
+    # schloesse daraus, der Bonus sei noch eingerechnet.
+    satz = fo["grundfoerderung_pct"]
+    bonus = fo["effizienzbonus_pct"]
+    werte["Zuschuss %g %%" % satz] = basis * satz / 100
+    if bonus:
+        werte["Zuschuss %g %% inkl. Bonus" % (satz + bonus)] = basis * (satz + bonus) / 100
     werte["PV inkl. Zählerplatz"] = (inv["pv_40_kwp"]
                                      + inv["zaehlerplatzumbau_je_we"] * o["einheiten"])
     return werte
