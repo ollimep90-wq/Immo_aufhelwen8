@@ -541,8 +541,22 @@ und riskiert die AfA.
 
 ## Was im Vault nachzuziehen ist
 
-Die Prüfung hat **sieben** Stellen gefunden, an denen eine alte Fassung
-weiterlebt. (Hier stand zuvor „vier“ — das war der Stand vor den letzten beiden
+> [!success] Alle sieben sind am 2026-09-13 durchgezogen
+> Die Liste unten bleibt stehen, weil sie den Befund dokumentiert. Was in jeder
+> Notiz geändert wurde, steht dort jeweils in einem Korrekturkasten — nach
+> Regel 6 sichtbar, nicht stillschweigend. Der Verlauf in [[OBJ-2026-001]]
+> fasst es zusammen.
+>
+> Zwei Dinge sind **bewusst** unverändert geblieben:
+> - **Der Ordner `99-Archiv/`.** Ein Archiv protokolliert historische Stände;
+>   es zu korrigieren hieße, die Nachvollziehbarkeit zu zerstören, für die es da
+>   ist. Gleiches gilt für die Einträge im Verlauf von [[OBJ-2026-001]], die
+>   älter als heute sind.
+> - **Die Ampelsymbole in [[Due-Diligence-Status]].** Die Zahlen dahinter sind
+>   korrigiert, die Bewertung rot/gelb/grün steht dir zu.
+
+Die Prüfung hatte **sieben** Stellen gefunden, an denen eine alte Fassung
+weiterlebte. (Hier stand zuvor „vier" — das war der Stand vor den letzten beiden
 Prüfrunden und ist mit der Liste unten nie mitgewachsen.)
 Keine davon stammt aus dieser Notiz, alle betreffen Zahlen, die Entscheidungen
 tragen.
