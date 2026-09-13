@@ -541,7 +541,9 @@ und riskiert die AfA.
 
 ## Was im Vault nachzuziehen ist
 
-Die Prüfung hat vier Stellen gefunden, an denen eine alte Fassung weiterlebt.
+Die Prüfung hat **sieben** Stellen gefunden, an denen eine alte Fassung
+weiterlebt. (Hier stand zuvor „vier“ — das war der Stand vor den letzten beiden
+Prüfrunden und ist mit der Liste unten nie mitgewachsen.)
 Keine davon stammt aus dieser Notiz, alle betreffen Zahlen, die Entscheidungen
 tragen.
 
