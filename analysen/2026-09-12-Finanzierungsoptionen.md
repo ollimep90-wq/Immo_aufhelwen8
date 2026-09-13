@@ -92,7 +92,8 @@ tags: [immobilie, finanzierung, strategie, vertraulich]
 > **1.450 € Altbestand** = 145 m² × 10,00 €/m². Dieser zweite Teil ist kein
 > Vertrag, sondern eine Zielannahme — `annahmen.json` markiert sie selbst als
 > „UNBELEGT", und [[Haus-A-Sanierungsplan]] empfiehlt, die Übergangsmiete am
-> **Bestandsniveau** anzusetzen — dort steht noch 8,78 €/m², richtig sind
+> **Bestandsniveau** anzusetzen — dort stand bis zum 2026-09-13 noch 8,78 €/m²,
+richtig sind
 > **8,72 €/m²** (die Notiz gehört nachgezogen).
 >
 > | | 10,00 €/m² | 9,36 €/m² | 8,72 €/m² |
@@ -145,7 +146,8 @@ mit dem sich etwas anfangen lässt — die Anfangstilgung liegt bei 1,04 %.
 
 **a) Nebengebäude separat vermieten** — Rang 1 in
 [[Reihenfolge-der-Optimierungen]], **drei freie Garagen**, null Euro Investition.
-*(Die Rangliste dort rechnet noch mit sechs Einheiten und 350 €/Monat.)*
+*(Die Rangliste dort rechnete bis zum 2026-09-13 mit sechs Einheiten und
+350 €/Monat; inzwischen korrigiert.)*
 
 Die Höhe ist allerdings zu klären:
 
@@ -396,7 +398,9 @@ PV-GmbH ausgeschlossen hat.
 
 ### 1. Die Förderannahmen sind überholt — aber weniger schlimm als gedacht
 
-Die BEG-EM-Richtlinie vom 17.07.2026 gilt seit 21.07.2026.
+Die BEG-EM-Richtlinie gilt in der seit 21.07.2026 geltenden Fassung (BAnz AT
+27.08.2026 B1). Das früher hier genannte Ausfertigungsdatum 17.07.2026 ließ
+sich in keiner Quelle bestätigen; belegt ist das Inkrafttreten.
 
 | | Deckel alt | Deckel neu | Zuschuss alt | Zuschuss neu |
 |---|---|---|---|---|
@@ -561,7 +565,9 @@ Prüfrunden und ist mit der Liste unten nie mitgewachsen.)
 Keine davon stammt aus dieser Notiz, alle betreffen Zahlen, die Entscheidungen
 tragen.
 
-**1. Die Restliquidität von 4.500 € lebt an fünf Stellen weiter:**
+**1. ✅ Die Restliquidität von 4.500 € lebte an fünf Stellen weiter** —
+erledigt 2026-09-13, einschließlich der beiden Risikozeilen in
+[[OBJ-2026-001]], die zunächst übersehen worden waren:
 [[Due-Diligence-Status]], [[Heizung-und-Energetische-Sanierung]],
 [[Startpaket-WP-und-PV]], [[Vorbereitung-vor-dem-Verkaeufergespraech]] — und
 **[[OBJ-2026-001]] an zwei Stellen**, obwohl die Notiz dort andernorts bereits
@@ -572,13 +578,17 @@ auf 20.100 € korrigiert ist. Korrigiert sind [[Reihenfolge-der-Optimierungen]]
 prüfen, ob die Begründung noch trägt — die Entscheidung selbst (gemeinsamer
 Antrag, gebündelte Umsetzung) ist davon unberührt.
 
-**2. Die Förderkorrektur betrifft mehr als zwei Stellen.** Neben
+**2. ✅ Die Förderkorrektur betraf mehr als zwei Stellen** — erledigt
+2026-09-13, dazu die Bonus-Tabelle und der hartkodierte Hebelbetrag in
+`build.py`/`unterlagen.py`. Neben
 `annahmen.json` sind in [[Heizung-und-Energetische-Sanierung]] betroffen: der
 Effizienzbonus-Eintrag, die Höchstgrenzen 113.000/135.000, die Zuschussspannen,
 der Planwert-Block und die Wiederholung im Fragenteil. Dazu der Eigenanteil
 72.450 €, der über [[Rechenweg-Cashflow]] in den Cashflow ab 2028 wandert.
 
-**3. [[Finanzierung-und-Sensitivitaet]] rechnet noch mit 3.952 € Miete.**
+**3. ✅ [[Finanzierung-und-Sensitivitaet]] rechnete noch mit 3.952 € Miete** —
+erledigt 2026-09-13: Die Notiz trägt jetzt einen Überholt-Kasten mit dem
+gültigen Stand.
 [[Mietstruktur]] behauptet, „alle Rechnungen im Vault sind auf 3.924 €
 umgestellt" — das stimmt nicht: Die Sensitivitätstabellen laufen mit 5.225 €
 und 6.452 € Gesamtmiete. Die Notiz steht zudem auf einer überholten
@@ -587,7 +597,7 @@ bis 910.000 €), die [[Rechenweg-Cashflow]] bereits verworfen hat. Ich verweise
 in dieser Notiz mehrfach darauf — die Verweise gelten den dort **offenen
 Fragen**, nicht den Rechnungen.
 
-**4. Die Garagenfrage.** [[Reihenfolge-der-Optimierungen]] trägt noch „Räumung
+**4. ✅ Die Garagenfrage** — erledigt 2026-09-13, Frage wieder geöffnet. [[Reihenfolge-der-Optimierungen]] trägt noch „Räumung
 zum Übergabetermin" und „sofort nach Übergabe" — beides steht vor der Antwort
 vom 2026-09-10 („zum Auszug"). Schwerer wiegt: In
 [[Fragen-an-den-Verkaeufer]] ist **abgehakt**, die „Garagen nutzen die
@@ -595,12 +605,14 @@ Eigentümer selbst". Das ist durch die Angabe vom 13.09. falsch geworden — ein
 falsch abgehakte Frage wird nicht mehr gelesen und ist damit gegen Nachprüfung
 immunisiert. Sie gehört wieder geöffnet.
 
-**5. Das Bestandsniveau 8,78 €/m² lebt an sechs Stellen weiter** —
+**5. ✅ Das Bestandsniveau 8,78 €/m² lebte an sechs Stellen weiter** — erledigt
+2026-09-13 —
 [[Mietstruktur]], [[Haus-A-Sanierungsplan]] (dreimal),
 [[Fragen-an-den-Verkaeufer]], [[OBJ-2026-001]] und [[Nettersheim]] — dazu die
 daraus abgeleiteten 1.273 €/Monat und 5.197 € Gesamtmiete.
 
-**6. Die alte Nebengebäude-Rechnung (4.200 €/Jahr, 350 €/Monat)** steht in
+**6. ✅ Die alte Nebengebäude-Rechnung (4.200 €/Jahr, 350 €/Monat)** — erledigt
+2026-09-13. Sie stand in
 [[Reihenfolge-der-Optimierungen]], [[Strategie-und-Verhandlung]] und — am
 schwersten — im [[Entscheidungsregister]]: Dort ist die Entscheidung
 „Reihenfolge: Nebengebäude zuerst" mit „4.200 €/Jahr für null Investition"
@@ -609,7 +621,7 @@ weiter (Rang 1 bleibt Rang 1, null Investition bleibt null), aber ihre
 Begründungszahl ist um Faktor 2,2 zu hoch. Nach der Registerregel wird die
 Zeile nicht überschrieben, sondern durchgestrichen und neu eingetragen.
 
-**7. [[OBJ-2026-001]]** nennt „95 % der **Gesamtkosten** (Kaufpreis +
+**7. ✅ [[OBJ-2026-001]]** — erledigt 2026-09-13. Die Notiz nannte „95 % der **Gesamtkosten** (Kaufpreis +
 Modernisierung)" statt des Kaufpreises — das ist die verworfene Architektur —
 und führt die **Maklerfrage** als offen, obwohl sie seit dem 10.09. beantwortet
 ist.
