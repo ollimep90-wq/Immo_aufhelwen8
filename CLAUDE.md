@@ -35,6 +35,17 @@ Projekt gefährden.
 6. **Korrekturen werden sichtbar gemacht, nicht stillschweigend eingebaut.**
    Eine revidierte Zahl bekommt einen Hinweis, was vorher dort stand und warum
    es falsch war. So bleibt nachvollziehbar, worauf eine Entscheidung beruht.
+7. **Jedes Dokument wird vollständig gelesen — jede Seite.** Kein Auswerten
+   nach der ersten Seite, kein Überfliegen, kein Schluss aus einem Auszug. Bei
+   gescannten PDFs heißt das: jede Seite rendern und ansehen, nicht nur die
+   mit Text. Die entscheidende Information steht regelmäßig hinten — die
+   Mieterhöhungen und die unterschriebenen Zustimmungserklärungen standen auf
+   den Seiten 8 bis 10 von zehn, während aus Seite 1 bereits eine
+   Schlussfolgerung über den Kaufpreis gezogen worden war. Wer nur den Anfang
+   liest, erfindet den Rest.
+   - Vor jeder Auswertung die **Seitenzahl** feststellen und nennen.
+   - Am Ende festhalten, **welche Seiten** gelesen wurden. Was ungelesen
+     blieb, wird als ungelesen ausgewiesen, nicht stillschweigend übergangen.
 
 ## Die Prüfagenten
 
