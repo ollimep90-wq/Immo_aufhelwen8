@@ -8,6 +8,31 @@ review_on: 2026-10-15
 tags: [immobilie, finanzierung, strategie, vertraulich]
 ---
 
+> [!danger] ÜBERHOLT durch die Unterlagen vom 2026-09-18
+> Diese Analyse beruht auf `annahmen.json` **Stand 2026-09-13** — vor Eingang
+> der Grundbücher, Mietverträge und Abrechnungen. Drei ihrer Grundlagen sind
+> widerlegt:
+>
+> 1. **Option 3 ist gegenstandslos.** Das Objekt ist seit dem 03.02.2003 nach
+>    WEG geteilt, sieben Einheiten, Blätter 506–512. Es gibt nichts zu teilen
+>    → [[Eigentumsstruktur]]. Was unten über Kosten, Abgeschlossenheit und
+>    Genehmigung steht, ist erledigt; was über die **Drei-Objekt-Grenze**
+>    steht, gilt weiter und ist jetzt der Ausgangszustand, nicht die Folge
+>    einer Entscheidung.
+> 2. **Die Kaltmiete ist 3.027 €, nicht 3.924 €** → [[Mietverhaeltnisse]].
+>    Jede Cashflow-, Faktor- und Kapazitätszahl unten ist damit zu hoch.
+> 3. **Die Anbaufläche ist 478 m², nicht 450.** Das erhöht die
+>    Instandhaltungsrücklage in jeder Rechnung.
+>
+> **Der Stand nach der Umstellung**, gerechnet über `modell.py` beim Zielpreis
+> 740.000 €: Cashflow **−280 €/Monat** statt +590. Der Kaufpreis, der Cashflow
+> null trägt, liegt bei **685.400 €** statt 855.300 €.
+>
+> Die Notiz bleibt vollständig stehen — ihre Methode, die Rechtsprüfung und die
+> Befunde zu Option 1 und 2 tragen weiter. Nur die Beträge sind es nicht mehr.
+> Eine Neufassung folgt, wenn die letzten offenen Werte da sind
+> (Mietvertrag 8a, Zustimmung 8c, Aufmaß Altbestand).
+
 # Drei Finanzierungsoptionen
 
 [[OBJ-2026-001|← Zurück zum Objekt]] · [[Strategie-und-Verhandlung]] ·
