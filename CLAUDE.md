@@ -1,7 +1,8 @@
 # Immobilienankauf Auf Helwen 8 — Arbeitsregeln
 
-Dieses Projekt begleitet den Kauf eines Mehrfamilienhauses in Nettersheim für
-rund 740.000–800.000 € bei 120.000 € Eigenkapital. **Eine falsche Zahl oder ein
+Dieses Projekt begleitet den Kauf eines Mehrfamilienhauses in Nettersheim bei
+120.000 € Eigenkapital. Die Verkäufer rufen **800.000 €** auf; was das Objekt
+trägt, wird gerechnet und nicht gesetzt. **Eine falsche Zahl oder ein
 übersehener Widerspruch kostet hier fünf- bis sechsstellig.** Gründlichkeit geht
 vor Geschwindigkeit.
 
@@ -103,7 +104,21 @@ Der verbindliche Stand steht im Vault in `Strategie-und-Verhandlung.md` und in
 - **Ein** Förderantrag für beide Hausteile, Umsetzung gebündelt nach dem Auszug
 - Wärmepumpe plus Heizkörpertausch zuerst, Fußbodenheizung bei Mieterwechsel
 - PV zuletzt und aus dem Cashflow
-- Zielpreis 740.000 €, Obergrenze 800.000 €
+- **Der Zielpreis ist eine Rechengröße, keine Entscheidung.** Er kommt aus
+  `preisregel` in `annahmen.json` und `preisbild()` in `modell.py` und ändert
+  sich mit jeder neuen Information, ohne dass jemand ihn neu beschließt. Drei
+  Schranken, die kleinste bindet: **Ertragsgrenze** (Preis, bei dem der
+  Cashflow null ist), **Liquiditätsgrenze** (Restliquidität deckt Reserve plus
+  24 Monate Defizit — sie *ist* die Obergrenze), **Mängelgrenze** (aufgerufener
+  Preis minus belegbare Mängel). Stand 2026-09-19: Zielpreis **612.400 €**
+  (die Ertragsgrenze bindet), Obergrenze **732.800 €**
+- **800.000 € ist der aufgerufene Preis der Verkäufer, keine Obergrenze des
+  Käufers.** Bis zum 2026-09-19 stand hier „Zielpreis 740.000 €, Obergrenze
+  800.000 €" als feste Entscheidung. Beides ist überholt: Der alte Zielpreis
+  trug auf der berichtigten Miete keinen positiven Cashflow mehr, und was der
+  Verkäufer aufruft, sagt nichts darüber, was der Käufer zahlen kann. Wer die
+  beiden Größen gleichsetzt, übernimmt die Preisvorstellung der Gegenseite als
+  eigene Grenze
 
 **Nach außen heißt es Altbestand und Anbau, nicht Haus A und Haus B.**
 Der Verkäufer heißt Stephan und wird geduzt.

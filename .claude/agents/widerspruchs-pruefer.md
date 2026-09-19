@@ -34,7 +34,15 @@ Befund.
 - Wärmepumpe **plus Heizkörpertausch** zuerst, Fußbodenheizung bei
   Mieterwechsel. Nicht umgekehrt
 - PV kommt zuletzt und aus dem Cashflow, nicht als weitere Kreditlinie
-- Obergrenze 800.000 €, Zielpreis 740.000 €
+- **Zielpreis und Obergrenze sind Rechengrößen, keine Entscheidungen** (seit
+  2026-09-19). Sie kommen aus `preisregel` in `annahmen.json` und
+  `preisbild()` in `modell.py`; die kleinste von Ertrags-, Liquiditäts- und
+  Mängelgrenze bindet. Ein Text, der einen **festen** Zielpreis als beschlossen
+  führt, widerspricht dieser Entscheidung — auch dann, wenn die Zahl stimmt.
+  Der frühere Stand „Zielpreis 740.000 €, Obergrenze 800.000 €" ist überholt
+- **800.000 € ist der von den Verkäufern aufgerufene Preis, nicht die
+  Obergrenze des Käufers.** Jede Stelle, die 800.000 € „Obergrenze",
+  „Schmerzgrenze" oder „Limit" nennt, ist ein Befund
 
 **Fakten, die der Nutzer mitgeteilt hat**
 - Kein Makler, Privatverkauf
