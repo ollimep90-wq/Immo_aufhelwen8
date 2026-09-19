@@ -44,10 +44,22 @@ def lade_modell(ordner: pathlib.Path):
 def kennzahlen(modell) -> dict[str, float]:
     a = modell.annahmen()
     o, f, st = a["objekt"], a["finanzierung"], a["steuern"]
-    vk = a["mieten"]["haus_a_verkaeufermiete_eur_m2"]
+    # Der Zielpreis ist eine Rechengroesse, keine feste Zahl -- er kommt aus
+    # der "preisregel" in annahmen.json. Bis 2026-09-19 stand hier 740000 fest,
+    # und damit pruefte der mechanische Abgleich gegen einen veralteten Anker.
+    pr = a.get("preisregel")
+    if pr and hasattr(modell, "preisbild"):
+        vk = pr["planungs_verkaeufermiete_eur_m2"]
+        pb = modell.preisbild(a=a)
+        stufen = (("Zielpreis", round(pb["zielpreis"], -3)),
+                  ("Obergrenze", round(pb["obergrenze"], -3)),
+                  ("Aufgerufen", o["aufgerufener_preis"]))
+    else:
+        vk = a["mieten"]["haus_a_verkaeufermiete_eur_m2"]
+        stufen = (("Aufgerufen", o["aufgerufener_preis"]),)
     werte: dict[str, float] = {}
 
-    for name, kp in (("Zielpreis", 740000), ("Aufgerufen", o["aufgerufener_preis"])):
+    for name, kp in stufen:
         r = modell.rechne(kp, a=a, vk_miete_eur_m2=vk)
         werte[f"{name}: Kaufpreis"] = r["kaufpreis"]
         werte[f"{name}: Nebenkosten"] = r["nebenkosten"]
