@@ -135,6 +135,10 @@ def main() -> None:
                    help="Ordner mit annahmen.json und modell.py")
     p.add_argument("--vault", type=pathlib.Path, help="Ordner mit den Notizen")
     p.add_argument("--naehe", type=float, default=NAEHE)
+    p.add_argument("--limit", type=int, default=150,
+                   help="Hoechstzahl gezeigter Abweichungen (groesste zuerst)")
+    p.add_argument("--alle", action="store_true",
+                   help="Alle Abweichungen zeigen, ohne Begrenzung")
     args = p.parse_args()
 
     werte = kennzahlen(lade_modell(args.strategie))
@@ -168,14 +172,34 @@ def main() -> None:
             print(f"  {name:<32} {wert:>14,.0f} €".replace(",", "."))
 
     if abweichungen:
-        print("\nABWEICHUNG — nahe an einer Kennzahl, aber nicht gleich."
-              " Jede Zeile ist zu prüfen:\n")
-        gesehen = set()
-        for _, name, wert, b in sorted(abweichungen)[:40]:
-            schluessel = (b[1].name, b[2])
-            if schluessel in gesehen:
-                continue
-            gesehen.add(schluessel)
+        # Erst entdoppeln, DANN sortieren, und zwar ABSTEIGEND nach Abweichung.
+        #
+        # Bis zum 19.09.2026 stand hier `sorted(abweichungen)[:40]`: aufsteigend
+        # nach relativer Naehe, abgeschnitten bei 40, und die Entdopplung lief
+        # erst nach dem Schnitt. Damit wurden genau die harmlosen Treffer zuerst
+        # gedruckt (612.400 gegen 612.000) und die veralteten Werte fielen
+        # hinten heraus -- von 447 Fundstellen waren 407 unsichtbar, darunter
+        # der gesamte Restbestand des abgeschafften Zielpreises 740.000 EUR
+        # (703.000 EUR Darlehen, 99.900 EUR EK, 20.100 EUR Restliquiditaet).
+        # Ein Pruefskript, das die gesuchte Fehlerklasse systematisch
+        # unterdrueckt, ist schlimmer als keines: es erzeugt Sicherheit.
+        beste: dict[tuple, tuple] = {}
+        for rel, name, wert, b in abweichungen:
+            schluessel = (str(b[1]), b[2], round(b[0]))
+            if schluessel not in beste or rel > beste[schluessel][0]:
+                beste[schluessel] = (rel, name, wert, b)
+        geordnet = sorted(beste.values(), key=lambda z: -z[0])
+        zeige = geordnet if args.alle else geordnet[:args.limit]
+
+        print(f"\nABWEICHUNG — nahe an einer Kennzahl, aber nicht gleich."
+              f" Jede Zeile ist zu prüfen."
+              f"\n{len(geordnet)} Fundstellen, groesste Abweichung zuerst.")
+        if len(zeige) < len(geordnet):
+            print(f"Gezeigt werden {len(zeige)}; die uebrigen"
+                  f" {len(geordnet) - len(zeige)} haben die kleinsten"
+                  f" Abweichungen. Mit --alle vollstaendig.")
+        print()
+        for _, name, wert, b in zeige:
             ab = 100 * (b[0] - wert) / wert
             print(f"  {b[1].name}:{b[2]}")
             print(f"    {b[0]:>12,.0f} € gegen {name} = {wert:,.0f} € ({ab:+.1f} %)"
