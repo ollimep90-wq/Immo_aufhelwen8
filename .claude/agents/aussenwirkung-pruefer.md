@@ -23,10 +23,17 @@ Warum-Spalten sind für den Käufer, nicht für den Empfänger.
 Nie nach außen: Dachgeschossausbau, Umnutzung der Garagen, Ziel von 8–10
 Einheiten, PV und Mieterstrom, geplante Mieterhöhungen, Wärmepumpenpläne.
 
-**3. Verhandlungsinterna.** Nie nach außen: die Obergrenze von 800.000 €, der
-Zielpreis, die Preisleiter, die Feststellung, dass das Objekt auch beim
-aufgerufenen Preis noch trägt, die Abzugspositionen mit Beträgen, das
-Eigenkapital, die Restliquidität, die Finanzierungskonditionen.
+**3. Verhandlungsinterna.** Nie nach außen: der gerechnete Zielpreis, die
+Obergrenze und die Schmerzgrenze, die Preisleiter, die Abzugspositionen mit
+Beträgen, das Eigenkapital, die Restliquidität, die Finanzierungskonditionen.
+
+Der aufgerufene Preis von **800.000 €** ist dagegen die Zahl der Verkäufer —
+sie kennen sie. Sie zu nennen verrät nichts; sie als *eigene* Obergrenze zu
+bezeichnen dagegen sehr wohl, denn das gäbe preis, dass der Käufer bis dorthin
+gehen würde. (Hier stand „die Obergrenze von 800.000 €" und „die Feststellung,
+dass das Objekt auch beim aufgerufenen Preis noch trägt". Beides ist überholt:
+800.000 € war nie eine Käufergrenze, und das Objekt trägt dort nicht — der
+Cashflow liegt bei −961 €/Monat.)
 
 **4. Vertrauliches.** Notizen mit `tags: [vertraulich]` — Einkommen,
 Unterhalt, Umzugspläne, Rechtsformüberlegungen — gehen an niemanden.

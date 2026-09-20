@@ -44,10 +44,22 @@ def lade_modell(ordner: pathlib.Path):
 def kennzahlen(modell) -> dict[str, float]:
     a = modell.annahmen()
     o, f, st = a["objekt"], a["finanzierung"], a["steuern"]
-    vk = a["mieten"]["haus_a_verkaeufermiete_eur_m2"]
+    # Der Zielpreis ist eine Rechengroesse, keine feste Zahl -- er kommt aus
+    # der "preisregel" in annahmen.json. Bis 2026-09-19 stand hier 740000 fest,
+    # und damit pruefte der mechanische Abgleich gegen einen veralteten Anker.
+    pr = a.get("preisregel")
+    if pr and hasattr(modell, "preisbild"):
+        vk = pr["planungs_verkaeufermiete_eur_m2"]
+        pb = modell.preisbild(a=a)
+        stufen = (("Zielpreis", round(pb["zielpreis"], -3)),
+                  ("Obergrenze", round(pb["obergrenze"], -3)),
+                  ("Aufgerufen", o["aufgerufener_preis"]))
+    else:
+        vk = a["mieten"]["haus_a_verkaeufermiete_eur_m2"]
+        stufen = (("Aufgerufen", o["aufgerufener_preis"]),)
     werte: dict[str, float] = {}
 
-    for name, kp in (("Zielpreis", 740000), ("Aufgerufen", o["aufgerufener_preis"])):
+    for name, kp in stufen:
         r = modell.rechne(kp, a=a, vk_miete_eur_m2=vk)
         werte[f"{name}: Kaufpreis"] = r["kaufpreis"]
         werte[f"{name}: Nebenkosten"] = r["nebenkosten"]
@@ -70,17 +82,43 @@ def kennzahlen(modell) -> dict[str, float]:
               + inv["entsorgung_kessel_tanks"])
     basis = min(waerme, fo["hoechstgrenze_ein_gebaeude"])
     werte["Wärmepaket"] = waerme
-    werte["Zuschuss 30 %"] = basis * fo["grundfoerderung_pct"] / 100
-    werte["Zuschuss 35 %"] = basis * (fo["grundfoerderung_pct"] + fo["effizienzbonus_pct"]) / 100
+    # Die Bonuszeile nur dann, wenn es einen Bonus gibt. Sonst stuenden hier zwei
+    # identische Betraege unter verschiedenen Prozentsaetzen -- und ein Leser
+    # schloesse daraus, der Bonus sei noch eingerechnet.
+    satz = fo["grundfoerderung_pct"]
+    bonus = fo["effizienzbonus_pct"]
+    werte["Zuschuss %g %%" % satz] = basis * satz / 100
+    if bonus:
+        werte["Zuschuss %g %% inkl. Bonus" % (satz + bonus)] = basis * (satz + bonus) / 100
     werte["PV inkl. Zählerplatz"] = (inv["pv_40_kwp"]
                                      + inv["zaehlerplatzumbau_je_we"] * o["einheiten"])
     return werte
 
 
+TAG = re.compile(r"<[^>]+>")
+
+
+def _zeilen(pfad: pathlib.Path) -> list[str]:
+    """Zeilen einer Notiz oder eines erzeugten Dokuments.
+
+    HTML wird mitgeprüft, weil die aus build.py erzeugten Dokumente genau der
+    Ort sind, an dem hartkodierte Beträge eine Annahmenänderung überleben —
+    und weil ein Fehler dort in einem Dokument steht, das nach außen geht.
+    """
+    text = pfad.read_text(encoding="utf-8")
+    if pfad.suffix == ".html":
+        text = TAG.sub(" ", text).replace("&nbsp;", " ").replace("&rarr;", "->")
+    return text.splitlines()
+
+
 def betraege(vault: pathlib.Path) -> list[tuple[float, pathlib.Path, int, str]]:
     gefunden = []
-    for pfad in sorted(vault.rglob("*.md")):
-        for nr, zeile in enumerate(pfad.read_text(encoding="utf-8").splitlines(), 1):
+    pfade = sorted(list(vault.rglob("*.md")) + list(vault.rglob("*.html")))
+    for pfad in pfade:
+        # Das Archiv ist per Definition überholt — es zu prüfen erzeugt nur Rauschen.
+        if "99-Archiv" in pfad.parts:
+            continue
+        for nr, zeile in enumerate(_zeilen(pfad), 1):
             for treffer in EURO.finditer(zeile):
                 ganz = treffer.group(1).replace(".", "")
                 nach = treffer.group(2) or "0"
@@ -97,6 +135,10 @@ def main() -> None:
                    help="Ordner mit annahmen.json und modell.py")
     p.add_argument("--vault", type=pathlib.Path, help="Ordner mit den Notizen")
     p.add_argument("--naehe", type=float, default=NAEHE)
+    p.add_argument("--limit", type=int, default=150,
+                   help="Hoechstzahl gezeigter Abweichungen (groesste zuerst)")
+    p.add_argument("--alle", action="store_true",
+                   help="Alle Abweichungen zeigen, ohne Begrenzung")
     args = p.parse_args()
 
     werte = kennzahlen(lade_modell(args.strategie))
@@ -130,14 +172,34 @@ def main() -> None:
             print(f"  {name:<32} {wert:>14,.0f} €".replace(",", "."))
 
     if abweichungen:
-        print("\nABWEICHUNG — nahe an einer Kennzahl, aber nicht gleich."
-              " Jede Zeile ist zu prüfen:\n")
-        gesehen = set()
-        for _, name, wert, b in sorted(abweichungen)[:40]:
-            schluessel = (b[1].name, b[2])
-            if schluessel in gesehen:
-                continue
-            gesehen.add(schluessel)
+        # Erst entdoppeln, DANN sortieren, und zwar ABSTEIGEND nach Abweichung.
+        #
+        # Bis zum 19.09.2026 stand hier `sorted(abweichungen)[:40]`: aufsteigend
+        # nach relativer Naehe, abgeschnitten bei 40, und die Entdopplung lief
+        # erst nach dem Schnitt. Damit wurden genau die harmlosen Treffer zuerst
+        # gedruckt (612.400 gegen 612.000) und die veralteten Werte fielen
+        # hinten heraus -- von 447 Fundstellen waren 407 unsichtbar, darunter
+        # der gesamte Restbestand des abgeschafften Zielpreises 740.000 EUR
+        # (703.000 EUR Darlehen, 99.900 EUR EK, 20.100 EUR Restliquiditaet).
+        # Ein Pruefskript, das die gesuchte Fehlerklasse systematisch
+        # unterdrueckt, ist schlimmer als keines: es erzeugt Sicherheit.
+        beste: dict[tuple, tuple] = {}
+        for rel, name, wert, b in abweichungen:
+            schluessel = (str(b[1]), b[2], round(b[0]))
+            if schluessel not in beste or rel > beste[schluessel][0]:
+                beste[schluessel] = (rel, name, wert, b)
+        geordnet = sorted(beste.values(), key=lambda z: -z[0])
+        zeige = geordnet if args.alle else geordnet[:args.limit]
+
+        print(f"\nABWEICHUNG — nahe an einer Kennzahl, aber nicht gleich."
+              f" Jede Zeile ist zu prüfen."
+              f"\n{len(geordnet)} Fundstellen, groesste Abweichung zuerst.")
+        if len(zeige) < len(geordnet):
+            print(f"Gezeigt werden {len(zeige)}; die uebrigen"
+                  f" {len(geordnet) - len(zeige)} haben die kleinsten"
+                  f" Abweichungen. Mit --alle vollstaendig.")
+        print()
+        for _, name, wert, b in zeige:
             ab = 100 * (b[0] - wert) / wert
             print(f"  {b[1].name}:{b[2]}")
             print(f"    {b[0]:>12,.0f} € gegen {name} = {wert:,.0f} € ({ab:+.1f} %)"

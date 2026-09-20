@@ -1,7 +1,8 @@
 # Immobilienankauf Auf Helwen 8 — Arbeitsregeln
 
-Dieses Projekt begleitet den Kauf eines Mehrfamilienhauses in Nettersheim für
-rund 740.000–800.000 € bei 120.000 € Eigenkapital. **Eine falsche Zahl oder ein
+Dieses Projekt begleitet den Kauf eines Mehrfamilienhauses in Nettersheim bei
+120.000 € Eigenkapital. Die Verkäufer rufen **800.000 €** auf; was das Objekt
+trägt, wird gerechnet und nicht gesetzt. **Eine falsche Zahl oder ein
 übersehener Widerspruch kostet hier fünf- bis sechsstellig.** Gründlichkeit geht
 vor Geschwindigkeit.
 
@@ -35,6 +36,17 @@ Projekt gefährden.
 6. **Korrekturen werden sichtbar gemacht, nicht stillschweigend eingebaut.**
    Eine revidierte Zahl bekommt einen Hinweis, was vorher dort stand und warum
    es falsch war. So bleibt nachvollziehbar, worauf eine Entscheidung beruht.
+7. **Jedes Dokument wird vollständig gelesen — jede Seite.** Kein Auswerten
+   nach der ersten Seite, kein Überfliegen, kein Schluss aus einem Auszug. Bei
+   gescannten PDFs heißt das: jede Seite rendern und ansehen, nicht nur die
+   mit Text. Die entscheidende Information steht regelmäßig hinten — die
+   Mieterhöhungen und die unterschriebenen Zustimmungserklärungen standen auf
+   den Seiten 8 bis 10 von zehn, während aus Seite 1 bereits eine
+   Schlussfolgerung über den Kaufpreis gezogen worden war. Wer nur den Anfang
+   liest, erfindet den Rest.
+   - Vor jeder Auswertung die **Seitenzahl** feststellen und nennen.
+   - Am Ende festhalten, **welche Seiten** gelesen wurden. Was ungelesen
+     blieb, wird als ungelesen ausgewiesen, nicht stillschweigend übergangen.
 
 ## Die Prüfagenten
 
@@ -83,11 +95,30 @@ Der verbindliche Stand steht im Vault in `Strategie-und-Verhandlung.md` und in
 `Reihenfolge-der-Optimierungen.md`. Kurz:
 
 - Erwerb **privat**, PV ebenfalls privat gewerblich
+- Finanzierung: **Volltilger über 34 Jahre zu 5,45 %** (reales Angebot der
+  Wüstenrot). Kein Annuitätendarlehen mit Zinsbindung — es gibt keine
+  Anschlussfinanzierung und kein Zinsänderungsrisiko. Der Beleihungsauslauf
+  ist in `annahmen.json` mit 95 % **des Kaufpreises** angesetzt; ob die Bank
+  so rechnet oder auf einen Beleihungswert, ist offen
 - Verkäufer bleiben **unbefristet** wohnen, Absicherung über **Indexmiete**
 - **Ein** Förderantrag für beide Hausteile, Umsetzung gebündelt nach dem Auszug
 - Wärmepumpe plus Heizkörpertausch zuerst, Fußbodenheizung bei Mieterwechsel
 - PV zuletzt und aus dem Cashflow
-- Zielpreis 740.000 €, Obergrenze 800.000 €
+- **Der Zielpreis ist eine Rechengröße, keine Entscheidung.** Er kommt aus
+  `preisregel` in `annahmen.json` und `preisbild()` in `modell.py` und ändert
+  sich mit jeder neuen Information, ohne dass jemand ihn neu beschließt. Drei
+  Schranken, die kleinste bindet: **Ertragsgrenze** (Preis, bei dem der
+  Cashflow null ist), **Liquiditätsgrenze** (Restliquidität deckt Reserve plus
+  24 Monate Defizit — sie *ist* die Obergrenze), **Mängelgrenze** (aufgerufener
+  Preis minus belegbare Mängel). Stand 2026-09-19: Zielpreis **612.400 €**
+  (die Ertragsgrenze bindet), Obergrenze **732.800 €**
+- **800.000 € ist der aufgerufene Preis der Verkäufer, keine Obergrenze des
+  Käufers.** Bis zum 2026-09-19 stand hier „Zielpreis 740.000 €, Obergrenze
+  800.000 €" als feste Entscheidung. Beides ist überholt: Der alte Zielpreis
+  trug auf der berichtigten Miete keinen positiven Cashflow mehr, und was der
+  Verkäufer aufruft, sagt nichts darüber, was der Käufer zahlen kann. Wer die
+  beiden Größen gleichsetzt, übernimmt die Preisvorstellung der Gegenseite als
+  eigene Grenze
 
 **Nach außen heißt es Altbestand und Anbau, nicht Haus A und Haus B.**
 Der Verkäufer heißt Stephan und wird geduzt.
