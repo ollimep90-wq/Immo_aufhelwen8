@@ -134,7 +134,7 @@ REPL = {"⟦AVFAKTEN⟧": AVFAKTEN, "⟦PFLICHTEN⟧": PFLICHTEN, "⟦GANTT⟧":
         "⟦AVKUNDE⟧": AVKUNDE, "⟦KONTAKT-OLIVER⟧": KONTAKT_OLIVER, "⟦PFLICHTHINWEIS⟧": PFLICHTHINWEIS,
         "⟦AVTABELLE⟧": AVKONZEPT_TABELLE, "⟦RIESTERNOTE⟧": RIESTERNOTE, "⟦R⟧": R, "⟦A⟧": A}
 
-DOCS = {"konzept": "Konzept_Finanzanlagenberatung", "kunde": "Kundeninformation_Ganzheitliche_Beratung",
+DOCS = {"konzept": "Konzept_Finanzanlagenberatung", "kunde": "Kundenpraesentation_Ganzheitliche_Beratung",
         "leitfaden": "Gespraechsleitfaden_Bedarfsanalyse"}
 TITLES = {"konzept": "Konzept Finanzanlagenberatung", "kunde": "Ganzheitliche Beratung – Rosenbaum Finanzberatung",
           "leitfaden": "Gesprächsleitfaden Bedarfsanalyse"}

@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<title>Ganzheitliche Beratung</title>
+<style>
+/* Keynote-artige Folien 16:9: viel Weißraum, eine Aussage pro Folie, Grün aus dem Logo als einziger Akzent */
+:root{
+  --ink:#1D1D1F; --ink2:#515154; --mute:#86868B; --line:#E5E5EA; --bg:#FFFFFF; --soft:#F5F5F7;
+  --green:#2E8B3E; --green-l:#E9F5EC; --blue:#3F6FB0; --blue-l:#EAF0F9; --night:#0B1410;
+  --display:"Inter Display","Inter",system-ui,sans-serif; --text:"Inter",system-ui,sans-serif;
+}
+@page{size:297mm 167mm;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--text);color:var(--ink);background:var(--bg);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.s{width:297mm;height:167mm;padding:15mm 18mm;position:relative;overflow:hidden;page-break-after:always;background:var(--bg)}
+.s:last-child{page-break-after:auto}
+.eyebrow{font-size:9pt;font-weight:600;color:var(--green);letter-spacing:.02em;margin-bottom:3mm}
+h1{font-family:var(--display);font-weight:700;font-size:34pt;line-height:1.05;letter-spacing:-.025em;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:24pt;line-height:1.1;letter-spacing:-.02em;text-wrap:balance}
+h3{font-family:var(--display);font-weight:650;font-size:13pt;letter-spacing:-.01em;margin-bottom:1.5mm}
+.sub{font-size:13pt;line-height:1.4;color:var(--ink2);max-width:200mm;margin-top:4mm}
+p,li{font-size:10pt;line-height:1.45;color:var(--ink2)}
+.grey{color:var(--mute)}
+.fine{font-size:7pt;line-height:1.4;color:var(--mute)}
+.row{display:flex;gap:7mm}
+.col{flex:1;min-width:0}
+.tile{background:var(--soft);border-radius:5mm;padding:7mm 6mm}
+.ic{width:13mm;height:13mm;color:var(--green);margin-bottom:4mm;display:block}
+.ic.b{color:var(--blue)}
+.big{font-family:var(--display);font-weight:700;letter-spacing:-.03em;line-height:1}
+.grad{color:#4CAF50}
+.foot{position:absolute;left:18mm;right:18mm;bottom:7mm;display:flex;justify-content:space-between;font-size:7pt;color:var(--mute)}
+.pill{display:inline-block;font-size:8pt;font-weight:600;padding:1.2mm 3mm;border-radius:10mm;background:var(--green-l);color:var(--green)}
+.legend{display:flex;gap:6mm;font-size:8.5pt;color:var(--ink2);align-items:center}
+.sw{display:inline-block;width:3.2mm;height:3.2mm;border-radius:1mm;margin-right:1.5mm;vertical-align:-.4mm}
+svg text{font-family:var(--text)}
+</style></head><body>
+
+<svg width="0" height="0" style="position:absolute">
+ <defs>
+  <symbol id="i-compass" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></g></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></g></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10C19.5 15.4 12 20 12 20z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8.5 10h7M8.5 14h7M8.5 18h4"/></g></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></g></symbol>
+  <symbol id="i-cycle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></g></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 18h18M7 18a5 5 0 0 1 10 0"/><path d="M12 7V4M5.6 10.6 3.5 8.5M18.4 10.6l2.1-2.1"/></g></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M5 16l4.5-4.5 3 3L19 8"/><path d="M15 8h4v4"/></g></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8-7.5 9.5-4.3-1.5-7.5-4.9-7.5-9.5V6z"/><path d="M9 12l2 2 4-4" stroke-linecap="round"/></g></symbol>
+  <symbol id="i-house" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5M10 20v-5h4v5"/></g></symbol>
+  <symbol id="i-family" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="6.5" r="2.5"/><circle cx="16" cy="6.5" r="2.5"/><circle cx="12" cy="13" r="2"/><path d="M3.5 20v-3a4.5 4.5 0 0 1 4.5-4.5M20.5 20v-3a4.5 4.5 0 0 0-4.5-4.5M8.5 20v-1.5a3.5 3.5 0 0 1 7 0V20"/></g></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3 9h18M12 9v11M12 9c-2-4-6-4-6-1.5S10 9 12 9c2 0 6-.5 6-1.5S14 5 12 9z"/></g></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3 21 8l-9 5-9-5z"/><path d="M3 12.5l9 5 9-5M3 16.5l9 5 9-5"/></g></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M15 8.5a3.5 3.5 0 1 0 0 7M7.5 11h6M7.5 13.5h6"/></g></symbol>
+  <symbol id="i-slider" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.2" fill="#fff"/><circle cx="15" cy="17" r="2.2" fill="#fff"/></g></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+ </defs>
+</svg>
+
+<!-- 1 Titel -->
+<section class="s" style="background:var(--night);color:#fff">
+  <div style="display:flex;gap:6mm;align-items:center;background:#fff;border-radius:4mm;padding:3mm 6mm;width:max-content">
+    <img src="../assets/logo_rosenbaum.png" style="height:17mm"><span style="width:1px;height:12mm;background:#E5E5EA"></span><img src="../assets/logo_ebb.png" style="height:12mm">
+  </div>
+  <div style="position:absolute;left:18mm;bottom:24mm;right:110mm">
+    <div class="eyebrow" style="color:#7CC243">Ganzheitliche Finanz- und Vorsorgeberatung</div>
+    <div class="big" style="font-size:54pt;color:#fff">Ihr Geld.<br>Ihr Plan.<br><span class="grad">Ihr Leben.</span></div>
+  </div>
+  <svg style="position:absolute;right:16mm;top:28mm" width="96mm" height="96mm" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="86" fill="none" stroke="#2E8B3E" stroke-width="1.2" opacity=".5"/>
+    <circle cx="100" cy="100" r="62" fill="none" stroke="#7CC243" stroke-width="1.2" opacity=".6"/>
+    <circle cx="100" cy="100" r="38" fill="none" stroke="#B8E08F" stroke-width="1.2" opacity=".8"/>
+    <circle cx="100" cy="100" r="6" fill="#7CC243"/>
+  </svg>
+  <div class="fine" style="position:absolute;left:18mm;bottom:8mm;color:#7C8B82">Werbemitteilung · Rosenbaum Finanzberatung in Kooperation mit Endlich Besser Beraten</div>
+</section>
+
+<!-- 2 Problem -->
+<section class="s">
+  <div class="row" style="align-items:center;height:100%;gap:12mm">
+    <div class="col">
+      <div class="eyebrow">Warum ganzheitlich?</div>
+      <h1>Viele Verträge.<br><span class="grey">Aber ein Plan?</span></h1>
+      <p class="sub">Über die Jahre kommt einiges zusammen: Rentenversicherung, Bausparvertrag, Riester, ein Fondssparplan. Jeder Vertrag hatte seinen Grund. Wir schauen, ob alles zusammen noch zu Ihnen und Ihren Zielen passt.</p>
+    </div>
+    <svg width="120mm" height="110mm" viewBox="0 0 240 220">
+      <g font-size="9" font-weight="600">
+        <rect x="8" y="14" width="78" height="30" rx="9" fill="#F5F5F7"/><text x="47" y="33" text-anchor="middle" fill="#515154">Rentenversicherung</text>
+        <rect x="150" y="6" width="80" height="30" rx="9" fill="#F5F5F7"/><text x="190" y="25" text-anchor="middle" fill="#515154">Bausparvertrag</text>
+        <rect x="0" y="150" width="70" height="30" rx="9" fill="#F5F5F7"/><text x="35" y="169" text-anchor="middle" fill="#515154">Riester</text>
+        <rect x="158" y="160" width="80" height="30" rx="9" fill="#F5F5F7"/><text x="198" y="179" text-anchor="middle" fill="#515154">Fondssparplan</text>
+        <rect x="88" y="190" width="64" height="26" rx="9" fill="#F5F5F7"/><text x="120" y="207" text-anchor="middle" fill="#515154">Tagesgeld</text>
+      </g>
+      <g stroke="#2E8B3E" stroke-width="1.2" stroke-dasharray="3 3" fill="none"><path d="M70 44 103 92"/><path d="M175 36 138 92"/><path d="M50 150 103 122"/><path d="M190 160 140 122"/><path d="M120 190V140"/></g>
+      <circle cx="120" cy="108" r="30" fill="#2E8B3E"/>
+      <text x="120" y="105" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Ihr</text>
+      <text x="120" y="119" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Plan</text>
+    </svg>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>2</span></div>
+</section>
+
+<!-- 3 Drei Fragen -->
+<section class="s">
+  <div class="eyebrow">Unser Ansatz</div>
+  <h2>Drei Fragen, um die sich alles dreht.</h2>
+  <div class="row" style="margin-top:12mm">
+    <div class="col tile"><svg class="ic"><use href="#i-compass"/></svg><h3>Wo stehen Sie?</h3><p>Einkommen, Ausgaben, Vermögen, Verträge, Absicherung, Immobilien. Ein vollständiges Bild statt Einzelteile.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-flag"/></svg><h3>Wo wollen Sie hin?</h3><p>Ruhestand, Eigenheim, Kinder, finanzielle Freiheit. Jedes Ziel mit Betrag und Zeitpunkt.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-heart"/></svg><h3>Was ist Ihnen wichtig?</h3><p>Sicherheit, Flexibilität, Rendite, Nachhaltigkeit. Ihre Werte bestimmen die Strategie.</p></div>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>3</span></div>
+</section>
+
+<!-- 4 Zwei Partner -->
+<section class="s">
+  <div class="eyebrow">Zwei Spezialisten, ein Blick auf Ihre Situation</div>
+  <h2>Jeder macht, was er am besten kann.</h2>
+  <div class="row" style="margin-top:10mm">
+    <div class="col tile" style="background:var(--green-l)">
+      <img src="../assets/logo_rosenbaum.png" style="height:15mm;margin-bottom:4mm">
+      <h3>Rosenbaum Finanzberatung</h3>
+      <div class="row" style="gap:4mm;margin:3mm 0">
+        <div style="display:flex;gap:2mm;align-items:center"><svg width="7mm" height="7mm" style="color:var(--green)"><use href="#i-chart"/></svg><p><b>Geldanlage</b></p></div>
+        <div style="display:flex;gap:2mm;align-items:center"><svg width="7mm" height="7mm" style="color:var(--green)"><use href="#i-sun"/></svg><p><b>Altersvorsorge</b></p></div>
+        <div style="display:flex;gap:2mm;align-items:center"><svg width="7mm" height="7mm" style="color:var(--green)"><use href="#i-house"/></svg><p><b>Finanzierung</b></p></div>
+      </div>
+      <p>Oliver Rosenbaum, Honorar-Finanzanlagenberater (§34h GewO) und Immobiliardarlehensvermittler (§34i GewO).</p>
+    </div>
+    <div class="col tile" style="background:var(--blue-l)">
+      <img src="../assets/logo_ebb.png" style="height:12mm;margin-bottom:5mm">
+      <h3>Endlich Besser Beraten</h3>
+      <div class="row" style="gap:4mm;margin:3mm 0">
+        <div style="display:flex;gap:2mm;align-items:center"><svg width="7mm" height="7mm" style="color:var(--blue)"><use href="#i-shield"/></svg><p><b>Absicherung</b></p></div>
+        <div style="display:flex;gap:2mm;align-items:center"><svg width="7mm" height="7mm" style="color:var(--blue)"><use href="#i-family"/></svg><p><b>Versicherungen</b></p></div>
+      </div>
+      <p>Jan Schnichels, Versicherungsmakler (§34d GewO) in Kall. Er prüft und bewertet Ihre Versicherungsverträge.</p>
+    </div>
+  </div>
+  <p class="fine" style="margin-top:5mm">Zwei eigenständige Unternehmen: Jedes ist für seine Beratung selbst verantwortlich, Verträge schließen Sie mit jedem getrennt. Ihre Daten geben wir nur mit Ihrer Einwilligung weiter.</p>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>4</span></div>
+</section>
+
+<!-- 5 Ablauf -->
+<section class="s">
+  <div class="eyebrow">So läuft es ab</div>
+  <h2>In fünf Schritten zu Ihrem Plan.</h2>
+  <svg width="100%" height="20mm" viewBox="0 0 1000 60" style="margin-top:8mm">
+    <line x1="60" y1="30" x2="940" y2="30" stroke="#E5E5EA" stroke-width="3"/>
+    <line x1="60" y1="30" x2="940" y2="30" stroke="#2E8B3E" stroke-width="3" stroke-dasharray="6 8"/>
+    <g fill="#2E8B3E"><circle cx="60" cy="30" r="9"/><circle cx="280" cy="30" r="9"/><circle cx="500" cy="30" r="9"/><circle cx="720" cy="30" r="9"/><circle cx="940" cy="30" r="9"/></g>
+  </svg>
+  <div class="row" style="gap:4mm">
+    <div class="col"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-chat"/></svg><h3>Kennenlernen</h3><p><span class="pill">kostenfrei</span><br>Ihre Situation, unsere Arbeitsweise, die Kosten. Dann entscheiden Sie.</p></div>
+    <div class="col"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-clip"/></svg><h3>Bestandsaufnahme</h3><p>Ihr komplettes finanzielles Bild, inklusive Risikobereitschaft und Nachhaltigkeit.</p></div>
+    <div class="col"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-route"/></svg><h3>Strategie</h3><p>Reserve, Rentenlücke, Aufteilung Ihres Vermögens, Blick auf Ihre Geldanlagen.</p></div>
+    <div class="col"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-check"/></svg><h3>Umsetzung</h3><p>Auf Ihren Wunsch. Die Empfehlung erhalten Sie schriftlich und begründet.</p></div>
+    <div class="col"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-cycle"/></svg><h3>Begleitung</h3><p>Auf Wunsch regelmäßig, je nach Paket. Jede Änderung entscheiden Sie selbst.</p></div>
+  </div>
+  <p class="fine" style="margin-top:6mm">Beim Paket Start können Kennenlernen und Analyse im selben Termin stattfinden. Das Honorar vereinbaren wir vorher schriftlich. Kein Abschluss ist Bedingung für die Beratung.</p>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>5</span></div>
+</section>
+
+<!-- 6 Themen -->
+<section class="s">
+  <div class="eyebrow">Unsere Themen</div>
+  <h2>Alles, was Ihr Geld betrifft. Gut abgestimmt.</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-top:8mm">
+    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-sun"/></svg><h3>Altersvorsorge</h3><p>Rentenlücke, Altersvorsorgedepot, bestehende Riester- und Fondsverträge.</p></div>
+    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-chart"/></svg><h3>Vermögensaufbau</h3><p>Breit gestreute, kostengünstige Fonds und ETFs. Sparplan oder Einmalanlage.</p></div>
+    <div class="tile" style="padding:5mm"><svg class="ic b" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-shield"/></svg><h3>Absicherung</h3><p>Berufsunfähigkeit, Familie, Haftung. Prüft und bewertet Endlich Besser Beraten.</p></div>
+    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-house"/></svg><h3>Immobilien und Finanzierung</h3><p>Trägt sich das Objekt? Welche Finanzierung passt?</p></div>
+    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-family"/></svg><h3>Kinder und Familie</h3><p>Vorsorge und Vermögen für Ihre Kinder, Zulagen für Familien.</p></div>
+    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-coin"/></svg><h3>Ruhestand</h3><p>Wie aus Vermögen ein verlässliches Einkommen wird: Entnahmeplan und Sicherheit.</p></div>
+  </div>
+  <p class="fine" style="margin-top:4mm">Renten-, Lebens- und Riester-Versicherungen sowie die betriebliche Versorgung bewertet Endlich Besser Beraten.</p>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>6</span></div>
+</section>
+
+<!-- 7 AV-Depot Hero -->
+<section class="s" style="background:var(--night);color:#fff">
+  <div class="eyebrow" style="color:#7CC243">Neu ab 1. Januar 2027</div>
+  <h2 style="color:#fff">Das Altersvorsorgedepot.</h2>
+  <p class="sub" style="color:#B8C4BC">Staatlich gefördert sparen in Fonds und ETFs. Für neue Verträge ersetzt es Riester.</p>
+  <div class="row" style="margin-top:12mm;gap:10mm">
+    <div class="col"><svg class="ic" style="color:#7CC243"><use href="#i-gift"/></svg><div class="big grad" style="font-size:44pt">540 €</div><p style="color:#B8C4BC;margin-top:2mm">Grundzulage pro Jahr, höchstens.<br>50 % auf die ersten 360 €, 25 % auf den Rest bis 1.800 €.</p></div>
+    <div class="col"><svg class="ic" style="color:#7CC243"><use href="#i-family"/></svg><div class="big grad" style="font-size:44pt">+300 €</div><p style="color:#B8C4BC;margin-top:2mm">je Kind mit Kindergeld, pro Jahr.<br>Einmalig 200 € Bonus unter 25 Jahren.</p></div>
+    <div class="col"><svg class="ic" style="color:#7CC243"><use href="#i-layers"/></svg><div class="big" style="font-size:44pt;color:#fff">ETFs</div><p style="color:#B8C4BC;margin-top:2mm">und Fonds, ohne Garantiepflicht. Varianten mit Garantie sind möglich. Auch für viele Selbständige.</p></div>
+  </div>
+  <p class="fine" style="position:absolute;left:18mm;bottom:8mm;color:#7C8B82">Stand der Gesetzgebung Oktober 2026. Auszahlung ab 65 als Rente oder Auszahlplan, bis 30 % als Kapital. Einzelheiten regelt eine Rechtsverordnung.</p>
+</section>
+
+<!-- 8 Zulagen-Grafik -->
+<section class="s">
+  <div class="eyebrow">So viel legt der Staat dazu</div>
+  <h2>Gerade Familien profitieren.</h2>
+  <div class="legend" style="margin-top:6mm"><span><span class="sw" style="background:var(--blue)"></span>Ihr Beitrag pro Jahr</span><span><span class="sw" style="background:var(--green)"></span>Zulagen vom Staat</span></div>
+  <svg width="100%" height="88mm" viewBox="0 0 900 270" style="margin-top:3mm">
+    <g font-size="12" fill="#515154">
+      <text x="0" y="40">360 € · ohne Kinder</text>
+      <text x="0" y="105">600 € · 2 Kinder</text>
+      <text x="0" y="170">1.800 € · ohne Kinder</text>
+      <text x="0" y="235">1.800 € · 2 Kinder</text>
+    </g>
+    <g>
+      <rect x="200" y="20" width="68.6" height="30" rx="4" fill="#3F6FB0"/><rect x="270.6" y="20" width="34.3" height="30" rx="4" fill="#2E8B3E"/>
+      <rect x="200" y="85" width="114.3" height="30" rx="4" fill="#3F6FB0"/><rect x="316.3" y="85" width="160" height="30" rx="4" fill="#2E8B3E"/>
+      <rect x="200" y="150" width="342.9" height="30" rx="4" fill="#3F6FB0"/><rect x="544.9" y="150" width="102.9" height="30" rx="4" fill="#2E8B3E"/>
+      <rect x="200" y="215" width="342.9" height="30" rx="4" fill="#3F6FB0"/><rect x="544.9" y="215" width="217.1" height="30" rx="4" fill="#2E8B3E"/>
+    </g>
+    <g font-size="13" font-weight="700" fill="#1D1D1F">
+      <text x="315" y="41">+180 €</text><text x="382" y="41" font-weight="500" fill="#86868B">50 %</text>
+      <text x="486" y="106">+840 €</text><text x="552" y="106" font-weight="500" fill="#86868B">140 %</text>
+      <text x="658" y="171">+540 €</text><text x="724" y="171" font-weight="500" fill="#86868B">30 %</text>
+      <text x="772" y="236">+1.140 €</text><text x="850" y="236" font-weight="500" fill="#86868B">63 %</text>
+    </g>
+  </svg>
+  <p class="fine">Zulagen in Prozent des eigenen Beitrags. Vereinfachte Rechnung nach Gesetzesstand Oktober 2026, ohne steuerliche Effekte und ohne Berufseinsteigerbonus.</p>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>8</span></div>
+</section>
+
+<!-- 9 AV Beispiel + Riester -->
+<section class="s">
+  <div class="row" style="gap:12mm;height:100%">
+    <div class="col">
+      <div class="eyebrow">Beispiel: 150 € im Monat, 30 Jahre</div>
+      <h2>Die Zulage arbeitet mit.</h2>
+      <div class="legend" style="margin-top:5mm"><span><span class="sw" style="background:var(--blue)"></span>ohne Zulage</span><span><span class="sw" style="background:var(--green)"></span>mit Grundzulage</span></div>
+      <svg width="100%" height="70mm" viewBox="0 0 440 220" style="margin-top:2mm">
+        <line x1="20" y1="190" x2="430" y2="190" stroke="#E5E5EA"/>
+        <rect x="60" y="126" width="70" height="64" rx="4" fill="#3F6FB0"/><rect x="134" y="107" width="70" height="83" rx="4" fill="#2E8B3E"/>
+        <rect x="260" y="74" width="70" height="116" rx="4" fill="#3F6FB0"/><rect x="334" y="40" width="70" height="150" rx="4" fill="#2E8B3E"/>
+        <g font-size="11" font-weight="700" fill="#1D1D1F" text-anchor="middle">
+          <text x="95" y="120">73.700 €</text><text x="169" y="101">95.600 €</text>
+          <text x="295" y="68">133.600 €</text><text x="369" y="34">172.800 €</text>
+        </g>
+        <g font-size="11" fill="#515154" text-anchor="middle"><text x="132" y="208">2 % Rendite pro Jahr</text><text x="332" y="208">5,5 % Rendite pro Jahr</text></g>
+      </svg>
+      <p class="fine">Angenommene Renditen nach Kosten, keine Prognose. Bei Umschichtung in sicherere Anlagen vor Rentenbeginn kann die Rendite niedriger ausfallen. Auszahlungen sind einkommensteuerpflichtig. Fonds und ETFs können an Wert verlieren.</p>
+    </div>
+    <div class="col" style="display:flex;flex-direction:column;justify-content:center">
+      <div class="tile" style="background:#FFF6E5">
+        <svg class="ic" style="color:#B26A00"><use href="#i-eye"/></svg>
+        <h3>Sie haben schon einen Riester-Vertrag?</h3>
+        <p>Dann sprechen Sie mit uns, <b>bevor</b> Sie etwas Neues abschließen. Ein neuer Vertrag ab 2027 stellt automatisch alle bestehenden Riester-Verträge auf das neue Recht um.</p>
+        <p style="margin-top:2mm">Bei Riester-Fondssparplänen prüfen wir gemeinsam, ob Weiterführen, Ruhenlassen oder Übertragen am besten ist. Riester-Rentenversicherungen bewertet Endlich Besser Beraten.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>9</span></div>
+</section>
+
+<!-- 10 Kosten -->
+<section class="s">
+  <div class="row" style="gap:10mm;align-items:center;height:100%">
+    <div style="width:85mm">
+      <div class="eyebrow">Vermögensaufbau</div>
+      <h2>Kosten sind der Teil der Rendite, den Sie selbst beeinflussen.</h2>
+      <div class="big grad" style="font-size:40pt;margin-top:8mm">51.000 €</div>
+      <p style="margin-top:2mm">Unterschied nach 30 Jahren zwischen 0,3 % und 2,0 % laufenden Kosten. Mehr als zwei Drittel der eingezahlten Summe.</p>
+    </div>
+    <div class="col">
+      <p style="font-weight:600;color:var(--ink)">200 € im Monat, 30 Jahre, 6 % Rendite vor Kosten angenommen. Eingezahlt: 72.000 €.</p>
+      <svg width="100%" height="72mm" viewBox="0 0 800 250" style="margin-top:3mm">
+        <g font-size="13" fill="#515154"><text x="0" y="38">0,3 % Kosten</text><text x="0" y="98">0,8 % Kosten</text><text x="0" y="158">1,5 % Kosten</text><text x="0" y="218">2,0 % Kosten</text></g>
+        <rect x="110" y="16" width="560" height="34" rx="5" fill="#2E8B3E"/>
+        <rect x="110" y="76" width="509.8" height="34" rx="5" fill="#B9C4BD"/>
+        <rect x="110" y="136" width="448.2" height="34" rx="5" fill="#B9C4BD"/>
+        <rect x="110" y="196" width="409.7" height="34" rx="5" fill="#8E9A93"/>
+        <g font-size="14" font-weight="700" fill="#1D1D1F"><text x="680" y="39">189.753 €</text><text x="630" y="99">172.745 €</text><text x="568" y="159">151.877 €</text><text x="530" y="219">138.810 €</text></g>
+      </svg>
+      <p class="fine">Vereinfachtes Rechenbeispiel ohne Steuern. Bei Honorarberatung kommt das vereinbarte Honorar hinzu; bei provisionsbasierten Produkten ist die Vergütung des Vermittlers in den laufenden Kosten enthalten. Simulationen sind kein verlässlicher Indikator für künftige Ergebnisse. Fonds und ETFs können an Wert verlieren.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>10</span></div>
+</section>
+
+<!-- 11 Depot-Ansatz -->
+<section class="s">
+  <div class="eyebrow">Ihr Depot</div>
+  <h2>Einfach. Breit gestreut. Passend zu Ihnen.</h2>
+  <div class="row" style="margin-top:12mm">
+    <div class="col tile"><svg class="ic"><use href="#i-layers"/></svg><h3>Breit gestreut</h3><p>Tausende Unternehmen weltweit statt einzelner Wetten. Schwankungen gleichen sich besser aus.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-coin"/></svg><h3>Kostengünstig</h3><p>ETFs und Fonds mit niedrigen laufenden Kosten, provisionsfreie Anteilsklassen.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-slider"/></svg><h3>Passend zu Ihnen</h3><p>Die Mischung aus Aktien und sicheren Anlagen richtet sich nach Ihren Zielen und Ihrer Risikobereitschaft.</p></div>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>11</span></div>
+</section>
+
+<!-- 12 Vergütung -->
+<section class="s">
+  <div class="eyebrow">Transparenz</div>
+  <h2>So werden wir bezahlt.</h2>
+  <div class="row" style="margin-top:9mm">
+    <div class="col tile" style="background:var(--green-l)"><svg class="ic"><use href="#i-chart"/></svg><h3>Geldanlage und Altersvorsorge</h3><p>Rosenbaum Finanzberatung erhält <b>keine Provisionen</b> von Produktanbietern. Sie bezahlen ein Honorar, das wir vorher schriftlich vereinbaren.</p></div>
+    <div class="col tile" style="background:var(--blue-l)"><svg class="ic b"><use href="#i-shield"/></svg><h3>Versicherungen</h3><p>Endlich Besser Beraten vermittelt Versicherungen. Dafür zahlt der Versicherer eine Courtage.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-house"/></svg><h3>Baufinanzierung</h3><p>Die Vergütung für die Vermittlung eines Darlehens nennen wir Ihnen vorab.</p></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;margin-top:7mm;gap:3mm;align-items:center">
+    <span class="pill">Kennenlernen kostenfrei</span><span class="pill" style="background:var(--soft);color:var(--ink2)">Start: für Sparpläne und kleinere Beträge</span><span class="pill" style="background:var(--soft);color:var(--ink2)">Strategie: ganzheitliche Analyse mit Plan</span><span class="pill" style="background:var(--soft);color:var(--ink2)">Vermögen: mit regelmäßigen Überprüfungen</span>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>12</span></div>
+</section>
+
+<!-- 13 Kontakt + Pflicht -->
+<section class="s">
+  <div class="row" style="gap:10mm">
+    <div style="width:110mm">
+      <div class="eyebrow">Kontakt</div>
+      <h2>Lassen Sie uns sprechen.</h2>
+      <p class="sub" style="font-size:11pt">Das erste Gespräch ist kostenfrei und unverbindlich.</p>
+      <div class="tile" style="margin-top:6mm;padding:5mm 6mm;background:var(--green-l)"><img src="../assets/logo_rosenbaum.png" style="height:12mm"><p style="margin-top:2mm"><b>Oliver Rosenbaum</b> · Geldanlage, Altersvorsorge, Finanzierung<br>⟦KONTAKT-OLIVER⟧</p></div>
+      <div class="tile" style="margin-top:4mm;padding:5mm 6mm;background:var(--blue-l)"><img src="../assets/logo_ebb.png" style="height:9mm"><p style="margin-top:2mm"><b>Jan Schnichels</b> · Versicherungen und Absicherung<br>Aachener Str. 34, 53925 Kall · 02441 99 47 780 · 0176 23 565 305<br>info@endlich-besser-beraten.de · www.endlich-besser-beraten.de</p></div>
+    </div>
+    <div class="col">
+      <div class="eyebrow" style="color:var(--mute)">Rechtliche Hinweise</div>
+      <p class="fine" style="font-size:6.8pt">⟦PFLICHTHINWEIS⟧</p>
+      <p class="fine" style="font-size:6.8pt;margin-top:2mm">Diese Präsentation ist eine Werbemitteilung. Sie dient der allgemeinen Information und ist keine Anlageberatung und kein Angebot. Eine Anlageempfehlung erfolgt ausschließlich nach einer persönlichen Beratung auf Grundlage Ihrer individuellen Situation. Investmentfonds und ETFs unterliegen Kursschwankungen und können an Wert verlieren. Rechenbeispiele beruhen auf Annahmen und sind keine Prognose. Angaben zum Altersvorsorgedepot nach Stand der Gesetzgebung Oktober 2026; Einzelheiten werden durch Rechtsverordnung geregelt.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>13</span></div>
+</section>
+</body></html>
