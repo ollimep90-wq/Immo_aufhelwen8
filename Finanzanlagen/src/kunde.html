@@ -55,11 +55,14 @@ svg text{font-family:var(--text)}
   <symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M15 8.5a3.5 3.5 0 1 0 0 7M7.5 11h6M7.5 13.5h6"/></g></symbol>
   <symbol id="i-slider" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.2" fill="#fff"/><circle cx="15" cy="17" r="2.2" fill="#fff"/></g></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.5c0 1.4 2.5 3 5.5 3s5.5-1.6 5.5-3V11M21.5 9v5"/></g></symbol>
+  <symbol id="i-hex" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="M10 8.5h3.2a1.8 1.8 0 0 1 0 3.5H10zM10 12h3.7a1.8 1.8 0 0 1 0 3.5H10zM10 8.5v7M11.5 7v1.5M11.5 15.5V17" stroke-linecap="round"/></g></symbol>
+  <symbol id="i-safe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="14" rx="2"/><circle cx="12" cy="11.5" r="3"/><path d="M12 8.5v-1M12 15.5v-1M6.5 18.5v1.5M17.5 18.5v1.5" stroke-linecap="round"/></g></symbol>
  </defs>
 </svg>
 
 <!-- 1 Titel -->
-<section class="s" style="background:var(--night);color:#fff">
+<section id="f1" class="s" style="background:var(--night);color:#fff">
   <div style="display:flex;gap:6mm;align-items:center;background:#fff;border-radius:4mm;padding:3mm 6mm;width:max-content">
     <img src="../assets/logo_rosenbaum.png" style="height:17mm"><span style="width:1px;height:12mm;background:#E5E5EA"></span><img src="../assets/logo_ebb.png" style="height:12mm">
   </div>
@@ -75,9 +78,8 @@ svg text{font-family:var(--text)}
   </svg>
   <div class="fine" style="position:absolute;left:18mm;bottom:8mm;color:#7C8B82">Werbemitteilung · Rosenbaum Finanzberatung in Kooperation mit Endlich Besser Beraten</div>
 </section>
-
 <!-- 2 Problem -->
-<section class="s">
+<section id="f2" class="s">
   <div class="row" style="align-items:center;height:100%;gap:12mm">
     <div class="col">
       <div class="eyebrow">Warum ganzheitlich?</div>
@@ -100,9 +102,8 @@ svg text{font-family:var(--text)}
   </div>
   <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>2</span></div>
 </section>
-
 <!-- 3 Drei Fragen -->
-<section class="s">
+<section id="f3" class="s">
   <div class="eyebrow">Unser Ansatz</div>
   <h2>Drei Fragen, um die sich alles dreht.</h2>
   <div class="row" style="margin-top:12mm">
@@ -112,9 +113,8 @@ svg text{font-family:var(--text)}
   </div>
   <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>3</span></div>
 </section>
-
 <!-- 4 Zwei Partner -->
-<section class="s">
+<section id="f4" class="s">
   <div class="eyebrow">Wer was für Sie macht</div>
   <h2>Zwei Spezialisten. Ein Blick auf Ihre Situation.</h2>
   <div class="row" style="margin-top:10mm">
@@ -141,9 +141,8 @@ svg text{font-family:var(--text)}
   <p class="fine" style="margin-top:5mm">Zwei eigenständige Unternehmen: Jedes ist für seine Beratung selbst verantwortlich, Verträge schließen Sie mit jedem getrennt. Ihre Daten geben wir nur mit Ihrer Einwilligung weiter.</p>
   <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>4</span></div>
 </section>
-
 <!-- 5 Ablauf -->
-<section class="s">
+<section id="f5" class="s">
   <div class="eyebrow">So läuft es ab</div>
   <h2>In fünf Schritten zu Ihrem Plan.</h2>
   <svg width="100%" height="20mm" viewBox="0 0 1000 60" style="margin-top:8mm">
@@ -161,26 +160,54 @@ svg text{font-family:var(--text)}
   <p class="fine" style="margin-top:6mm">Bei kleineren Anliegen können Kennenlernen und Bestandsaufnahme im selben Termin stattfinden. Das Honorar vereinbaren wir vorher schriftlich. Kein Abschluss ist Bedingung für die Beratung.</p>
   <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>5</span></div>
 </section>
-
-<!-- 6 Themen -->
-<section class="s">
-  <div class="eyebrow">Unsere Themen</div>
-  <h2>Alles, was Ihr Geld betrifft. Gut abgestimmt.</h2>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-top:8mm">
-    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-sun"/></svg><h3>Altersvorsorge</h3><p>Rentenlücke, Altersvorsorgedepot, bestehende Riester- und Fondsverträge.</p></div>
-    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-chart"/></svg><h3>Vermögensaufbau</h3><p>Breit gestreute, kostengünstige Fonds und ETFs. Sparplan oder Einmalanlage.</p></div>
-    <div class="tile" style="padding:5mm"><svg class="ic b" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-shield"/></svg><h3>Absicherung</h3><p>Berufsunfähigkeit, Familie, Haftung. Prüft und bewertet Endlich Besser Beraten.</p></div>
-    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-house"/></svg><h3>Immobilien und Finanzierung</h3><p>Trägt sich das Objekt? Welche Finanzierung passt?</p></div>
-    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-family"/></svg><h3>Kinder und Familie</h3><p>Vorsorge und Vermögen für Ihre Kinder, Zulagen für Familien.</p></div>
-    <div class="tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-coin"/></svg><h3>Ruhestand</h3><p>Wie aus Vermögen ein verlässliches Einkommen wird: Entnahmeplan und Sicherheit.</p></div>
+<!-- 6 Fundament -->
+<section id="f6" class="s">
+  <div class="eyebrow">Zwei Ziele, ein Fundament</div>
+  <h2>Altersvorsorge und Vermögensaufbau sind nicht dasselbe.</h2>
+  <div class="row" style="margin-top:7mm;gap:9mm;align-items:flex-start">
+    <svg width="112mm" height="92mm" viewBox="0 0 300 245">
+      <path d="M150 8 288 70H12z" fill="#E9F5EC"/>
+      <text x="150" y="52" text-anchor="middle" font-size="12" font-weight="700" fill="#1D1D1F">Ihre Ziele</text>
+      <rect x="22" y="80" width="122" height="96" rx="8" fill="#3F6FB0"/>
+      <rect x="156" y="80" width="122" height="96" rx="8" fill="#2E8B3E"/>
+      <text x="83" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#fff">Altersvorsorge</text>
+      <text x="83" y="140" text-anchor="middle" font-size="9.5" fill="#E7EEF8">gebunden · gefördert</text>
+      <text x="217" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#fff">Vermögensaufbau</text>
+      <text x="217" y="140" text-anchor="middle" font-size="9.5" fill="#E9F5EC">flexibel · verfügbar</text>
+      <rect x="12" y="186" width="276" height="52" rx="8" fill="#1D1D1F"/>
+      <text x="150" y="208" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Fundament</text>
+      <text x="150" y="226" text-anchor="middle" font-size="9.5" fill="#C7CCC9">Notreserve · Absicherung der großen Risiken</text>
+    </svg>
+    <div class="col">
+      <table style="width:100%;border-collapse:collapse;font-size:9.5pt">
+        <tr style="color:var(--mute);font-size:8pt;text-transform:uppercase;letter-spacing:.06em"><td style="padding:2mm 0"></td><td style="padding:2mm 2mm;color:var(--blue);font-weight:700">Altersvorsorge</td><td style="padding:2mm 2mm;color:var(--green);font-weight:700">Vermögensaufbau</td></tr>
+        <tr style="border-top:1px solid var(--line)"><td style="padding:2.2mm 0;color:var(--mute)">Wofür</td><td style="padding:2.2mm 2mm">Einkommen im Ruhestand</td><td style="padding:2.2mm 2mm">Ihre Ziele und Freiheit</td></tr>
+        <tr style="border-top:1px solid var(--line)"><td style="padding:2.2mm 0;color:var(--mute)">Verfügbar</td><td style="padding:2.2mm 2mm">ab Rentenbeginn</td><td style="padding:2.2mm 2mm">jederzeit</td></tr>
+        <tr style="border-top:1px solid var(--line)"><td style="padding:2.2mm 0;color:var(--mute)">Staat hilft</td><td style="padding:2.2mm 2mm">Zulagen und Steuervorteile</td><td style="padding:2.2mm 2mm">Freibeträge</td></tr>
+        <tr style="border-top:1px solid var(--line)"><td style="padding:2.2mm 0;color:var(--mute)">Bausteine</td><td style="padding:2.2mm 2mm">Altersvorsorgedepot, betriebliche Versorgung</td><td style="padding:2.2mm 2mm">Depot, Immobilien, Sie selbst</td></tr>
+      </table>
+      <p style="margin-top:5mm"><b>Erst das Fundament:</b> eine Notreserve von drei bis sechs Monatsausgaben auf dem Tagesgeld und die Absicherung von Berufsunfähigkeit und Familie über Endlich Besser Beraten. Dann bauen wir darauf auf.</p>
+    </div>
   </div>
-  <p class="fine" style="margin-top:4mm">Renten-, Lebens- und Riester-Versicherungen sowie die betriebliche Versorgung bewertet Endlich Besser Beraten.</p>
   <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>6</span></div>
 </section>
-
+<!-- 7 Anlageklassen -->
+<section id="f7" class="s">
+  <div class="eyebrow">Fünf Anlageklassen, ein Gesamtbild</div>
+  <h2>Wo Ihr Geld arbeiten kann.</h2>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4mm;margin-top:8mm">
+    <a href="#f6" class="tile" style="padding:5mm;text-decoration:none;color:inherit;display:block"><svg class="ic" style="width:10mm;height:10mm;margin-bottom:3mm"><use href="#i-safe"/></svg><h3>Liquidität</h3><p style="font-size:8.5pt">Tagesgeld, Geldmarkt. Ihre Reserve.</p><p style="font-size:8pt;margin-top:3mm">Chance <span style="letter-spacing:1px;color:var(--green)">●</span><span style="letter-spacing:1px;color:#D2D7D3">●●●●</span><br>Schwankung <span style="letter-spacing:1px;color:var(--green)">●</span><span style="letter-spacing:1px;color:#D2D7D3">●●●●</span><br>Verfügbar <span style="letter-spacing:1px;color:var(--green)">●●●●●</span><span style="letter-spacing:1px;color:#D2D7D3"></span></p><p style="font-size:8pt;margin-top:3mm;color:var(--green);font-weight:600">Fundament ›</p></a>
+    <a href="#f11" class="tile" style="padding:5mm;text-decoration:none;color:inherit;display:block"><svg class="ic" style="width:10mm;height:10mm;margin-bottom:3mm"><use href="#i-chart"/></svg><h3>Fonds und ETFs</h3><p style="font-size:8.5pt">Weltweit gestreut, als Sparplan oder Einmalanlage.</p><p style="font-size:8pt;margin-top:3mm">Chance <span style="letter-spacing:1px;color:var(--green)">●●●●</span><span style="letter-spacing:1px;color:#D2D7D3">●</span><br>Schwankung <span style="letter-spacing:1px;color:var(--green)">●●●●</span><span style="letter-spacing:1px;color:#D2D7D3">●</span><br>Verfügbar <span style="letter-spacing:1px;color:var(--green)">●●●●</span><span style="letter-spacing:1px;color:#D2D7D3">●</span></p><p style="font-size:8pt;margin-top:3mm;color:var(--green);font-weight:600">Wir beraten ›</p></a>
+    <a href="#f13" class="tile" style="padding:5mm;text-decoration:none;color:inherit;display:block"><svg class="ic" style="width:10mm;height:10mm;margin-bottom:3mm"><use href="#i-house"/></svg><h3>Immobilien</h3><p style="font-size:8.5pt">Eigenheim oder Kapitalanlage, meist mit Finanzierung.</p><p style="font-size:8pt;margin-top:3mm">Chance <span style="letter-spacing:1px;color:var(--green)">●●●</span><span style="letter-spacing:1px;color:#D2D7D3">●●</span><br>Schwankung <span style="letter-spacing:1px;color:var(--green)">●●●</span><span style="letter-spacing:1px;color:#D2D7D3">●●</span><br>Verfügbar <span style="letter-spacing:1px;color:var(--green)">●</span><span style="letter-spacing:1px;color:#D2D7D3">●●●●</span></p><p style="font-size:8pt;margin-top:3mm;color:var(--green);font-weight:600">Wir rechnen und finanzieren ›</p></a>
+    <a href="#f14" class="tile" style="padding:5mm;text-decoration:none;color:inherit;display:block"><svg class="ic" style="width:10mm;height:10mm;margin-bottom:3mm;color:#B26A00"><use href="#i-hex"/></svg><h3>Krypto</h3><p style="font-size:8.5pt">Bitcoin und Co. Hohe Chancen, hohes Risiko.</p><p style="font-size:8pt;margin-top:3mm">Chance <span style="letter-spacing:1px;color:var(--green)">●●●●●</span><span style="letter-spacing:1px;color:#D2D7D3"></span><br>Schwankung <span style="letter-spacing:1px;color:var(--green)">●●●●●</span><span style="letter-spacing:1px;color:#D2D7D3"></span><br>Verfügbar <span style="letter-spacing:1px;color:var(--green)">●●●●</span><span style="letter-spacing:1px;color:#D2D7D3">●</span></p><p style="font-size:8pt;margin-top:3mm;color:#B26A00;font-weight:600">Wir ordnen ein ›</p></a>
+    <a href="#f15" class="tile" style="padding:5mm;text-decoration:none;color:inherit;display:block;background:var(--green-l)"><svg class="ic" style="width:10mm;height:10mm;margin-bottom:3mm"><use href="#i-cap"/></svg><h3>Sie selbst</h3><p style="font-size:8.5pt">Wissen, Weiterbildung, Einkommen.</p><p style="font-size:8pt;margin-top:3mm">Chance <span style="letter-spacing:1px;color:var(--green)">●●●●●</span><span style="letter-spacing:1px;color:#D2D7D3"></span><br>Schwankung <span style="letter-spacing:1px;color:var(--green)">●</span><span style="letter-spacing:1px;color:#D2D7D3">●●●●</span><br>Verfügbar <span style="letter-spacing:1px;color:var(--green)">●●●●●</span><span style="letter-spacing:1px;color:#D2D7D3"></span></p><p style="font-size:8pt;margin-top:3mm;color:var(--green);font-weight:600">Die erste Investition ›</p></a>
+  </div>
+  <p class="fine" style="margin-top:4mm">Vereinfachte, allgemeine Einordnung zur Orientierung, keine Anlageempfehlung. Jede Anlageklasse kann an Wert verlieren; welche Mischung zu Ihnen passt, ergibt sich aus Ihrer persönlichen Situation.</p>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>7</span></div>
+</section>
 <!-- 7 AV-Depot Hero -->
-<section class="s" style="background:var(--night);color:#fff">
-  <div class="eyebrow" style="color:#7CC243">Neu ab 1. Januar 2027</div>
+<section id="f8" class="s" style="background:var(--night);color:#fff">
+  <div class="eyebrow" style="color:#7CC243">Altersvorsorge · neu ab 1. Januar 2027</div>
   <h2 style="color:#fff">Das Altersvorsorgedepot.</h2>
   <p class="sub" style="color:#B8C4BC">Staatlich gefördert sparen in Fonds und ETFs. Für neue Verträge ersetzt es Riester.</p>
   <div class="row" style="margin-top:12mm;gap:10mm">
@@ -189,11 +216,10 @@ svg text{font-family:var(--text)}
     <div class="col"><svg class="ic" style="color:#7CC243"><use href="#i-layers"/></svg><h3 style="color:#fff;font-size:20pt;margin-bottom:3mm">Fonds und ETFs</h3><p style="color:#E3EAE5">Ohne Garantie: Der Wert kann schwanken und unter die Summe Ihrer Einzahlungen fallen. Varianten mit Garantie sind möglich. Auch für viele Selbständige; die Voraussetzungen klären wir mit Ihnen.</p></div>
   </div>
   <p class="fine" style="position:absolute;left:18mm;bottom:8mm;color:#7C8B82">Stand der Gesetzgebung Oktober 2026. Auszahlung ab 65 als Rente oder Auszahlplan, bis 30 % als Kapital. Einzelheiten regelt eine Rechtsverordnung. Fonds und ETFs können an Wert verlieren.</p>
-  <div class="foot" style="color:#7C8B82;bottom:3mm"><span></span><span>7</span></div>
+  <div class="foot" style="color:#7C8B82;bottom:3mm"><span></span><span>8</span></div>
 </section>
-
 <!-- 8 Zulagen-Grafik -->
-<section class="s">
+<section id="f9" class="s">
   <div class="eyebrow">So viel legt der Staat dazu</div>
   <h2>Gerade Familien profitieren.</h2>
   <div class="legend" style="margin-top:6mm"><span><span class="sw" style="background:var(--blue)"></span>Ihr Beitrag pro Jahr</span><span><span class="sw" style="background:var(--green)"></span>Zulagen vom Staat</span></div>
@@ -218,11 +244,10 @@ svg text{font-family:var(--text)}
     </g>
   </svg>
   <p class="fine">Zulagen in Prozent des eigenen Beitrags. Die Kinderzulage beträgt höchstens so viel, wie Sie selbst einzahlen. Vereinfachte Rechnung nach Gesetzesstand Oktober 2026, ohne steuerliche Effekte und ohne Berufseinsteigerbonus.</p>
-  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>8</span></div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>9</span></div>
 </section>
-
 <!-- 9 AV Beispiel + Riester -->
-<section class="s">
+<section id="f10" class="s">
   <div class="row" style="gap:12mm;height:100%">
     <div class="col">
       <div class="eyebrow">Beispiel: 150 € im Monat, 30 Jahre</div>
@@ -247,16 +272,27 @@ svg text{font-family:var(--text)}
         <p>Dann sprechen Sie mit uns, <b>bevor</b> Sie etwas Neues abschließen. Ein neuer Vertrag ab 2027 stellt automatisch alle bestehenden Riester-Verträge auf das neue Recht um.</p>
         <p style="margin-top:2mm">Bei Riester-Fondssparplänen prüfen wir gemeinsam, ob Weiterführen, Ruhenlassen oder Übertragen am besten ist. Riester-Rentenversicherungen bewertet Endlich Besser Beraten.</p>
       </div>
+      <div class="tile" style="background:var(--blue-l);margin-top:4mm;padding:5mm 6mm"><svg class="ic b" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-shield"/></svg><h3>Für Unternehmer und Arbeitgeber</h3><p>Betriebliche Versorgung, zum Beispiel über eine Pensionsfonds-Unterstützungskasse (PUK). Dazu berät Endlich Besser Beraten.</p></div>
     </div>
   </div>
-  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>9</span></div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>10</span></div>
 </section>
-
+<!-- 11 Depot-Ansatz -->
+<section id="f11" class="s">
+  <div class="eyebrow">Anlageklasse Fonds und ETFs</div>
+  <h2>Einfach. Breit gestreut. Passend zu Ihnen.</h2>
+  <div class="row" style="margin-top:12mm">
+    <div class="col tile"><svg class="ic"><use href="#i-layers"/></svg><h3>Breit gestreut</h3><p>Tausende Unternehmen weltweit statt einzelner Wetten. Schwankungen gleichen sich besser aus.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-coin"/></svg><h3>Kostengünstig</h3><p>ETFs und Fonds mit niedrigen laufenden Kosten, provisionsfreie Anteilsklassen.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-slider"/></svg><h3>Passend zu Ihnen</h3><p>Die Mischung aus Aktien und sicheren Anlagen richtet sich nach Ihren Zielen und Ihrer Risikobereitschaft.</p></div>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>11</span></div>
+</section>
 <!-- 10 Kosten -->
-<section class="s">
+<section id="f12" class="s">
   <div class="row" style="gap:10mm;align-items:center;height:100%">
     <div style="width:85mm">
-      <div class="eyebrow">Vermögensaufbau</div>
+      <div class="eyebrow">Fonds und ETFs · Kosten</div>
       <h2>Die Rendite kennt niemand vorher. Die Kosten schon.</h2>
       <div class="big grad" style="font-size:36pt;margin-top:8mm">rund 51.000 €</div>
       <p style="margin-top:2mm">Unterschied nach 30 Jahren zwischen 0,3 % und 2,0 % laufenden Kosten, vor einem Beratungshonorar. <b>Angenommene Rendite, keine Prognose. Fonds und ETFs können an Wert verlieren.</b></p>
@@ -274,23 +310,60 @@ svg text{font-family:var(--text)}
       <p class="fine">Vereinfachtes Rechenbeispiel ohne Steuern. Bei Honorarberatung kommt das vereinbarte Honorar hinzu; bei provisionsbasierten Produkten ist die Vergütung des Vermittlers in den laufenden Kosten enthalten. Die angenommene Rendite ist keine Prognose. Simulationen sind kein verlässlicher Indikator für künftige Ergebnisse.</p>
     </div>
   </div>
-  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>10</span></div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>12</span></div>
 </section>
-
-<!-- 11 Depot-Ansatz -->
-<section class="s">
-  <div class="eyebrow">Ihr Depot</div>
-  <h2>Einfach. Breit gestreut. Passend zu Ihnen.</h2>
-  <div class="row" style="margin-top:12mm">
-    <div class="col tile"><svg class="ic"><use href="#i-layers"/></svg><h3>Breit gestreut</h3><p>Tausende Unternehmen weltweit statt einzelner Wetten. Schwankungen gleichen sich besser aus.</p></div>
-    <div class="col tile"><svg class="ic"><use href="#i-coin"/></svg><h3>Kostengünstig</h3><p>ETFs und Fonds mit niedrigen laufenden Kosten, provisionsfreie Anteilsklassen.</p></div>
-    <div class="col tile"><svg class="ic"><use href="#i-slider"/></svg><h3>Passend zu Ihnen</h3><p>Die Mischung aus Aktien und sicheren Anlagen richtet sich nach Ihren Zielen und Ihrer Risikobereitschaft.</p></div>
+<!-- 13 Immobilien -->
+<section id="f13" class="s">
+  <div class="eyebrow">Anlageklasse Immobilien</div>
+  <h2>Erst rechnen, dann kaufen.</h2>
+  <div class="row" style="margin-top:10mm;gap:5mm">
+    <div class="col tile" style="padding:6mm 5mm"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-compass"/></svg><h3>1 · Objekt</h3><p>Sie haben ein Objekt gefunden oder suchen eines. Bei der Suche arbeiten wir mit Partnern.</p></div>
+    <div class="col tile" style="padding:6mm 5mm"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-clip"/></svg><h3>2 · Prüfen</h3><p>Kaufpreis, Miete, Kosten, Rendite. Trägt sich das Objekt, auch wenn die Zinsen steigen?</p></div>
+    <div class="col tile" style="padding:6mm 5mm"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-coin"/></svg><h3>3 · Finanzieren</h3><p>Eigenkapital, Zinsbindung, Tilgung, Förderkredite. Rosenbaum Finanzberatung vermittelt die Finanzierung.</p></div>
+    <div class="col tile" style="padding:6mm 5mm"><svg class="ic" style="width:10mm;height:10mm"><use href="#i-layers"/></svg><h3>4 · Einordnen</h3><p>Passt die Immobilie zu Ihrem Gesamtvermögen? Bleiben Reserve und Streuung erhalten? Die Gebäudeversicherung prüft Endlich Besser Beraten.</p></div>
   </div>
-  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>11</span></div>
+  <div class="note-like" style="margin-top:7mm;background:var(--green-l);border-radius:4mm;padding:4mm 6mm"><p><b>Schon Eigentümer?</b> Endet Ihre Zinsbindung in den nächsten Jahren, planen wir die Anschlussfinanzierung rechtzeitig.</p></div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>13</span></div>
 </section>
-
+<!-- 14 Krypto -->
+<section id="f14" class="s">
+  <div class="eyebrow" style="color:#B26A00">Anlageklasse Krypto</div>
+  <h2>Spannend. Aber nur mit Geld, dessen Verlust Sie verkraften.</h2>
+  <div class="row" style="margin-top:9mm">
+    <div class="col tile" style="background:#FFF6E5"><h3>Starke Schwankungen</h3><p>Kursverluste von mehr als der Hälfte innerhalb kurzer Zeit hat es mehrfach gegeben.</p></div>
+    <div class="col tile" style="background:#FFF6E5"><h3>Totalverlust möglich</h3><p>Kryptowerte werfen keine laufenden Erträge ab wie Unternehmen oder Immobilien. Plattformen und Projekte können scheitern.</p></div>
+    <div class="col tile" style="background:#FFF6E5"><h3>Verwahrung und Steuern</h3><p>Zugangsdaten, Plattformrisiko und steuerliche Besonderheiten gehören zur Entscheidung dazu.</p></div>
+  </div>
+  <div class="tile" style="margin-top:6mm;padding:5mm 6mm"><h3>So gehen wir damit um</h3><p>Wir berücksichtigen vorhandene Kryptowerte in Ihrem Gesamtbild, vor allem beim Risiko. Eine Empfehlung zu einzelnen Kryptowerten geben wir nicht, dafür ist eine eigene Erlaubnis nötig. Wichtig ist, dass Ihr Fundament steht und Krypto nur ein Anteil ist, dessen Verlust Ihre Ziele nicht gefährdet.</p></div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>14</span></div>
+</section>
+<!-- 15 Sie selbst -->
+<section id="f15" class="s">
+  <div class="row" style="gap:12mm;align-items:center;height:100%">
+    <div class="col">
+      <div class="eyebrow">Anlageklasse Sie selbst</div>
+      <h2>Die erste Investition: in Sie selbst.</h2>
+      <p class="sub" style="font-size:11.5pt">Gerade am Anfang bringt ein höheres Einkommen oft mehr als jede Rendite. Wissen und Weiterbildung zahlen sich ein Leben lang aus.</p>
+      <div class="row" style="margin-top:7mm;gap:4mm">
+        <div class="col tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-cap"/></svg><h3>Weiterbildung</h3><p style="font-size:9pt">Qualifikation, Meisterbrief, Studium. Berufliche Fortbildungskosten können steuerlich absetzbar sein; das klärt Ihr Steuerberater.</p></div>
+        <div class="col tile" style="padding:5mm"><svg class="ic" style="width:9mm;height:9mm;margin-bottom:2mm"><use href="#i-chat"/></svg><h3>Finanzwissen</h3><p style="font-size:9pt">Wir erklären jede Entscheidung so, dass Sie sie selbst verstehen und vertreten können.</p></div>
+      </div>
+    </div>
+    <div style="width:118mm">
+      <p style="font-weight:600;color:var(--ink)">Ein Rechenbeispiel pro Jahr</p>
+      <svg width="100%" height="56mm" viewBox="0 0 560 180" style="margin-top:2mm">
+        <text x="0" y="30" font-size="12" fill="#515154">10.000 € Depot, 5 % Rendite</text>
+        <rect x="0" y="40" width="72.2" height="34" rx="5" fill="#3F6FB0"/><text x="82" y="63" font-size="14" font-weight="700" fill="#1D1D1F">500 €</text>
+        <text x="0" y="112" font-size="12" fill="#515154">300 € mehr Netto im Monat</text>
+        <rect x="0" y="122" width="520" height="34" rx="5" fill="#2E8B3E"/><text x="12" y="145" font-size="14" font-weight="700" fill="#fff">3.600 €</text>
+      </svg>
+      <p class="fine">Vereinfachtes Beispiel mit angenommenen Werten, keine Prognose. Fonds und ETFs können an Wert verlieren.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>15</span></div>
+</section>
 <!-- 12 Vergütung -->
-<section class="s">
+<section id="f16" class="s">
   <div class="eyebrow">Transparenz</div>
   <h2>So werden wir bezahlt.</h2>
   <div class="row" style="margin-top:9mm">
@@ -301,11 +374,10 @@ svg text{font-family:var(--text)}
   <div style="display:flex;flex-wrap:wrap;margin-top:7mm;gap:3mm;align-items:center">
     <span class="pill">Kennenlernen kostenfrei</span><span class="pill" style="background:var(--soft);color:var(--ink2)">Start: für Sparpläne und kleinere Beträge</span><span class="pill" style="background:var(--soft);color:var(--ink2)">Strategie: ganzheitliche Analyse mit Plan</span><span class="pill" style="background:var(--soft);color:var(--ink2)">Vermögen: mit regelmäßigen Überprüfungen</span>
   </div>
-  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>12</span></div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>16</span></div>
 </section>
-
 <!-- 13 Kontakt + Pflicht -->
-<section class="s">
+<section id="f17" class="s">
   <div class="row" style="gap:10mm">
     <div style="width:110mm">
       <div class="eyebrow">Kontakt</div>
@@ -320,6 +392,6 @@ svg text{font-family:var(--text)}
       <p class="fine" style="font-size:6.8pt;margin-top:2mm">Diese Präsentation ist eine Werbemitteilung. Sie dient der allgemeinen Information und ist keine Anlageberatung und kein Angebot. Eine Anlageempfehlung erfolgt ausschließlich nach einer persönlichen Beratung auf Grundlage Ihrer individuellen Situation. Investmentfonds und ETFs unterliegen Kursschwankungen und können an Wert verlieren. Rechenbeispiele beruhen auf Annahmen und sind keine Prognose. Angaben zum Altersvorsorgedepot nach Stand der Gesetzgebung Oktober 2026; Einzelheiten werden durch Rechtsverordnung geregelt.</p>
     </div>
   </div>
-  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>13</span></div>
+  <div class="foot"><span>Rosenbaum Finanzberatung · in Kooperation mit Endlich Besser Beraten</span><span>17</span></div>
 </section>
 </body></html>
