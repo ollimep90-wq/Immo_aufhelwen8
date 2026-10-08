@@ -18,14 +18,14 @@ AVFAKTEN = """
 <tr><td><b>Kinderzulage</b></td><td>100 % der Beiträge, höchstens 300 € je Kind mit Kindergeld</td></tr>
 <tr><td><b>Berufseinsteiger</b></td><td>einmalig 200 € zusätzlich, wenn jünger als 25</td></tr>
 <tr><td><b>Förderberechtigt</b></td><td>Pflichtversicherte, Beamte, <b>neu: Selbständige</b> mit gewerblichen oder freiberuflichen Einkünften und abgegebener Steuererklärung. Ehepartner mittelbar (höchstens 175 €).</td></tr>
-<tr><td><b>Anlagen</b></td><td>Investmentfonds und ETFs, offene Publikumsfonds und ELTIF mit Risikoklasse (SRI) bis 5, Euro-Staatsanleihen. <b>Keine Einzelaktien, kein Krypto.</b></td></tr>
+<tr><td><b>Anlagen</b></td><td>Investmentfonds und ETFs, offene Publikums-AIF und ELTIF, jeweils mit Risikoklasse (SRI) bis 5, sowie Euro-Staatsanleihen. <b>Keine Einzelaktien, kein Krypto.</b></td></tr>
 <tr><td><b>Standarddepot</b></td><td>Pflichtangebot jedes Anbieters: zwei Fonds, die vor Rentenbeginn automatisch sicherer werden (Lebenszyklus). Effektivkosten höchstens 1,0 %. Der Deckel gilt nur hier.</td></tr>
 <tr><td><b>Varianten</b></td><td>freies Altersvorsorgedepot (eigene Fondsauswahl, keine Garantie) oder Garantieprodukt (80 % oder 100 % der Beiträge)</td></tr>
 <tr><td><b>Auszahlung</b></td><td>ab 65 (früher mit gesetzlicher Altersrente), spätestens 70. Lebenslange Rente oder Auszahlplan bis mindestens 85. Bis 30 % als Kapital.</td></tr>
 <tr><td><b>Steuer, Grenzen</b></td><td>Sonderausgabenabzug bis 1.800 € plus Zulage, nachgelagerte Besteuerung. Höchstens 6.840 € Einzahlung pro Jahr, ab dem dritten neuen Vertrag keine Förderung.</td></tr>
 </table><p class="tiny" style="margin-top:2mm">Quelle: Gesetzestext BGBl. 2026 I Nr. 156. Günstigerprüfung, Zulageverfahren für Selbständige und Kostenverordnung stehen noch aus. """ + R + """</p></div>
 """
-RIESTERNOTE = """<div class="note red" style="margin-top:4mm;font-size:8.4pt"><b>Riester-Falle:</b> Wer ab 2027 einen <b>neuen</b> Vertrag abschließt, stellt automatisch und unwiderruflich <b>alle</b> bestehenden Riester-Verträge auf das neue Recht um. Vorher prüfen! Übertragung aus Riester: gesetzliches Recht, 3 Monate zum Quartalsende, höchstens 150 € Kosten, Zulagen bleiben erhalten. Garantien gehen dabei verloren. """ + R + """</div>
+RIESTERNOTE = """<div class="note red" style="margin-top:4mm;font-size:8.4pt"><b>Riester-Falle:</b> Wer ab 2027 einen <b>neuen</b> Vertrag abschließt, stellt automatisch und unwiderruflich <b>alle</b> bestehenden Riester-Verträge auf das neue Recht um. Vorher prüfen! Übertragung aus Riester: gesetzliches Recht, 3 Monate zum Quartalsende, höchstens 150 € Kosten, Zulagen bleiben erhalten. Die Riester-Garantie entfällt; im neuen Recht ist eine Garantievariante (80 % oder 100 %) wählbar. """ + R + """</div>
 """
 
 AVKONZEPT_TABELLE = """
@@ -61,7 +61,7 @@ PFLICHTEN = """
 <tr><td><b>Keine Zuwendungen</b></td><td>Vergütung nur vom Kunden. Zuwendungen nur ausnahmsweise und dann vollständig an den Kunden (§34h Abs. 3 GewO).</td></tr>
 <tr><td><b>Bezeichnung</b></td><td>„Honorar-Finanzanlagenberater". <b>Nicht</b> „Honorar-Anlageberater" (§94 WpHG geschützt), „unabhängig" nur mit Vorsicht.</td></tr>
 </tbody></table></div>
-<div class="note" style="margin-top:4mm"><b>Grenzen zu anderen Berufen:</b> Keine Bewertung einzelner Versicherungsverträge gegen Honorar (das macht Jan als Makler, vergütet über Courtage). Courtage nie mit Honorar verrechnen. Keine Einzelfallberatung zur gesetzlichen Rente (Rentenberatung nach RDG) und keine individuelle Steuerberatung (StBerG). Allgemeine Hinweise sind zulässig. """ + R + """</div>
+<div class="note" style="margin-top:4mm"><b>Grenzen zu anderen Berufen:</b> Keine Bewertung oder Beratung von Versicherungsverträgen, auch nicht unentgeltlich (das macht Jan als Makler, vergütet über Courtage). Courtage nie mit Honorar verrechnen. Keine Einzelfallberatung zur gesetzlichen Rente (Rentenberatung nach RDG) und keine individuelle Steuerberatung (StBerG). Allgemeine Hinweise sind zulässig. """ + R + """</div>
 """
 
 CHECKDOKU = "".join(f'<p class="small chk">{t}</p>' for t in [
@@ -80,9 +80,9 @@ AVKUNDE = """
 <div class="card acc"><h3>Das Wichtigste</h3><ul class="small">
 <li><b>Bis zu 540 € Grundzulage</b> pro Jahr: 50 % auf die ersten 360 €, 25 % auf den Rest bis 1.800 €</li>
 <li><b>Bis zu 300 € je Kind</b> mit Kindergeld</li>
-<li><b>200 € Bonus</b> für Sparer unter 25 Jahren</li>
-<li><b>Neu: auch für Selbständige</b></li>
-<li>Anlage in Fonds und ETFs, ohne teure Pflichtgarantie</li>
+<li><b>Einmalig 200 € Bonus</b> für Sparer unter 25 Jahren</li>
+<li><b>Neu: auch für viele Selbständige</b> (Voraussetzungen klären wir mit Ihnen)</li>
+<li>Anlage in Fonds und ETFs, ohne Garantiepflicht (Varianten mit Garantie sind möglich)</li>
 <li>Auszahlung ab 65 als Rente oder Auszahlplan, bis 30 % als Kapital</li>
 </ul></div>
 <div class="card fill"><h3>So viel legt der Staat dazu</h3>
@@ -92,19 +92,19 @@ AVKUNDE = """
 <tr><td>1.800 € (150 € im Monat)</td><td>0</td><td class="num">540 €</td></tr>
 <tr class="hl"><td>1.800 € (150 € im Monat)</td><td>2</td><td class="num">1.140 €</td></tr>
 </tbody></table>
-<p class="tiny" style="margin-top:2mm">Vereinfachte Rechnung nach Gesetzesstand Oktober 2026, ohne steuerliche Effekte. """ + R + """</p></div>
+<p class="tiny" style="margin-top:2mm">Vereinfachte Rechnung nach Gesetzesstand Oktober 2026, ohne steuerliche Effekte und ohne Berufseinsteigerbonus.</p></div>
 </div>
-<div class="note" style="margin-top:5mm"><b>Sie haben schon einen Riester-Vertrag?</b> Dann sprechen Sie mit uns, bevor Sie etwas Neues abschließen. Ein neuer Vertrag ab 2027 hat Folgen für alle bestehenden Riester-Verträge. Ob Weiterführen, Ruhenlassen oder Übertragen am besten ist, prüfen wir gemeinsam.</div>
-<div class="card fill" style="margin-top:5mm"><h3>Beispiel: 150 € im Monat über 30 Jahre</h3><p class="small">Mit Grundzulage wächst das Vermögen bei angenommenen 5,5 % Rendite pro Jahr nach Kosten auf ca. <b>178.000 €</b>, ohne Zulage auf ca. <b>137.000 €</b>.</p><p class="tiny">Annahme, keine Prognose. Steuern in der Auszahlphase nicht berücksichtigt. Fonds können an Wert verlieren.</p></div>
+<div class="note" style="margin-top:5mm"><b>Sie haben schon einen Riester-Vertrag?</b> Dann sprechen Sie mit uns, bevor Sie etwas Neues abschließen. Ein neuer Vertrag ab 2027 stellt automatisch alle bestehenden Riester-Verträge auf das neue Recht um. Bei Riester-Fondssparplänen prüfen wir gemeinsam, ob Weiterführen, Ruhenlassen oder Übertragen am besten ist. Riester-Rentenversicherungen bewertet unser Versicherungspartner.</div>
+<div class="card fill" style="margin-top:5mm"><h3>Beispiel: 150 € im Monat über 30 Jahre</h3><table style="font-size:8.8pt"><thead><tr><th>Angenommene Rendite nach Kosten</th><th class="num">mit Grundzulage</th><th class="num">ohne Zulage</th></tr></thead><tbody><tr><td>2 % pro Jahr</td><td class="num">ca. 95.600 €</td><td class="num">ca. 73.700 €</td></tr><tr><td>5,5 % pro Jahr</td><td class="num">ca. 172.800 €</td><td class="num">ca. 133.600 €</td></tr></tbody></table><p class="small" style="margin-top:2mm">Annahmen, keine Prognose. Bei Umschichtung in sicherere Anlagen vor Rentenbeginn kann die Rendite niedriger ausfallen. Die Auszahlungen sind einkommensteuerpflichtig. <b>Fonds und ETFs können an Wert verlieren.</b></p></div>
 """
 
 KONTAKT_OLIVER = '<span style="background:#FFF3B0">[Anschrift] · [Telefon] · [E-Mail]</span>'
 PFLICHTHINWEIS = ('Oliver Rosenbaum, Rosenbaum Finanzberatung: Honorar-Finanzanlagenberater nach § 34h Abs. 1 GewO, '
     'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>; Immobiliardarlehensvermittler nach § 34i Abs. 1 GewO, '
     'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Jan Schnichels, Endlich Besser Beraten: Versicherungsmakler nach § 34d Abs. 1 GewO, '
-    'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Erlaubnis- und Registerbehörde: <span style="background:#FFF3B0">[IHK]</span>. '
-    'Prüfung im Vermittlerregister unter www.vermittlerregister.info. Für die Finanzanlagenberatung erhält Rosenbaum Finanzberatung ausschließlich ein Honorar vom Kunden. '
-    'Für die Vermittlung von Versicherungen wird Endlich Besser Beraten von den Versicherern über Courtage vergütet.')
+    'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Erlaubnis- und Registerbehörde: für Rosenbaum Finanzberatung <span style="background:#FFF3B0">[IHK]</span>, für Endlich Besser Beraten <span style="background:#FFF3B0">[IHK]</span>. '
+    'Prüfung im Vermittlerregister unter www.vermittlerregister.info. Oliver Rosenbaum ist zudem Versicherungsmakler nach § 34d Abs. 1 GewO; Versicherungen vermittelt in dieser Kooperation Endlich Besser Beraten. Für die Finanzanlagenberatung erhält Rosenbaum Finanzberatung ausschließlich ein Honorar vom Kunden. Für die Vermittlung von Immobiliardarlehen erhält Rosenbaum Finanzberatung <span style="background:#FFF3B0">[eine Provision des Darlehensgebers]</span> und arbeitet mit mehreren Darlehensgebern zusammen. '
+    'Für die Vermittlung von Versicherungen wird Endlich Besser Beraten von den Versicherern über Courtage vergütet. Wir erbringen keine Steuer- und Rechtsberatung; steuerliche und erbrechtliche Fragen klären Sie bitte mit Ihrem Steuerberater oder Notar.')
 
 def gantt():
     X = lambda m: 250 + 50 * m      # m = Monate ab Oktober 2026
@@ -144,6 +144,8 @@ for key, out in DOCS.items():
     for k, v in REPL.items():
         html = html.replace(k, v)
     assert "⟦" not in html, (key, html[html.index("⟦"):html.index("⟦") + 40])
+    if key == "kunde":
+        assert 'class="tag' not in html, "interner Prüfvermerk im Kunden-PDF"
     tmp = ROOT / "src" / f"_{key}.built.html"
     tmp.write_text(html)
     pdf = ROOT / f"{out}.pdf"
