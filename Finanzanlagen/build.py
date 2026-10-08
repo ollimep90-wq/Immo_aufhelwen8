@@ -66,7 +66,7 @@ PFLICHTEN = """
 
 CHECKDOKU = "".join(f'<p class="small chk">{t}</p>' for t in [
     "Statusinformation vor Beratung übergeben (Datum)",
-    "Honorarvereinbarung unterschrieben",
+    "Vergütungsvereinbarung unterschrieben",
     "Exploration vollständig: Kenntnisse, Verlusttragfähigkeit, Risikotoleranz, Ziele",
     "Nachhaltigkeitspräferenzen abgefragt",
     "Geeignetheitserklärung vor Vertragsschluss übergeben",
@@ -103,7 +103,7 @@ PFLICHTHINWEIS = ('Oliver Rosenbaum, Rosenbaum Finanzberatung: Honorar-Finanzanl
     'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>; Immobiliardarlehensvermittler nach § 34i Abs. 1 GewO, '
     'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Jan Schnichels, Endlich Besser Beraten: Versicherungsmakler nach § 34d Abs. 1 GewO, '
     'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Erlaubnis- und Registerbehörde: für Rosenbaum Finanzberatung <span style="background:#FFF3B0">[IHK]</span>, für Endlich Besser Beraten <span style="background:#FFF3B0">[IHK]</span>. '
-    'Prüfung im Vermittlerregister unter www.vermittlerregister.info. Oliver Rosenbaum ist zudem Versicherungsmakler nach § 34d Abs. 1 GewO; Versicherungen vermittelt in dieser Kooperation Endlich Besser Beraten. Für die Finanzanlagenberatung erhält Rosenbaum Finanzberatung ausschließlich ein Honorar vom Kunden. Für die Vermittlung von Immobiliardarlehen erhält Rosenbaum Finanzberatung <span style="background:#FFF3B0">[eine Provision des Darlehensgebers]</span> und arbeitet mit mehreren Darlehensgebern zusammen. '
+    'Prüfung im Vermittlerregister unter www.vermittlerregister.info. Oliver Rosenbaum ist zudem Versicherungsmakler nach § 34d Abs. 1 GewO; Versicherungen vermittelt in dieser Kooperation Endlich Besser Beraten. Für die Finanzanlagenberatung erhält Rosenbaum Finanzberatung ausschließlich eine Vergütung vom Kunden (laufendes Serviceentgelt auf das betreute Vermögen, Analysen und Projekte nach Stundensatz, jeweils zzgl. USt). Für die Vermittlung von Immobiliardarlehen erhält Rosenbaum Finanzberatung <span style="background:#FFF3B0">[eine Provision des Darlehensgebers]</span> und arbeitet mit mehreren Darlehensgebern zusammen. '
     'Für die Vermittlung von Versicherungen wird Endlich Besser Beraten von den Versicherern über Courtage vergütet. Wir erbringen keine Steuer- und Rechtsberatung; steuerliche und erbrechtliche Fragen klären Sie bitte mit Ihrem Steuerberater oder Notar.')
 
 def gantt():
@@ -117,7 +117,7 @@ def gantt():
             ("Pilot mit Jans Bestand", 1, 4, "#2E7D32", "Pilot", "#fff"),
             ("Altersvorsorgedepot vorbereiten", 1, 3, "#B7791F", "FFB, Rechner", "#fff"),
             ("Start Altersvorsorgedepot und Aktion", 3, 6, "#B7791F", "Familien, Riester-Kunden", "#fff"),
-            ("Regelbetrieb, Jahresgespräche", 6, 15, "#5FA463", "Preise festigen, Kennzahlen", "#fff"),
+            ("Regelbetrieb, Jahresgespräche", 6, 15, "#5FA463", "Sätze festlegen, Kennzahlen", "#fff"),
             ("Frühstart-Rente beobachten", 0, 6, "#9AA3B8", "Gesetzgebung offen", "#fff")]
     r = t = l = ""
     for i, (n, a, b, c, lab, lc) in enumerate(rows):

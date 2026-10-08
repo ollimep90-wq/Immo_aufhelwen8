@@ -143,7 +143,7 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
         <h2>Eigene Vorbereitung</h2>
         <label class="chk"><input type="checkbox" id="v1" data-k="v1">Infos von Jan zu Verträgen und Lebenssituation</label>
         <label class="chk"><input type="checkbox" id="v2" data-k="v2">Einwilligung zur Datenweitergabe liegt vor</label>
-        <label class="chk"><input type="checkbox" id="v3" data-k="v3">Statusinformation und Honorarvereinbarung bereit</label>
+        <label class="chk"><input type="checkbox" id="v3" data-k="v3">Statusinformation und Vergütungsvereinbarung bereit</label>
         <div class="note g"><b>Grundhaltung:</b> 70 % zuhören, 30 % sprechen. In Termin 1 empfehlen wir nichts. Die Empfehlung kommt in Termin 2.</div>
       </section>
 
@@ -152,10 +152,10 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
         <div class="say">„Schön, dass Sie da sind. Was hat Sie bewogen, sich das jetzt anzuschauen? Und was müsste heute passieren, damit Sie sagen: Das hat sich gelohnt?"</div>
         <label class="f">Motiv und Erwartung im Originalton<textarea id="motiv" data-k="motiv"></textarea></label>
         <div class="say">„Heute geht es nur ums Verstehen: wo Sie stehen, wo Sie hinwollen, was Ihnen wichtig ist. Ich empfehle heute noch nichts. Im zweiten Termin zeige ich Ihnen eine Strategie, und Sie entscheiden in Ruhe."</div>
-        <div class="say">„Ich arbeite als Honorar-Finanzanlagenberater. Ich bekomme für Ihre Geldanlage keine Provisionen von Banken oder Fondsgesellschaften. Sie zahlen ein Honorar, das wir vorher festlegen. So bin ich frei, Ihnen auch zu sagen: Behalten Sie das, das ist gut."</div>
+        <div class="say">„Ich arbeite als Honorar-Finanzanlagenberater. Ich bekomme für Ihre Geldanlage keine Provisionen von Banken oder Fondsgesellschaften. Sie zahlen ein Serviceentgelt, einen vorher festgelegten Prozentsatz pro Jahr auf Ihr betreutes Vermögen, zzgl. Umsatzsteuer. Meine Vergütung hängt also nicht an Produktabschlüssen. Deshalb bin ich frei, Ihnen auch zu sagen: Behalten Sie das, das ist gut."</div>
         <h2>Pflichtpunkte</h2>
         <label class="chk"><input type="checkbox" id="p_status" data-k="p_status" data-pflicht>Statusinformation in Textform übergeben, bevor beraten wird</label>
-        <label class="chk"><input type="checkbox" id="p_honorar" data-k="p_honorar" data-pflicht>Honorarvereinbarung unterschrieben</label>
+        <label class="chk"><input type="checkbox" id="p_honorar" data-k="p_honorar" data-pflicht>Vergütungsvereinbarung unterschrieben</label>
         <label class="chk"><input type="checkbox" id="p_ds" data-k="p_ds">Datenschutzinformation übergeben; Gesundheitsdaten nur mit ausdrücklicher Einwilligung</label>
         <label class="chk"><input type="checkbox" id="p_vers" data-k="p_vers">Hinweis: Versicherungsverträge werden nur erfasst, Bewertung macht Jan</label>
       </section>
@@ -347,7 +347,7 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
     <aside class="side">
       <div class="card"><h3>Hinweise</h3><div class="alerts" id="alerts"></div></div>
       <div class="card"><h3>Grenzen der Beratung</h3>
-        <div class="small" style="line-height:1.55">Beraten: Investmentfonds und ETFs (§34h), Finanzierung (§34i).<br>Nicht beraten: Kryptowerte, Krypto-ETNs, Einzelaktien, Anleihen, Zertifikate, Versicherungsverträge, gesetzliche Rente im Einzelfall, individuelle Steuerfragen.<br>Honorar nie aus dem Altersvorsorgedepot.</div>
+        <div class="small" style="line-height:1.55">Beraten: Investmentfonds und ETFs (§34h), Finanzierung (§34i).<br>Nicht beraten: Kryptowerte, Krypto-ETNs, Einzelaktien, Anleihen, Zertifikate, Versicherungsverträge, gesetzliche Rente im Einzelfall, individuelle Steuerfragen.<br>Vergütung nie aus dem Altersvorsorgedepot.</div>
       </div>
     </aside>
   </div>
@@ -379,12 +379,12 @@ const T2=[
  ['Ihre Situation in Zahlen','Haushaltsbilanz, frei verfügbarer Betrag, Reserve, Rentenlücke'],
  ['Ihre Strategie','Reserve, Absicherung, Altersvorsorgedepot, freies Depot. Zielaufteilung nach Risikoklasse.'],
  ['Ihre bestehenden Geldanlagen','Fonds, Sparpläne, Riester-Fondssparplan: behalten, anpassen, übertragen. Versicherungen bewertet Jan.'],
- ['Empfehlung und Kosten','Konkrete Fonds und ETFs, Sparrate, alle Kosten (Produkt, Depot, Honorar)'],
+ ['Empfehlung und Kosten','Konkrete Fonds und ETFs, Sparrate, alle Kosten (Produkt, Depot, Serviceentgelt)'],
  ['Entscheidung','„Wie fühlt sich das für Sie an? Was spricht aus Ihrer Sicht dagegen?"'],
  ['Umsetzung','Geeignetheitserklärung, Kosteninformation, Anträge, Termin fürs Jahresgespräch']
 ];
 const OBJ=[
- ['Ein Honorar ist mir zu teuer.','Kosten sind sichtbar, Provisionen nicht','„Verständlich, weil Sie es direkt sehen. Bei klassischen Produkten zahlen Sie auch, nur unsichtbar im Vertrag. Darf ich Ihnen an Ihrem eigenen Fonds oder Sparplan zeigen, was Sie dort jedes Jahr zahlen?"'],
+ ['Das Serviceentgelt ist mir zu teuer.','Kosten sind bei uns direkt sichtbar','„Verständlich, weil Sie es direkt sehen. Bei provisionsbasierten Produkten steckt die Vergütung in den laufenden Kosten. Darf ich Ihnen an Ihrem eigenen Fonds oder Sparplan zeigen, was Sie dort jedes Jahr zahlen?"'],
  ['Bei meiner Bank ist die Beratung kostenlos.','Vertrauen in die Hausbank','„Die Bank wird über die Produkte bezahlt, die sie verkauft. Das ist legitim, aber nicht kostenlos. Ich zeige Ihnen gern den Vergleich: Was kostet die Lösung der Bank in 20 Jahren, was meine?"'],
  ['ETFs kann ich selbst kaufen.','Selbstbewusst, preisbewusst','„Stimmt, und für manche ist das genau richtig. Mein Wert liegt in der Strategie davor und im Durchhalten danach: wie viel, wofür, welche Reserve, welche Förderung, was mit Ihren bestehenden Geldanlagen passiert."'],
  ['Jetzt ist ein schlechter Zeitpunkt, die Börse ist zu hoch.','Angst vor Verlust','„Den perfekten Zeitpunkt kennt niemand. Deshalb arbeiten wir mit Sparplänen oder steigen gestaffelt ein. Und wir legen nur Geld an, das Sie langfristig nicht brauchen."'],
@@ -398,7 +398,7 @@ const OBJ=[
  ['Ich habe keine Zeit für so etwas.','Überforderung','„Genau deshalb machen wir es einmal richtig. Danach läuft es weitgehend automatisch, und wir schauen einmal im Jahr drauf."'],
  ['Was passiert, wenn es Sie nicht mehr gibt?','Sorge um Abhängigkeit','„Ihr Geld liegt nicht bei mir, sondern in Ihrem eigenen Depot bei einer Depotbank. Fondsanteile sind Sondervermögen und bei einer Insolvenz der Fondsgesellschaft geschützt. Sie können jederzeit selbst entscheiden oder wechseln."'],
  ['Ich warte lieber noch ein bisschen.','Unsicherheit','„Das ist Ihre Entscheidung, und ich setze Sie nicht unter Druck. Darf ich Ihnen zeigen, was zehn Jahre Warten bei einer monatlichen Sparrate ausmachen?"'],
- ['Ich vertraue Finanzberatern grundsätzlich nicht.','Schlechte Erfahrungen','„Das verstehe ich gut. Deshalb arbeite ich mit Honorar, lege alle Kosten offen und begründe jede Empfehlung schriftlich. Sie unterschreiben nichts, was Sie nicht verstanden haben."']
+ ['Ich vertraue Finanzberatern grundsätzlich nicht.','Schlechte Erfahrungen','„Das verstehe ich gut. Deshalb werde ich nur von Ihnen bezahlt, lege alle Kosten offen und begründe jede Empfehlung schriftlich. Sie unterschreiben nichts, was Sie nicht verstanden haben."']
 ];
 
 const EXAMPLE={kunde:'Familie Muster (Beispiel)',art:'persoenlich',paket:'Strategie',quelle:'Jan (Jahresgespräch)',alter:38,fam:'verheiratet',kinder:2,test:'nicht vorhanden',status:'ang',netto:2900,netto_p:1600,eink_sonst:500,a_wohn:1350,a_vers:280,a_kred:250,a_mob:420,a_leb:1500,a_spar:200,v_liq:9000,v_dep:14000,v_sonst:6000,v_immo:0,v_krypto:1500,s_rest:0,riester:'fonds',bav:'ja',rv:'ja',rente_g:1650,bu:'fehlt',rl:'unklar',phv:'vorhanden',r_alter:65,r_wunsch:3000,r_weitere:250,verlust:20,horizont:25,szen:'3',pref:'4',esg:'ja',esg_det:'mind. 30 % nachhaltig',av_beitrag:1800,av_u25:'nein',krypto_int:'ja',einzel:'nein',
