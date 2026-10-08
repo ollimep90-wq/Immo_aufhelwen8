@@ -1,0 +1,595 @@
+<title>Bedarfsanalyse Rosenbaum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Arbeitsoberfläche fürs Kundengespräch: links die Gesprächsphasen, Mitte die aktive Phase, oben die Live-Auswertung */
+:root{
+  --bg:#F6F8F6; --panel:#FFFFFF; --fg:#17201A; --fg2:#4A564E; --mute:#7C887F; --line:#DCE3DD;
+  --acc:#2E7D32; --acc-ink:#FFFFFF; --acc-soft:#E6F2E7; --blue:#2F5F9E; --blue-soft:#E7EEF8;
+  --warn:#9A5B00; --warn-soft:#FFF3DC; --crit:#B3261E; --crit-soft:#FCE8E6; --ok:#2E7D32;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1511; --panel:#171F19; --fg:#E7EEE8; --fg2:#B3BFB6; --mute:#8A968D; --line:#2A352D;
+  --acc:#6CC070; --acc-ink:#0F1511; --acc-soft:#1E3221; --blue:#8DB3EA; --blue-soft:#1C2737;
+  --warn:#F2B35B; --warn-soft:#33270F; --crit:#F2827A; --crit-soft:#3A1C1A; --ok:#6CC070; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1511; --panel:#171F19; --fg:#E7EEE8; --fg2:#B3BFB6; --mute:#8A968D; --line:#2A352D;
+  --acc:#6CC070; --acc-ink:#0F1511; --acc-soft:#1E3221; --blue:#8DB3EA; --blue-soft:#1C2737;
+  --warn:#F2B35B; --warn-soft:#33270F; --crit:#F2827A; --crit-soft:#3A1C1A; --ok:#6CC070; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 var(--sans)}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
+header.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.brand{display:flex;flex-direction:column}
+.brand b{font-size:18px;letter-spacing:-.01em}
+.brand span{color:var(--mute);font-size:12px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,.btn{font:inherit;font-weight:600;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:8px;padding:7px 12px;cursor:pointer}
+button.primary{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.example{min-width:0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:13px}
+.example[hidden]{display:none}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.kpi .l{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+.kpi .v{font-family:var(--mono);font-size:19px;font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .s{font-size:11.5px;color:var(--fg2)}
+.chip{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:20px;background:var(--acc-soft);color:var(--acc)}
+.chip.w{background:var(--warn-soft);color:var(--warn)} .chip.c{background:var(--crit-soft);color:var(--crit)} .chip.b{background:var(--blue-soft);color:var(--blue)}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr) 290px;gap:12px;align-items:start}
+nav.steps{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px}
+nav.steps button{display:flex;gap:8px;align-items:center;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:8px;font-weight:500;color:var(--fg2)}
+nav.steps button .n{font-family:var(--mono);font-size:11px;color:var(--mute);width:18px}
+nav.steps button[aria-current="step"]{background:var(--acc-soft);color:var(--fg);font-weight:600}
+nav.steps button .dot{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--line)}
+nav.steps button .dot.on{background:var(--acc)}
+main{min-width:0}
+main section.step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+h1{font-size:21px;margin:0 0 2px;letter-spacing:-.01em;text-wrap:balance}
+.meta{color:var(--mute);font-size:12.5px;margin-bottom:14px}
+h2{font-size:14px;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.06em;color:var(--fg2)}
+.say{position:relative;background:var(--acc-soft);border-radius:10px;padding:10px 44px 10px 12px;margin:8px 0;font-style:italic}
+.say .cp{position:absolute;right:6px;top:6px;padding:3px 7px;font-size:11px;font-style:normal}
+.why{font-size:12.5px;color:var(--mute);margin:2px 0 8px}
+.q{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px dashed var(--line)}
+.q input[type=checkbox]{margin-top:4px}
+.q .star{color:var(--acc);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:10px 12px}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--fg2);min-width:0}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%;min-width:0}
+input[type=checkbox],input[type=radio]{width:auto;accent-color:var(--acc)}
+input.num{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+textarea{min-height:64px;resize:vertical}
+.chk{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:13.5px}
+.chk input{margin-top:4px}
+.radios{display:flex;flex-wrap:wrap;gap:6px}
+.radios label{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
+.radios label:has(input:checked){border-color:var(--acc);background:var(--acc-soft)}
+.calc{display:flex;flex-wrap:wrap;gap:16px;background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13px}
+.calc b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{border-left:3px solid var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:0 8px 8px 0;font-size:13px;margin:10px 0}
+.note.c{border-color:var(--crit);background:var(--crit-soft)} .note.g{border-color:var(--acc);background:var(--acc-soft)} .note.b{border-color:var(--blue);background:var(--blue-soft)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:600;padding:6px;border-bottom:1px solid var(--line)}
+td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl{overflow-x:auto}
+aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:flex;flex-direction:column;gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card h3{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--fg2)}
+.alerts{display:flex;flex-direction:column;gap:6px}
+.alert{font-size:12.5px;border-radius:8px;padding:7px 9px;display:flex;gap:7px;align-items:flex-start}
+.alert.w{background:var(--warn-soft);color:var(--warn)} .alert.c{background:var(--crit-soft);color:var(--crit)} .alert.b{background:var(--blue-soft);color:var(--blue)} .alert.g{background:var(--acc-soft);color:var(--acc)}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:6px}
+.obj{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
+.obj b{display:block;margin-bottom:3px}
+.obj .bg{font-size:12px;color:var(--mute);margin-bottom:5px}
+.pager{display:flex;justify-content:space-between;margin-top:18px}
+.small{font-size:12px;color:var(--mute)}
+.risk{display:flex;gap:4px;margin-top:6px}
+.risk span{flex:1;text-align:center;padding:6px 0;border-radius:6px;background:var(--bg);font-family:var(--mono);font-size:13px;color:var(--mute)}
+.risk span.on{background:var(--acc);color:var(--acc-ink)}
+@media (max-width:1100px){.layout{grid-template-columns:200px minmax(0,1fr)} aside.side{grid-column:1 / -1;position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))} .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:720px){.layout{grid-template-columns:minmax(0,1fr)} .brand span{display:none} .actions{width:100%} nav.steps{position:static;display:flex;overflow-x:auto;gap:2px} nav.steps button{white-space:nowrap;width:auto} nav.steps button .dot{display:none} .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} main section.step{padding:14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>Bedarfsanalyse</b><span>Rosenbaum Finanzberatung · Gesprächsleitfaden für Altersvorsorgedepot und Wertpapierdepot · Stand Oktober 2026</span></div>
+    <div class="actions">
+      <label class="chk" style="font-size:12.5px;align-items:center" title="Speichert nur in diesem Browser auf diesem Gerät"><input type="checkbox" id="persist"> Auf diesem Gerät zwischenspeichern</label>
+      <button id="btnCopy">Zusammenfassung kopieren</button>
+      <button id="btnNew">Neues Gespräch</button>
+    </div>
+  </header>
+  <div class="example" id="exampleBanner"><b>Beispieldaten:</b> Familie Muster ist ein erfundenes Beispiel. „Neues Gespräch" leert alle Felder. <button id="btnNew2">Leeren und starten</button></div>
+
+  <div class="kpis" aria-live="polite">
+    <div class="kpi"><div class="l">Frei verfügbar</div><div class="v" id="k_frei">–</div><div class="s">pro Monat</div></div>
+    <div class="kpi"><div class="l">Notreserve</div><div class="v" id="k_res">–</div><div class="s" id="k_res_s">Ziel</div></div>
+    <div class="kpi"><div class="l">Rentenlücke</div><div class="v" id="k_luecke">–</div><div class="s">pro Monat, heutige Kaufkraft</div></div>
+    <div class="kpi"><div class="l">Risikoklasse</div><div class="v" id="k_risk">–</div><div class="s" id="k_risk_s">Vorschlag</div></div>
+    <div class="kpi"><div class="l">Zulagen AV-Depot</div><div class="v" id="k_zul">–</div><div class="s" id="k_zul_s">pro Jahr</div></div>
+    <div class="kpi"><div class="l">Pflichtangaben</div><div class="v" id="k_pfl">–</div><div class="bar" style="margin-top:6px"><i id="k_pfl_bar" style="width:0"></i></div></div>
+  </div>
+
+  <div class="layout">
+    <nav class="steps" id="nav" aria-label="Gesprächsphasen"></nav>
+
+    <main id="main">
+
+      <section class="step" data-step="0" data-title="Vorbereitung">
+        <h1>Vorbereitung</h1><div class="meta">Vor Termin 1 · 10 Minuten</div>
+        <div class="grid">
+          <label class="f">Kunde<input id="kunde" data-k="kunde"></label>
+          <label class="f">Datum<input id="datum" type="date" data-k="datum"></label>
+          <label class="f">Gesprächsart<select id="art" data-k="art"><option value="persoenlich">persönlich</option><option value="telefon">telefonisch</option><option value="online">online (Video)</option></select></label>
+          <label class="f">Paket<select id="paket" data-k="paket"><option value="">noch offen</option><option>Start</option><option>Strategie</option><option>Vermögen</option></select></label>
+          <label class="f">Kontakt über<select id="quelle" data-k="quelle"><option>Jan (Jahresgespräch)</option><option>Empfehlung</option><option>eigener Kontakt</option><option>Anfrage</option></select></label>
+        </div>
+        <h2>Unterlagen vom Kunden</h2>
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))">
+          <label class="chk"><input type="checkbox" id="u1" data-k="u1">Gehaltsabrechnung oder Einkommensnachweis</label>
+          <label class="chk"><input type="checkbox" id="u2" data-k="u2">Letzte Renteninformation</label>
+          <label class="chk"><input type="checkbox" id="u3" data-k="u3">Depot-, Sparplan-, Tagesgeldauszüge</label>
+          <label class="chk"><input type="checkbox" id="u4" data-k="u4">Standmitteilungen Lebens- und Rentenversicherungen</label>
+          <label class="chk"><input type="checkbox" id="u5" data-k="u5">Riester, betriebliche Altersversorgung, sonstige Vorsorge</label>
+          <label class="chk"><input type="checkbox" id="u6" data-k="u6">Kreditverträge, Übersicht Immobilien</label>
+          <label class="chk"><input type="checkbox" id="u7" data-k="u7">Bei Selbständigen: letzter Steuerbescheid</label>
+        </div>
+        <h2>Eigene Vorbereitung</h2>
+        <label class="chk"><input type="checkbox" id="v1" data-k="v1">Infos von Jan zu Verträgen und Lebenssituation</label>
+        <label class="chk"><input type="checkbox" id="v2" data-k="v2">Einwilligung zur Datenweitergabe liegt vor</label>
+        <label class="chk"><input type="checkbox" id="v3" data-k="v3">Statusinformation und Honorarvereinbarung bereit</label>
+        <div class="note g"><b>Grundhaltung:</b> 70 % zuhören, 30 % sprechen. In Termin 1 empfehlen wir nichts. Die Empfehlung kommt in Termin 2.</div>
+      </section>
+
+      <section class="step" data-step="1" data-title="Einstieg" hidden>
+        <h1>Einstieg und Rahmen</h1><div class="meta">Termin 1 · Phase 1 · ca. 10 Minuten</div>
+        <div class="say">„Schön, dass Sie da sind. Was hat Sie bewogen, sich das jetzt anzuschauen? Und was müsste heute passieren, damit Sie sagen: Das hat sich gelohnt?"</div>
+        <label class="f">Motiv und Erwartung im Originalton<textarea id="motiv" data-k="motiv"></textarea></label>
+        <div class="say">„Heute geht es nur ums Verstehen: wo Sie stehen, wo Sie hinwollen, was Ihnen wichtig ist. Ich empfehle heute noch nichts. Im zweiten Termin zeige ich Ihnen eine Strategie, und Sie entscheiden in Ruhe."</div>
+        <div class="say">„Ich arbeite als Honorar-Finanzanlagenberater. Ich bekomme für Ihre Geldanlage keine Provisionen von Banken oder Fondsgesellschaften. Sie zahlen ein Honorar, das wir vorher festlegen. So bin ich frei, Ihnen auch zu sagen: Behalten Sie das, das ist gut."</div>
+        <h2>Pflichtpunkte</h2>
+        <label class="chk"><input type="checkbox" id="p_status" data-k="p_status" data-pflicht>Statusinformation in Textform übergeben, bevor beraten wird</label>
+        <label class="chk"><input type="checkbox" id="p_honorar" data-k="p_honorar" data-pflicht>Honorarvereinbarung unterschrieben</label>
+        <label class="chk"><input type="checkbox" id="p_ds" data-k="p_ds">Datenschutzinformation übergeben; Gesundheitsdaten nur mit ausdrücklicher Einwilligung</label>
+        <label class="chk"><input type="checkbox" id="p_vers" data-k="p_vers">Hinweis: Versicherungsverträge werden nur erfasst, Bewertung macht Jan</label>
+      </section>
+
+      <section class="step" data-step="2" data-title="Wo stehen Sie?" hidden>
+        <h1>Wo stehen Sie?</h1><div class="meta">Termin 1 · Phase 2 · ca. 30 Minuten</div>
+        <div class="say">„Lassen Sie uns mit einer Bestandsaufnahme beginnen. Je vollständiger das Bild, desto besser wird die Strategie. Alles bleibt vertraulich."</div>
+        <h2>Person und Familie</h2>
+        <div class="grid">
+          <label class="f">Alter<input id="alter" class="num" type="number" min="0" data-k="alter"></label>
+          <label class="f">Familienstand<select id="fam" data-k="fam"><option>ledig</option><option>verheiratet</option><option>Lebenspartnerschaft</option><option>getrennt</option><option>verwitwet</option></select></label>
+          <label class="f">Kinder mit Kindergeld<input id="kinder" class="num" type="number" min="0" data-k="kinder"></label>
+          <label class="f">Testament, Vollmachten<select id="test" data-k="test"><option>unklar</option><option>vorhanden</option><option>nicht vorhanden</option></select></label>
+        </div>
+        <h2>Beruf und Einkommen</h2>
+        <div class="grid">
+          <label class="f">Status<select id="status" data-k="status"><option value="ang">angestellt (rentenversicherungspflichtig)</option><option value="beamt">Beamter</option><option value="selb">selbständig, gibt Steuererklärung ab</option><option value="selb_o">selbständig, sonstiges</option><option value="ohne">nicht erwerbstätig</option></select></label>
+          <label class="f">Netto pro Monat (€)<input id="netto" class="num" type="number" min="0" data-k="netto"></label>
+          <label class="f">Partner netto pro Monat (€)<input id="netto_p" class="num" type="number" min="0" data-k="netto_p"></label>
+          <label class="f">Sonstiges pro Monat (€)<input id="eink_sonst" class="num" type="number" min="0" data-k="eink_sonst"></label>
+        </div>
+        <h2>Ausgaben pro Monat</h2>
+        <div class="grid">
+          <label class="f">Wohnen (€)<input id="a_wohn" class="num" type="number" min="0" data-k="a_wohn"></label>
+          <label class="f">Versicherungen (€)<input id="a_vers" class="num" type="number" min="0" data-k="a_vers"></label>
+          <label class="f">Kredite, Leasing (€)<input id="a_kred" class="num" type="number" min="0" data-k="a_kred"></label>
+          <label class="f">Mobilität (€)<input id="a_mob" class="num" type="number" min="0" data-k="a_mob"></label>
+          <label class="f">Lebenshaltung (€)<input id="a_leb" class="num" type="number" min="0" data-k="a_leb"></label>
+          <label class="f">Bestehende Sparraten (€)<input id="a_spar" class="num" type="number" min="0" data-k="a_spar"></label>
+        </div>
+        <div class="calc"><span>Einnahmen <b id="c_ein">–</b></span><span>Ausgaben <b id="c_aus">–</b></span><span>Frei verfügbar <b id="c_frei">–</b></span></div>
+        <h2>Vermögen und Schulden</h2>
+        <div class="grid">
+          <label class="f">Giro, Tagesgeld (€)<input id="v_liq" class="num" type="number" min="0" data-k="v_liq"></label>
+          <label class="f">Depots, Fonds (€)<input id="v_dep" class="num" type="number" min="0" data-k="v_dep"></label>
+          <label class="f">Bausparen, Sonstiges (€)<input id="v_sonst" class="num" type="number" min="0" data-k="v_sonst"></label>
+          <label class="f">Immobilienwert (€)<input id="v_immo" class="num" type="number" min="0" data-k="v_immo"></label>
+          <label class="f">Krypto (€)<input id="v_krypto" class="num" type="number" min="0" data-k="v_krypto"></label>
+          <label class="f">Restschuld Darlehen (€)<input id="s_rest" class="num" type="number" min="0" data-k="s_rest"></label>
+          <label class="f">Zinsbindung bis (Jahr)<input id="s_zb" class="num" type="number" min="2000" data-k="s_zb"></label>
+        </div>
+        <div class="calc"><span>Nettovermögen <b id="c_netto">–</b></span><span>davon liquide <b id="c_liq">–</b></span></div>
+        <h2>Vorsorge und Verträge</h2>
+        <div class="grid">
+          <label class="f">Riester<select id="riester" data-k="riester"><option value="nein">kein Riester</option><option value="fonds">Riester-Fondssparplan</option><option value="vers">Riester-Rentenversicherung</option><option value="bank">Riester-Banksparplan</option><option value="unklar">vorhanden, Art unklar</option></select></label>
+          <label class="f">Betriebliche Altersversorgung<select id="bav" data-k="bav"><option>nein</option><option>ja</option><option>unklar</option></select></label>
+          <label class="f">Renten- oder Lebensversicherung<select id="rv" data-k="rv"><option>nein</option><option>ja</option></select></label>
+          <label class="f">Gesetzliche Rente laut Renteninformation (€/Monat)<input id="rente_g" class="num" type="number" min="0" data-k="rente_g"></label>
+        </div>
+        <p class="why">Versicherungsverträge nur mit Kundenangaben erfassen, nicht bewerten. Rentenwerte nur aus der Renteninformation übernehmen, keine Rentenberatung.</p>
+        <h2>Absicherung (nur erfassen, Weitergabe an Jan)</h2>
+        <div class="grid">
+          <label class="f">Berufsunfähigkeit<select id="bu" data-k="bu"><option>unklar</option><option>vorhanden</option><option>fehlt</option></select></label>
+          <label class="f">Risikoleben für die Familie<select id="rl" data-k="rl"><option>unklar</option><option>vorhanden</option><option>fehlt</option><option>nicht nötig</option></select></label>
+          <label class="f">Privathaftpflicht<select id="phv" data-k="phv"><option>unklar</option><option>vorhanden</option><option>fehlt</option></select></label>
+        </div>
+        <h2>Kernfragen</h2>
+        <div id="qlist2"></div>
+      </section>
+
+      <section class="step" data-step="3" data-title="Wo wollen Sie hin?" hidden>
+        <h1>Wo wollen Sie hin?</h1><div class="meta">Termin 1 · Phase 3 · ca. 15 Minuten</div>
+        <div class="say">„Stellen Sie sich vor, wir sitzen in zehn Jahren wieder hier und Sie sind rundum zufrieden mit Ihrer finanziellen Entwicklung. Was ist dann passiert?"</div>
+        <h2>Ziele</h2>
+        <div class="tbl"><table><thead><tr><th>Ziel</th><th style="width:130px">Betrag (€)</th><th style="width:100px">Bis Jahr</th><th style="width:110px">Priorität</th><th style="width:40px"></th></tr></thead><tbody id="goals"></tbody></table></div>
+        <button id="addGoal" style="margin-top:8px">Ziel hinzufügen</button>
+        <p class="why">Ein Ziel ohne Betrag und Datum ist ein Wunsch.</p>
+        <h2>Ruhestand</h2>
+        <div class="grid">
+          <label class="f">Wunschalter Ruhestand<input id="r_alter" class="num" type="number" min="50" data-k="r_alter"></label>
+          <label class="f">Wunscheinkommen netto (€/Monat, heutige Kaufkraft)<input id="r_wunsch" class="num" type="number" min="0" data-k="r_wunsch"></label>
+          <label class="f">Weitere erwartete Renten (€/Monat)<input id="r_weitere" class="num" type="number" min="0" data-k="r_weitere"></label>
+        </div>
+        <div class="calc"><span>Gesetzliche Rente <b id="c_rg">–</b></span><span>Lücke <b id="c_luecke">–</b></span><span>Jahre bis Ruhestand <b id="c_jahre">–</b></span></div>
+        <p class="why">Vereinfachte Lücke nach heutiger Kaufkraft; Steuern und Krankenversicherung im Alter sind nicht berücksichtigt.</p>
+      </section>
+
+      <section class="step" data-step="4" data-title="Was ist wichtig?" hidden>
+        <h1>Was ist Ihnen wichtig?</h1><div class="meta">Termin 1 · Phase 4 · ca. 10 Minuten</div>
+        <div class="say">„Geld ist nur Mittel zum Zweck. Was soll es für Sie leisten? Bitte bringen Sie diese fünf Punkte in eine Reihenfolge."</div>
+        <div class="grid" id="werte"></div>
+        <div class="grid" style="margin-top:10px">
+          <label class="f">Was hat Sie bei Geldanlagen bisher geärgert?<textarea id="aerger" data-k="aerger"></textarea></label>
+          <label class="f">Ausschlüsse (Branchen, Themen)<textarea id="ausschl" data-k="ausschl"></textarea></label>
+        </div>
+      </section>
+
+      <section class="step" data-step="5" data-title="Anlegerprofil" hidden>
+        <h1>Anlegerprofil</h1><div class="meta">Termin 1 · Phase 5 · Pflichtteil · ca. 15 Minuten</div>
+        <div class="say">„Jetzt kommen einige Fragen, die ich Ihnen gesetzlich stellen muss. Sie helfen aber auch uns beiden: Eine Anlage, bei der Sie nachts nicht schlafen können, ist keine gute Anlage."</div>
+        <h2>A · Kenntnisse und Erfahrungen</h2>
+        <div class="tbl"><table><thead><tr><th>Anlageart</th><th>Kenntnisse</th><th>Erfahrung seit (Jahr)</th></tr></thead><tbody id="ke"></tbody></table></div>
+        <label class="chk" style="margin-top:6px"><input type="checkbox" id="ke_done" data-k="ke_done" data-pflicht>Kenntnisse und Erfahrungen vollständig erfasst</label>
+        <h2>B · Verlusttragfähigkeit</h2>
+        <div class="grid">
+          <label class="f">Maximaler verkraftbarer Verlust (% der Anlage)<input id="verlust" class="num" type="number" min="0" max="100" data-k="verlust"></label>
+          <label class="f">Anlagehorizont (Jahre)<input id="horizont" class="num" type="number" min="0" data-k="horizont"></label>
+        </div>
+        <h2>C · Risikotoleranz</h2>
+        <p>„Sie legen 10.000 € an. Nach einem Jahr sind es 8.000 €. Was tun Sie?"</p>
+        <div class="radios"><label><input type="radio" name="szen" value="2" data-k="szen">verkaufen</label><label><input type="radio" name="szen" value="3" data-k="szen">abwarten</label><label><input type="radio" name="szen" value="5" data-k="szen">nachkaufen</label></div>
+        <p style="margin-top:10px">„Was ist Ihnen lieber: sicher 3 % pro Jahr oder im Durchschnitt 6 % mit Jahren von minus 20 %?"</p>
+        <div class="radios"><label><input type="radio" name="pref" value="2" data-k="pref">sicher 3 %</label><label><input type="radio" name="pref" value="4" data-k="pref">6 % mit Schwankung</label></div>
+        <h2>D · Nachhaltigkeitspräferenzen</h2>
+        <div class="radios"><label><input type="radio" name="esg" value="nein" data-k="esg">keine</label><label><input type="radio" name="esg" value="ja" data-k="esg">ja, wichtig</label></div>
+        <label class="f" style="margin-top:8px">Mindestanteil, Kriterien<input id="esg_det" data-k="esg_det"></label>
+        <h2>Ergebnis</h2>
+        <div class="risk" id="riskScale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        <p class="small" id="riskWhy">Bitte Angaben ergänzen.</p>
+        <div class="grid">
+          <label class="f">Risikoklasse festlegen (Berater)<select id="risk_final" data-k="risk_final"><option value="">wie Vorschlag</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+          <label class="f">Begründung<input id="risk_grund" data-k="risk_grund"></label>
+        </div>
+        <p class="why">Maßgeblich ist der niedrigste Wert aus Risikotoleranz, Verlusttragfähigkeit und Anlagehorizont. Der Vorschlag ersetzt nicht das Urteil des Beraters.</p>
+      </section>
+
+      <section class="step" data-step="6" data-title="Sonderthemen" hidden>
+        <h1>Sonderthemen</h1><div class="meta">Termin 1 · Phase 6 · nach Bedarf</div>
+        <h2>Altersvorsorgedepot</h2>
+        <div class="grid">
+          <label class="f">Möglicher Eigenbeitrag pro Jahr (€)<input id="av_beitrag" class="num" type="number" min="0" data-k="av_beitrag"></label>
+          <label class="f">Jünger als 25<select id="av_u25" data-k="av_u25"><option value="nein">nein</option><option value="ja">ja</option></select></label>
+        </div>
+        <div class="calc"><span>Förderberechtigt <b id="c_av_ber">–</b></span><span>Grundzulage <b id="c_av_g">–</b></span><span>Kinderzulage <b id="c_av_k">–</b></span><span>Bonus einmalig <b id="c_av_b">–</b></span><span>Förderquote <b id="c_av_q">–</b></span></div>
+        <p class="why">50 % auf die ersten 360 €, 25 % bis 1.800 €, höchstens 540 €. Kinderzulage 100 % der Beiträge, höchstens 300 € je Kind (Lesart: aus denselben Beiträgen). Mindesteigenbeitrag 120 €. Stand Oktober 2026, vor dem Start erneut prüfen.</p>
+        <div class="say">„Ab 2027 gibt es für Ihre Altersvorsorge eine neue staatliche Förderung. Auf kleine Beiträge legt der Staat 50 % drauf, für jedes Kind bis zu 300 € im Jahr. Ob und wie viel sich das für Sie lohnt, rechne ich Ihnen im nächsten Termin aus."</div>
+        <h2>Immobilien</h2>
+        <label class="f">Plan, Objekt im Blick?<input id="immo_plan" data-k="immo_plan"></label>
+        <div class="say">„Wenn Sie ein Objekt gefunden haben, rechnen wir gemeinsam, ob es sich trägt, und ich kümmere mich um die Finanzierung. Bei der Suche selbst arbeiten wir mit Partnern."</div>
+        <h2>Krypto und Einzeltitel</h2>
+        <div class="grid">
+          <label class="f">Krypto-Interesse<select id="krypto_int" data-k="krypto_int"><option>nein</option><option>ja</option></select></label>
+          <label class="f">Wunsch nach Einzelaktien, Anleihen<select id="einzel" data-k="einzel"><option>nein</option><option>ja</option></select></label>
+        </div>
+        <div class="say">„Krypto berücksichtige ich in Ihrem Gesamtbild, vor allem beim Risiko. Zu einzelnen Kryptowerten gebe ich keine Empfehlung, dafür ist eine eigene Erlaubnis nötig. Planen Sie nur mit Geld, dessen Totalverlust Sie verkraften."</div>
+        <h2>Versicherungen</h2>
+        <label class="chk"><input type="checkbox" id="an_jan" data-k="an_jan">Kunde ist einverstanden, dass Jan sich wegen der Absicherung meldet</label>
+        <div class="say">„Das ist ein wichtiger Punkt, und zwar vor dem Vermögensaufbau. Darum kümmert sich Jan als Versicherungsmakler. Darf ich ihm Bescheid geben?"</div>
+      </section>
+
+      <section class="step" data-step="7" data-title="Abschluss Termin 1" hidden>
+        <h1>Abschluss Termin 1</h1><div class="meta">Termin 1 · Phase 7 · ca. 5 Minuten</div>
+        <div class="say">„Lassen Sie mich kurz zusammenfassen, was ich mitnehme. Habe ich etwas vergessen oder falsch verstanden?"</div>
+        <label class="chk"><input type="checkbox" id="z_ok" data-k="z_ok">Zusammenfassung vom Kunden bestätigt</label>
+        <div class="grid">
+          <label class="f">Fehlende Unterlagen<input id="fehlend" data-k="fehlend"></label>
+          <label class="f">Termin 2 am<input id="termin2" type="date" data-k="termin2"></label>
+        </div>
+        <h2>Zusammenfassung</h2>
+        <pre id="summary" style="white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:12px;font:12.5px/1.55 var(--mono);margin:0"></pre>
+      </section>
+
+      <section class="step" data-step="8" data-title="Strategiegespräch" hidden>
+        <h1>Termin 2: Strategiegespräch</h1><div class="meta">60–90 Minuten</div>
+        <div id="t2"></div>
+        <div class="note g"><b>Merksatz:</b> Erst die Strategie, dann das Produkt. Die Reihenfolge ist Reserve, Absicherung, Altersvorsorgedepot, freies Depot.</div>
+        <label class="f" style="margin-top:8px">Weiterempfehlung 0–10 (am Ende fragen)<input id="nps" class="num" type="number" min="0" max="10" data-k="nps"></label>
+      </section>
+
+      <section class="step" data-step="9" data-title="Einwände" hidden>
+        <h1>Einwandbehandlung</h1><div class="meta">Zuhören, Verständnis zeigen, nachfragen, antworten, bestätigen lassen</div>
+        <input id="objSearch" placeholder="Einwand suchen, zum Beispiel „teuer", „Bank", „Krypto"" aria-label="Einwand suchen">
+        <div id="objList"></div>
+      </section>
+
+      <section class="step" data-step="10" data-title="Dokumentation" hidden>
+        <h1>Dokumentation</h1><div class="meta">Nach dem Gespräch · Pflicht</div>
+        <label class="chk"><input type="checkbox" id="d_expl" data-k="d_expl" data-pflicht>Exploration vollständig: Kenntnisse, Verlusttragfähigkeit, Risikotoleranz, Ziele</label>
+        <label class="chk"><input type="checkbox" id="d_esg" data-k="d_esg" data-pflicht>Nachhaltigkeitspräferenzen abgefragt</label>
+        <label class="chk"><input type="checkbox" id="d_geeig" data-k="d_geeig" data-pflicht>Geeignetheitserklärung vor Vertragsschluss übergeben</label>
+        <label class="chk"><input type="checkbox" id="d_kosten" data-k="d_kosten" data-pflicht>Kosteninformation vorab übergeben</label>
+        <label class="chk"><input type="checkbox" id="d_tape" data-k="d_tape" data-pflicht>Telefon- oder Online-Beratung aufgezeichnet bzw. persönliches Gespräch dokumentiert</label>
+        <label class="chk"><input type="checkbox" id="d_arch" data-k="d_arch" data-pflicht>Alles 10 Jahre archiviert</label>
+        <h2>Nachbereitung</h2>
+        <label class="chk"><input type="checkbox" id="n1" data-k="n1">In Beratungsmappe und CRM übertragen</label>
+        <label class="chk"><input type="checkbox" id="n2" data-k="n2">Strategiepapier erstellt</label>
+        <label class="chk"><input type="checkbox" id="n3" data-k="n3">Versicherungsthemen an Jan übergeben</label>
+        <label class="chk"><input type="checkbox" id="n4" data-k="n4">Wiedervorlage: Jahresgespräch, Zinsbindungsende</label>
+        <h2>Daten sichern</h2>
+        <p class="small">Die Daten verlassen diesen Browser nicht. Zum Sichern den Datensatz kopieren und in der Beratungsmappe ablegen; zum Fortsetzen hier wieder einfügen.</p>
+        <div class="actions"><button id="btnJson">Datensatz kopieren</button><button id="btnImport">Datensatz einfügen</button></div>
+        <textarea id="importBox" hidden placeholder="Datensatz hier einfügen und erneut „Datensatz einfügen" klicken" style="margin-top:8px"></textarea>
+        <p class="small" id="ioMsg" role="status"></p>
+      </section>
+
+      <div class="pager"><button id="prev">Zurück</button><button id="next" class="primary">Weiter</button></div>
+    </main>
+
+    <aside class="side">
+      <div class="card"><h3>Hinweise</h3><div class="alerts" id="alerts"></div></div>
+      <div class="card"><h3>Grenzen der Beratung</h3>
+        <div class="small" style="line-height:1.55">Beraten: Investmentfonds und ETFs (§34h), Finanzierung (§34i).<br>Nicht beraten: Kryptowerte, Krypto-ETNs, Einzelaktien, Anleihen, Zertifikate, Versicherungsverträge, gesetzliche Rente im Einzelfall, individuelle Steuerfragen.<br>Honorar nie aus dem Altersvorsorgedepot.</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+const fmt=n=>isFinite(n)?new Intl.NumberFormat('de-DE',{maximumFractionDigits:0}).format(n)+' €':'–';
+const pct=n=>isFinite(n)?new Intl.NumberFormat('de-DE',{maximumFractionDigits:1}).format(n)+' %':'–';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const KEY='rosenbaum-bedarfsanalyse-v1', PKEY='rosenbaum-bedarfsanalyse-persist';
+
+const Q2=[
+ ['★','Wie sieht Ihre familiäre Situation aus? Partner, Kinder?'],
+ ['★','Was machen Sie beruflich? Angestellt, selbständig, verbeamtet?'],
+ ['★','Wie hoch ist Ihr Nettoeinkommen? Bonus, Mieteinnahmen, Kindergeld?'],
+ ['★','Was bleibt am Monatsende übrig, und was passiert damit?'],
+ ['★','Wie viel liegt auf Giro, Tagesgeld, Sparbuch? Depots, Bausparen?'],
+ ['','Besitzen Sie Immobilien? Restschuld, Zins, Zinsbindungsende?'],
+ ['★','Welche Verträge haben Sie fürs Alter? Riester, Betriebsrente, Versicherungen?'],
+ ['','Was steht auf Ihrer letzten Renteninformation?'],
+ ['★','Sind Sie gegen Berufsunfähigkeit abgesichert? Risikoleben für die Familie?'],
+ ['','Erwarten Sie eine Erbschaft oder Schenkung?']
+];
+const WERTE=['Sicherheit','Flexibilität','Rendite','Einfachheit','Nachhaltigkeit'];
+const KE=['Geldmarkt, Tagesgeld','Investmentfonds, ETFs','Aktien, Anleihen','Geschlossene Fonds, Vermögensanlagen','Krypto (nur erfassen)'];
+const T2=[
+ ['Rückblick','„Beim letzten Mal haben Sie gesagt, Ihnen ist besonders wichtig …"'],
+ ['Ihre Situation in Zahlen','Haushaltsbilanz, frei verfügbarer Betrag, Reserve, Rentenlücke'],
+ ['Ihre Strategie','Reserve, Absicherung, Altersvorsorgedepot, freies Depot. Zielaufteilung nach Risikoklasse.'],
+ ['Ihre bestehenden Geldanlagen','Fonds, Sparpläne, Riester-Fondssparplan: behalten, anpassen, übertragen. Versicherungen bewertet Jan.'],
+ ['Empfehlung und Kosten','Konkrete Fonds und ETFs, Sparrate, alle Kosten (Produkt, Depot, Honorar)'],
+ ['Entscheidung','„Wie fühlt sich das für Sie an? Was spricht aus Ihrer Sicht dagegen?"'],
+ ['Umsetzung','Geeignetheitserklärung, Kosteninformation, Anträge, Termin fürs Jahresgespräch']
+];
+const OBJ=[
+ ['Ein Honorar ist mir zu teuer.','Kosten sind sichtbar, Provisionen nicht','„Verständlich, weil Sie es direkt sehen. Bei klassischen Produkten zahlen Sie auch, nur unsichtbar im Vertrag. Darf ich Ihnen an Ihrem eigenen Fonds oder Sparplan zeigen, was Sie dort jedes Jahr zahlen?"'],
+ ['Bei meiner Bank ist die Beratung kostenlos.','Vertrauen in die Hausbank','„Die Bank wird über die Produkte bezahlt, die sie verkauft. Das ist legitim, aber nicht kostenlos. Ich zeige Ihnen gern den Vergleich: Was kostet die Lösung der Bank in 20 Jahren, was meine?"'],
+ ['ETFs kann ich selbst kaufen.','Selbstbewusst, preisbewusst','„Stimmt, und für manche ist das genau richtig. Mein Wert liegt in der Strategie davor und im Durchhalten danach: wie viel, wofür, welche Reserve, welche Förderung, was mit Ihren bestehenden Geldanlagen passiert."'],
+ ['Jetzt ist ein schlechter Zeitpunkt, die Börse ist zu hoch.','Angst vor Verlust','„Den perfekten Zeitpunkt kennt niemand. Deshalb arbeiten wir mit Sparplänen oder steigen gestaffelt ein. Und wir legen nur Geld an, das Sie langfristig nicht brauchen."'],
+ ['Ich will keine Verluste.','Sicherheitsbedürfnis','„Das nehme ich ernst. Dann ist Ihre Risikoklasse niedriger und ein größerer Teil liegt sicher. Auf dem Sparbuch verlieren Sie durch Inflation still an Kaufkraft. Wir finden die Mischung, mit der Sie ruhig schlafen."'],
+ ['Ich habe schon Riester oder eine Rentenversicherung.','Will nichts falsch gemacht haben','„Sehr gut, dass Sie früh vorgesorgt haben. Ihre Riester-Fondssparpläne und Fonds schaue ich mir gern an. Renten- und Riester-Versicherungen bewertet Jan als Makler, ich gebe ihm gern Bescheid."'],
+ ['Ich muss erst mit meinem Partner sprechen.','Gemeinsame Entscheidung','„Unbedingt. Am besten machen wir den nächsten Termin gemeinsam. Dann geht es ohnehin um Ihre Ziele als Familie."'],
+ ['Ich habe kein Geld übrig.','Knappes Budget','„Dann ist das Altersvorsorgedepot besonders interessant: Auf die ersten 30 € im Monat legt der Staat 50 % drauf, für Kinder sogar mehr. Und oft finden wir Spielraum, etwa bei teuren Fondssparplänen. Versicherungsverträge prüft Jan."'],
+ ['Ich investiere lieber in Immobilien.','Wunsch nach Greifbarem','„Immobilien können eine sehr gute Anlage sein, ich finanziere selbst welche. Wir schauen, wie sie in Ihr Gesamtbild passen und ob daneben Liquidität und Streuung stimmen."'],
+ ['Ich will in Krypto investieren.','Renditehoffnung, Trend','„Ich nehme das in Ihr Gesamtbild auf. Eine Empfehlung zu Kryptowerten gebe ich nicht, das darf ich nicht und das wäre auch nicht seriös. Wichtig ist, dass Ihre Basis steht und Krypto nur ein Anteil ist, dessen Verlust Sie verkraften."'],
+ ['Die staatliche Förderung lohnt sich nicht, das Geld ist gebunden.','Schlechte Erfahrung mit Riester','„Das neue Depot ist anders als Riester: keine Pflichtgarantie, Anlage in Fonds und ETFs. Ob es sich lohnt, rechnen wir aus. Das hängt von Beitrag, Kinderzahl und Steuersatz ab."'],
+ ['Ich habe keine Zeit für so etwas.','Überforderung','„Genau deshalb machen wir es einmal richtig. Danach läuft es weitgehend automatisch, und wir schauen einmal im Jahr drauf."'],
+ ['Was passiert, wenn es Sie nicht mehr gibt?','Sorge um Abhängigkeit','„Ihr Geld liegt nicht bei mir, sondern in Ihrem eigenen Depot bei einer Depotbank. Fondsanteile sind Sondervermögen und bei einer Insolvenz der Fondsgesellschaft geschützt. Sie können jederzeit selbst entscheiden oder wechseln."'],
+ ['Ich warte lieber noch ein bisschen.','Unsicherheit','„Das ist Ihre Entscheidung, und ich setze Sie nicht unter Druck. Darf ich Ihnen zeigen, was zehn Jahre Warten bei einer monatlichen Sparrate ausmachen?"'],
+ ['Ich vertraue Finanzberatern grundsätzlich nicht.','Schlechte Erfahrungen','„Das verstehe ich gut. Deshalb arbeite ich mit Honorar, lege alle Kosten offen und begründe jede Empfehlung schriftlich. Sie unterschreiben nichts, was Sie nicht verstanden haben."']
+];
+
+const EXAMPLE={kunde:'Familie Muster (Beispiel)',art:'persoenlich',paket:'Strategie',quelle:'Jan (Jahresgespräch)',alter:38,fam:'verheiratet',kinder:2,test:'nicht vorhanden',status:'ang',netto:2900,netto_p:1600,eink_sonst:500,a_wohn:1350,a_vers:280,a_kred:250,a_mob:420,a_leb:1500,a_spar:200,v_liq:9000,v_dep:14000,v_sonst:6000,v_immo:0,v_krypto:1500,s_rest:0,riester:'fonds',bav:'ja',rv:'ja',rente_g:1650,bu:'fehlt',rl:'unklar',phv:'vorhanden',r_alter:65,r_wunsch:3000,r_weitere:250,verlust:20,horizont:25,szen:'3',pref:'4',esg:'ja',esg_det:'mind. 30 % nachhaltig',av_beitrag:1800,av_u25:'nein',krypto_int:'ja',einzel:'nein',
+ goals:[{z:'Notreserve aufstocken',b:12000,j:2027,p:1},{z:'Auto',b:15000,j:2029,p:3},{z:'Ausbildung Kinder',b:30000,j:2040,p:2}],
+ werte:{Sicherheit:1,Flexibilität:3,Rendite:2,Einfachheit:4,Nachhaltigkeit:5},
+ ke:[{k:true,s:2015},{k:true,s:2021},{k:false,s:''},{k:false,s:''},{k:true,s:2023}],
+ motiv:'„Wir haben viele Verträge und keinen Überblick. Wir wollen wissen, ob wir für die Kinder und fürs Alter genug tun."',__example:true};
+
+let S={};
+function blank(){return {goals:[],werte:{},ke:KE.map(()=>({k:false,s:''})),q2:{},t2:{}}}
+function load(){
+  let persist=false; try{persist=localStorage.getItem(PKEY)==='1'}catch(e){}
+  $('#persist').checked=persist;
+  if(persist){try{const raw=localStorage.getItem(KEY); if(raw){S=Object.assign(blank(),JSON.parse(raw)); return}}catch(e){}}
+  S=Object.assign(blank(),JSON.parse(JSON.stringify(EXAMPLE)));
+}
+function save(){ if(!$('#persist').checked) return; try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} }
+
+// ---------- Aufbau dynamischer Teile ----------
+function buildStatic(){
+  $('#qlist2').innerHTML=Q2.map((q,i)=>`<label class="q"><input type="checkbox" data-q2="${i}"><span>${q[0]?'<span class="star">★</span> ':''}${q[1]}</span></label>`).join('');
+  $('#werte').innerHTML=WERTE.map(w=>`<label class="f">${w}<select data-wert="${w}"><option value="">–</option>${[1,2,3,4,5].map(n=>`<option>${n}</option>`).join('')}</select></label>`).join('');
+  $('#ke').innerHTML=KE.map((k,i)=>`<tr><td>${k}</td><td><input type="checkbox" data-ke="${i}" aria-label="Kenntnisse ${k}"></td><td><input class="num" type="number" min="1950" data-kes="${i}" aria-label="Erfahrung seit ${k}" style="max-width:110px"></td></tr>`).join('');
+  $('#t2').innerHTML=T2.map((t,i)=>`<label class="q"><input type="checkbox" data-t2="${i}"><span><b>${i+1} · ${t[0]}</b><br><span class="small">${t[1]}</span></span></label>`).join('');
+  $('#objList').innerHTML=OBJ.map((o,i)=>`<div class="obj" data-obj="${i}"><b>„${o[0]}"</b><div class="bg">Dahinter: ${o[1]}</div><div class="say" style="margin:0">${o[2]}<button class="cp" data-copy>Kopieren</button></div></div>`).join('');
+  $$('.say').forEach(el=>{ if(!el.querySelector('[data-copy]')){const b=document.createElement('button');b.className='cp';b.textContent='Kopieren';b.dataset.copy='';el.appendChild(b)} });
+  const nav=$('#nav');
+  $$('section.step').forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.dataset.go=i;b.innerHTML=`<span class="n">${String(i).padStart(2,'0')}</span>${s.dataset.title}<span class="dot" data-dot="${i}"></span>`;nav.appendChild(b)});
+}
+function renderGoals(){
+  $('#goals').innerHTML=S.goals.map((g,i)=>`<tr><td><input data-g="${i}" data-gf="z" value="${esc(g.z||'')}" aria-label="Ziel"></td><td><input class="num" type="number" min="0" data-g="${i}" data-gf="b" value="${g.b??''}" aria-label="Betrag"></td><td><input class="num" type="number" min="2025" data-g="${i}" data-gf="j" value="${g.j??''}" aria-label="Jahr"></td><td><select data-g="${i}" data-gf="p" aria-label="Priorität">${[1,2,3,4,5].map(n=>`<option ${+g.p===n?'selected':''}>${n}</option>`).join('')}</select></td><td><button data-delgoal="${i}" aria-label="Ziel entfernen">×</button></td></tr>`).join('');
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+// ---------- Formular <-> Zustand ----------
+function fill(){
+  $$('[data-k]').forEach(el=>{const k=el.dataset.k, v=S[k];
+    if(el.type==='checkbox') el.checked=!!v;
+    else if(el.type==='radio') el.checked=(v!=null && String(v)===el.value);
+    else el.value=(v??'');
+  });
+  $$('[data-q2]').forEach(el=>el.checked=!!S.q2[el.dataset.q2]);
+  $$('[data-t2]').forEach(el=>el.checked=!!S.t2[el.dataset.t2]);
+  $$('[data-wert]').forEach(el=>el.value=S.werte[el.dataset.wert]??'');
+  $$('[data-ke]').forEach(el=>el.checked=!!(S.ke[el.dataset.ke]||{}).k);
+  $$('[data-kes]').forEach(el=>el.value=(S.ke[el.dataset.kes]||{}).s??'');
+  renderGoals();
+  $('#exampleBanner').hidden=!S.__example;
+}
+document.addEventListener('input',onChange); document.addEventListener('change',onChange);
+function onChange(e){
+  const el=e.target;
+  if(el.id==='persist'){ try{ if(el.checked){localStorage.setItem(PKEY,'1');save()} else {localStorage.removeItem(PKEY);localStorage.removeItem(KEY)} }catch(x){} return }
+  if(el.dataset.k){const k=el.dataset.k;
+    if(el.type==='checkbox') S[k]=el.checked; else if(el.type==='radio'){ if(el.checked) S[k]=el.value } else S[k]=(el.type==='number'? (el.value===''?'':+el.value) : el.value);}
+  else if(el.dataset.q2!=null) S.q2[el.dataset.q2]=el.checked;
+  else if(el.dataset.t2!=null) S.t2[el.dataset.t2]=el.checked;
+  else if(el.dataset.wert) S.werte[el.dataset.wert]=el.value;
+  else if(el.dataset.ke!=null) S.ke[el.dataset.ke].k=el.checked;
+  else if(el.dataset.kes!=null) S.ke[el.dataset.kes].s=el.value;
+  else if(el.dataset.g!=null){const g=S.goals[el.dataset.g]; const f=el.dataset.gf; g[f]=(f==='z'?el.value:(el.value===''?'':+el.value))}
+  else if(el.id==='objSearch'){filterObj(el.value); return}
+  else return;
+  update(); save();
+}
+const n=v=>(v===''||v==null||isNaN(+v))?0:+v;
+
+// ---------- Berechnungen ----------
+function zulage(b,kinder,u25){
+  const g=0.5*Math.min(b,360)+0.25*Math.max(0,Math.min(b,1800)-360);
+  const k=Math.min(b,300*kinder);
+  return {g, k, bonus:u25?200:0};
+}
+function riskProposal(){
+  const parts=[];
+  const tol=[S.szen,S.pref].filter(v=>v!=null&&v!=='').map(Number);
+  if(tol.length) parts.push(['Risikotoleranz',Math.min(...tol)]);
+  if(S.verlust!==''&&S.verlust!=null){const v=+S.verlust; parts.push(['Verlusttragfähigkeit', v<5?1:v<10?2:v<20?3:v<35?4:5])}
+  if(S.horizont!==''&&S.horizont!=null){const h=+S.horizont; parts.push(['Anlagehorizont', h<3?1:h<5?2:h<8?3:h<10?4:5])}
+  if(parts.length<3) return {cls:null,parts};
+  return {cls:Math.min(...parts.map(p=>p[1])),parts};
+}
+function compute(){
+  const ein=n(S.netto)+n(S.netto_p)+n(S.eink_sonst);
+  const fix=n(S.a_wohn)+n(S.a_vers)+n(S.a_kred)+n(S.a_mob)+n(S.a_leb);
+  const aus=fix+n(S.a_spar);
+  const frei=ein-aus;
+  const liq=n(S.v_liq);
+  const resMon=(S.status==='selb'||S.status==='selb_o')?6:3;
+  const resZiel=fix*resMon;
+  const netto=n(S.v_liq)+n(S.v_dep)+n(S.v_sonst)+n(S.v_immo)+n(S.v_krypto)-n(S.s_rest);
+  const luecke=Math.max(0,n(S.r_wunsch)-n(S.rente_g)-n(S.r_weitere));
+  const jahre=S.r_alter&&S.alter? n(S.r_alter)-n(S.alter):NaN;
+  const ber=['ang','beamt','selb'].includes(S.status);
+  const b=n(S.av_beitrag); const z=zulage(b,n(S.kinder),S.av_u25==='ja');
+  const zsum=ber&&b>=120? z.g+z.k : 0;
+  const risk=riskProposal(); const final=S.risk_final? +S.risk_final : risk.cls;
+  const pfl=$$('[data-pflicht]'); const done=pfl.filter(x=>S[x.dataset.k]).length + (S.esg?1:0) + (risk.cls?1:0);
+  const total=pfl.length+2;
+  return {ein,aus,frei,liq,resZiel,resMon,netto,luecke,jahre,ber,b,z,zsum,risk,final,done,total};
+}
+
+// ---------- Darstellung ----------
+function update(){
+  const c=compute();
+  $('#k_frei').textContent=fmt(c.frei);
+  $('#k_res').textContent=fmt(c.liq);
+  $('#k_res_s').innerHTML=c.resZiel? `Ziel ${fmt(c.resZiel)} · ${c.liq>=c.resZiel?'<span class="chip">erreicht</span>':'<span class="chip w">zu niedrig</span>'}`:'Ziel: Fixkosten erfassen';
+  $('#k_luecke').textContent=S.r_wunsch? fmt(c.luecke):'–';
+  $('#k_risk').textContent=c.final? 'Klasse '+c.final:'–';
+  $('#k_risk_s').textContent=S.risk_final? 'vom Berater festgelegt':(c.risk.cls?'Vorschlag':'Angaben fehlen');
+  $('#k_zul').textContent=c.b? (c.ber? fmt(c.zsum):'nicht berechtigt'):'–';
+  $('#k_zul_s').textContent=c.b&&c.ber? `${pct(c.zsum/c.b*100)} Förderquote`:'pro Jahr';
+  $('#k_pfl').textContent=`${c.done} / ${c.total}`;
+  $('#k_pfl_bar').style.width=(c.done/c.total*100)+'%';
+  $('#c_ein').textContent=fmt(c.ein); $('#c_aus').textContent=fmt(c.aus); $('#c_frei').textContent=fmt(c.frei);
+  $('#c_netto').textContent=fmt(c.netto); $('#c_liq').textContent=fmt(c.liq);
+  $('#c_rg').textContent=S.rente_g? fmt(n(S.rente_g)):'–'; $('#c_luecke').textContent=S.r_wunsch? fmt(c.luecke):'–'; $('#c_jahre').textContent=isFinite(c.jahre)?c.jahre:'–';
+  $('#c_av_ber').textContent=c.ber?'ja':'prüfen'; $('#c_av_g').textContent=fmt(c.ber?c.z.g:0); $('#c_av_k').textContent=fmt(c.ber?c.z.k:0); $('#c_av_b').textContent=fmt(c.ber?c.z.bonus:0); $('#c_av_q').textContent=c.b&&c.ber?pct(c.zsum/c.b*100):'–';
+  $$('#riskScale span').forEach((s,i)=>s.classList.toggle('on',c.final===i+1));
+  $('#riskWhy').textContent=c.risk.parts.length? c.risk.parts.map(p=>`${p[0]}: ${p[1]}`).join(' · ')+(c.risk.cls?` → Vorschlag Klasse ${c.risk.cls} (niedrigster Wert)`:' · weitere Angaben fehlen'):'Bitte Angaben ergänzen.';
+  alerts(c); summary(c); dots();
+}
+function alerts(c){
+  const A=[];
+  if(S.riester&&S.riester!=='nein') A.push(['c','Riester vorhanden: Ein neuer Vertrag ab 2027 stellt alle Riester-Verträge unwiderruflich auf neues Recht um. Vor jedem Abschluss klären.']);
+  if(S.riester==='vers'||S.riester==='unklar') A.push(['b','Riester-Rentenversicherung oder unklar: Bewertung durch Jan.']);
+  if(S.art&&S.art!=='persoenlich') A.push(['w','Telefon oder online: Beratung aufzeichnen und den Kunden vorher darauf hinweisen. Video bei der IHK klären.']);
+  if(['fehlt','unklar'].includes(S.bu)||S.rl==='fehlt'||S.phv==='fehlt') A.push(['b','Absicherungslücke möglich: an Jan übergeben, vor dem Vermögensaufbau.']);
+  if(c.resZiel&&c.liq<c.resZiel) A.push(['w',`Notreserve unter Ziel (${c.resMon} Monate Fixkosten): Reserve zuerst aufbauen.`]);
+  if(c.frei<0) A.push(['c','Ausgaben übersteigen die Einnahmen. Budget klären, bevor gespart wird.']);
+  if(S.krypto_int==='ja'||n(S.v_krypto)>0) A.push(['w','Krypto: nur erfassen und allgemein aufklären, keine Empfehlung. Bei Verlusttragfähigkeit berücksichtigen.']);
+  if(S.einzel==='ja') A.push(['w','Einzelaktien, Anleihen: nicht von §34h gedeckt. Grenze erklären.']);
+  if(S.status==='selb_o') A.push(['w','Selbständig ohne Steuererklärung oder unklar: Förderberechtigung für das Altersvorsorgedepot prüfen.']);
+  if(c.b&&c.b<120) A.push(['w','Eigenbeitrag unter 120 € pro Jahr: Mindesteigenbeitrag nicht erreicht.']);
+  if(c.b&&c.ber&&c.b>1800) A.push(['g','Nur 1.800 € pro Jahr sind gefördert. Den Rest ins freie Depot.']);
+  if(S.s_zb&&n(S.s_zb)<=new Date().getFullYear()+3) A.push(['g',`Zinsbindung endet ${S.s_zb}: Anschlussfinanzierung vormerken.`]);
+  if(!S.p_status) A.push(['c','Statusinformation noch nicht als übergeben markiert.']);
+  $('#alerts').innerHTML=A.length? A.map(a=>`<div class="alert ${a[0]}">${a[1]}</div>`).join(''):'<div class="small">Keine offenen Hinweise.</div>';
+}
+function summary(c){
+  const lines=[];
+  lines.push(`Bedarfsanalyse ${S.kunde||'(ohne Name)'}${S.datum?' · '+S.datum:''} · Paket: ${S.paket||'offen'}`);
+  lines.push(`Motiv: ${S.motiv||'–'}`);
+  lines.push(`Haushalt: ${S.alter||'–'} Jahre, ${S.fam||'–'}, ${n(S.kinder)} Kind(er)`);
+  lines.push(`Einnahmen ${fmt(c.ein)} · Ausgaben ${fmt(c.aus)} · frei verfügbar ${fmt(c.frei)} pro Monat`);
+  lines.push(`Liquidität ${fmt(c.liq)} (Ziel ${fmt(c.resZiel)}) · Nettovermögen ${fmt(c.netto)}`);
+  if(S.r_wunsch) lines.push(`Ruhestand mit ${S.r_alter||'–'}: Wunsch ${fmt(n(S.r_wunsch))}, Lücke ${fmt(c.luecke)} pro Monat (heutige Kaufkraft)`);
+  const g=S.goals.filter(x=>x.z).sort((a,b)=>a.p-b.p).map(x=>`${x.z} ${x.b?fmt(x.b):''} bis ${x.j||'–'} (P${x.p})`);
+  if(g.length) lines.push('Ziele: '+g.join('; '));
+  const w=Object.entries(S.werte).filter(e=>e[1]).sort((a,b)=>a[1]-b[1]).map(e=>e[0]);
+  if(w.length) lines.push('Wichtig: '+w.join(' > '));
+  lines.push(`Risikoklasse: ${c.final||'–'}${S.risk_grund?' ('+S.risk_grund+')':''} · Nachhaltigkeit: ${S.esg||'–'} ${S.esg_det||''}`);
+  if(c.b) lines.push(`Altersvorsorgedepot: Beitrag ${fmt(c.b)} → Zulagen ${fmt(c.zsum)} pro Jahr${c.z.bonus&&c.ber?' + 200 € Bonus einmalig':''}`);
+  lines.push(`Riester: ${({nein:'kein',fonds:'Fondssparplan',vers:'Rentenversicherung',bank:'Banksparplan',unklar:'unklar'})[S.riester]||'–'} · bAV: ${S.bav||'–'} · BU: ${S.bu||'–'}`);
+  if(S.an_jan) lines.push('Übergabe an Jan: ja');
+  if(S.fehlend) lines.push('Fehlende Unterlagen: '+S.fehlend);
+  if(S.termin2) lines.push('Termin 2: '+S.termin2);
+  $('#summary').textContent=lines.join('\n');
+  return lines.join('\n');
+}
+function dots(){
+  const filled=[!!S.kunde, !!S.p_status, !!(S.netto||S.a_leb), S.goals.length>0||!!S.r_wunsch, Object.values(S.werte).some(Boolean), !!compute().risk.cls, !!S.av_beitrag||!!S.immo_plan, !!S.z_ok, Object.values(S.t2).some(Boolean), false, !!S.d_expl];
+  $$('[data-dot]').forEach(d=>d.classList.toggle('on',!!filled[+d.dataset.dot]));
+}
+function filterObj(q){q=q.toLowerCase(); $$('[data-obj]').forEach(el=>{el.hidden=q&&!el.textContent.toLowerCase().includes(q)})}
+
+// ---------- Navigation ----------
+let cur=0; const steps=$$('section.step');
+function go(i){cur=Math.max(0,Math.min(steps.length-1,i)); steps.forEach((s,j)=>s.hidden=j!==cur); $$('[data-go]').forEach(b=>b.setAttribute('aria-current',+b.dataset.go===cur?'step':'false')); $('#prev').disabled=cur===0; $('#next').textContent=cur===steps.length-1?'Fertig':'Weiter'; try{localStorage.setItem(KEY+'-step',cur)}catch(e){} }
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.go!=null){go(+t.dataset.go); window.scrollTo({top:0})}
+  else if(t.id==='prev'){go(cur-1); window.scrollTo({top:0})}
+  else if(t.id==='next'){go(cur+1); window.scrollTo({top:0})}
+  else if(t.id==='addGoal'){S.goals.push({z:'',b:'',j:'',p:3}); renderGoals(); update(); save()}
+  else if(t.dataset.delgoal!=null){S.goals.splice(+t.dataset.delgoal,1); renderGoals(); update(); save()}
+  else if(t.dataset.copy!=null){const say=t.parentElement.cloneNode(true); say.querySelector('[data-copy]').remove(); copy(say.textContent.trim(),t)}
+  else if(t.id==='btnCopy'){copy(summary(compute()),t)}
+  else if(t.id==='btnNew'||t.id==='btnNew2'){ if(t.dataset.confirm!=='1'){t.dataset.confirm='1'; const old=t.textContent; t.textContent='Wirklich leeren?'; setTimeout(()=>{t.textContent=old; t.dataset.confirm=''},3000); return} t.dataset.confirm=''; S=blank(); fill(); update(); save(); go(0); t.textContent=t.id==='btnNew'?'Neues Gespräch':'Leeren und starten'}
+  else if(t.id==='btnJson'){copy(JSON.stringify(S),t)}
+  else if(t.id==='btnImport'){const box=$('#importBox'); if(box.hidden){box.hidden=false; box.focus(); return} try{S=Object.assign(blank(),JSON.parse(box.value)); S.__example=false; fill(); update(); save(); $('#ioMsg').textContent='Datensatz geladen.'; box.value=''; box.hidden=true}catch(x){$('#ioMsg').textContent='Das ist kein gültiger Datensatz. Bitte den kopierten Text vollständig einfügen.'}}
+});
+function copy(text,btn){
+  const done=()=>{const o=btn.textContent; btn.textContent='Kopiert'; setTimeout(()=>btn.textContent=o,1400)};
+  try{ navigator.clipboard.writeText(text).then(done,()=>fallback(text,btn)) }catch(e){fallback(text,btn)}
+}
+function fallback(text,btn){const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); btn.textContent='Kopiert'}catch(e){btn.textContent='Bitte manuell kopieren'} ta.remove(); setTimeout(()=>{btn.textContent=btn.id==='btnCopy'?'Zusammenfassung kopieren':btn.id==='btnJson'?'Datensatz kopieren':'Kopieren'},1600)}
+
+buildStatic(); load(); fill(); update();
+let start=0; try{start=+(localStorage.getItem(KEY+'-step')||0)}catch(e){}
+go(start||0);
+})();
+</script>
