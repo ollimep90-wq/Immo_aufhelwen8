@@ -527,7 +527,7 @@ function update(){
 }
 function alerts(c){
   const A=[];
-  if(S.riester&&S.riester!=='nein') A.push(['c','Riester vorhanden: Ein neuer Vertrag ab 2027 stellt alle Riester-Verträge unwiderruflich auf neues Recht um. Vor jedem Abschluss klären.']);
+  if(S.riester&&S.riester!=='nein') A.push(['c','Riester vorhanden: Ein neuer Vertrag ab 2027 stellt alle Riester-Verträge auf neues Recht um. Vor jedem Abschluss klären.']);
   if(S.riester==='vers'||S.riester==='unklar') A.push(['b','Riester-Rentenversicherung oder unklar: Bewertung durch Jan.']);
   if(S.art&&S.art!=='persoenlich') A.push(['w','Telefon oder online: Beratung aufzeichnen und den Kunden vorher darauf hinweisen. Video bei der IHK klären.']);
   if(['fehlt','unklar'].includes(S.bu)||S.rl==='fehlt'||S.phv==='fehlt'||S.wg==='fehlt'||S.kv==='unklar') A.push(['b','Absicherungslücke möglich: an Jan übergeben, vor dem Vermögensaufbau.']);
