@@ -114,9 +114,9 @@ def gantt():
     lanes = [  # (Bereich, Farbe, hell, [(Text, von, bis)])
         ("Aufbau", "#14213D", "#EEF0F5", [("Vorlagen, Recht, WealthKonzept-Strategien", 0, 3), ("Testgespräche", 1, 2)]),
         ("Fundament", "#3F6FB0", "#E8EEFB", [("Absicherungs-Check Bestand (Jan)", 1, 7)]),
-        ("Beratung", "#2E7D32", "#E8F3E6", [("Pilot mit Jans Bestand", 1.5, 4), ("Regelbetrieb, Jahresgespräche, Kennzahlen", 4, 15)]),
+        ("Beratung", "#2E7D32", "#E8F3E6", [("Pilot Jans Bestand", 1.5, 4), ("Regelbetrieb, Jahresgespräche, Kennzahlen", 6, 15)]),
         ("Altersvorsorge", "#B7791F", "#FBF1DF", [("AV vorbereiten", 1, 3), ("Start AV-Depot und Aktion", 3, 6)]),
-        ("Add-ons", "#6B4FA0", "#F0ECF7", [("§34c, Immobilien-Abo", 4, 9), ("Edelmetall-Partner (Jan)", 2, 5)]),
+        ("Add-ons", "#6B4FA0", "#F0ECF7", [("§34c, Immobilien-Abo", 6, 11), ("Edelmetall-Partner (Jan)", 2, 5)]),
     ]
     miles = [(1.5, "Pilotstart"), (3, "Start AV-Depot 1.1.27"), (6, "GmbH (geplant)")]
     top, lane_h, bar_h = 58, 52, 18
