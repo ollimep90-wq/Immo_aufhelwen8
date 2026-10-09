@@ -127,7 +127,7 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
           <label class="f">Kunde<input id="kunde" data-k="kunde"></label>
           <label class="f">Datum<input id="datum" type="date" data-k="datum"></label>
           <label class="f">Gesprächsart<select id="art" data-k="art"><option value="persoenlich">persönlich</option><option value="telefon">telefonisch</option><option value="online">online (Video)</option></select></label>
-          <label class="f">Paket<select id="paket" data-k="paket"><option value="">noch offen</option><option>Start</option><option>Strategie</option><option>Vermögen</option></select></label>
+          <label class="f">Produkt<select id="paket" data-k="paket"><option value="">noch offen</option><option>Strategiedepot</option><option>Altersvorsorgedepot</option><option>ETF-Depot</option><option>Finanzplan</option></select></label>
           <label class="f">Kontakt über<select id="quelle" data-k="quelle"><option>Jan (Jahresgespräch)</option><option>Empfehlung</option><option>eigener Kontakt</option><option>Anfrage</option></select></label>
         </div>
         <h2>Unterlagen vom Kunden</h2>
@@ -152,7 +152,7 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
         <div class="say">„Schön, dass Sie da sind. Was hat Sie bewogen, sich das jetzt anzuschauen? Und was müsste heute passieren, damit Sie sagen: Das hat sich gelohnt?"</div>
         <label class="f">Motiv und Erwartung im Originalton<textarea id="motiv" data-k="motiv"></textarea></label>
         <div class="say">„Heute geht es nur ums Verstehen: wo Sie stehen, wo Sie hinwollen, was Ihnen wichtig ist. Ich empfehle heute noch nichts. Im zweiten Termin zeige ich Ihnen eine Strategie, und Sie entscheiden in Ruhe."</div>
-        <div class="say">„Ich arbeite als Honorar-Finanzanlagenberater. Ich bekomme für Ihre Geldanlage keine Provisionen von Banken oder Fondsgesellschaften. Sie zahlen ein Serviceentgelt, einen vorher festgelegten Prozentsatz pro Jahr auf Ihr betreutes Vermögen, zzgl. Umsatzsteuer. Meine Vergütung hängt also nicht an Produktabschlüssen. Deshalb bin ich frei, Ihnen auch zu sagen: Behalten Sie das, das ist gut."</div>
+        <div class="say">„Ich arbeite als Honorar-Finanzanlagenberater. Ich bekomme für Ihre Geldanlage keine Provisionen von Banken oder Fondsgesellschaften. Sie zahlen ein Serviceentgelt, in der Regel 1,0 % pro Jahr auf Ihr betreutes Vermögen, inklusive Umsatzsteuer und ohne Mindestbetrag. Meine Vergütung hängt also nicht an Produktabschlüssen. Deshalb bin ich frei, Ihnen auch zu sagen: Behalten Sie das, das ist gut."</div>
         <h2>Pflichtpunkte</h2>
         <label class="chk"><input type="checkbox" id="p_status" data-k="p_status" data-pflicht>Statusinformation in Textform übergeben, bevor beraten wird</label>
         <label class="chk"><input type="checkbox" id="p_honorar" data-k="p_honorar" data-pflicht>Vergütungsvereinbarung unterschrieben</label>
@@ -193,6 +193,7 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
           <label class="f">Depots, Fonds (€)<input id="v_dep" class="num" type="number" min="0" data-k="v_dep"></label>
           <label class="f">Bausparen, Sonstiges (€)<input id="v_sonst" class="num" type="number" min="0" data-k="v_sonst"></label>
           <label class="f">Immobilienwert (€)<input id="v_immo" class="num" type="number" min="0" data-k="v_immo"></label>
+          <label class="f">Edelmetalle (€)<input id="v_edel" class="num" type="number" min="0" data-k="v_edel"></label>
           <label class="f">Krypto (€)<input id="v_krypto" class="num" type="number" min="0" data-k="v_krypto"></label>
           <label class="f">Restschuld Darlehen (€)<input id="s_rest" class="num" type="number" min="0" data-k="s_rest"></label>
           <label class="f">Zinsbindung bis (Jahr)<input id="s_zb" class="num" type="number" min="2000" data-k="s_zb"></label>
@@ -206,11 +207,13 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
           <label class="f">Gesetzliche Rente laut Renteninformation (€/Monat)<input id="rente_g" class="num" type="number" min="0" data-k="rente_g"></label>
         </div>
         <p class="why">Versicherungsverträge nur mit Kundenangaben erfassen, nicht bewerten. Rentenwerte nur aus der Renteninformation übernehmen, keine Rentenberatung.</p>
-        <h2>Absicherung (nur erfassen, Weitergabe an Jan)</h2>
+        <h2>Absicherungs-Check (nur erfassen, Weitergabe an Jan)</h2>
         <div class="grid">
           <label class="f">Berufsunfähigkeit<select id="bu" data-k="bu"><option>unklar</option><option>vorhanden</option><option>fehlt</option></select></label>
           <label class="f">Risikoleben für die Familie<select id="rl" data-k="rl"><option>unklar</option><option>vorhanden</option><option>fehlt</option><option>nicht nötig</option></select></label>
           <label class="f">Privathaftpflicht<select id="phv" data-k="phv"><option>unklar</option><option>vorhanden</option><option>fehlt</option></select></label>
+          <label class="f">Wohngebäude, Hausrat<select id="wg" data-k="wg"><option>unklar</option><option>vorhanden</option><option>fehlt</option><option>nicht nötig</option></select></label>
+          <label class="f">Krankenversicherung<select id="kv" data-k="kv"><option>GKV</option><option>PKV</option><option>unklar</option></select></label>
         </div>
         <h2>Kernfragen</h2>
         <div id="qlist2"></div>
@@ -311,7 +314,7 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
       <section class="step" data-step="8" data-title="Strategiegespräch" hidden>
         <h1>Termin 2: Strategiegespräch</h1><div class="meta">60–90 Minuten</div>
         <div id="t2"></div>
-        <div class="note g"><b>Merksatz:</b> Erst die Strategie, dann das Produkt. Die Reihenfolge ist Reserve, Absicherung, Altersvorsorgedepot, freies Depot.</div>
+        <div class="note g"><b>Merksatz:</b> Erst die Strategie, dann das Produkt. Die Reihenfolge folgt dem Haus der Finanzen: Reserve und Absicherungs-Check, dann Altersvorsorgedepot, dann Strategiedepot.</div>
         <label class="f" style="margin-top:8px">Weiterempfehlung 0–10 (am Ende fragen)<input id="nps" class="num" type="number" min="0" max="10" data-k="nps"></label>
       </section>
 
@@ -377,9 +380,9 @@ const KE=['Geldmarkt, Tagesgeld','Investmentfonds, ETFs','Aktien, Anleihen','Ges
 const T2=[
  ['Rückblick','„Beim letzten Mal haben Sie gesagt, Ihnen ist besonders wichtig …"'],
  ['Ihre Situation in Zahlen','Haushaltsbilanz, frei verfügbarer Betrag, Reserve, Rentenlücke'],
- ['Ihre Strategie','Reserve, Absicherung, Altersvorsorgedepot, freies Depot. Zielaufteilung nach Risikoklasse.'],
+ ['Ihre Strategie','Haus der Finanzen: Reserve und Absicherungs-Check (Jan), Altersvorsorgedepot, Strategiedepot passend zur Risikoklasse.'],
  ['Ihre bestehenden Geldanlagen','Fonds, Sparpläne, Riester-Fondssparplan: behalten, anpassen, übertragen. Versicherungen bewertet Jan.'],
- ['Empfehlung und Kosten','Konkrete Fonds und ETFs, Sparrate, alle Kosten (Produkt, Depot, Serviceentgelt)'],
+ ['Empfehlung und Kosten','Strategie (WealthKonzept) bzw. ETFs im Sonderfall, Sparrate, alle Kosten (Serviceentgelt, Fonds, Depot)'],
  ['Entscheidung','„Wie fühlt sich das für Sie an? Was spricht aus Ihrer Sicht dagegen?"'],
  ['Umsetzung','Geeignetheitserklärung, Kosteninformation, Anträge, Termin fürs Jahresgespräch']
 ];
@@ -392,16 +395,16 @@ const OBJ=[
  ['Ich habe schon Riester oder eine Rentenversicherung.','Will nichts falsch gemacht haben','„Sehr gut, dass Sie früh vorgesorgt haben. Ihre Riester-Fondssparpläne und Fonds schaue ich mir gern an. Renten- und Riester-Versicherungen bewertet Jan als Makler, ich gebe ihm gern Bescheid."'],
  ['Ich muss erst mit meinem Partner sprechen.','Gemeinsame Entscheidung','„Unbedingt. Am besten machen wir den nächsten Termin gemeinsam. Dann geht es ohnehin um Ihre Ziele als Familie."'],
  ['Ich habe kein Geld übrig.','Knappes Budget','„Dann ist das Altersvorsorgedepot besonders interessant: Auf die ersten 30 € im Monat legt der Staat 50 % drauf, für Kinder sogar mehr. Und oft finden wir Spielraum, etwa bei teuren Fondssparplänen. Versicherungsverträge prüft Jan."'],
- ['Ich investiere lieber in Immobilien.','Wunsch nach Greifbarem','„Immobilien können eine sehr gute Anlage sein, ich finanziere selbst welche. Wir schauen, wie sie in Ihr Gesamtbild passen und ob daneben Liquidität und Streuung stimmen."'],
+ ['Ich investiere lieber in Immobilien.','Wunsch nach Greifbarem','„Immobilien können eine sehr gute Anlage sein, ich investiere selbst in Immobilien. Wir schauen, wie sie in Ihr Gesamtbild passen und ob daneben Liquidität und Streuung stimmen."'],
  ['Ich will in Krypto investieren.','Renditehoffnung, Trend','„Ich nehme das in Ihr Gesamtbild auf. Eine Empfehlung zu Kryptowerten gebe ich nicht, das darf ich nicht und das wäre auch nicht seriös. Wichtig ist, dass Ihre Basis steht und Krypto nur ein Anteil ist, dessen Verlust Sie verkraften."'],
  ['Die staatliche Förderung lohnt sich nicht, das Geld ist gebunden.','Schlechte Erfahrung mit Riester','„Das neue Depot ist anders als Riester: keine Pflichtgarantie, Anlage in Fonds und ETFs. Ob es sich lohnt, rechnen wir aus. Das hängt von Beitrag, Kinderzahl und Steuersatz ab."'],
  ['Ich habe keine Zeit für so etwas.','Überforderung','„Genau deshalb machen wir es einmal richtig. Danach läuft es weitgehend automatisch, und wir schauen einmal im Jahr drauf."'],
- ['Was passiert, wenn es Sie nicht mehr gibt?','Sorge um Abhängigkeit','„Ihr Geld liegt nicht bei mir, sondern in Ihrem eigenen Depot bei einer Depotbank. Fondsanteile sind Sondervermögen und bei einer Insolvenz der Fondsgesellschaft geschützt. Sie können jederzeit selbst entscheiden oder wechseln."'],
+ ['Was passiert, wenn es Sie nicht mehr gibt?','Sorge um Abhängigkeit','„Ihr Geld liegt nicht bei mir, sondern in Ihrem eigenen Depot bei einer Depotbank. Fondsanteile sind Sondervermögen und bei einer Insolvenz der Fondsgesellschaft geschützt. Sie können jederzeit kündigen, verkaufen oder wechseln."'],
  ['Ich warte lieber noch ein bisschen.','Unsicherheit','„Das ist Ihre Entscheidung, und ich setze Sie nicht unter Druck. Darf ich Ihnen zeigen, was zehn Jahre Warten bei einer monatlichen Sparrate ausmachen?"'],
  ['Ich vertraue Finanzberatern grundsätzlich nicht.','Schlechte Erfahrungen','„Das verstehe ich gut. Deshalb werde ich nur von Ihnen bezahlt, lege alle Kosten offen und begründe jede Empfehlung schriftlich. Sie unterschreiben nichts, was Sie nicht verstanden haben."']
 ];
 
-const EXAMPLE={kunde:'Familie Muster (Beispiel)',art:'persoenlich',paket:'Strategie',quelle:'Jan (Jahresgespräch)',alter:38,fam:'verheiratet',kinder:2,test:'nicht vorhanden',status:'ang',netto:2900,netto_p:1600,eink_sonst:500,a_wohn:1350,a_vers:280,a_kred:250,a_mob:420,a_leb:1500,a_spar:200,v_liq:9000,v_dep:14000,v_sonst:6000,v_immo:0,v_krypto:1500,s_rest:0,riester:'fonds',bav:'ja',rv:'ja',rente_g:1650,bu:'fehlt',rl:'unklar',phv:'vorhanden',r_alter:65,r_wunsch:3000,r_weitere:250,verlust:20,horizont:25,szen:'3',pref:'4',esg:'ja',esg_det:'mind. 30 % nachhaltig',av_beitrag:1800,av_u25:'nein',krypto_int:'ja',einzel:'nein',
+const EXAMPLE={kunde:'Familie Muster (Beispiel)',art:'persoenlich',paket:'Strategiedepot',quelle:'Jan (Jahresgespräch)',alter:38,fam:'verheiratet',kinder:2,test:'nicht vorhanden',status:'ang',netto:2900,netto_p:1600,eink_sonst:500,a_wohn:1350,a_vers:280,a_kred:250,a_mob:420,a_leb:1500,a_spar:200,v_liq:9000,v_dep:14000,v_sonst:6000,v_immo:0,v_krypto:1500,s_rest:0,riester:'fonds',bav:'ja',rv:'ja',rente_g:1650,bu:'fehlt',rl:'unklar',phv:'vorhanden',r_alter:65,r_wunsch:3000,r_weitere:250,verlust:20,horizont:25,szen:'3',pref:'4',esg:'ja',esg_det:'mind. 30 % nachhaltig',av_beitrag:1800,av_u25:'nein',krypto_int:'ja',einzel:'nein',
  goals:[{z:'Notreserve aufstocken',b:12000,j:2027,p:1},{z:'Auto',b:15000,j:2029,p:3},{z:'Ausbildung Kinder',b:30000,j:2040,p:2}],
  werte:{Sicherheit:1,Flexibilität:3,Rendite:2,Einfachheit:4,Nachhaltigkeit:5},
  ke:[{k:true,s:2015},{k:true,s:2021},{k:false,s:''},{k:false,s:''},{k:true,s:2023}],
@@ -489,7 +492,7 @@ function compute(){
   const liq=n(S.v_liq);
   const resMon=(S.status==='selb'||S.status==='selb_o')?6:3;
   const resZiel=fix*resMon;
-  const netto=n(S.v_liq)+n(S.v_dep)+n(S.v_sonst)+n(S.v_immo)+n(S.v_krypto)-n(S.s_rest);
+  const netto=n(S.v_liq)+n(S.v_dep)+n(S.v_sonst)+n(S.v_immo)+n(S.v_krypto)+n(S.v_edel)-n(S.s_rest);
   const luecke=Math.max(0,n(S.r_wunsch)-n(S.rente_g)-n(S.r_weitere));
   const jahre=S.r_alter&&S.alter? n(S.r_alter)-n(S.alter):NaN;
   const ber=['ang','beamt','selb'].includes(S.status);
@@ -527,7 +530,7 @@ function alerts(c){
   if(S.riester&&S.riester!=='nein') A.push(['c','Riester vorhanden: Ein neuer Vertrag ab 2027 stellt alle Riester-Verträge unwiderruflich auf neues Recht um. Vor jedem Abschluss klären.']);
   if(S.riester==='vers'||S.riester==='unklar') A.push(['b','Riester-Rentenversicherung oder unklar: Bewertung durch Jan.']);
   if(S.art&&S.art!=='persoenlich') A.push(['w','Telefon oder online: Beratung aufzeichnen und den Kunden vorher darauf hinweisen. Video bei der IHK klären.']);
-  if(['fehlt','unklar'].includes(S.bu)||S.rl==='fehlt'||S.phv==='fehlt') A.push(['b','Absicherungslücke möglich: an Jan übergeben, vor dem Vermögensaufbau.']);
+  if(['fehlt','unklar'].includes(S.bu)||S.rl==='fehlt'||S.phv==='fehlt'||S.wg==='fehlt'||S.kv==='unklar') A.push(['b','Absicherungslücke möglich: an Jan übergeben, vor dem Vermögensaufbau.']);
   if(c.resZiel&&c.liq<c.resZiel) A.push(['w',`Notreserve unter Ziel (${c.resMon} Monate Fixkosten): Reserve zuerst aufbauen.`]);
   if(c.frei<0) A.push(['c','Ausgaben übersteigen die Einnahmen. Budget klären, bevor gespart wird.']);
   if(S.krypto_int==='ja'||n(S.v_krypto)>0) A.push(['w','Krypto: nur erfassen und allgemein aufklären, keine Empfehlung. Bei Verlusttragfähigkeit berücksichtigen.']);
@@ -541,7 +544,7 @@ function alerts(c){
 }
 function summary(c){
   const lines=[];
-  lines.push(`Bedarfsanalyse ${S.kunde||'(ohne Name)'}${S.datum?' · '+S.datum:''} · Paket: ${S.paket||'offen'}`);
+  lines.push(`Bedarfsanalyse ${S.kunde||'(ohne Name)'}${S.datum?' · '+S.datum:''} · Produkt: ${S.paket||'offen'}`);
   lines.push(`Motiv: ${S.motiv||'–'}`);
   lines.push(`Haushalt: ${S.alter||'–'} Jahre, ${S.fam||'–'}, ${n(S.kinder)} Kind(er)`);
   lines.push(`Einnahmen ${fmt(c.ein)} · Ausgaben ${fmt(c.aus)} · frei verfügbar ${fmt(c.frei)} pro Monat`);
