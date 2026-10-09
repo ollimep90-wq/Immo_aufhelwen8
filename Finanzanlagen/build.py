@@ -99,46 +99,89 @@ AVKUNDE = """
 """
 
 KONTAKT_OLIVER = '<span style="background:#FFF3B0">[Anschrift] · [Telefon] · [E-Mail]</span>'
-PFLICHTHINWEIS = ('Oliver Rosenbaum, Rosenbaum Finanzberatung: Honorar-Finanzanlagenberater nach § 34h Abs. 1 GewO, '
+PFLICHTHINWEIS = ('Oliver Rosenbaum: Honorar-Finanzanlagenberater nach § 34h Abs. 1 GewO, '
     'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>; Immobiliardarlehensvermittler nach § 34i Abs. 1 GewO, '
     'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Jan Schnichels, Endlich Besser Beraten: Versicherungsmakler nach § 34d Abs. 1 GewO, '
-    'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Erlaubnis- und Registerbehörde: für Rosenbaum Finanzberatung <span style="background:#FFF3B0">[IHK]</span>, für Endlich Besser Beraten <span style="background:#FFF3B0">[IHK]</span>. '
-    'Prüfung im Vermittlerregister unter www.vermittlerregister.info. Oliver Rosenbaum ist zudem Versicherungsmakler nach § 34d Abs. 1 GewO; Versicherungen vermittelt in dieser Kooperation Endlich Besser Beraten. Für die Beratung zu Finanzanlagen erhält Rosenbaum Finanzberatung ausschließlich eine Vergütung vom Kunden (laufendes Serviceentgelt auf das betreute Vermögen, Analysen und Projekte zu Festpreisen, jeweils zzgl. USt). Für die Vermittlung von Immobiliardarlehen erhält Rosenbaum Finanzberatung <span style="background:#FFF3B0">[eine Provision des Darlehensgebers]</span> und arbeitet mit mehreren Darlehensgebern zusammen. '
+    'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Erlaubnis- und Registerbehörde: für Oliver Rosenbaum <span style="background:#FFF3B0">[IHK]</span>, für Endlich Besser Beraten <span style="background:#FFF3B0">[IHK]</span>. '
+    'Prüfung im Vermittlerregister unter www.vermittlerregister.info. Oliver Rosenbaum ist zudem Versicherungsmakler nach § 34d Abs. 1 GewO, Register-Nr. <span style="background:#FFF3B0">[D-…]</span>; Versicherungen vermittelt in dieser Kooperation Endlich Besser Beraten. Für die Beratung zu Finanzanlagen erhält Oliver Rosenbaum ausschließlich eine Vergütung vom Kunden (laufendes Serviceentgelt auf das betreute Vermögen, Analysen und Projekte zu Festpreisen, jeweils zzgl. USt). Für die Vermittlung von Immobiliardarlehen erhält Oliver Rosenbaum <span style="background:#FFF3B0">[eine Provision des Darlehensgebers]</span> und arbeitet mit mehreren Darlehensgebern zusammen. '
     'Für die Vermittlung von Versicherungen wird Endlich Besser Beraten von den Versicherern über Courtage vergütet. Wir erbringen keine Steuer- und Rechtsberatung; steuerliche und erbrechtliche Fragen klären Sie bitte mit Ihrem Steuerberater oder Notar.')
 
 def gantt():
-    X = lambda m: 250 + 50 * m      # m = Monate ab Oktober 2026
-    labels = ["Okt", "Nov", "Dez", "Jan 27", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
-    ticks = "".join(f'<text x="{X(i)+25}" y="16">{l}</text>' for i, l in enumerate(labels))
-    lines = "".join(f'<line x1="{X(i)}" y1="22" x2="{X(i)}" y2="318"/>' for i in range(16))
-    rows = [("Vorlagen und Rechtsprüfung", 0, 2, "#14213D", "Vorlagen", "#fff"),
-            ("Modellportfolios festlegen", 0, 2, "#14213D", "", ""),
-            ("Testgespräche (3–5)", 1, 2, "#2E7D32", "", ""),
-            ("Pilot mit Jans Bestand", 1, 4, "#2E7D32", "Pilot", "#fff"),
-            ("Absicherungs-Check Bestand (Jan)", 1, 7, "#3F6FB0", "Fundament zuerst", "#fff"),
-            ("Altersvorsorgedepot vorbereiten", 1, 3, "#B7791F", "FFB, Rechner", "#fff"),
-            ("Start Altersvorsorgedepot und Aktion", 3, 6, "#B7791F", "Familien, Riester-Kunden", "#fff"),
-            ("Regelbetrieb, Jahresgespräche", 6, 15, "#5FA463", "Sätze festlegen, Kennzahlen", "#fff"),
-            ("Add-ons vorbereiten", 4, 9, "#6B4FA0", "WealthKonzept, §34c, Abo", "#fff"),
-            ("Frühstart-Rente beobachten", 0, 6, "#9AA3B8", "Gesetzgebung offen", "#fff")]
-    r = t = l = ""
-    for i, (n, a, b, c, lab, lc) in enumerate(rows):
-        y = 28 + 29 * i
-        r += f'<rect x="{X(a)}" y="{y}" width="{X(b)-X(a)}" height="22" rx="5" fill="{c}"/>'
-        t += f'<text x="0" y="{y+15}">{n}</text>'
-        if lab:
-            l += f'<text x="{X(a)+7}" y="{y+15}" fill="{lc}">{lab}</text>'
-    return (f'<svg width="100%" height="320" viewBox="0 0 1010 320"><g font-size="10.5" fill="#6B7690" text-anchor="middle">{ticks}</g>'
-            f'<g stroke="#D9DEE8">{lines}</g><g font-size="12" fill="#14213D" font-weight="600">{t}</g><g>{r}</g>'
-            f'<g font-size="10" font-weight="600">{l}</g></svg>')
+    """Fahrplan als Swimlane-Grafik: Bereiche, Balken, Meilensteine, Heute-Linie."""
+    X0, W = 205, 52                       # x-Start, Breite je Monat; m = Monate ab Oktober 2026
+    X = lambda m: X0 + W * m
+    labels = ["Okt", "Nov", "Dez", "Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+    lanes = [  # (Bereich, Farbe, hell, [(Text, von, bis)])
+        ("Aufbau", "#14213D", "#EEF0F5", [("Vorlagen, Recht, Modellportfolios", 0, 2), ("Testgespräche", 1, 2)]),
+        ("Fundament", "#3F6FB0", "#E8EEFB", [("Absicherungs-Check Bestand (Jan)", 1, 7)]),
+        ("Beratung", "#2E7D32", "#E8F3E6", [("Pilot mit Jans Bestand", 1.5, 4), ("Regelbetrieb, Jahresgespräche, Kennzahlen", 4, 15)]),
+        ("Altersvorsorge", "#B7791F", "#FBF1DF", [("AV vorbereiten", 1, 3), ("Start AV-Depot und Aktion", 3, 6)]),
+        ("Add-ons", "#6B4FA0", "#F0ECF7", [("WealthKonzept, §34c, Immobilien-Abo", 4, 9), ("Edelmetall-Partner", 2, 5)]),
+    ]
+    miles = [(1.5, "Pilotstart"), (3, "Start AV-Depot 1.1.27"), (6, "GmbH (geplant)")]
+    top, lane_h, bar_h = 58, 52, 18
+    H = top + lane_h * len(lanes) + 10
+    s = [f'<svg width="100%" viewBox="0 0 1000 {H}" font-family="Inter, sans-serif">']
+    # Jahresband
+    s.append(f'<rect x="{X(0)}" y="0" width="{X(3)-X(0)}" height="16" rx="3" fill="#E5E8EF"/><text x="{(X(0)+X(3))/2}" y="12" font-size="10" font-weight="700" fill="#3D4A63" text-anchor="middle">2026</text>')
+    s.append(f'<rect x="{X(3)+2}" y="0" width="{X(15)-X(3)-2}" height="16" rx="3" fill="#DCEFD8"/><text x="{(X(3)+X(15))/2}" y="12" font-size="10" font-weight="700" fill="#2E7D32" text-anchor="middle">2027</text>')
+    for k, l in enumerate(labels):
+        s.append(f'<text x="{X(k)+W/2}" y="32" font-size="9.5" fill="#6B7690" text-anchor="middle">{l}</text>')
+    # Lanes: Hintergründe zuerst, dann Gitter, dann Balken
+    fg = []
+    for n, (name, c, cl, bars) in enumerate(lanes):
+        y = top + n * lane_h
+        s.append(f'<rect x="0" y="{y}" width="1000" height="{lane_h-6}" rx="6" fill="{cl}"/>')
+        s.append(f'<rect x="0" y="{y}" width="6" height="{lane_h-6}" rx="3" fill="{c}"/>')
+        s.append(f'<text x="16" y="{y+(lane_h-6)/2+4}" font-size="12" font-weight="700" fill="{c}">{name}</text>')
+        rows = 2 if len(bars) > 1 and any(a < bb2 and a2 < b1 for (_, a, b1) in bars for (_, a2, bb2) in bars if (a, b1) != (a2, bb2)) else 1
+        for k, (txt, a, bb) in enumerate(bars):
+            r = k if rows == 2 else 0
+            by = y + 5 + r * (bar_h + 4) if rows == 2 else y + (lane_h - 6 - bar_h) / 2
+            fg.append(f'<rect x="{X(a)+2}" y="{by}" width="{X(bb)-X(a)-4}" height="{bar_h}" rx="9" fill="{c}"/>')
+            if len(txt) * 5.6 > X(bb) - X(a) - 16:   # passt nicht in den Balken: rechts daneben
+                fg.append(f'<text x="{X(bb)+6}" y="{by+12.5}" font-size="9.6" font-weight="600" fill="{c}">{txt}</text>')
+            else:
+                fg.append(f'<text x="{X(a)+10}" y="{by+12.5}" font-size="9.6" font-weight="600" fill="#fff">{txt}</text>')
+    # Gitter
+    for k in range(16):
+        s.append(f'<line x1="{X(k)}" y1="38" x2="{X(k)}" y2="{H-6}" stroke="#FFFFFF" stroke-width="1"/>')
+    s.extend(fg)
+    # Meilensteine
+    for m, txt in miles:
+        x = X(m)
+        s.append(f'<line x1="{x}" y1="44" x2="{x}" y2="{H-6}" stroke="#2E7D32" stroke-width="1" stroke-dasharray="3 3"/>')
+        s.append(f'<path d="M{x} 38 l6 6 l-6 6 l-6 -6 z" fill="#2E7D32"/>')
+    lab = "".join(f'<text x="{X(m)+9}" y="49" font-size="9" font-weight="700" fill="#2E7D32">{t}</text>' for m, t in miles)
+    s.append(lab)
+    # Heute
+    xt = X(0.3)
+    s.append(f'<line x1="{xt}" y1="20" x2="{xt}" y2="{H-6}" stroke="#B42318" stroke-width="2"/><rect x="{xt-20}" y="{H-20}" width="40" height="14" rx="7" fill="#B42318"/><text x="{xt}" y="{H-10}" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle">heute</text>')
+    s.append('</svg>')
+    return "".join(s)
 
-REPL = {"⟦AVFAKTEN⟧": AVFAKTEN, "⟦PFLICHTEN⟧": PFLICHTEN, "⟦GANTT⟧": gantt(), "⟦CHECKDOKU⟧": CHECKDOKU,
+
+def marke(text="#14213D", sub="#6B7690", subline="", h=60):
+    """Neutrale Wortmarke ohne Personennamen: Haus der Finanzen."""
+    icon = ('<g><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/>'
+            '<rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/>'
+            '<rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></g>')
+    sl = f'<text x="72" y="52" font-size="11" fill="{sub}" letter-spacing="1.5">{subline}</text>' if subline else ""
+    return (f'<svg height="{h}" viewBox="0 0 400 60" style="display:block" font-family="Inter, sans-serif">{icon}'
+            f'<text x="72" y="{30 if subline else 38}" font-size="22" font-weight="700" fill="{text}">Ganzheitliche Finanzberatung</text>{sl}</svg>')
+
+def marke_icon(h=34):
+    return ('<svg height="%d" viewBox="0 0 60 60" style="display:block"><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/>'
+            '<rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/>'
+            '<rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></svg>' % h)
+
+REPL = {"⟦AVFAKTEN⟧": AVFAKTEN, "⟦PFLICHTEN⟧": PFLICHTEN, "⟦GANTT⟧": gantt(), "⟦MARKE_HELL⟧": marke("#FFFFFF", "#9BD77F", "NAME FOLGT · ARBEITSTITEL", 120), "⟦MARKE⟧": marke(h=70), "⟦MARKE_HELL_S⟧": marke("#FFFFFF", "#9BD77F", "NAME FOLGT · ARBEITSTITEL", 70), "⟦MARKE_KLEIN⟧": marke(subline="OLIVER ROSENBAUM", h=48), "⟦MARKE_ICON⟧": marke_icon(), "⟦CHECKDOKU⟧": CHECKDOKU,
         "⟦AVKUNDE⟧": AVKUNDE, "⟦KONTAKT-OLIVER⟧": KONTAKT_OLIVER, "⟦PFLICHTHINWEIS⟧": PFLICHTHINWEIS,
         "⟦AVTABELLE⟧": AVKONZEPT_TABELLE, "⟦RIESTERNOTE⟧": RIESTERNOTE, "⟦R⟧": R, "⟦A⟧": A}
 
 DOCS = {"konzept": "Konzept_Ganzheitliche_Finanzberatung", "kunde": "Kundenpraesentation_Ganzheitliche_Beratung",
         "leitfaden": "Gespraechsleitfaden_Bedarfsanalyse"}
-TITLES = {"konzept": "Konzept Ganzheitliche Finanzberatung", "kunde": "Ganzheitliche Beratung – Rosenbaum Finanzberatung",
+TITLES = {"konzept": "Konzept Ganzheitliche Finanzberatung", "kunde": "Ganzheitliche Finanzberatung",
           "leitfaden": "Gesprächsleitfaden Bedarfsanalyse"}
 
 for key, out in DOCS.items():
@@ -155,6 +198,6 @@ for key, out in DOCS.items():
                     f"--print-to-pdf={pdf}", tmp.as_uri()], check=True, capture_output=True)
     tmp.unlink()
     w = PdfWriter(clone_from=PdfReader(pdf))
-    w.add_metadata({"/Title": TITLES[key], "/Author": "Rosenbaum Finanzberatung", "/Creator": "", "/Producer": ""})
+    w.add_metadata({"/Title": TITLES[key], "/Author": "Oliver Rosenbaum", "/Creator": "", "/Producer": ""})
     w.write(pdf)
     print(out, len(PdfReader(pdf).pages), "Seiten")
