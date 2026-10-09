@@ -72,6 +72,7 @@ und nie in `out/*.html`. Danach neu bauen.
 - Bevölkerungsfilter nur als „bevorzugt". Geprüft ist er bisher nur für NRW
   (siehe `notizen/`). Für Hannover, München und Hamburg steht die Prüfung noch
   aus.
+- „Über mich“: M.Sc. Finance, Accounting & Taxation laut Urkunde (13.02.2026); Abschluss als Wirtschaftsingenieur vom Nutzer bestätigt (eigene Angabe). Zeugnisse liegen nicht im Repo.
 - Farben aus dem eigenen Logo (#006837 / #95CE24), das Logo selbst nicht im
   Profil.
 
