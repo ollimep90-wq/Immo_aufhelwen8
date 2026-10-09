@@ -118,10 +118,11 @@ def gantt():
             ("Altersvorsorgedepot vorbereiten", 1, 3, "#B7791F", "FFB, Rechner", "#fff"),
             ("Start Altersvorsorgedepot und Aktion", 3, 6, "#B7791F", "Familien, Riester-Kunden", "#fff"),
             ("Regelbetrieb, Jahresgespräche", 6, 15, "#5FA463", "Sätze festlegen, Kennzahlen", "#fff"),
+            ("Add-ons vorbereiten", 4, 9, "#6B4FA0", "WealthKonzept, §34c, Abo", "#fff"),
             ("Frühstart-Rente beobachten", 0, 6, "#9AA3B8", "Gesetzgebung offen", "#fff")]
     r = t = l = ""
     for i, (n, a, b, c, lab, lc) in enumerate(rows):
-        y = 30 + 36 * i
+        y = 30 + 32 * i
         r += f'<rect x="{X(a)}" y="{y}" width="{X(b)-X(a)}" height="22" rx="5" fill="{c}"/>'
         t += f'<text x="0" y="{y+15}">{n}</text>'
         if lab:
