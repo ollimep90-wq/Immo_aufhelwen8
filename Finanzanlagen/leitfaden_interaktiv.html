@@ -127,7 +127,7 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
           <label class="f">Kunde<input id="kunde" data-k="kunde"></label>
           <label class="f">Datum<input id="datum" type="date" data-k="datum"></label>
           <label class="f">Gesprächsart<select id="art" data-k="art"><option value="persoenlich">persönlich</option><option value="telefon">telefonisch</option><option value="online">online (Video)</option></select></label>
-          <label class="f">Produkt<select id="paket" data-k="paket"><option value="">noch offen</option><option>Strategiedepot</option><option>Altersvorsorgedepot</option><option>ETF-Depot</option><option>Finanzplan</option></select></label>
+          <label class="f">Produkt<select id="paket" data-k="paket"><option value="">noch offen</option><option>Strategiedepot</option><option>ETF-Standarddepot</option><option>Altersvorsorgedepot</option><option>Finanzplan</option></select></label>
           <label class="f">Kontakt über<select id="quelle" data-k="quelle"><option>Jan (Jahresgespräch)</option><option>Empfehlung</option><option>eigener Kontakt</option><option>Anfrage</option></select></label>
         </div>
         <h2>Unterlagen vom Kunden</h2>
@@ -152,7 +152,7 @@ aside.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:
         <div class="say">„Schön, dass Sie da sind. Was hat Sie bewogen, sich das jetzt anzuschauen? Und was müsste heute passieren, damit Sie sagen: Das hat sich gelohnt?"</div>
         <label class="f">Motiv und Erwartung im Originalton<textarea id="motiv" data-k="motiv"></textarea></label>
         <div class="say">„Heute geht es nur ums Verstehen: wo Sie stehen, wo Sie hinwollen, was Ihnen wichtig ist. Ich empfehle heute noch nichts. Im zweiten Termin zeige ich Ihnen eine Strategie, und Sie entscheiden in Ruhe."</div>
-        <div class="say">„Ich arbeite als Honorar-Finanzanlagenberater. Ich bekomme für Ihre Geldanlage keine Provisionen von Banken oder Fondsgesellschaften. Sie zahlen ein Serviceentgelt, in der Regel 1,0 % pro Jahr auf Ihr betreutes Vermögen, inklusive Umsatzsteuer und ohne Mindestbetrag. Meine Vergütung hängt also nicht an Produktabschlüssen. Deshalb bin ich frei, Ihnen auch zu sagen: Behalten Sie das, das ist gut."</div>
+        <div class="say">„Ich arbeite als Honorar-Finanzanlagenberater. Ich bekomme für Ihre Geldanlage keine Provisionen von Banken oder Fondsgesellschaften. Sie zahlen ein Serviceentgelt, einen festen Prozentsatz pro Jahr auf Ihr betreutes Vermögen, ohne Mindestbetrag: 0,5 % im ETF-Standarddepot, 1,0 % inklusive Umsatzsteuer im Strategiedepot. Meine Vergütung hängt also nicht an Produktabschlüssen. Deshalb bin ich frei, Ihnen auch zu sagen: Behalten Sie das, das ist gut."</div>
         <h2>Pflichtpunkte</h2>
         <label class="chk"><input type="checkbox" id="p_status" data-k="p_status" data-pflicht>Statusinformation in Textform übergeben, bevor beraten wird</label>
         <label class="chk"><input type="checkbox" id="p_honorar" data-k="p_honorar" data-pflicht>Vergütungsvereinbarung unterschrieben</label>
@@ -382,7 +382,7 @@ const T2=[
  ['Ihre Situation in Zahlen','Haushaltsbilanz, frei verfügbarer Betrag, Reserve, Rentenlücke'],
  ['Ihre Strategie','Haus der Finanzen: Reserve und Absicherungs-Check (Jan), Altersvorsorgedepot, Strategiedepot passend zur Risikoklasse.'],
  ['Ihre bestehenden Geldanlagen','Fonds, Sparpläne, Riester-Fondssparplan: behalten, anpassen, übertragen. Versicherungen bewertet Jan.'],
- ['Empfehlung und Kosten','Strategie (WealthKonzept) bzw. ETFs im Sonderfall, Sparrate, alle Kosten (Serviceentgelt, Fonds, Depot)'],
+ ['Empfehlung und Kosten','Strategiedepot (WealthKonzept) oder ETF-Standarddepot (1–2 ETFs), Sparrate, alle Kosten (Serviceentgelt, Fonds, Depot)'],
  ['Entscheidung','„Wie fühlt sich das für Sie an? Was spricht aus Ihrer Sicht dagegen?"'],
  ['Umsetzung','Geeignetheitserklärung, Kosteninformation, Anträge, Termin fürs Jahresgespräch']
 ];
