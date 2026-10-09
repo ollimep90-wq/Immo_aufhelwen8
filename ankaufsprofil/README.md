@@ -56,6 +56,8 @@ und nie in `out/*.html`. Danach neu bauen.
   ausdrücklich bestätigt.**
 - Nahversorgung: Supermärkte ab ca. 1.200 m² Verkaufsfläche. **Fachmärkte:
   Entscheidung offen.**
+- Nicht gesucht (Nutzer, 09.10.2026): reine Büroimmobilien, Erbbaurecht, einzelne
+  Eigentumswohnungen, Neubau- und Projektentwicklungen, unbebaute Grundstücke.
 - Kein Kaufpreisfaktor, kein Volumen, keine Zusage zur Käuferprovision.
 - „Verbindliche Rückmeldung", „Core+ / Value-Add" und „Mietniveau unter Markt"
   bleiben drin.
