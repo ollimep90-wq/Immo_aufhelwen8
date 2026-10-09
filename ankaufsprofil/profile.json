@@ -1,0 +1,88 @@
+{
+  "gemeinsam": {
+    "stand": "Oktober 2026",
+    "email": null,
+    "autor": "Oliver Rosenbaum",
+    "ueber_mich": "Wirtschaftsingenieur mit Master in Finance, Accounting &amp; Taxation (Vertiefung in Immobilienwirtschaft und Corporate Finance), beruflich im Controlling eines Großunternehmens tätig. Kalkulation und Ankaufsprüfung übernehme ich selbst.",
+    "eigener_bestand": null,
+    "_hinweis_eigener_bestand": "Erst nach Übergabe Auf Helwen 8 UND unterschriebenem Mietvertrag mit Indexmiete setzen: 'Eigener Bestand: ein Mehrfamilienhaus in der Nordeifel.'"
+  },
+  "profile": [
+    {
+      "datei": "Ankaufsprofil_Aachen-Koeln-Bonn-Nordeifel",
+      "region_titel": "Aachen · Köln · Bonn · Nordeifel",
+      "lead_ort": "im Raum Aachen – Köln – Bonn und in der Nordeifel.",
+      "standorte": [
+        [
+          "",
+          "Städteregion Aachen, Köln, Bonn sowie die Kreise Euskirchen, Düren, Heinsberg, Rhein-Erft und Rhein-Sieg"
+        ]
+      ]
+    },
+    {
+      "datei": "Ankaufsprofil_Region-Hannover",
+      "region_titel": "Region Hannover",
+      "lead_ort": "in der Region Hannover.",
+      "standorte": [
+        [
+          "",
+          "Region Hannover"
+        ]
+      ]
+    },
+    {
+      "datei": "Ankaufsprofil_Muenchen-Nord",
+      "region_titel": "Großraum München-Nord",
+      "lead_ort": "im nördlichen Großraum München.",
+      "standorte": [
+        [
+          "Wohnen",
+          "Raum Freising – Erding"
+        ],
+        [
+          "Light Industrial & Nahversorgung",
+          "nördlicher Großraum München"
+        ]
+      ]
+    },
+    {
+      "datei": "Ankaufsprofil_Hamburg-Nord",
+      "region_titel": "Großraum Hamburg-Nord",
+      "lead_ort": "im nördlichen Großraum Hamburg.",
+      "standorte": [
+        [
+          "Wohnen",
+          "nördliches Hamburg und angrenzendes Umland"
+        ],
+        [
+          "Light Industrial & Nahversorgung",
+          "nördlicher Großraum Hamburg"
+        ]
+      ]
+    },
+    {
+      "datei": "Ankaufsprofil_Uebersicht",
+      "kompakt": true,
+      "region_titel": "",
+      "lead_ort": "mit regionalen Schwerpunkten: Aachen – Köln – Bonn / Nordeifel, Region Hannover, Großraum München-Nord und Großraum Hamburg-Nord.",
+      "standorte": [
+        [
+          "Aachen – Köln – Bonn – Nordeifel",
+          "Städteregion Aachen, Köln, Bonn, Kreise Euskirchen, Düren, Heinsberg, Rhein-Erft, Rhein-Sieg"
+        ],
+        [
+          "Region Hannover",
+          "gesamte Region"
+        ],
+        [
+          "Großraum München-Nord",
+          "Wohnen im Raum Freising – Erding; Light Industrial & Nahversorgung im nördlichen Großraum"
+        ],
+        [
+          "Großraum Hamburg-Nord",
+          "Wohnen im nördlichen Hamburg und angrenzenden Umland; Light Industrial & Nahversorgung im nördlichen Großraum"
+        ]
+      ]
+    }
+  ]
+}
