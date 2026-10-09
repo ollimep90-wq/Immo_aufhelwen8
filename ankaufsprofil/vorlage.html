@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>{{TITEL}}</title>
+<style>
+  @page { size: 338.67mm 190.5mm; margin: 0; }
+  :root {
+    --ink: #1f2a24;
+    --navy: #006837;
+    --navy-2: #006837;
+    --line: rgba(255,255,255,.22);
+    --muted: #5d6b63;
+    --accent: #95ce24;
+    --paper: #f3f6f4;
+    --ph: #fff1b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 338.67mm; height: 190.5mm; }
+  body {
+    font-family: "Inter", "DejaVu Sans", sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+  .ph { background: var(--ph); color: #6b5300; padding: 0 3px; border-radius: 2px; }
+
+  header { border-bottom: 2mm solid; border-image: linear-gradient(90deg, #006837, #95ce24) 1;
+    background: var(--navy);
+    color: #fff;
+    padding: 8mm 14mm 6mm;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  header h1 .region { font-weight: 400; opacity: .85; margin-left: 4mm; font-size: 17pt; }
+  body.kompakt td { padding-top: 1.5mm; padding-bottom: 1.5mm; }
+  body.kompakt table { font-size: 8.1pt; line-height: 1.32; }
+  body.kompakt header { padding-top: 7mm; padding-bottom: 5mm; }
+  body.kompakt main { padding-top: 4mm; }
+  body.kompakt aside { font-size: 8.3pt; line-height: 1.38; padding-top: 4mm; padding-bottom: 4mm; }
+  body.kompakt aside li { margin-bottom: 0.8mm; }
+  body.kompakt aside .about { font-size: 7.8pt; }
+  li .lbl { font-weight: 600; color: var(--navy); }
+  header h1 { font-size: 23pt; font-weight: 600; letter-spacing: -.01em; }
+  header .lead { font-size: 10.5pt; margin-top: 2.5mm; opacity: .9; max-width: 190mm; line-height: 1.45; }
+  header .tag { font-size: 9.5pt; color: rgba(255,255,255,.85); margin-top: 2mm; letter-spacing: .02em; }
+  header .stand { font-size: 8.5pt; opacity: .7; text-align: right; }
+
+  main {
+    display: grid;
+    grid-template-columns: 1fr 72mm;
+    gap: 7mm;
+    padding: 6mm 14mm 4mm;
+  }
+  .matrix {
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    padding: 5mm 6mm 4mm;
+  }
+  .matrix h2, aside h2 {
+    font-size: 11pt; font-weight: 600; color: var(--navy);
+    padding-bottom: 2mm; border-bottom: 1.5px solid var(--navy);
+    display: inline-block; margin-bottom: 3mm;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 8.6pt; line-height: 1.4; }
+  th { text-align: left; font-weight: 600; color: var(--navy); font-size: 9.5pt; padding: 0 3mm 2mm 0; }
+  th.cat { width: 30mm; }
+  td { vertical-align: top; padding: 2.3mm 3mm 2.3mm 0; border-top: 1px solid #e3e0da; }
+  td.cat { font-weight: 600; color: var(--muted); font-size: 8.4pt; }
+  ul { list-style: none; }
+  li { padding-left: 3.2mm; position: relative; }
+  li::before { content: ""; position: absolute; left: 0; top: .55em; width: 1.4mm; height: 1.4mm; background: var(--navy); border-radius: 50%; }
+  .note { font-size: 7.6pt; color: var(--muted); margin-top: 2mm; }
+
+  aside {
+    background: var(--navy-2);
+    color: #fff;
+    border-radius: 3px;
+    padding: 5mm 6mm;
+    display: flex; flex-direction: column;
+    font-size: 8.8pt; line-height: 1.45;
+  }
+  aside h2 { color: #fff; border-bottom-color: var(--accent); }
+  aside li::before { background: var(--accent); }
+  aside li { margin-bottom: 1.1mm; }
+  aside .intro { opacity: .9; margin-bottom: 3mm; }
+  aside .about { font-size: 8.1pt; line-height: 1.4; margin-top: 3mm; padding-top: 3mm; border-top: 1px solid var(--line); }
+  aside .about h3 { font-size: 9pt; font-weight: 600; margin-bottom: 1.5mm; }
+  aside .about p { opacity: .92; }
+  aside .contact { margin-top: auto; padding-top: 3mm; border-top: 1px solid var(--line); }
+  aside .contact strong { display: block; font-size: 10pt; margin-bottom: 1mm; }
+
+  footer {
+    padding: 0 14mm 5mm;
+    font-size: 7.6pt; color: var(--muted);
+    display: flex; gap: 10mm;
+  }
+</style>
+</head>
+<body class="{{BODYCLASS}}">
+
+<header>
+  <div>
+    <h1>Ankaufsprofil<span class="region">{{REGION_TITEL}}</span></h1>
+    <p class="lead">Ich investiere in Mehrfamilienhäuser sowie ausgewählte Gewerbe- und Nahversorgungsobjekte
+      {{LEAD_ORT}}</p>
+    <p class="tag">Langfristige Bestandshaltung · Persönliche Entscheidung · Diskrete Prüfung</p>
+  </div>
+  <div class="stand">Stand: {{STAND}}</div>
+</header>
+
+<main>
+  <section class="matrix">
+    <h2>Was ich kaufe</h2>
+    <table>
+      <thead>
+        <tr>
+          <th class="cat"></th>
+          <th>Wohnen</th>
+          <th>Light Industrial</th>
+          <th>Nahversorgung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cat">Objekttypen</td>
+          <td><ul>
+            <li>Mehrfamilienhäuser</li>
+            <li>Wohn- &amp; Geschäftshäuser mit überwiegendem Wohnanteil</li>
+          </ul></td>
+          <td><ul>
+            <li>Gewerbe-, Lager- &amp; Logistikhallen</li>
+            <li>Werkstatt- &amp; Produktionsflächen, Gewerbehöfe</li>
+            <li>Hallen mit flexibler Nutzung (z.&nbsp;B. Fitness, Handwerk)</li>
+            <li>keine reinen Büroimmobilien</li>
+          </ul></td>
+          <td><ul>
+            <li>Lebensmittelmärkte / Supermärkte</li>
+          </ul></td>
+        </tr>
+        <tr>
+          <td class="cat">Größe</td>
+          <td><ul>
+            <li>ab 4 Wohneinheiten</li>
+            <li>ab ca. 300&nbsp;m² Wohnfläche</li>
+          </ul></td>
+          <td><ul><li>ab ca. 500&nbsp;m² Nutzfläche</li></ul></td>
+          <td><ul><li>ab ca. 1.200&nbsp;m² Verkaufsfläche</li></ul></td>
+        </tr>
+        <tr>
+          <td class="cat">Standorte</td>
+          <td colspan="3"><ul>
+{{STANDORTE}}
+            <li>Bevorzugt Standorte mit stabiler oder wachsender Bevölkerungsprognose</li>
+          </ul></td>
+        </tr>
+        <tr>
+          <td class="cat">Investitions&shy;strategie</td>
+          <td colspan="3"><ul>
+            <li>Core+ (stabil vermietet, mit Optimierungspotenzial) und Value-Add (Sanierungs- oder Instandhaltungsbedarf, Leerstand, Mietniveau unter Markt)</li>
+            <li>Auch Sondersituationen: Nachlass, Insolvenz, Bankenverwertung</li>
+          </ul></td>
+        </tr>
+        <tr>
+          <td class="cat">Für die Erstprüfung</td>
+          <td colspan="3">Lage/Adresse · Flächen · Mieterliste mit Ist-Mieten · Baujahr &amp; Zustand · Kaufpreisvorstellung</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <aside>
+    <h2>Was Sie erwarten können</h2>
+    <p class="intro">Ich erwerbe zum Bestandshalt – keine Weitervermittlung.</p>
+    <ul>
+      <li>Schnelle und verbindliche Rückmeldung – auch bei einem Nein</li>
+      <li>Vorkenntnis melde ich umgehend zurück</li>
+      <li>Vertraulichkeitsvereinbarung unterzeichne ich gern</li>
+    </ul>
+{{UEBER_MICH}}
+    <div class="contact">
+      Ihre Angebote gern an:
+      <strong>Oliver Rosenbaum</strong>
+      {{EMAIL}}<br>
+      +49 1577 1772230<br>
+      Formegey 8 · 53947 Nettersheim
+    </div>
+  </aside>
+</main>
+
+
+</body>
+</html>
