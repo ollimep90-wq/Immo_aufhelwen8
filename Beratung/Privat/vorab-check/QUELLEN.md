@@ -18,7 +18,7 @@ Stand 10.10.2026. Alle Werte stehen in `rechenkern.js` (`P2026`) und, unabhängi
 
 ## Gegenprobe
 
-- **Zwei unabhängige Umsetzungen:** `rechenkern.js` und `test_rechenkern.py` stimmen in 312 Fällen auf 1 Cent überein.
+- **Zwei unabhängige Umsetzungen:** `rechenkern.js` und `test_rechenkern.py` stimmen in 330 Fällen auf 1 Cent überein.
 - **Externer Vergleich:**
   - Fall: 4.000 € brutto im Monat, Steuerklasse I, kinderlos, 36 Jahre, gesetzlich versichert mit 2,9 % Zusatzbeitrag, ohne Kirchensteuer.
   - Veröffentlichte Rechner: 2.605,50 € netto, Lohnsteuer 524,50 €.
@@ -35,5 +35,5 @@ Der Rechenkern betrachtet nur das ganze Jahr. Er bildet nicht ab:
 - Bei Ehepaaren, bei denen eine Person brutto und die andere netto angibt: Hier wird ohne Splitting gerechnet. Das Formular weist darauf hin.
 - PKV: Nur der Basisanteil zählt. Das Formular fragt danach; ob die Angabe stimmt, liegt beim Kunden.
 - Günstigerprüfung Kinderfreibetrag gegen Kindergeld: nicht gerechnet, nur als Hinweis.
-- Übergangsbereich und Minijob: nicht abgebildet. Ab 24.000 € Jahresbrutto oder darunter erscheint ein Hinweis.
+- Übergangsbereich und Minijob: nicht abgebildet. Unter 24.000 € Jahresbrutto erscheint ein Hinweis.
 - **Jährlich neu:** Werte für 2027 nach dem neuen Programmablaufplan (erscheint üblicherweise im November).
