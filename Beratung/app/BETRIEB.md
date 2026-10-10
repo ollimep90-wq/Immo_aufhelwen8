@@ -23,7 +23,7 @@ Stand 10.10.2026. Die App läuft lokal und ist getestet. Online ist sie noch nic
    - Verschlüsselt ablegen, zum Beispiel mit `age` oder `gpg`, an einem zweiten Ort in der EU.
    - Die Rücksicherung einmal testen.
 5. **Updates:** Betriebssystem und Image monatlich aktualisieren. Die Versionen sind in `requirements.txt` festgeschrieben.
-6. **Zwei-Faktor-Anmeldung für Berater:** noch nicht eingebaut. Für eine App mit Finanzdaten dringend empfohlen, als nächster Ausbauschritt.
+6. **Zwei-Faktor-Anmeldung für Berater:** noch nicht eingebaut. Muss vor dem Livegang eingebaut werden (siehe unten).
 7. **E-Mail:** Die App verschickt keine E-Mails. Den Einladungslink schickt der Berater selbst, am besten nicht zusammen mit sensiblen Angaben.
 
 ## Entscheidungen im Code (10.10.2026)
