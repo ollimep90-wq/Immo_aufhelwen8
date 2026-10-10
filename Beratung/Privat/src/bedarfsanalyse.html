@@ -169,8 +169,9 @@
         <tr><td>Kredite, Leasing</td><td></td></tr>
         <tr><td>Kinder (Kita, Schule, Hobbys)</td><td></td></tr>
         <tr><td>Abos und Sonstiges</td><td></td></tr>
-        <tr><td>Bestehende Sparraten</td><td></td></tr>
-        <tr class="hl"><td><b>Frei verfügbar</b> = Einnahmen − Ausgaben</td><td></td></tr>
+        <tr class="hl"><td><b>Überschuss I</b> = Netto − Fixkosten, in % vom Netto</td><td></td></tr>
+        <tr><td>Bestehende Sparraten (Sparquote in % vom Netto)</td><td></td></tr>
+        <tr class="hl"><td><b>Überschuss II = frei verfügbar</b>, in % vom Netto</td><td></td></tr>
       </table>
       <p class="why" style="margin-top:2mm">Die meisten schätzen ihre Ausgaben zu niedrig. Wenn möglich, drei Monate Kontoauszüge grob durchgehen. Die Summe vom Kunden bestätigen lassen.</p>
     </div>
@@ -220,6 +221,42 @@
     <tr><td class="l">Pflege, Unfall, Kfz, Rechtsschutz</td><td class="small">○ ja &nbsp; ○ nein</td><td></td><td class="small">je nach Lage</td></tr>
   </table>
   <p class="why" style="margin-top:2mm">Oliver erfasst nur, ob etwas vorhanden ist, und gibt mit Einwilligung des Kunden an Jan weiter. Ob Summe und Bedingungen passen, beurteilt Jan. ⟦R⟧</p>
+  ⟦FOOT⟧
+</section>
+
+<!-- 8b Risiko-Check -->
+<section class="page">
+  <div class="kicker">Teil B · Schritt 2 · Risiko-Check aus dem Prototyp</div>
+  <h1>„Stell dir vor …“: Wie hart würde es dich treffen?</h1>
+  <p class="lead">Statt „Brauchst du eine Berufsunfähigkeitsversicherung?“ fragen wir nach Situationen. Der Kunde schätzt ein, wie stark ihn ein Ereignis treffen würde. So wird aus einem abstrakten Risiko ein greifbares Bild. Grundlage ist der Excel-Prototyp der Masterarbeit, Stand Januar 2026; die Methode ist ein Entwurf ⟦A⟧.</p>
+  <table style="font-size:8.4pt">
+    <thead><tr><th style="width:5%">#</th><th style="width:30%">Block</th><th>Beispielfrage</th><th style="width:30%">zeigt Bedarf bei</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>Körperliche Grenzen</b></td><td class="small">Bandscheibenvorfall, 12 Monate nicht arbeiten: Was heißt das für dein Einkommen?</td><td class="small">Berufsunfähigkeit, Grundfähigkeit, Unfall, Kranken-Zusatz</td></tr>
+      <tr><td>2</td><td><b>Psychische Belastung</b></td><td class="small">Schlafstörungen über Monate: Wie wirkt sich das auf deine Leistung aus?</td><td class="small">Berufsunfähigkeit, Kranken-Zusatz</td></tr>
+      <tr><td>3</td><td><b>Beruf nach Einschränkung</b></td><td class="small">Einkommen sinkt dauerhaft um 30–50 %: Welche Bereiche wären betroffen?</td><td class="small">Berufsunfähigkeit, Grundfähigkeit</td></tr>
+      <tr><td>4</td><td><b>Haushalt und Verpflichtungen</b></td><td class="small">Einkommen fällt weg, Fixkosten bleiben: Wie lange reichen die Rücklagen?</td><td class="small">Berufsunfähigkeit, Risikoleben</td></tr>
+      <tr><td>5</td><td><b>Verantwortung für Kinder und Tiere</b></td><td class="small">Dein Kind muss wochenlang ins Krankenhaus: Würdest du Zusatzkosten tragen?</td><td class="small">Kinder-Absicherung, Risikoleben; Tierkranken, Tier-OP</td></tr>
+      <tr><td>6</td><td><b>Recht und Konflikte</b></td><td class="small">Langer Streit mit Vermieter oder Arbeitgeber: Könntest du die Kosten tragen?</td><td class="small">Rechtsschutz</td></tr>
+      <tr><td>7</td><td><b>Hausrat</b></td><td class="small">Ein Akku verursacht einen Schwelbrand: Wie hoch wäre der Schaden?</td><td class="small">Hausrat</td></tr>
+      <tr><td>8</td><td><b>Gebäude</b> (nur Eigentümer)</td><td class="small">Starkregen drückt Wasser in den Keller: Könntest du die Sanierung zahlen?</td><td class="small">Wohngebäude inkl. Elementar</td></tr>
+      <tr><td>9</td><td><b>Selbstbild</b></td><td class="small">„Mein Körper wird mir immer signalisieren, bevor es kritisch wird.“</td><td class="small">verstärkt Blöcke 1–5</td></tr>
+    </tbody>
+  </table>
+  <div class="grid g2" style="margin-top:4mm;gap:5mm">
+    <div class="card fill"><h3>So wird gewertet</h3><ul class="small">
+      <li>Antwortskala: existenzbedrohend (4), stark belastend (3), spürbar (2), kaum relevant (1), egal (0), trifft nicht zu (zählt nicht)</li>
+      <li>Fragen zu Kindern, Tieren, Partner und Eigentum erscheinen nur, wenn das auf den Kunden zutrifft</li>
+      <li>Jeder Block wirkt mit einem Gewicht von 0 bis 3 auf bestimmte Versicherungsarten</li>
+      <li>Ergebnis je Versicherungsart in Prozent der möglichen Punkte. Ampel: ab 60 % rot, 30 bis unter 60 % gelb, unter 30 % grün, 0 % nicht bewertbar</li>
+    </ul></div>
+    <div class="card blue"><h3>Was das Ergebnis heißt und was nicht</h3><ul class="small">
+      <li>Es misst, <b>wie stark der Kunde betroffen wäre</b>, nicht ob er schon versichert ist</li>
+      <li>Zusammen mit dem Absicherungs-Check („vorhanden?“) ergibt sich der Handlungsbedarf: hohe Betroffenheit und nichts vorhanden heißt zuerst angehen</li>
+      <li>Die fachliche Bewertung und jede Empfehlung zu Versicherungen macht Jan ⟦R⟧</li>
+      <li>Haftpflicht, Pflege und Krankentagegeld fragt der Prototyp noch nicht ab; bis dahin über den Absicherungs-Check</li>
+    </ul></div>
+  </div>
   ⟦FOOT⟧
 </section>
 

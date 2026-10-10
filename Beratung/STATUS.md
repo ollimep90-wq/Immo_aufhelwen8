@@ -33,7 +33,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
 
 ## Offen
 
-1. Excel-Prototyp und Fragenkatalog (folgt vom Nutzer) in die Bedarfsanalyse und den Vorab-Check einarbeiten.
+1. **Excel-Prototyp:** am 10.10.2026 erhalten und ausgewertet, siehe `Prototyp_Analyse.md`. Budgetlogik und Risiko-Check sind in der Bedarfsanalyse übernommen (S. 7 und 9). Der Vorab-Check ist offen, siehe Punkt 2.
 2. Der Vorab-Check als digitales Formular ist noch nicht gebaut. Das interaktive Werkzeug muss angepasst werden.
 3. Den gleichen Satz für **Gewerbe und Unternehmen** erstellen.
 4. **§34i-Modell wählen:** Provision oder Honorar.
