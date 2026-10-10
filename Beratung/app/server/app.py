@@ -34,6 +34,7 @@ LEERLAUF = 30 * 60                                  # Abmeldung nach 30 Minuten 
 MAX_BODY = 512 * 1024
 PROTOKOLL_TAGE = int(os.environ.get("APP_PROTOKOLL_TAGE", "730"))        # Annahme, festzulegen (BETRIEB.md)
 EINWILLIGUNG_TAGE = int(os.environ.get("APP_EINWILLIGUNG_TAGE", "1095"))  # Nachweis nach Löschung, Annahme
+AKTEN_TAGE = int(os.environ.get("APP_AKTEN_TAGE", "365"))   # Entscheidung 10.10.2026: 12 Monate ohne Aktivität, dann Löschung
 EMAIL_RE = re.compile(r"^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,30}$")
 
 # Einwilligungstext: Version und Wortlaut werden mit Hash gespeichert (Nachweis Art. 7 Abs. 1 DSGVO)
@@ -126,7 +127,7 @@ def norm_email(e):
 def neue_sitzung(resp: Response, user_id):
     token = secrets.token_urlsafe(32)
     jetzt = time.time()
-    DB.aufraeumen(PROTOKOLL_TAGE, EINWILLIGUNG_TAGE)
+    DB.aufraeumen(PROTOKOLL_TAGE, EINWILLIGUNG_TAGE, AKTEN_TAGE)
     DB.x("INSERT INTO sessions (token_hash,user_id,ablauf,letzte) VALUES (?,?,?,?)", h(token), user_id, jetzt + SESSION_DAUER, jetzt)
     resp.set_cookie(COOKIE, token, max_age=SESSION_DAUER, httponly=True, samesite="strict", secure=not UNSICHER, path="/")
 
@@ -258,6 +259,7 @@ def login(d: Login, request: Request, resp: Response):
         DB.protokoll(u["id"], None, "passwort ok, zweiter faktor offen")
         return {"schritt": "2fa" if u["totp_aktiv"] else "2fa_einrichten", "name": u["name"]}
     neue_sitzung(resp, u["id"])
+    DB.x("UPDATE akten SET geaendert=? WHERE kunde_id=?", time.time(), u["id"])   # Kundenanmeldung = Aktivität
     DB.protokoll(u["id"], None, "login")
     return {"schritt": "fertig", "rolle": u["rolle"], "name": u["name"]}
 
@@ -402,6 +404,7 @@ def akten(u=Depends(nur("admin", "berater"))):
                     "LEFT JOIN users k ON k.id=a.kunde_id WHERE b.user_id=? ORDER BY a.geaendert DESC", u["id"])
     for r in rows:
         r["vorab_da"] = bool(DB.eins("SELECT 1 AS x FROM abschnitte WHERE akte_id=? AND schluessel='vorab'", r["id"]))
+        r["loeschung_am"] = r["geaendert"] + AKTEN_TAGE * 86400
     return rows
 
 

@@ -50,11 +50,20 @@ Stand: 10.10.2026. Die App läuft lokal und ist getestet: 19 API-Tests und ein B
 
 ## Fristen und Löschung
 
-- **Interessenten-Akten:** 12 Monate nach der letzten Änderung automatisch löschen. Das hast du am 10.10.2026 entschieden. Die Umsetzung folgt, sobald die Prüfung der Aufbewahrungspflichten vorliegt.
-- **Protokoll:** wird nach 730 Tagen gelöscht.
-- **Einwilligungsnachweise gelöschter Akten:** werden nach 1.095 Tagen gelöscht.
-- Beide Fristen für Protokoll und Einwilligungsnachweise sind **Annahmen** und noch festzulegen (`APP_PROTOKOLL_TAGE`, `APP_EINWILLIGUNG_TAGE`).
-- **Auftragsakten:** Aufbewahrungspflichten gelten für die Beratungsdokumentation außerhalb der App, siehe Prüfung.
+Diese Fristen beruhen auf der Prüfung vom 10.10.2026. Die Normtexte stammen aus nicht-amtlichen Fassungen, weil gesetze-im-internet.de nicht erreichbar war. Vor Verwendung am amtlichen Text prüfen.
+
+| Fall | Frist | Grundlage | Wo |
+|---|---|---|---|
+| Interessent ohne Auftrag | **12 Monate nach letzter Aktivität**, dann automatische Löschung (umgesetzt, `APP_AKTEN_TAGE=365`). Aktivität ist jedes Speichern und jede Kundenanmeldung. Die Liste zeigt „Löschung am“, 30 Tage vorher gelb markiert | Keine gewerberechtliche Pflicht. DSGVO: Speicherbegrenzung (Art. 5 Abs. 1 e). Die 12 Monate sind eine Wertung, keine Vorgabe | App |
+| Auftrag Finanzanlagen (§ 34h) | **10 Jahre** ab Ende des Jahres des letzten aufzeichnungspflichtigen Vorgangs. Betrifft die Kundenangaben nach § 16, die Geeignetheitserklärung, Informationsnachweise und gegebenenfalls Gesprächsaufzeichnungen nach § 18a (Telefon/Video) | §§ 22, 23 FinVermV | **außerhalb der App** archivieren, unveränderbar |
+| Auftrag Darlehen (§ 34i) | Pflichtangaben **5 Jahre**. Empfehlung nach § 511 BGB aus Haftungsgründen länger (strittig, bis 10 Jahre) | § 14 ImmVermV, § 511 BGB | außerhalb |
+| Auftrag Versicherung (§ 34d) | Keine gesetzliche Frist für die Beratungsdokumentation. Aufbewahrung wegen Haftung: Mandat plus bis 10 Jahre (strittig). Zahlungsaufzeichnungen 5 Jahre | §§ 61–63 VVG, § 22 VersVermV, §§ 195, 199 BGB | außerhalb |
+| GwG-Unterlagen (Lebensversicherung, wohl auch § 34h) | 5 Jahre, **spätestens nach 10 Jahren löschen** | § 8 Abs. 4 GwG | getrennt |
+| Rechnungen/Belege; Geschäftsbriefe | 8 Jahre; 6 Jahre | § 147 AO, § 257 HGB | Buchhaltung |
+
+**Protokoll:** 730 Tage. **Einwilligungsnachweise gelöschter Akten:** 1.095 Tage. Beide Fristen sind Annahmen und noch festzulegen.
+
+**Offene Entscheidung:** Wo wird die Pflichtdokumentation der Aufträge geführt? Siehe die Frage an den Nutzer im Verlauf.
 
 ## Was die Sicherheitsprüfung ergab und umgesetzt ist (10.10.2026)
 

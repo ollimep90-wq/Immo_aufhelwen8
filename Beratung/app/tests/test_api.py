@@ -244,3 +244,15 @@ def test_rfc6238():
     import base64
     g = base64.b32encode(b"12345678901234567890").decode()
     assert [sicher.totp(g, t, 8) for t in (59, 1111111109, 1234567890, 2000000000)] == ["94287082", "07081804", "89005924", "69279037"]
+
+
+def test_akten_nach_frist_geloescht(umgebung):
+    oli = client("oliver@x.de")
+    alt = oli.post("/api/akten", json={"titel": "Alt"}, headers=H).json()["id"]
+    neu = oli.post("/api/akten", json={"titel": "Neu"}, headers=H).json()["id"]
+    umgebung.x("UPDATE akten SET geaendert=geaendert-? WHERE id=?", (appmod.AKTEN_TAGE + 1) * 86400, alt)
+    liste = {a["id"]: a for a in oli.get("/api/akten").json()}
+    assert liste[neu]["loeschung_am"] > liste[alt]["loeschung_am"]
+    client("jan@x.de")   # jede Anmeldung startet den Löschlauf
+    ids = [a["id"] for a in oli.get("/api/akten").json()]
+    assert alt not in ids and neu in ids

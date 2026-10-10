@@ -37,6 +37,7 @@
   const seg = (f, label, optionen) => `<div><label>${label}</label><div class="seg" role="radiogroup" aria-label="${esc(label)}">` +
     optionen.map(([w, t]) => `<label><input type="radio" name="${f}" data-f="${f}" value="${w}"><span>${t}</span></label>`).join("") + "</div></div>";
   const fehler = (t) => { $("fehler").textContent = t || ""; };
+  const tag = (t) => t ? new Date(t * 1000).toLocaleDateString("de-DE") : "–";
   const datum = (t) => t ? new Date(t * 1000).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) : "–";
 
   /* ---------- Rechnungen aus den Abschnitten ---------- */
@@ -95,7 +96,8 @@
     $("akten").innerHTML = rows.map((a) => `<tr class="klick" data-id="${a.id}" tabindex="0"><td><b>${esc(a.titel)}</b></td>
       <td>${a.kunde_id ? '<span class="badge gr">aktiv</span>' : '<span class="badge">keiner</span>'}</td>
       <td>${a.vorab_da ? '<span class="badge gr">ausgefüllt</span>' : '<span class="badge">offen</span>'}</td>
-      <td class="n hint">${datum(a.geaendert)}</td></tr>`).join("") || '<tr><td colspan="4" class="hint">Noch keine Akten.</td></tr>';
+      <td class="n hint">${datum(a.geaendert)}</td>
+      <td class="n">${(a.loeschung_am - Date.now() / 1000) < 30 * 86400 ? `<span class="badge" style="background:var(--amber-l);color:var(--amber)">${tag(a.loeschung_am)}</span>` : `<span class="hint">${tag(a.loeschung_am)}</span>`}</td></tr>`).join("") || '<tr><td colspan="5" class="hint">Noch keine Akten.</td></tr>';
     document.querySelectorAll("#akten tr.klick").forEach((tr) => {
       const oeffnen = () => oeffneAkte(Number(tr.dataset.id));
       tr.addEventListener("click", oeffnen);

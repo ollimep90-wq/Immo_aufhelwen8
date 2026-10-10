@@ -192,7 +192,7 @@ class DB:
             con.execute("UPDATE akten SET geaendert=? WHERE id=?", (jetzt, akte_id))
         return neu
 
-    def aufraeumen(self, protokoll_tage, einwilligung_tage):
+    def aufraeumen(self, protokoll_tage, einwilligung_tage, akten_tage=None):
         """Löschlauf: abgelaufene Sitzungen, benutzte/abgelaufene Einladungen, alte Protokoll- und Nachweisdaten."""
         jetzt = time.time()
         with self.tx() as con:
@@ -200,6 +200,16 @@ class DB:
             con.execute("DELETE FROM vorsitzungen WHERE ablauf < ?", (jetzt,))
             con.execute("DELETE FROM einladungen WHERE ablauf < ? OR benutzt IS NOT NULL", (jetzt,))
             con.execute("DELETE FROM protokoll WHERE zeit < ?", (jetzt - protokoll_tage * 86400,))
+            if akten_tage:   # Interessenten-Akten: Löschung nach Frist ohne Aktivität (geaendert = letzte Aktivität)
+                grenze = jetzt - akten_tage * 86400
+                alt = [r[0] for r in con.execute("SELECT id FROM akten WHERE geaendert < ?", (grenze,))]
+                for aid in alt:
+                    k = con.execute("SELECT kunde_id FROM akten WHERE id=?", (aid,)).fetchone()[0]
+                    con.execute("DELETE FROM akten WHERE id=?", (aid,))
+                    if k:
+                        con.execute("DELETE FROM sessions WHERE user_id=?", (k,))
+                        con.execute("UPDATE users SET aktiv=0, pw_hash=NULL, email=?, name='gelöscht' WHERE id=?", (f"geloescht-{k}@invalid", k))
+                    con.execute("INSERT INTO protokoll (zeit,user_id,akte_id,aktion) VALUES (?,?,?,?)", (jetzt, None, aid, "akte nach frist gelöscht"))
             con.execute("DELETE FROM einwilligungen WHERE COALESCE(widerrufen, zeit) < ? "
                         "AND akte_id NOT IN (SELECT id FROM akten)", (jetzt - einwilligung_tage * 86400,))
 
