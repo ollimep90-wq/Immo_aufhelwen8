@@ -18,6 +18,12 @@ PFLICHTHINWEIS = ('Oliver Rosenbaum: Honorar-Finanzanlagenberater nach § 34h Ab
     'Prüfung im Vermittlerregister unter www.vermittlerregister.info. Oliver Rosenbaum ist zudem Versicherungsmakler nach § 34d Abs. 1 GewO, Register-Nr. <span style="background:#FFF3B0">[D-…]</span>; Versicherungen vermittelt in dieser Kooperation Endlich Besser Beraten. Für die Beratung zu Finanzanlagen erhält Oliver Rosenbaum ausschließlich eine Vergütung vom Kunden (laufendes Serviceentgelt auf das betreute Vermögen bzw. Festpreis für einen Finanzplan, jeweils inkl. USt). Für die Vermittlung von Immobiliardarlehen erhält Oliver Rosenbaum <span style="background:#FFF3B0">[eine Provision des Darlehensgebers; bei Wahl der Honorar-Immobiliardarlehensberatung stattdessen ein Honorar]</span> und arbeitet mit mehreren Darlehensgebern zusammen. '
     'Für die Vermittlung von Versicherungen wird Endlich Besser Beraten von den Versicherern über Courtage vergütet. Wir erbringen keine Steuer- und Rechtsberatung; steuerliche und erbrechtliche Fragen klären Sie bitte mit Ihrem Steuerberater oder Notar.')
 
+# Fassung für Unterlagen in du-Form
+PFLICHTHINWEIS_DU = PFLICHTHINWEIS.replace(
+    'steuerliche und erbrechtliche Fragen klären Sie bitte mit Ihrem Steuerberater oder Notar.',
+    'steuerliche und erbrechtliche Fragen klärst du bitte mit deinem Steuerberater oder Notar.')
+assert PFLICHTHINWEIS_DU != PFLICHTHINWEIS
+
 def marke(text="#14213D", sub="#6B7690", subline="", h=60):
     """Neutrale Wortmarke ohne Personennamen: Haus der Finanzen."""
     icon = ('<g><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/>'

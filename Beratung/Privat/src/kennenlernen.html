@@ -22,8 +22,8 @@
   <h1>Erst du. Dann der Plan.<br>Dann das Produkt.</h1>
   <div class="row" style="margin-top:12mm">
     <div class="col tile"><svg class="ic"><use href="#i-heart"/></svg><h3>Du erzählst</h3><p>Wie soll dein Leben aussehen? Was ist dir wichtig, was macht dir Sorgen? Wir hören zu, bevor wir rechnen.</p></div>
-    <div class="col tile"><svg class="ic"><use href="#i-route"/></svg><h3>Wir bauen den Plan</h3><p>Aus deinen Zielen wird ein Konstrukt aus Absicherung, Vermögensaufbau und Altersvorsorge, in der richtigen Reihenfolge.</p></div>
-    <div class="col tile"><svg class="ic"><use href="#i-check"/></svg><h3>Erst dann Lösungen</h3><p>Jede Empfehlung hängt an einem deiner Ziele. Was nicht passt, empfehlen wir nicht, auch wenn es sich verkaufen ließe.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-route"/></svg><h3>Wir bauen den Plan</h3><p>Aus deinen Zielen wird ein Plan aus Absicherung, Vermögensaufbau und Altersvorsorge, in der richtigen Reihenfolge.</p></div>
+    <div class="col tile"><svg class="ic"><use href="#i-check"/></svg><h3>Erst dann Lösungen</h3><p>Jede Empfehlung hängt an einem deiner Ziele. Was nicht passt, empfehlen wir nicht.</p></div>
   </div>
   ⟦FOOT⟧
 </section>
@@ -105,7 +105,7 @@
     <div class="col tile"><svg class="ic b"><use href="#i-shield"/></svg><h3>Was abgesichert ist</h3><p>Deine Verträge, im Absicherungs-Check bei Jan.</p></div>
     <div class="col tile"><svg class="ic"><use href="#i-slider"/></svg><h3>Wie du tickst</h3><p>Wie viel Schwankung hältst du aus, wie viel Verlust kannst du tragen?</p></div>
   </div>
-  <p class="sub" style="margin-top:8mm">Tipp: Mit dem kurzen Vorab-Check bist du in zehn Minuten vorbereitet und siehst schon ein erstes Bild.</p>
+  <p class="sub" style="margin-top:8mm">Tipp: Bring mit, was du hast. Die Liste dazu findest du am Ende.</p>
   ⟦FOOT⟧
 </section>
 
@@ -190,14 +190,14 @@
       <div class="eyebrow">Warum jetzt</div>
       <h2>Zehn Jahre warten kostet mehr als gedacht.</h2>
       <div class="big grad" style="font-size:36pt;margin-top:7mm">⟦Z:warten_diff⟧</div>
-      <p style="margin-top:2mm">weniger, wenn du 200 € im Monat erst ab 40 statt ab 30 sparst, bis 67. Eingezahlt hast du dabei nur ⟦Z:warten_einz_diff⟧ weniger.</p>
+      <p style="margin-top:2mm">weniger im Rechenbeispiel, wenn du 200 € im Monat erst ab 40 statt ab 30 sparst, bis 67. Eingezahlt hast du dabei nur ⟦Z:warten_einz_diff⟧ weniger.</p>
     </div>
     <div class="col">
       <svg width="100%" height="50mm" viewBox="0 0 800 170">
         <g font-family="Inter, sans-serif" font-size="14" fill="#515154"><text x="0" y="45">Start mit 30</text><text x="0" y="125">Start mit 40</text></g>
         <rect x="140" y="20" width="560" height="40" rx="6" fill="#2E8B3E"/>
-        <rect x="140" y="100" width="305.4" height="40" rx="6" fill="#B9C4BD"/>
-        <g font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#1D1D1F"><text x="710" y="46">⟦Z:warten_ab30⟧</text><text x="455" y="126">⟦Z:warten_ab40⟧</text></g>
+        <rect x="140" y="100" width="⟦Z:warten_bar⟧" height="40" rx="6" fill="#B9C4BD"/>
+        <g font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#1D1D1F"><text x="710" y="46">⟦Z:warten_ab30⟧</text><text x="⟦Z:warten_txt⟧" y="126">⟦Z:warten_ab40⟧</text></g>
       </svg>
       <p class="fine" style="margin-top:3mm">Rechenbeispiel: 200 € monatlich bis Alter 67, angenommene Rendite 6 % pro Jahr vor Kosten, abzüglich 1,3 % laufender Kosten, ohne Steuern. Die angenommene Rendite ist keine Prognose. Wertpapiere können an Wert verlieren.</p>
     </div>
@@ -224,7 +224,7 @@
     </svg>
     <div class="col">
       <h2>Ein Plan lebt mit deinem Leben.</h2>
-      <p class="sub">Einmal im Jahr schauen wir gemeinsam drauf: Läuft alles nach Plan? Und wenn sich etwas ändert, melden wir uns schon vorher.</p>
+      <p class="sub">Einmal im Jahr schauen wir gemeinsam drauf: Läuft alles nach Plan? Erzähl uns, wenn sich etwas ändert. Und wo wir es vorher wissen, etwa wenn deine Zinsbindung endet, melden wir uns rechtzeitig.</p>
       <p style="margin-top:6mm"><span class="pill">Hochzeit</span> <span class="pill">Kind</span> <span class="pill">Jobwechsel</span> <span class="pill">Hauskauf</span> <span class="pill">Erbschaft</span> <span class="pill">Zinsbindung endet</span></p>
     </div>
   </div>
@@ -237,7 +237,7 @@
   <h2>So werden wir bezahlt.</h2>
   <div class="row" style="margin-top:9mm">
     <div class="col tile" style="background:var(--blue-l)"><svg class="ic b"><use href="#i-shield"/></svg><h3>Absicherung</h3><p>Endlich Besser Beraten vermittelt Versicherungen. Dafür zahlt der Versicherer eine Courtage.</p></div>
-    <div class="col tile" style="background:var(--green-l)"><svg class="ic"><use href="#i-chart"/></svg><h3>Vermögen und Altersvorsorge</h3><p>Keine Provisionen von Produktanbietern. Du zahlst ein Serviceentgelt pro Jahr auf dein betreutes Vermögen: 0,5 % im ETF-Standarddepot, 1,0 % inklusive Umsatzsteuer im Strategiedepot inklusive Vermögensverwaltung. Kein Mindestbetrag. Dazu kommen Fonds- und Depotkosten.</p></div>
+    <div class="col tile" style="background:var(--green-l)"><svg class="ic"><use href="#i-chart"/></svg><h3>Vermögen und Altersvorsorge</h3><p>Keine Provisionen von Produktanbietern. Du zahlst ein Serviceentgelt pro Jahr auf dein betreutes Vermögen: 0,5 % im ETF-Standarddepot, 1,0 % inklusive Umsatzsteuer im Strategiedepot inklusive Vermögensverwaltung. Kein Mindestentgelt. Dazu kommen Fonds- und Depotkosten.</p></div>
     <div class="col tile"><svg class="ic"><use href="#i-house"/></svg><h3>Finanzierung</h3><p>Bei der Vermittlung eines Darlehens erhält Oliver eine Provision der Bank oder, als Honorarberater, ein Honorar von dir, nie beides. Die Höhe nennen wir dir vorab.</p></div>
   </div>
   <p style="margin-top:6mm"><span class="pill">Kennenlernen kostenfrei</span> <span class="pill" style="background:var(--soft);color:var(--ink2)">Nur ein Plan, ohne Umsetzung: Festpreis, vorher vereinbart</span></p>

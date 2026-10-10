@@ -6,7 +6,7 @@ Aufruf: python3 build.py
 import pathlib, re, sys
 ROOT = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent.parent / "shared"))
-from brand import marke, marke_icon, KONTAKT_OLIVER, PFLICHTHINWEIS, R, A, render  # noqa: E402
+from brand import marke, marke_icon, KONTAKT_OLIVER, PFLICHTHINWEIS_DU, R, A, render  # noqa: E402
 from zahlen import Z  # noqa: E402
 
 DECK_HEAD = (ROOT / "assets" / "deck_head.html").read_text()
@@ -41,7 +41,7 @@ TOKENS = {
     "⟦MARKE⟧": marke(subline="OLIVER ROSENBAUM · JAN SCHNICHELS", h=48),
     "⟦MARKE_ICON⟧": marke_icon(),
     "⟦KONTAKT-OLIVER⟧": KONTAKT_OLIVER,
-    "⟦PFLICHTHINWEIS⟧": PFLICHTHINWEIS,
+    "⟦PFLICHTHINWEIS⟧": PFLICHTHINWEIS_DU,
     "⟦R⟧": R, "⟦A⟧": A,
 }
 

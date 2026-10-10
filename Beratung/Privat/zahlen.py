@@ -53,6 +53,17 @@ Z["warten_ab30"] = eur(ab30)
 Z["warten_ab40"] = eur(ab40)
 Z["warten_diff"] = eur(ab30 - ab40)
 Z["warten_einz_diff"] = eur(200 * 12 * 10)
+Z["warten_bar"] = f"{560 * ab40 / ab30:.1f}"          # Balkenbreite in px, 560 = ab30
+Z["zz_bar"] = f"{560 * 200 * 12 * 30 / fv_sparplan(200, 30, RENDITE, KOSTEN):.1f}"
+Z["warten_txt"] = f"{140 + float(Z['warten_bar']) + 10:.0f}"
+Z["zz_txt"] = f"{140 + float(Z['zz_bar']) + 10:.0f}"
+# Kostenvergleich (vermoegen.html): 200 €/Monat, 30 Jahre
+kv = {"03": 0.003, "08": 0.008, "13": 0.013, "20": 0.020}
+kv_end = {k: fv_sparplan(200, 30, RENDITE, c) for k, c in kv.items()}
+for k, v in kv_end.items():
+    Z[f"kv_end{k}"] = eur(v)
+    Z[f"kv_bar{k}"] = f"{476 * v / kv_end['03']:.1f}"
+    Z[f"kv_txt{k}"] = f"{190 + 476 * v / kv_end['03'] + 10:.0f}"
 # Rentenlücke in heutiger Kaufkraft
 netto, ziel_quote, gesetzl = 3000, 0.8, 1300
 luecke = netto * ziel_quote - gesetzl
@@ -74,6 +85,7 @@ Z["fin_rest10"] = eur(restschuld(d, zins, rate, 10))
 Z["fin_zins"] = f"{zins*100:.1f} %".replace(".", ",")
 Z["fin_tilg"] = f"{tilg*100:.0f} %"
 def laufzeit(darlehen, zins, rate_monat):
+    assert rate_monat > darlehen * zins / 12, "Rate deckt die Zinsen nicht"
     r, n = darlehen, 0
     while r > 0:
         r = r * (1 + zins / 12) - rate_monat
