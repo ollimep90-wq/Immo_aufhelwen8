@@ -73,6 +73,16 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
     - Umstellung der Riester-Verträge (Fundstelle im EStG n. F.).
     - Förderberechtigung Selbständiger.
 13. **USt beim ETF-Standarddepot:** „jeweils inkl. USt“ wurde am 10.10.2026 aus dem Pflichthinweis entfernt, weil es für die 0,5 % noch offen ist.
+15. **Gemeinsame GmbH (Entscheidung 10.10.2026, Name offen):**
+    - Sie betreibt die App und ist die einzige Verantwortliche nach DSGVO.
+    - **Anzupassen**, sobald Name und Erlaubnisse feststehen:
+      - Pflichtangaben in `shared/brand.py`, denn die GmbH braucht eigene Erlaubnisse und Registernummern.
+      - Die Texte „zwei eigenständige Unternehmen in Kooperation“ in den Präsentationen und Fußzeilen.
+      - Der Platzhalter `[Name GmbH]` in den Einwilligungen.
+    - **Fachlich prüfen:** Gehen § 34h, § 34i und § 34d zusammen in einer GmbH? Ist Courtage mit § 34h Abs. 3 vereinbar? Ist die GmbH Verpflichtete nach dem GwG?
+16. **Beratungs-App** (`app/`):
+    - Gebaut: Zwei-Faktor-Anmeldung, Verschlüsselung, Löschung nach 12 Monaten ohne Aktivität, Archivauszug.
+    - Hosting bei IONOS, offene Punkte in `app/BETRIEB.md`.
 14. **Gemeinsamer Auftritt:**
     - Die Namen sind aus der Unterzeile entfernt, die Fußzeilen lauten „… in Kooperation mit …“.
     - Die gemeinsame Marke bleibt. Klären: Risiko einer Außen-GbR (siehe Pitch).

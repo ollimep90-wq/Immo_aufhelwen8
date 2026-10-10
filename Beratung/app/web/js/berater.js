@@ -186,7 +186,9 @@
       const zl = [1, 2, 3, 4, 5].map((i) => ziele["z" + i]).filter(Boolean);
       const vw = va && Array.isArray(va.wuensche) ? va.wuensche.filter((w) => w && typeof w === "object").map((w) => String(w.text || "") + (w.jahr ? " · " + w.jahr : "")) : [];
       html += `<div class="card"><h2 style="margin-top:0">Ziele</h2>${(zl.length ? zl : vw).map((z) => `<div>· ${esc(z)}</div>`).join("") || '<p class="hint">Noch keine.</p>'}</div>`;
-      html += `<div class="nav"><button type="button" class="quiet" id="drucken">Ergebnisbogen drucken</button></div>`;
+      html += `<div class="nav" style="justify-content:flex-start"><button type="button" class="quiet" id="drucken">Ergebnisbogen drucken</button>
+        <button type="button" class="primary" id="archiv">Aktenauszug fürs Archiv (PDF)</button></div>
+        <p class="hint">Bei Auftrag: Auszug als PDF speichern und im Archiv ablegen (Pflichtdokumentation, z. B. 10 Jahre bei Finanzanlagen). Die App selbst löscht die Akte 12 Monate nach der letzten Aktivität.</p>`;
       return html;
     },
     haushalt() {
@@ -313,7 +315,10 @@
 
   /* ---------- Tabs: Knöpfe ---------- */
   const BINDEN = {
-    ueberblick() { $("drucken").addEventListener("click", () => window.print()); },
+    ueberblick() {
+      $("drucken").addEventListener("click", () => window.print());
+      $("archiv").addEventListener("click", archivAuszug);
+    },
     haushalt() { uebernehmen((va) => {
       const p = va.person || {}, e = (va.einkommen && va.einkommen.eingaben) || [];
       const o = { familie: p.familie === "single" ? "allein" : p.familie, kinder_u25: p.kinder, kinder_kg: p.kinder, tiere: p.tiere, wohnen: p.wohnen, land: p.bundesland, alter1: p.alter };
@@ -361,6 +366,58 @@
       });
     }
   };
+  /* ---------- Aktenauszug fürs Archiv ---------- */
+  const LABEL = Object.assign({
+    familie: "Familienstand", kinder_u25: "Kinder unter 25", kinder_kg: "davon mit Kindergeld", eltern: "Erwachsene Kinder", tiere: "Haustiere",
+    wohnen: "Wohnen", land: "Bundesland", kirche: "Kirchensteuer", sonstige: "Weitere Einnahmen/Monat", sparen: "Sparraten/Monat",
+    liquide: "Konto und Tagesgeld", netto_manuell: "Netto/Monat (manuell)", depot: "Depots und Fonds", immobilien: "Immobilien",
+    sonstverm: "Sonstiges Vermögen", schulden: "Kredite (Restschuld)", av_kapital: "Kapital fürs Alter heute", rentenalter: "Rentenbeginn mit",
+    gesetzl: "Gesetzliche Rente netto", netto_basis: "Netto heute (Rentenrechnung)", zielquote: "Ziel in % vom Netto", rendite: "Rendite vor Kosten %",
+    kosten: "Kosten %", inflation: "Inflation %", entnahme: "Reale Rendite Auszahlung %", rentendauer: "Auszahlungsdauer Jahre", notizen: "Notizen"
+  }, Object.fromEntries(FIX), Object.fromEntries([1, 2].flatMap((i) => [["name" + i, "Person " + i + ": Name"], ["alter" + i, "Person " + i + ": Alter"],
+    ["brutto" + i, "Person " + i + ": Brutto/Jahr"], ["kv" + i, "Person " + i + ": Krankenversicherung"], ["zb" + i, "Person " + i + ": Zusatzbeitrag %"],
+    ["pkv" + i, "Person " + i + ": PKV-Basisanteil"], ["netto" + i, "Person " + i + ": Netto/Monat"]])),
+    Object.fromEntries([1, 2, 3, 4, 5].flatMap((i) => [["z" + i, "Ziel " + i], ["zb" + i, "Ziel " + i + ": Betrag"], ["zj" + i, "Ziel " + i + ": bis Jahr"]])));
+  async function archivAuszug() {
+    let a;
+    try { a = await api.get(`/api/akten/${akte.id}/export?zweck=archiv`); } catch (e) { fehler(e.message); return; }
+    const ab = a.abschnitte || {}, d = (k) => (ab[k] && ab[k].daten) || {};
+    const zeile = (k, v) => `<tr><td>${esc(k)}</td><td>${esc(v == null || v === "" ? "–" : v)}</td></tr>`;
+    const tabelle = (titel, obj, labels) => {
+      const keys = Object.keys(obj).filter((k) => obj[k] !== "" && obj[k] != null && !(Array.isArray(obj[k]) && !obj[k].length));
+      if (!keys.length) return "";
+      return `<h2>${esc(titel)}</h2><table>${keys.map((k) => zeile((labels && labels[k]) || k, Array.isArray(obj[k]) ? obj[k].join(", ") : typeof obj[k] === "object" ? JSON.stringify(obj[k]) : obj[k])).join("")}</table>`;
+    };
+    const fragen = {}; (fragenVoll ? fragenVoll.fragen : []).forEach((q) => { fragen["q_" + q.id] = q.nr + " " + q.text; });
+    const skala = { "4": "existenzbedrohend / stimme voll zu", "3": "stark belastend", "2": "spürbar", "1": "kaum", "0": "gar nicht", na: "trifft nicht zu" };
+    const risiko = {}; Object.entries(d("risiko")).forEach(([k, v]) => { risiko[k] = skala[v] || v; });
+    const abs = {}; Object.entries(d("absicherung_bewertung")).forEach(([k, v]) => { if (v) abs[(ARTEN[k.slice(2)] || k) + (k.startsWith("s_") ? ": Status" : ": Notiz")] = BEW[v] || v; });
+    const ber = (a.berater || []).map((b) => b.name + (b.bereich ? " (" + b.bereich + ")" : "")).join(", ");
+    const e = a.einwilligung;
+    const hr = haushaltRechnung(d("haushalt")), b = budgetRechnung(ab.budget ? d("budget") : null, hr), vs = vorsorgeRechnung(ab.altersvorsorge ? d("altersvorsorge") : null, d("haushalt"), hr);
+    let h = `<div class="druck-kopf"><h1>Aktenauszug: ${esc(a.titel)}</h1>
+      <table>${zeile("Erstellt am", new Date(a.erstellt_am * 1000).toLocaleString("de-DE"))}${zeile("Erstellt von", a.erstellt_von_name)}
+      ${zeile("Kunde", a.kunde ? a.kunde.name + " (" + a.kunde.email + ")" : "kein Kundenzugang")}${zeile("Berater mit Zugriff", ber)}
+      ${zeile("Einwilligung", e ? (e.widerrufen ? "widerrufen " + new Date(e.widerrufen * 1000).toLocaleString("de-DE") : "erteilt " + new Date(e.zeit * 1000).toLocaleString("de-DE") + ", Text " + e.text_version) : "keine")}
+      ${zeile("Prüfwert (SHA-256)", a.pruefwert)}</table></div>`;
+    if (b) h += tabelle("Budget (Ergebnis)", { "Einnahmen": eur(b.einnahmen), "Feste Ausgaben": eur(b.fixkosten), "Überschuss I": eur(b.ueberschuss1) + " (" + pct(b.quote1) + ")",
+      "Sparquote": pct(b.sparquote), "Überschuss II": eur(b.ueberschuss2) + " (" + pct(b.quote2) + ")", "Notreserve": monate(b.reserve_monate) + " Monate" });
+    if (vs) h += tabelle("Altersvorsorge (Rechenbeispiel, Annahmen)", { "Wunsch netto": eur(vs.wunsch), "Lücke heute": eur(vs.luecke), "Kapitalbedarf": eur(vs.kapital), "Sparrate (Start)": eur(vs.sparrate) });
+    h += tabelle("Haushalt", d("haushalt"), LABEL) + tabelle("Budget (Eingaben)", d("budget"), LABEL) + tabelle("Vermögen und Vorsorge (Eingaben)", d("altersvorsorge"), LABEL)
+      + tabelle("Risiko-Check: Betroffenheit laut Kunde", risiko, fragen) + tabelle("Absicherung: Bewertung durch Versicherungsmakler", abs)
+      + tabelle("Ziele und Notizen", d("ziele"), LABEL);
+    if (ab.vorab) h += tabelle("Angaben des Kunden im Vorab-Check (Auswertung)", (() => { const v = d("vorab").auswertung || {}; const o = {};
+      if (v.budget) { o["Einnahmen"] = eur(zahl(v.budget.einnahmen)); o["Überschuss II"] = eur(zahl(v.budget.ueberschuss2)); }
+      if (Array.isArray(v.wuensche)) o["Wünsche"] = v.wuensche.map((w) => (w && w.text) || "").join("; ");
+      if (v.sorge) o["Sorge"] = v.sorge; return o; })());
+    h += `<p class="hint">Rechnungen sind Näherungen auf Basis der Angaben und Annahmen, keine Prognose. Der Prüfwert belegt den Inhalt zum Zeitpunkt des Auszugs (JSON-Export mit gleichem Prüfwert über „Zugang & Daten“).</p>`;
+    let box = $("druck"); if (!box) { box = document.createElement("div"); box.id = "druck"; document.body.appendChild(box); }
+    box.innerHTML = h;
+    document.body.classList.add("druckmodus");
+    window.print();
+    setTimeout(() => document.body.classList.remove("druckmodus"), 500);
+  }
+
   function uebernehmen(abbild) {
     const k = $("uebernehmen"); if (!k) return;
     k.addEventListener("click", () => {

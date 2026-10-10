@@ -500,9 +500,14 @@ def abschnitt_schreiben(akte_id: int, schluessel: str, d: Abschnitt, u=Depends(n
 
 
 @app.get("/api/akten/{akte_id}/export")
-def akte_export(akte_id: int, u=Depends(nur("admin", "berater"))):
+def akte_export(akte_id: int, zweck: str = "export", u=Depends(nur("admin", "berater"))):
+    """Vollständiger Auszug. Prüfwert = SHA-256 über den kanonischen JSON-Inhalt (ohne Prüfwert selbst).
+    zweck=archiv: Auszug für die Pflichtdokumentation außerhalb der App (Entscheidung 10.10.2026)."""
     a = akte_lesen(akte_id, u)
-    DB.protokoll(u["id"], akte_id, "export")
+    a["erstellt_am"] = time.time()
+    a["erstellt_von_name"] = u["name"]
+    a["pruefwert"] = hashlib.sha256(json.dumps(a, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+    DB.protokoll(u["id"], akte_id, "archiv-auszug" if zweck == "archiv" else "export")
     return a
 
 

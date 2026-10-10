@@ -63,7 +63,15 @@ Diese Fristen beruhen auf der Prüfung vom 10.10.2026. Die Normtexte stammen aus
 
 **Protokoll:** 730 Tage. **Einwilligungsnachweise gelöschter Akten:** 1.095 Tage. Beide Fristen sind Annahmen und noch festzulegen.
 
-**Offene Entscheidung:** Wo wird die Pflichtdokumentation der Aufträge geführt? Siehe die Frage an den Nutzer im Verlauf.
+**Entscheidung 10.10.2026 (Variante A):** Die Pflichtdokumentation der Aufträge wird außerhalb der App geführt, im eigenen Archiv oder im Maklerverwaltungsprogramm.
+
+So geht ihr bei einem Auftrag vor:
+- In der Akte unter „Überblick“ auf **„Aktenauszug fürs Archiv (PDF)“** klicken.
+- Den Auszug als PDF speichern und im Archiv ablegen.
+- Er enthält alle Angaben, Ergebnisse, Antworten im Risiko-Check, die Bewertung der Absicherung, die Einwilligung und einen **Prüfwert (SHA-256)**. Der JSON-Export unter „Zugang & Daten“ ergibt denselben Prüfwert. Damit lässt sich später nachweisen, dass der Inhalt unverändert ist.
+- Jeder Auszug wird protokolliert.
+
+Für die Geeignetheitserklärung nach § 18 FinVermV ist der Auszug nur eine Grundlage, er ersetzt sie nicht.
 
 ## Was die Sicherheitsprüfung ergab und umgesetzt ist (10.10.2026)
 

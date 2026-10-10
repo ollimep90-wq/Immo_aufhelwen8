@@ -85,3 +85,12 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
   .card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
 }
 @media print{ .step:not(.print){display:none!important} .step.print{display:block!important} }
+
+#druck{display:none}
+@media print{
+  body.druckmodus .wrap{display:none!important}
+  body.druckmodus #druck{display:block;font-size:11pt;color:#000}
+  #druck h1{font-size:18pt} #druck h2{font-size:13pt;margin-top:14pt;break-after:avoid}
+  #druck td{padding:3pt 4pt;border-bottom:1px solid #ccc} #druck td:first-child{width:45%;color:#333}
+  #druck tr{break-inside:avoid}
+}

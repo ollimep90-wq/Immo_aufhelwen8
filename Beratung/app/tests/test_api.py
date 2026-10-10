@@ -256,3 +256,14 @@ def test_akten_nach_frist_geloescht(umgebung):
     client("jan@x.de")   # jede Anmeldung startet den Löschlauf
     ids = [a["id"] for a in oli.get("/api/akten").json()]
     assert alt not in ids and neu in ids
+
+
+def test_archivauszug_pruefwert(umgebung):
+    import hashlib, json
+    oli = client("oliver@x.de")
+    akte = oli.post("/api/akten", json={"titel": "A"}, headers=H).json()["id"]
+    oli.put(f"/api/akten/{akte}/abschnitte/budget", json={"daten": {"fk_wohnen": "1000"}}, headers=H)
+    a = oli.get(f"/api/akten/{akte}/export?zweck=archiv").json()
+    p = a.pop("pruefwert")
+    assert p == hashlib.sha256(json.dumps(a, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+    assert umgebung.eins("SELECT 1 AS x FROM protokoll WHERE akte_id=? AND aktion='archiv-auszug'", akte)
