@@ -3,8 +3,10 @@
 Platzhalter ⟦…⟧ werden hier befüllt, damit Fakten an einer Stelle stehen.
 Aufruf: python3 build.py
 """
-import pathlib, subprocess
+import pathlib, subprocess, sys
 from pypdf import PdfReader, PdfWriter
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared"))
+from brand import marke, marke_icon, KONTAKT_OLIVER, PFLICHTHINWEIS  # noqa: E402
 
 ROOT = pathlib.Path(__file__).parent
 CHROME = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
@@ -98,13 +100,7 @@ AVKUNDE = """
 <div class="card fill" style="margin-top:5mm"><h3>Beispiel: 150 € im Monat über 30 Jahre</h3><table style="font-size:8.8pt"><thead><tr><th>Angenommene Rendite nach Kosten</th><th class="num">mit Grundzulage</th><th class="num">ohne Zulage</th></tr></thead><tbody><tr><td>2 % pro Jahr</td><td class="num">ca. 95.600 €</td><td class="num">ca. 73.700 €</td></tr><tr><td>5,5 % pro Jahr</td><td class="num">ca. 172.800 €</td><td class="num">ca. 133.600 €</td></tr></tbody></table><p class="small" style="margin-top:2mm">Annahmen, keine Prognose. Bei Umschichtung in sicherere Anlagen vor Rentenbeginn kann die Rendite niedriger ausfallen. Die Auszahlungen sind einkommensteuerpflichtig. <b>Fonds und ETFs können an Wert verlieren.</b></p></div>
 """
 
-KONTAKT_OLIVER = '<span style="background:#FFF3B0">[Anschrift] · [Telefon] · [E-Mail]</span>'
-PFLICHTHINWEIS = ('Oliver Rosenbaum: Honorar-Finanzanlagenberater nach § 34h Abs. 1 GewO, '
-    'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>; Immobiliardarlehensvermittler nach § 34i Abs. 1 GewO, '
-    'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Jan Schnichels, Endlich Besser Beraten: Versicherungsmakler nach § 34d Abs. 1 GewO, '
-    'Register-Nr. <span style="background:#FFF3B0">[D-…]</span>. Erlaubnis- und Registerbehörde: für Oliver Rosenbaum <span style="background:#FFF3B0">[IHK]</span>, für Endlich Besser Beraten <span style="background:#FFF3B0">[IHK]</span>. '
-    'Prüfung im Vermittlerregister unter www.vermittlerregister.info. Oliver Rosenbaum ist zudem Versicherungsmakler nach § 34d Abs. 1 GewO, Register-Nr. <span style="background:#FFF3B0">[D-…]</span>; Versicherungen vermittelt in dieser Kooperation Endlich Besser Beraten. Für die Beratung zu Finanzanlagen erhält Oliver Rosenbaum ausschließlich eine Vergütung vom Kunden (laufendes Serviceentgelt auf das betreute Vermögen bzw. Festpreis für einen Finanzplan, jeweils inkl. USt). Für die Vermittlung von Immobiliardarlehen erhält Oliver Rosenbaum <span style="background:#FFF3B0">[eine Provision des Darlehensgebers; bei Wahl der Honorar-Immobiliardarlehensberatung stattdessen ein Honorar]</span> und arbeitet mit mehreren Darlehensgebern zusammen. '
-    'Für die Vermittlung von Versicherungen wird Endlich Besser Beraten von den Versicherern über Courtage vergütet. Wir erbringen keine Steuer- und Rechtsberatung; steuerliche und erbrechtliche Fragen klären Sie bitte mit Ihrem Steuerberater oder Notar.')
+
 
 def gantt():
     """Fahrplan als Swimlane-Grafik: Bereiche, Balken, Meilensteine, Heute-Linie."""
@@ -160,20 +156,6 @@ def gantt():
     s.append('</svg>')
     return "".join(s)
 
-
-def marke(text="#14213D", sub="#6B7690", subline="", h=60):
-    """Neutrale Wortmarke ohne Personennamen: Haus der Finanzen."""
-    icon = ('<g><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/>'
-            '<rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/>'
-            '<rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></g>')
-    sl = f'<text x="72" y="52" font-size="11" fill="{sub}" letter-spacing="1.5">{subline}</text>' if subline else ""
-    return (f'<svg height="{h}" viewBox="0 0 400 60" style="display:block" font-family="Inter, sans-serif">{icon}'
-            f'<text x="72" y="{30 if subline else 38}" font-size="22" font-weight="700" fill="{text}">Ganzheitliche Finanzberatung</text>{sl}</svg>')
-
-def marke_icon(h=34):
-    return ('<svg height="%d" viewBox="0 0 60 60" style="display:block"><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/>'
-            '<rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/>'
-            '<rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></svg>' % h)
 
 REPL = {"⟦AVFAKTEN⟧": AVFAKTEN, "⟦PFLICHTEN⟧": PFLICHTEN, "⟦GANTT⟧": gantt(), "⟦MARKE_HELL⟧": marke("#FFFFFF", "#9BD77F", "NAME FOLGT · ARBEITSTITEL", 120), "⟦MARKE⟧": marke(h=70), "⟦MARKE_HELL_S⟧": marke("#FFFFFF", "#9BD77F", "NAME FOLGT · ARBEITSTITEL", 70), "⟦MARKE_KLEIN⟧": marke(subline="OLIVER ROSENBAUM", h=48), "⟦MARKE_ICON⟧": marke_icon(), "⟦CHECKDOKU⟧": CHECKDOKU,
         "⟦AVKUNDE⟧": AVKUNDE, "⟦KONTAKT-OLIVER⟧": KONTAKT_OLIVER, "⟦PFLICHTHINWEIS⟧": PFLICHTHINWEIS,
