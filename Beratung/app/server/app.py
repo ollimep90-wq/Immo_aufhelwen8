@@ -19,13 +19,17 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import db as dbmod
+from . import db as dbmod, sicher
 
 WEB = pathlib.Path(__file__).resolve().parent.parent / "web"
 SESSION_DAUER = 8 * 3600
 EINLADUNG_DAUER = 14 * 24 * 3600
 UNSICHER = os.environ.get("APP_UNSICHER") == "1"   # nur lokal: Cookie ohne Secure
 COOKIE = "sid" if UNSICHER else "__Host-sid"        # __Host-: nur Secure, Pfad /, keine Domain (gegen Cookie-Tossing)
+COOKIE_PRE = "pre" if UNSICHER else "__Host-pre"     # Zwischenschritt nach Passwort, vor zweitem Faktor
+VORSITZUNG_DAUER = 5 * 60
+MAX_CODE_VERSUCHE = 5
+AUSSTELLER = os.environ.get("APP_AUSSTELLER", "Finanzberatung")
 LEERLAUF = 30 * 60                                  # Abmeldung nach 30 Minuten ohne Aktivität
 MAX_BODY = 512 * 1024
 PROTOKOLL_TAGE = int(os.environ.get("APP_PROTOKOLL_TAGE", "730"))        # Annahme, festzulegen (BETRIEB.md)
@@ -33,7 +37,7 @@ EINWILLIGUNG_TAGE = int(os.environ.get("APP_EINWILLIGUNG_TAGE", "1095"))  # Nach
 EMAIL_RE = re.compile(r"^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,30}$")
 
 # Einwilligungstext: Version und Wortlaut werden mit Hash gespeichert (Nachweis Art. 7 Abs. 1 DSGVO)
-EINWILLIGUNG_VERSION = "2026-10-v2"
+EINWILLIGUNG_VERSION = "2026-10-v3"   # v3: eine Verantwortliche (gemeinsame GmbH)
 
 ABSCHNITTE_BERATER = {"haushalt", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen"}
 # Keine Gesundheitsdaten speichern (Art. 9 DSGVO): Block 9 „Selbstbild“ des Prototyps wird nicht erfasst
@@ -139,7 +143,8 @@ def nutzer(request: Request):
             DB.x("DELETE FROM sessions WHERE token_hash=?", h(token))
         raise HTTPException(401, "Sitzung abgelaufen")
     DB.x("UPDATE sessions SET letzte=? WHERE token_hash=?", jetzt, h(token))
-    s.pop("pw_hash", None)
+    for geheim in ("pw_hash", "totp_geheim"):
+        s.pop(geheim, None)
     return s
 
 
@@ -246,9 +251,108 @@ def login(d: Login, request: Request, resp: Response):
         raise HTTPException(401, "E-Mail oder Passwort falsch")
     if ph.check_needs_rehash(u["pw_hash"]):
         DB.x("UPDATE users SET pw_hash=? WHERE id=?", ph.hash(d.passwort), u["id"])
+    if u["rolle"] in ("admin", "berater"):   # Berater und Admin: immer zweiter Faktor
+        token = secrets.token_urlsafe(32)
+        DB.x("INSERT INTO vorsitzungen (token_hash,user_id,ablauf) VALUES (?,?,?)", h(token), u["id"], time.time() + VORSITZUNG_DAUER)
+        resp.set_cookie(COOKIE_PRE, token, max_age=VORSITZUNG_DAUER, httponly=True, samesite="strict", secure=not UNSICHER, path="/")
+        DB.protokoll(u["id"], None, "passwort ok, zweiter faktor offen")
+        return {"schritt": "2fa" if u["totp_aktiv"] else "2fa_einrichten", "name": u["name"]}
     neue_sitzung(resp, u["id"])
     DB.protokoll(u["id"], None, "login")
-    return {"rolle": u["rolle"], "name": u["name"]}
+    return {"schritt": "fertig", "rolle": u["rolle"], "name": u["name"]}
+
+
+# ---------- Zweiter Faktor ----------
+
+class Code(BaseModel):
+    code: str = Field(min_length=6, max_length=40)
+
+
+def vorsitzung(request: Request):
+    token = request.cookies.get(COOKIE_PRE)
+    if not token:
+        raise HTTPException(401, "Bitte melde dich erneut an.")
+    v = DB.eins("SELECT v.versuche, u.* FROM vorsitzungen v JOIN users u ON u.id=v.user_id "
+                "WHERE v.token_hash=? AND v.ablauf>? AND u.aktiv=1", h(token), time.time())
+    if not v:
+        raise HTTPException(401, "Die Anmeldung ist abgelaufen. Bitte melde dich erneut an.")
+    v["_token"] = token
+    return v
+
+
+def versuch_zaehlen(v):
+    DB.x("UPDATE vorsitzungen SET versuche=versuche+1 WHERE token_hash=?", h(v["_token"]))
+    if v["versuche"] + 1 >= MAX_CODE_VERSUCHE:
+        DB.x("DELETE FROM vorsitzungen WHERE token_hash=?", h(v["_token"]))
+        raise HTTPException(429, "Zu viele falsche Codes. Bitte melde dich erneut an.")
+
+
+def abschliessen(resp: Response, v, aktion):
+    DB.x("DELETE FROM vorsitzungen WHERE user_id=?", v["id"])
+    resp.delete_cookie(COOKIE_PRE, path="/")
+    neue_sitzung(resp, v["id"])
+    DB.protokoll(v["id"], None, aktion)
+
+
+@app.post("/api/2fa/einrichten")
+def zfa_einrichten(request: Request):
+    v = vorsitzung(request)
+    if v["totp_aktiv"]:
+        raise HTTPException(409, "Die Zwei-Faktor-Anmeldung ist schon eingerichtet.")
+    geheim = DB.krypto.ent(v["totp_geheim"]) if v["totp_geheim"] else None
+    if not geheim:
+        geheim = sicher.neues_geheimnis()
+        DB.x("UPDATE users SET totp_geheim=? WHERE id=?", DB.krypto.ver(geheim), v["id"])
+    u = sicher.uri(geheim, v["email"], AUSSTELLER)
+    return {"geheimnis": geheim, "uri": u, "qr": sicher.qr_svg_data(u)}
+
+
+@app.post("/api/2fa/bestaetigen")
+def zfa_bestaetigen(d: Code, request: Request, resp: Response):
+    v = vorsitzung(request)
+    if v["totp_aktiv"] or not v["totp_geheim"]:
+        raise HTTPException(409, "Bitte starte die Einrichtung neu.")
+    schritt = sicher.pruefe_totp(DB.krypto.ent(v["totp_geheim"]), d.code, v["totp_letzter"])
+    if schritt is None:
+        versuch_zaehlen(v)
+        raise HTTPException(401, "Der Code stimmt nicht. Prüf die Uhrzeit deines Handys und versuch es noch einmal.")
+    codes = sicher.wiederherstellungscodes()
+    with DB.tx() as con:
+        con.execute("UPDATE users SET totp_aktiv=1, totp_letzter=? WHERE id=?", (schritt, v["id"]))
+        con.execute("DELETE FROM wiederherstellung WHERE user_id=?", (v["id"],))
+        con.executemany("INSERT INTO wiederherstellung (user_id,code_hash) VALUES (?,?)", [(v["id"], sicher.code_hash(c)) for c in codes])
+    abschliessen(resp, v, "zweiter faktor eingerichtet, login")
+    return {"wiederherstellungscodes": codes, "rolle": v["rolle"]}
+
+
+@app.post("/api/login/2fa")
+def login_2fa(d: Code, request: Request, resp: Response):
+    v = vorsitzung(request)
+    if not v["totp_aktiv"]:
+        raise HTTPException(409, "Bitte richte zuerst die Zwei-Faktor-Anmeldung ein.")
+    eingabe = d.code.strip()
+    if "-" in eingabe:   # Wiederherstellungscode
+        with DB.tx() as con:
+            cur = con.execute("UPDATE wiederherstellung SET benutzt=? WHERE user_id=? AND code_hash=? AND benutzt IS NULL",
+                              (time.time(), v["id"], sicher.code_hash(eingabe)))
+            ok = cur.rowcount == 1
+        if not ok:
+            versuch_zaehlen(v)
+            raise HTTPException(401, "Der Wiederherstellungscode stimmt nicht oder wurde schon benutzt.")
+        abschliessen(resp, v, "login mit wiederherstellungscode")
+        rest = DB.eins("SELECT COUNT(*) AS n FROM wiederherstellung WHERE user_id=? AND benutzt IS NULL", v["id"])["n"]
+        return {"rolle": v["rolle"], "wiederherstellungscodes_uebrig": rest}
+    schritt = sicher.pruefe_totp(DB.krypto.ent(v["totp_geheim"]), eingabe, v["totp_letzter"])
+    if schritt is None:
+        versuch_zaehlen(v)
+        raise HTTPException(401, "Der Code stimmt nicht.")
+    with DB.tx() as con:   # jeder Code nur einmal
+        cur = con.execute("UPDATE users SET totp_letzter=? WHERE id=? AND totp_letzter<?", (schritt, v["id"], schritt))
+        ok = cur.rowcount == 1
+    if not ok:
+        raise HTTPException(401, "Dieser Code wurde schon benutzt. Bitte warte auf den nächsten.")
+    abschliessen(resp, v, "login")
+    return {"rolle": v["rolle"]}
 
 
 @app.post("/api/logout")

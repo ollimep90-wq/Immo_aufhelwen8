@@ -2,7 +2,7 @@
 import time, pytest
 from argon2 import PasswordHasher
 from fastapi.testclient import TestClient
-from server import app as appmod, db as dbmod
+from server import app as appmod, db as dbmod, sicher
 
 PW = "ein-sicheres-passwort"
 H = {"X-Requested-With": "app"}
@@ -21,10 +21,22 @@ def umgebung(tmp_path):
 
 
 def client(email=None):
+    """Meldet an; Berater/Admin mit zweitem Faktor (beim ersten Mal Einrichtung)."""
     c = TestClient(appmod.app, base_url="https://testserver")
     if email:
         r = c.post("/api/login", json={"email": email, "passwort": PW}, headers=H)
         assert r.status_code == 200, r.text
+        schritt = r.json()["schritt"]
+        if schritt == "2fa_einrichten":
+            g = c.post("/api/2fa/einrichten", headers=H).json()["geheimnis"]
+            r = c.post("/api/2fa/bestaetigen", json={"code": sicher.totp(g)}, headers=H)
+            assert r.status_code == 200 and len(r.json()["wiederherstellungscodes"]) == 10, r.text
+        elif schritt == "2fa":
+            d = appmod.DB
+            u = d.eins("SELECT id, totp_geheim FROM users WHERE email=?", email)
+            d.x("UPDATE users SET totp_letzter=0 WHERE id=?", u["id"])   # Test: Code im selben Zeitfenster erneut erlauben
+            r = c.post("/api/login/2fa", json={"code": sicher.totp(d.krypto.ent(u["totp_geheim"]))}, headers=H)
+            assert r.status_code == 200, r.text
     return c
 
 
@@ -185,3 +197,50 @@ def test_grosse_anfrage_frueh_abgelehnt(umgebung):
     c = client("oliver@x.de")
     r = c.post("/api/akten", content=b"x" * (appmod.MAX_BODY + 10), headers={**H, "Content-Type": "application/json"})
     assert r.status_code == 413
+
+
+def test_zweiter_faktor(umgebung):
+    c = TestClient(appmod.app, base_url="https://testserver")
+    r = c.post("/api/login", json={"email": "oliver@x.de", "passwort": PW}, headers=H)
+    assert r.json()["schritt"] == "2fa_einrichten"
+    assert c.get("/api/ich").status_code == 401                      # ohne zweiten Faktor keine Sitzung
+    g = c.post("/api/2fa/einrichten", headers=H).json()
+    assert g["qr"].startswith("data:image/svg+xml") and g["uri"].startswith("otpauth://totp/")
+    assert c.post("/api/2fa/bestaetigen", json={"code": "000000"}, headers=H).status_code == 401
+    codes = c.post("/api/2fa/bestaetigen", json={"code": sicher.totp(g["geheimnis"])}, headers=H).json()["wiederherstellungscodes"]
+    assert c.get("/api/ich").status_code == 200
+    # Geheimnis verschlüsselt gespeichert, nie ausgeliefert
+    roh = umgebung.eins("SELECT totp_geheim FROM users WHERE email='oliver@x.de'")["totp_geheim"]
+    assert roh.startswith("f1:") and g["geheimnis"] not in roh
+    assert "totp" not in c.get("/api/ich").text
+    # neue Anmeldung: derselbe Code gilt nicht noch einmal
+    c2 = TestClient(appmod.app, base_url="https://testserver")
+    assert c2.post("/api/login", json={"email": "oliver@x.de", "passwort": PW}, headers=H).json()["schritt"] == "2fa"
+    assert c2.post("/api/login/2fa", json={"code": sicher.totp(g["geheimnis"])}, headers=H).status_code == 401
+    # Wiederherstellungscode genau einmal
+    r = c2.post("/api/login/2fa", json={"code": codes[0]}, headers=H)
+    assert r.status_code == 200 and r.json()["wiederherstellungscodes_uebrig"] == 9
+    c3 = TestClient(appmod.app, base_url="https://testserver")
+    c3.post("/api/login", json={"email": "oliver@x.de", "passwort": PW}, headers=H)
+    assert c3.post("/api/login/2fa", json={"code": codes[0]}, headers=H).status_code == 401
+    # nach 5 Fehlversuchen ist der Zwischenschritt verbraucht
+    for _ in range(4):
+        c3.post("/api/login/2fa", json={"code": "123456"}, headers=H)
+    assert c3.post("/api/login/2fa", json={"code": "123456"}, headers=H).status_code in (401, 429)
+    assert c3.post("/api/login/2fa", json={"code": "123456"}, headers=H).status_code == 401
+    # Kunden brauchen keinen zweiten Faktor (nur Berater/Admin)
+
+
+def test_daten_verschluesselt(umgebung):
+    oli = client("oliver@x.de")
+    akte = oli.post("/api/akten", json={"titel": "A"}, headers=H).json()["id"]
+    oli.put(f"/api/akten/{akte}/abschnitte/notizen", json={"daten": {"notizen": "Gehalt 5000"}}, headers=H)
+    roh = umgebung.eins("SELECT daten FROM abschnitte WHERE akte_id=?", akte)["daten"]
+    assert roh.startswith("f1:") and "5000" not in roh
+    assert oli.get(f"/api/akten/{akte}").json()["abschnitte"]["notizen"]["daten"]["notizen"] == "Gehalt 5000"
+
+
+def test_rfc6238():
+    import base64
+    g = base64.b32encode(b"12345678901234567890").decode()
+    assert [sicher.totp(g, t, 8) for t in (59, 1111111109, 1234567890, 2000000000)] == ["94287082", "07081804", "89005924", "69279037"]

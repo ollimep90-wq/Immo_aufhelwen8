@@ -6,6 +6,7 @@ services:
     logging:
       driver: json-file
       options: { max-size: "10m", max-file: "3" }
+    env_file: .env          # APP_SCHLUESSEL=… (nicht ins Repo!), optional APP_AUSSTELLER=Name der GmbH
     volumes:
       - daten:/daten
     expose:

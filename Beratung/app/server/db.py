@@ -17,7 +17,22 @@ CREATE TABLE IF NOT EXISTS users (
   bereich TEXT CHECK (bereich IN ('anlage','versicherung') OR bereich IS NULL),
   pw_hash TEXT,
   aktiv INTEGER NOT NULL DEFAULT 1,
-  erstellt REAL NOT NULL
+  erstellt REAL NOT NULL,
+  totp_geheim TEXT,
+  totp_aktiv INTEGER NOT NULL DEFAULT 0,
+  totp_letzter INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS vorsitzungen (
+  token_hash TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  ablauf REAL NOT NULL,
+  versuche INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS wiederherstellung (
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  code_hash TEXT NOT NULL,
+  benutzt REAL,
+  PRIMARY KEY (user_id, code_hash)
 );
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash TEXT PRIMARY KEY,
@@ -95,7 +110,9 @@ def als_json(daten):
 
 
 class DB:
-    def __init__(self, pfad):
+    def __init__(self, pfad, krypto=None):
+        from .sicher import Krypto
+        self.krypto = krypto or Krypto(unsicher=os.environ.get("APP_UNSICHER") == "1")
         self.pfad = pfad
         self.con = sqlite3.connect(pfad, check_same_thread=False, isolation_level=None)
         self.con.row_factory = sqlite3.Row
@@ -103,6 +120,10 @@ class DB:
         spalten = [r["name"] for r in self.con.execute("PRAGMA table_info(sessions)")]
         if "letzte" not in spalten:
             self.con.execute("ALTER TABLE sessions ADD COLUMN letzte REAL NOT NULL DEFAULT 0")
+        uspalten = [r["name"] for r in self.con.execute("PRAGMA table_info(users)")]
+        for sp, typ in (("totp_geheim", "TEXT"), ("totp_aktiv", "INTEGER NOT NULL DEFAULT 0"), ("totp_letzter", "INTEGER NOT NULL DEFAULT 0")):
+            if sp not in uspalten:
+                self.con.execute(f"ALTER TABLE users ADD COLUMN {sp} {typ}")
 
     def tx(self):
         """Transaktion mit Schreibsperre: with db.tx() as cur: ..."""
@@ -145,13 +166,13 @@ class DB:
                       akte_id, schluessel)
         if not r:
             return None
-        r["daten"] = json.loads(r["daten"])
+        r["daten"] = json.loads(self.krypto.ent(r["daten"]))
         return r
 
     def speichere_abschnitt(self, akte_id, schluessel, daten, user_id, version=None):
         """Optimistische Sperre in einer Transaktion.
         Neu anlegen nur mit version=None; ändern nur mit passender version. Sonst None (Konflikt)."""
-        js = als_json(daten)
+        js = self.krypto.ver(als_json(daten))
         jetzt = time.time()
         with self.tx() as con:
             if version is None:
@@ -176,10 +197,11 @@ class DB:
         jetzt = time.time()
         with self.tx() as con:
             con.execute("DELETE FROM sessions WHERE ablauf < ?", (jetzt,))
+            con.execute("DELETE FROM vorsitzungen WHERE ablauf < ?", (jetzt,))
             con.execute("DELETE FROM einladungen WHERE ablauf < ? OR benutzt IS NOT NULL", (jetzt,))
             con.execute("DELETE FROM protokoll WHERE zeit < ?", (jetzt - protokoll_tage * 86400,))
             con.execute("DELETE FROM einwilligungen WHERE COALESCE(widerrufen, zeit) < ? "
                         "AND akte_id NOT IN (SELECT id FROM akten)", (jetzt - einwilligung_tage * 86400,))
 
-def oeffne(pfad=None):
-    return DB(pfad or os.environ.get("APP_DB", "beratung.sqlite"))
+def oeffne(pfad=None, krypto=None):
+    return DB(pfad or os.environ.get("APP_DB", "beratung.sqlite"), krypto)

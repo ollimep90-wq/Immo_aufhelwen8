@@ -35,11 +35,14 @@ cd Beratung/app
 pip install -r requirements-dev.txt
 python3 tools/sync.py          # Rechenkern/Fragen aus Privat/vorab-check übernehmen
 python3 tools/baue_kunde.py    # Kundenbereich aus dem Vorab-Check erzeugen
-APP_DB=dev.sqlite python3 -m server.verwaltung berater-anlegen oliver@… "Oliver Rosenbaum" anlage
-APP_DB=dev.sqlite APP_UNSICHER=1 python3 -m uvicorn server.app:app --port 8000
+export APP_DB=dev.sqlite APP_UNSICHER=1 APP_SCHLUESSEL=$(python3 -m server.verwaltung schluessel-erzeugen 2>/dev/null)
+python3 -m server.verwaltung berater-anlegen oliver@… "Oliver Rosenbaum" anlage
+python3 -m uvicorn server.app:app --port 8000
 ```
 
-`APP_UNSICHER=1` erlaubt das Sitzungs-Cookie ohne HTTPS. Das ist **nur lokal** zulässig.
+- `APP_UNSICHER=1` erlaubt das Sitzungs-Cookie ohne HTTPS und einen Start ohne Schlüssel. Das ist **nur lokal** zulässig.
+- Im Betrieb braucht die App `APP_SCHLUESSEL`, sonst startet sie nicht.
+- Berater und Admin richten bei der ersten Anmeldung die Zwei-Faktor-Anmeldung ein. Dafür braucht man eine Authenticator-App.
 
 ## Tests
 

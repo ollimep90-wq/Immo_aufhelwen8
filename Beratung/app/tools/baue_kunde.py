@@ -10,8 +10,7 @@ KOPF = (HIER / "tools/kopf.html").read_text()
 MARKE = (HIER / "tools/marke.html").read_text()
 
 EINWILLIGUNG = ("Ich bin einverstanden, dass meine Angaben in diesem Finanz-Check zur Vorbereitung meiner Beratung "
-                "gespeichert und von meinen Beratern Oliver Rosenbaum [Firma, Anschrift] und Jan Schnichels "
-                "(Endlich Besser Beraten, [Anschrift]) verarbeitet werden. "
+                "von der [Name GmbH, Anschrift] gespeichert und von meinen Beratern dort verarbeitet werden. "
                 "Ich kann die Einwilligung jederzeit hier in der App unter „Meine Daten“ widerrufen. Dann werden alle meine "
                 "Angaben zur Beratung in der App gelöscht, auch was meine Berater daraus übernommen haben. "
                 "Mein Zugang (Name, E-Mail) bleibt, bis ich ihn löschen lasse.")

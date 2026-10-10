@@ -13,7 +13,7 @@
 <body>
 <div class="wrap" style="max-width:440px">
 <div class="top"><div class="marke"><svg height="30" viewBox="0 0 60 60" style="display:block"><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/><rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></svg><span>Ganzheitliche Finanzberatung</span></div></div>
-<div class="card">
+<div class="card" id="schritt-login">
   <h1>Anmelden</h1>
   <form id="login" novalidate>
     <label for="email">E-Mail</label><input id="email" type="email" autocomplete="username" required>
@@ -21,6 +21,37 @@
     <div class="nav"><button class="primary" type="submit">Anmelden</button></div>
     <p class="err" id="fehler" role="alert"></p>
   </form>
+</div>
+<div class="card" id="schritt-code" hidden>
+  <h1>Bestätigungscode</h1>
+  <p class="lead" style="font-size:15px">Gib den 6-stelligen Code aus deiner Authenticator-App ein. Ohne Handy: einen deiner Wiederherstellungscodes (Form <b>xxxx-xxxx-xxxx</b>).</p>
+  <form id="code-form" novalidate>
+    <label for="code">Code</label><input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="20" required>
+    <div class="nav"><button class="primary" type="submit">Bestätigen</button><button class="ghost" type="button" id="neu-anmelden">Neu anmelden</button></div>
+    <p class="err" id="code-fehler" role="alert"></p>
+  </form>
+</div>
+<div class="card" id="schritt-einrichten" hidden>
+  <h1>Zwei-Faktor-Anmeldung einrichten</h1>
+  <p class="lead" style="font-size:15px">Für den Zugang zu Kundendaten brauchst du zusätzlich einen Code vom Handy. Einmalig einrichten:</p>
+  <ol class="small" style="padding-left:20px">
+    <li>Authenticator-App öffnen (z. B. Google Authenticator, Microsoft Authenticator, 2FAS oder der Passwortmanager).</li>
+    <li>Den QR-Code scannen oder den Schlüssel von Hand eintragen.</li>
+    <li>Den angezeigten 6-stelligen Code unten eingeben.</li>
+  </ol>
+  <div style="text-align:center"><img id="qr" alt="QR-Code für die Authenticator-App" width="220" height="220" style="background:#fff;border-radius:12px"></div>
+  <p class="hint" style="text-align:center">Schlüssel: <code id="geheimnis" style="user-select:all;word-break:break-all"></code></p>
+  <form id="einrichten-form" novalidate>
+    <label for="code2">Code aus der App</label><input id="code2" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
+    <div class="nav"><button class="primary" type="submit">Einrichtung abschließen</button></div>
+    <p class="err" id="einrichten-fehler" role="alert"></p>
+  </form>
+</div>
+<div class="card" id="schritt-codes" hidden>
+  <h1>Wiederherstellungscodes</h1>
+  <p class="note">Diese Codes werden nur jetzt angezeigt. Bewahre sie sicher auf, z. B. im Passwortmanager oder ausgedruckt im Tresor. Jeder Code funktioniert genau einmal, falls dein Handy verloren geht.</p>
+  <pre id="codes" style="font-size:17px;line-height:1.7;background:var(--bg);padding:12px;border-radius:12px;user-select:all"></pre>
+  <div class="nav"><button class="quiet" type="button" id="codes-drucken">Drucken</button><button class="primary" type="button" id="codes-weiter">Ich habe sie gesichert</button></div>
 </div>
 <p class="hint">Neu hier? Du bekommst von uns einen persönlichen Einladungslink.<br>Passwort vergessen? Schreib uns kurz, dann bekommst du einen neuen Link.</p>
 <footer><span class="ph">[Impressum]</span> · <span class="ph">[Datenschutz]</span></footer>
