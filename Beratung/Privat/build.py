@@ -31,14 +31,14 @@ table.form td.l{width:38%;color:var(--ink2)}
 </style>"""
 BASE_CSS = '<link rel="stylesheet" href="../../Finanzanlagen/assets/base.css">'
 
-FOOT_KUNDE = "Ganzheitliche Finanzberatung · Oliver Rosenbaum und Jan Schnichels (Endlich Besser Beraten)"
-FOOT_JAN = "Ganzheitliche Finanzberatung · Jan Schnichels, Endlich Besser Beraten"
+FOOT_KUNDE = "Ganzheitliche Finanzberatung · Oliver Rosenbaum in Kooperation mit Endlich Besser Beraten"
+FOOT_JAN = "Ganzheitliche Finanzberatung · Jan Schnichels, Endlich Besser Beraten, in Kooperation mit Oliver Rosenbaum"
 FOOT_INTERN = "Bedarfsanalyse Privat · intern"
 
 TOKENS = {
-    "⟦MARKE_HELL⟧": marke("#FFFFFF", "#9BD77F", "OLIVER ROSENBAUM · JAN SCHNICHELS", 64),
+    "⟦MARKE_HELL⟧": marke("#FFFFFF", "#9BD77F", "ZWEI EIGENSTÄNDIGE PARTNER IN KOOPERATION", 64),
     "⟦MARKE_HELL_INTERN⟧": marke("#FFFFFF", "#9BD77F", "NAME FOLGT · ARBEITSTITEL", 70),
-    "⟦MARKE⟧": marke(subline="OLIVER ROSENBAUM · JAN SCHNICHELS", h=48),
+    "⟦MARKE⟧": marke(subline="ZWEI EIGENSTÄNDIGE PARTNER IN KOOPERATION", h=48),
     "⟦MARKE_ICON⟧": marke_icon(),
     "⟦KONTAKT-OLIVER⟧": KONTAKT_OLIVER,
     "⟦PFLICHTHINWEIS⟧": PFLICHTHINWEIS_DU,
