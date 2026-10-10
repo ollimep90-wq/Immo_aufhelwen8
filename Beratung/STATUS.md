@@ -34,7 +34,11 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
 ## Offen
 
 1. **Excel-Prototyp:** am 10.10.2026 erhalten und ausgewertet, siehe `Prototyp_Analyse.md`. Budgetlogik und Risiko-Check sind in der Bedarfsanalyse übernommen (S. 7 und 9). Der Vorab-Check ist offen, siehe Punkt 2.
-2. Der Vorab-Check als digitales Formular ist noch nicht gebaut. Das interaktive Werkzeug muss angepasst werden.
+2. **Vorab-Check:** Das Formular ist gebaut (`Privat/07_Vorab-Check.html`, Quellen in `Privat/vorab-check/`). Vor dem Livegang fehlen noch:
+   - Empfangsdienst für die Übermittlung (`VERSAND.url`) und ein AVV mit diesem Dienst.
+   - Datenschutzerklärung und Impressum.
+   - Hosting.
+   - Rechtliche Prüfung der Einwilligung.
 3. Den gleichen Satz für **Gewerbe und Unternehmen** erstellen.
 4. **§34i-Modell wählen:** Provision oder Honorar.
    - Nach § 34i Abs. 5 GewO schließen sich Vermittlung und Honorarberatung aus, eine Wahl je Kunde ist nicht möglich.

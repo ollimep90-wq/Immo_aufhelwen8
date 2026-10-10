@@ -69,6 +69,23 @@ Geprüft per Python gegen die gespeicherten Werte und gegen Quellen. Nichts davo
 13. **Skala passt nicht zu jeder Frage.** Manche Fragen sind Ja/Nein- oder Wie-viel-Fragen, etwa „Würdest du dein Recht durchsetzen, auch wenn es teuer wird?“ oder „Wie hoch schätzt du den Schaden ein?“. Die Antworten „existenzbedrohend … egal“ passen dort nicht. Vorschlag: diese Fragen umformulieren.
 14. **Interner Hinweis im Fragentext.** Block 9 heißt „Selbstbild vs. Körperrealität (sehr wichtig für deine Argumentation)“. Der Zusatz darf nicht zum Kunden.
 15. **Länge.** 78 Fragen sind für einen digitalen Vorab-Check von 10 bis 15 Minuten zu viel, siehe Frage an den Nutzer.
+16. **Block-Gewichte greifen nur teilweise.**
+    - Die Gewichte stehen in der Kopfzeile jedes Blocks.
+    - Die Fragezeilen übernehmen aber nur die erste Spalte aus der Kopfzeile (`=AK$2`). Alle anderen Spalten verweisen auf die leere Zwischenzeile (`=AL$3` …).
+    - Folge in Block 1: Gewertet wird nur Berufsunfähigkeit. Grundfähigkeit, Unfall, PKV, Krankenzusatz und Zahnzusatz bleiben bei 0, obwohl die Kopfzeile 3, 2, 2, 2, 2 vorsieht.
+    - Im Risk_assessment ist das sichtbar: Block 1 hat nur in der Spalte Berufsunfähigkeit einen Wert.
+    - Im Vorab-Check gelten die Kopfzeilen-Gewichte als beabsichtigt (ohne Zahnzusatz).
+
+**Stand Block 4 (Befund 10):** Der Nutzer konnte am 10.10.2026 nicht sagen, ob die Gewichte Absicht sind. Im Vorab-Check gilt bis zur Klärung nur Arbeitskraft/Familie.
+
+## Vorab-Check (gebaut am 10.10.2026)
+
+`Privat/vorab-check/`, gebaut zu `Privat/07_Vorab-Check.html`.
+
+- **Vorgaben des Nutzers:** kurz (ca. 15 Minuten), Web-Formular mit Übermittlung, Netto oder Brutto wählbar.
+- **Kurzcheck:** 14 Fragen, davon 13 aus dem Prototyp (meist angepasst) und 1 neue zur Haftpflicht. Die Kennzeichnung steht in `fragen.js`. Block 9 (Selbstbild) ist bewusst nicht übernommen, weil er nach eigenen Gesundheitserfahrungen fragt. Laut Bedarfsanalyse gehören keine Gesundheitsdaten in den Vorab-Check.
+- **Themen statt Produkte:** Das Ergebnis zeigt Themen wie Arbeitskraft oder Familie, keine Versicherungsprodukte. Die Bewertung bleibt bei Jan.
+- **Netto aus Brutto:** neu gerechnet mit dem Tarif 2026 und korrigiertem PV-Abschlag, siehe `QUELLEN.md`.
 
 ## Nächste Schritte
 

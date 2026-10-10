@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dein Finanz-Check</title>
+<style>
+/* Systemschriften statt Webfonts: keine Verbindung zu Drittanbietern (Datenschutz) */
+:root{
+  --bg:#F5F5F7; --card:#FFFFFF; --ink:#1D1D1F; --mute:#6E6E73; --line:#D2D2D7;
+  --green:#2E7D32; --green2:#7CC243; --green-l:#E8F3E6; --blue:#3F6FB0; --blue-l:#E8EEFB;
+  --red:#D64545; --red-l:#FBEAEA; --amber:#C98A00; --amber-l:#FFF6E5; --hl:#FFF3B0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000; --card:#1C1C1E; --ink:#F5F5F7; --mute:#A1A1A6; --line:#3A3A3C;
+    --green:#5FBF63; --green-l:#16301A; --blue:#7FA6E0; --blue-l:#17233A;
+    --red:#F07070; --red-l:#3A1818; --amber:#E8B23A; --amber-l:#3A2C10; --hl:#5A4E00;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000; --card:#1C1C1E; --ink:#F5F5F7; --mute:#A1A1A6; --line:#3A3A3C;
+  --green:#5FBF63; --green-l:#16301A; --blue:#7FA6E0; --blue-l:#17233A;
+  --red:#F07070; --red-l:#3A1818; --amber:#E8B23A; --amber-l:#3A2C10; --hl:#5A4E00;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+header .marke{background:#fff;border-radius:12px;padding:6px 12px}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0 22px}
+.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .3s}
+.step{display:none}
+.step.on{display:block}
+.eyebrow{color:var(--green);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:32px;line-height:1.15;margin:6px 0 10px;letter-spacing:-.02em}
+h2{font-size:22px;margin:22px 0 8px;letter-spacing:-.01em}
+p.lead{color:var(--mute);font-size:17px;margin:0 0 18px}
+.card{background:var(--card);border-radius:18px;padding:18px;margin:12px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+label{display:block;font-weight:600;font-size:15px;margin:12px 0 6px}
+.hint{color:var(--mute);font-size:13px;font-weight:400}
+input[type=number],input[type=text],input[type=email],select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+textarea{min-height:70px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--green);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{margin:0;font-weight:500;flex:1 1 auto}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;text-align:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer;font-size:15px}
+.seg input:checked+span{background:var(--green);border-color:var(--green);color:#fff}
+.seg input:focus-visible+span{outline:2px solid var(--green);outline-offset:2px}
+.q{margin:18px 0 8px;font-weight:500}
+.scale .seg span{font-size:14px;padding:9px 8px}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+button{font:inherit;font-weight:600;border:0;border-radius:980px;padding:12px 22px;cursor:pointer}
+.primary{background:var(--green);color:#fff}
+.ghost{background:transparent;color:var(--green)}
+button:disabled{opacity:.4;cursor:not-allowed}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:560px){.kpi{grid-template-columns:1fr 1fr}}
+.kpi div{background:var(--bg);border-radius:14px;padding:12px}
+.kpi b{display:block;font-size:22px;letter-spacing:-.01em}
+.kpi small{color:var(--mute)}
+.amp{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:-1px}
+.rot{background:var(--red)} .gelb{background:var(--amber)} .gruen{background:var(--green)} .keine{background:var(--line)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:9px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n{text-align:right;white-space:nowrap}
+.note{background:var(--amber-l);border-radius:14px;padding:12px 14px;font-size:14px}
+.ph{background:var(--hl);padding:0 3px;border-radius:3px}
+.err{color:var(--red);font-size:14px;margin-top:8px;min-height:1em}
+footer{color:var(--mute);font-size:12px;margin-top:30px}
+@media print{
+  body{background:#fff} .nav,.progress,#versand-box button,footer .noprint{display:none!important}
+  .step{display:block!important} .step:not(.print){display:none!important}
+  .card{box-shadow:none;border:1px solid #ddd}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="marke"><svg height="34" viewBox="0 0 400 60" style="display:block" font-family="Inter, sans-serif"><g><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/><rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></g><text x="72" y="38" font-size="22" font-weight="700" fill="#14213D">Ganzheitliche Finanzberatung</text></svg></div><span class="hint" id="schritt-text"></span></header>
+<div class="progress" aria-hidden="true"><div id="bar"></div></div>
+
+<form id="f" novalidate onsubmit="return false">
+
+<!-- 0 Start -->
+<section class="step on" data-step="0">
+  <div class="eyebrow">Vor unserem ersten Gespräch</div>
+  <h1>Dein Finanz-Check in 15 Minuten</h1>
+  <p class="lead">Ein paar Fragen zu deinem Leben, deinem Geld und dem, was dich treffen würde. Am Ende siehst du ein erstes Bild, und wir können im Gespräch direkt bei dem anfangen, was dir wichtig ist.</p>
+  <div class="card">
+    <p style="margin:0 0 8px"><b>Gut zu wissen</b></p>
+    <p style="margin:0" class="hint">Schätzungen reichen völlig. Jede Frage kannst du überspringen. Das Ergebnis ist eine erste Einschätzung auf Basis deiner Angaben und keine Beratung. Deine Angaben schickst du uns erst am Ende und nur, wenn du zustimmst.</p>
+  </div>
+</section>
+
+<!-- 1 Über dich -->
+<section class="step" data-step="1">
+  <div class="eyebrow">Schritt 1</div>
+  <h1>Über dich</h1>
+  <div class="card">
+    <div class="row">
+      <div><label for="vorname">Vorname</label><input id="vorname" type="text" autocomplete="given-name"></div>
+      <div><label for="alter">Alter</label><input id="alter" type="number" min="16" max="99" inputmode="numeric"></div>
+    </div>
+    <label>Familienstand</label>
+    <div class="seg" data-name="familie">
+      <label><input type="radio" name="familie" value="single"><span>Allein</span></label>
+      <label><input type="radio" name="familie" value="partner"><span>In Partnerschaft</span></label>
+      <label><input type="radio" name="familie" value="verheiratet"><span>Verheiratet</span></label>
+    </div>
+    <div class="row">
+      <div><label for="kinder">Kinder <span class="hint">mit Kindergeld</span></label><input id="kinder" type="number" min="0" max="12" value="0" inputmode="numeric"></div>
+      <div><label for="tiere">Haustiere</label><input id="tiere" type="number" min="0" max="20" value="0" inputmode="numeric"></div>
+    </div>
+    <label>Wohnen</label>
+    <div class="seg">
+      <label><input type="radio" name="wohnen" value="miete"><span>Zur Miete</span></label>
+      <label><input type="radio" name="wohnen" value="eigentum"><span>Im Eigentum</span></label>
+      <label><input type="radio" name="wohnen" value="sonst"><span>Anders</span></label>
+    </div>
+    <label>Beruf</label>
+    <div class="seg">
+      <label><input type="radio" name="beruf" value="angestellt"><span>Angestellt</span></label>
+      <label><input type="radio" name="beruf" value="selbststaendig"><span>Selbstständig</span></label>
+      <label><input type="radio" name="beruf" value="beamt"><span>Verbeamtet</span></label>
+      <label><input type="radio" name="beruf" value="sonst"><span>Anderes</span></label>
+    </div>
+    <div class="row">
+      <div><label for="land">Bundesland</label><select id="land">
+        <option value="">bitte wählen</option><option value="BW">Baden-Württemberg</option><option value="BY">Bayern</option><option value="BE">Berlin</option><option value="BB">Brandenburg</option><option value="HB">Bremen</option><option value="HH">Hamburg</option><option value="HE">Hessen</option><option value="MV">Mecklenburg-Vorpommern</option><option value="NI">Niedersachsen</option><option value="NW">Nordrhein-Westfalen</option><option value="RP">Rheinland-Pfalz</option><option value="SL">Saarland</option><option value="SN">Sachsen</option><option value="ST">Sachsen-Anhalt</option><option value="SH">Schleswig-Holstein</option><option value="TH">Thüringen</option></select></div>
+      <div><label>Kirchensteuer</label><div class="seg">
+        <label><input type="radio" name="kirche" value="ja"><span>Ja</span></label>
+        <label><input type="radio" name="kirche" value="nein"><span>Nein</span></label></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 Einkommen -->
+<section class="step" data-step="2">
+  <div class="eyebrow">Schritt 2</div>
+  <h1>Was reinkommt</h1>
+  <p class="lead">Du kannst dein Netto direkt eintragen oder dein Brutto, dann schätzen wir das Netto für dich.</p>
+  <div class="card" id="einkommen-du">
+    <h2 style="margin-top:0">Du</h2>
+    <div class="seg">
+      <label><input type="radio" name="eart1" value="netto" checked><span>Netto im Monat</span></label>
+      <label><input type="radio" name="eart1" value="brutto"><span>Brutto im Jahr</span></label>
+    </div>
+    <label for="betrag1"><span id="betrag1-label">Netto im Monat in €</span></label><input id="betrag1" type="number" min="0" step="10" inputmode="decimal">
+    <div class="brutto-only" data-p="1" hidden>
+      <label>Krankenversicherung</label>
+      <div class="seg">
+        <label><input type="radio" name="kv1" value="gkv" checked><span>Gesetzlich</span></label>
+        <label><input type="radio" name="kv1" value="pkv"><span>Privat</span></label>
+      </div>
+      <div class="pkv-only" data-p="1" hidden><label for="pkv1">Dein Anteil an KV und Pflege im Monat <span class="hint">nach Zuschuss des Arbeitgebers</span></label><input id="pkv1" type="number" min="0" inputmode="decimal"></div>
+      <p class="hint">Die Schätzung gilt für Angestellte, ganzjährig, ohne besondere Freibeträge, mit dem durchschnittlichen Zusatzbeitrag 2026.</p>
+    </div>
+  </div>
+  <div class="card" id="einkommen-partner" hidden>
+    <h2 style="margin-top:0">Dein Partner, deine Partnerin</h2>
+    <div class="row"><div><label for="alter2">Alter</label><input id="alter2" type="number" min="16" max="99" inputmode="numeric"></div><div></div></div>
+    <div class="seg" style="margin-top:12px">
+      <label><input type="radio" name="eart2" value="netto" checked><span>Netto im Monat</span></label>
+      <label><input type="radio" name="eart2" value="brutto"><span>Brutto im Jahr</span></label>
+    </div>
+    <label for="betrag2"><span id="betrag2-label">Netto im Monat in €</span></label><input id="betrag2" type="number" min="0" step="10" inputmode="decimal">
+    <div class="brutto-only" data-p="2" hidden>
+      <label>Krankenversicherung</label>
+      <div class="seg">
+        <label><input type="radio" name="kv2" value="gkv" checked><span>Gesetzlich</span></label>
+        <label><input type="radio" name="kv2" value="pkv"><span>Privat</span></label>
+      </div>
+      <div class="pkv-only" data-p="2" hidden><label for="pkv2">Anteil an KV und Pflege im Monat <span class="hint">nach Zuschuss des Arbeitgebers</span></label><input id="pkv2" type="number" min="0" inputmode="decimal"></div>
+    </div>
+  </div>
+  <div class="card">
+    <label for="sonstein" style="margin-top:0">Weitere Einnahmen im Monat <span class="hint">z. B. Miete, Nebenjob, Unterhalt; ohne Kindergeld</span></label>
+    <input id="sonstein" type="number" min="0" step="10" inputmode="decimal">
+    <p class="hint" id="netto-schaetzung"></p>
+  </div>
+</section>
+
+<!-- 3 Ausgaben -->
+<section class="step" data-step="3">
+  <div class="eyebrow">Schritt 3</div>
+  <h1>Was rausgeht</h1>
+  <p class="lead">Deine festen Ausgaben im Monat. Jährliche Beträge bitte durch zwölf teilen. Grob geschätzt reicht.</p>
+  <div class="card" id="fixkosten">
+    <div class="row">
+      <div><label for="fk_wohnen">Wohnen <span class="hint">Miete oder Rate, Nebenkosten, Strom</span></label><input id="fk_wohnen" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_essen">Essen und Drogerie</label><input id="fk_essen" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_mobil">Mobilität <span class="hint">Auto, Tanken, Tickets</span></label><input id="fk_mobil" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_kinder">Kinder <span class="hint">Kita, Schule, Hobbys</span></label><input id="fk_kinder" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_vers">Versicherungen</label><input id="fk_vers" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_vertr">Verträge und Abos <span class="hint">Handy, Internet, Streaming, Sport</span></label><input id="fk_vertr" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_kredit">Kredite und Leasing</label><input id="fk_kredit" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_urlaub">Urlaub und Freizeit</label><input id="fk_urlaub" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_sonst">Sonstiges</label><input id="fk_sonst" type="number" min="0" step="10" inputmode="decimal"></div>
+    </div>
+    <p class="hint" id="fk-summe" style="margin-top:12px"></p>
+  </div>
+</section>
+
+<!-- 4 Sparen und Vermögen -->
+<section class="step" data-step="4">
+  <div class="eyebrow">Schritt 4</div>
+  <h1>Was schon da ist</h1>
+  <div class="card">
+    <label for="sparen" style="margin-top:0">Was sparst du jeden Monat? <span class="hint">Sparpläne, Daueraufträge, Vorsorgeverträge</span></label><input id="sparen" type="number" min="0" step="10" inputmode="decimal">
+    <div class="row">
+      <div><label for="liquide">Konto und Tagesgeld</label><input id="liquide" type="number" min="0" step="100" inputmode="decimal"></div>
+      <div><label for="depot">Depots und Fonds</label><input id="depot" type="number" min="0" step="100" inputmode="decimal"></div>
+      <div><label for="sonstverm">Sonstiges Vermögen <span class="hint">ohne selbst genutzte Immobilie</span></label><input id="sonstverm" type="number" min="0" step="100" inputmode="decimal"></div>
+      <div><label for="schulden">Offene Kredite <span class="hint">Restschuld gesamt</span></label><input id="schulden" type="number" min="0" step="100" inputmode="decimal"></div>
+    </div>
+    <label for="rente">Erwartete gesetzliche Rente im Monat <span class="hint">steht in deiner Renteninformation, falls du sie zur Hand hast</span></label><input id="rente" type="number" min="0" step="10" inputmode="decimal">
+  </div>
+</section>
+
+<!-- 5 Wünsche -->
+<section class="step" data-step="5">
+  <div class="eyebrow">Schritt 5</div>
+  <h1>Wo soll dein Leben hin?</h1>
+  <p class="lead">Stell dir vor, es ist in zehn Jahren und alles ist gut gelaufen. Was hat sich erfüllt? Ein Stichwort genügt.</p>
+  <div class="card" id="wuensche">
+    <div class="row"><div><label for="w1">Wunsch 1</label><input id="w1" type="text" placeholder="z. B. Eigenes Haus"></div><div><label for="w1j">Bis wann?</label><input id="w1j" type="number" min="2026" max="2090" placeholder="Jahr" inputmode="numeric"></div></div>
+    <div class="row"><div><label for="w2">Wunsch 2</label><input id="w2" type="text" placeholder="z. B. Mit 60 kürzertreten"></div><div><label for="w2j">Bis wann?</label><input id="w2j" type="number" min="2026" max="2090" placeholder="Jahr" inputmode="numeric"></div></div>
+    <div class="row"><div><label for="w3">Wunsch 3</label><input id="w3" type="text" placeholder="z. B. Studium der Kinder"></div><div><label for="w3j">Bis wann?</label><input id="w3j" type="number" min="2026" max="2090" placeholder="Jahr" inputmode="numeric"></div></div>
+    <label for="ruhestand">Mit welchem Alter möchtest du aufhören zu arbeiten oder kürzertreten?</label><input id="ruhestand" type="number" min="40" max="80" inputmode="numeric">
+    <label for="sorge">Was beschäftigt dich beim Thema Geld gerade am meisten?</label><textarea id="sorge"></textarea>
+    <label for="schlaf">Wie gut schläfst du beim Thema Geld? <span class="hint">1 = schlecht, 10 = sehr gut</span></label><input id="schlaf" type="number" min="1" max="10" inputmode="numeric">
+  </div>
+</section>
+
+<!-- 6 Absicherung -->
+<section class="step" data-step="6">
+  <div class="eyebrow">Schritt 6</div>
+  <h1>Was würde dich treffen?</h1>
+  <p class="lead">Ein paar Situationen zum Durchdenken. Es gibt kein Richtig oder Falsch, nur dein Bauchgefühl.</p>
+  <div class="card scale" id="risikofragen"></div>
+  <div class="card">
+    <label style="margin-top:0">Was hast du schon? <span class="hint">nur ankreuzen, was du sicher weißt</span></label>
+    <div class="seg" id="vorhanden"></div>
+  </div>
+</section>
+
+<!-- 7 Ergebnis -->
+<section class="step print" data-step="7">
+  <div class="eyebrow">Dein erstes Bild</div>
+  <h1 id="erg-titel">Dein Finanz-Check</h1>
+  <p class="lead">Auf Basis deiner Angaben. Eine erste Einschätzung, keine Beratung. Im Gespräch schauen wir genau hin.</p>
+  <div class="card"><h2 style="margin-top:0">Dein Geld im Monat</h2><div class="kpi" id="kpi"></div><p class="hint" id="erg-netto-hinweis"></p></div>
+  <div class="card"><h2 style="margin-top:0">Deine Notreserve</h2><p id="erg-reserve"></p></div>
+  <div class="card"><h2 style="margin-top:0">Wie stark dich etwas treffen würde</h2><table id="erg-risiko"></table>
+    <p class="hint">Die Ampel zeigt, wie stark dich ein Ereignis laut deinen Antworten treffen würde, nicht, ob du schon abgesichert bist. Ob deine Verträge passen, prüft Jan Schnichels von Endlich Besser Beraten mit dir.</p></div>
+  <div class="card" id="erg-wuensche-box"><h2 style="margin-top:0">Deine Wünsche</h2><ul id="erg-wuensche"></ul></div>
+  <div class="card" id="versand-box">
+    <h2 style="margin-top:0">An uns schicken</h2>
+    <label for="email" style="margin-top:0">Deine E-Mail-Adresse <span class="hint">damit wir uns melden können</span></label><input id="email" type="email" autocomplete="email">
+    <label style="font-weight:400;display:flex;gap:10px;align-items:flex-start;margin-top:14px"><input type="checkbox" id="einwilligung" style="margin-top:4px"> <span>Ich bin einverstanden, dass meine Angaben zur Vorbereitung des Beratungsgesprächs an Oliver Rosenbaum und Jan Schnichels übermittelt und dafür gespeichert werden. Ich kann die Einwilligung jederzeit widerrufen. Details in der <a class="ph" href="#" id="ds-link">[Datenschutzerklärung]</a>.</span></label>
+    <div class="nav" style="justify-content:flex-start;flex-wrap:wrap">
+      <button type="button" class="primary" id="senden">Absenden</button>
+      <button type="button" class="ghost" id="drucken">Als PDF speichern</button>
+    </div>
+    <p class="err" id="versand-status" role="status"></p>
+  </div>
+</section>
+
+<div class="nav">
+  <button type="button" class="ghost" id="zurueck">Zurück</button>
+  <button type="button" class="primary" id="weiter">Los geht's</button>
+</div>
+</form>
+
+<footer>
+  <span class="ph">[Impressum]</span> · <span class="ph">[Datenschutz]</span> · Rechengrößen Stand 2026. Netto aus Brutto ist eine Schätzung für Angestellte und kann von deiner Gehaltsabrechnung abweichen.
+</footer>
+</div>
+
+<script>/* Rechenkern Vorab-Check (Privat).
+ * Läuft im Browser und unter Node (Tests: test_rechenkern.py vergleicht mit einer
+ * unabhängigen Python-Umsetzung).
+ *
+ * Netto aus Brutto ist eine NÄHERUNG für Angestellte: Jahresbetrachtung,
+ * Lohnsteuer ohne Kinderfreibetrag (wie auf der Gehaltsabrechnung),
+ * Soli und Kirchensteuer mit Kinderfreibetrag. Nicht abgebildet: Steuerklassen III/V,
+ * Freibeträge, geldwerte Vorteile, Minijob, Beamte, Selbstständige.
+ */
+(function (root) {
+  "use strict";
+
+  // Rechengrößen 2026. Quellen siehe vorab-check/QUELLEN.md
+  const P2026 = {
+    jahr: 2026,
+    grundfreibetrag: 12348,          // § 32a EStG
+    tarif: { z2: 17799, z3: 69878, z4: 277825,
+             a2: 914.51, b2: 1400, a3: 173.10, b3: 2397, c3: 1034.87,
+             s4: 0.42, k4: 11135.63, s5: 0.45, k5: 19470.38 },
+    an_pauschbetrag: 1230,
+    sonderausgaben_pauschbetrag: 36,
+    kinderfreibetrag: 9756,          // je Kind, zusammenveranlagt
+    kindergeld_monat: 259,
+    soli: { freigrenze: 20350, satz: 0.055, milderung: 0.119 },
+    kist: { BY: 0.08, BW: 0.08, sonst: 0.09 },
+    bbg_kv: 69750, bbg_rv: 101400,
+    kv_satz: 0.146, kv_satz_ermaessigt: 0.14, zusatzbeitrag_schnitt: 0.029,
+    pv_satz: 0.036, pv_an_sachsen_plus: 0.005, pv_kinderlos: 0.006,
+    pv_abschlag_je_kind: 0.0025, pv_abschlag_max_kinder: 5,
+    rv_satz: 0.186, av_satz: 0.026,
+    vsp_grenze_sonstige: 1900
+  };
+
+  const r2 = (x) => Math.round(x * 100) / 100;
+
+  function tarif(zve, p) {
+    const t = p.tarif, x = Math.floor(Math.max(0, zve));
+    let st;
+    if (x <= p.grundfreibetrag) st = 0;
+    else if (x <= t.z2) { const y = (x - p.grundfreibetrag) / 10000; st = (t.a2 * y + t.b2) * y; }
+    else if (x <= t.z3) { const z = (x - t.z2) / 10000; st = (t.a3 * z + t.b3) * z + t.c3; }
+    else if (x <= t.z4) st = t.s4 * x - t.k4;
+    else st = t.s5 * x - t.k5;
+    return Math.floor(st);
+  }
+
+  function est(zve, verheiratet, p) {
+    return verheiratet ? 2 * tarif(zve / 2, p) : tarif(zve, p);
+  }
+
+  /* Sozialabgaben Arbeitnehmer pro Jahr.
+   * person: {brutto, kv:'gkv'|'pkv', pkv_eigenanteil_monat, zusatzbeitrag, alter, kinder_u25, sachsen} */
+  function sozialabgaben(person, p) {
+    const b = person.brutto;
+    const bkv = Math.min(b, p.bbg_kv), brv = Math.min(b, p.bbg_rv);
+    const rv = brv * p.rv_satz / 2, av = brv * p.av_satz / 2;
+    let kv = 0, pv = 0, kv_vsp = 0;
+    if (person.kv === "pkv") {
+      kv = (person.pkv_eigenanteil_monat || 0) * 12;   // KV+PV nach Arbeitgeberzuschuss
+      kv_vsp = kv;
+    } else {
+      const zb = person.zusatzbeitrag != null ? person.zusatzbeitrag : p.zusatzbeitrag_schnitt;
+      kv = bkv * (p.kv_satz + zb) / 2;
+      kv_vsp = bkv * (p.kv_satz_ermaessigt + zb) / 2;
+      let pvsatz = p.pv_satz / 2 + (person.sachsen ? p.pv_an_sachsen_plus : 0);
+      const k = person.kinder_u25 || 0;
+      if (k === 0 && (person.alter || 0) >= 23) pvsatz += p.pv_kinderlos;
+      if (k >= 2) pvsatz -= (Math.min(k, p.pv_abschlag_max_kinder) - 1) * p.pv_abschlag_je_kind;
+      pv = bkv * pvsatz;
+    }
+    return { kv: r2(kv), pv: r2(pv), rv: r2(rv), av: r2(av), summe: r2(kv + pv + rv + av),
+             kv_vsp: r2(kv_vsp) };
+  }
+
+  function vorsorgepauschale(sv, person) {
+    const kvpv = sv.kv_vsp + (person.kv === "pkv" ? 0 : sv.pv);
+    const av_teil = Math.max(0, Math.min(sv.av, P2026.vsp_grenze_sonstige - kvpv));
+    return sv.rv + kvpv + av_teil;
+  }
+
+  /* Haushalt: personen = [p1, p2?] mit brutto>0; verheiratet → Splitting.
+   * Ergebnis je Person und gesamt, Jahreswerte. */
+  function nettoHaushalt(h, p) {
+    p = p || P2026;
+    const kist = h.kirche ? (p.kist[h.bundesland] || p.kist.sonst) : 0;
+    const personen = h.personen.filter((x) => x && x.brutto > 0);
+    const rows = personen.map((x) => {
+      const sv = sozialabgaben(x, p);
+      const zve = Math.max(0, x.brutto - p.an_pauschbetrag - p.sonderausgaben_pauschbetrag - vorsorgepauschale(sv, x));
+      return { brutto: x.brutto, sv, zve: r2(zve) };
+    });
+    const kfb_gesamt = (h.kinder || 0) * p.kinderfreibetrag;
+    let steuer = [];
+    if (h.verheiratet) {
+      const zve = rows.reduce((a, r) => a + r.zve, 0);
+      const e = est(zve, true, p);
+      const e_kfb = est(Math.max(0, zve - kfb_gesamt), true, p);
+      const fg = 2 * p.soli.freigrenze;
+      const soli = e_kfb > fg ? Math.min(e_kfb * p.soli.satz, (e_kfb - fg) * p.soli.milderung) : 0;
+      const k = e_kfb * kist;
+      // Aufteilung nach Anteil am zvE (Näherung für die Anzeige je Person)
+      rows.forEach((r) => {
+        const a = zve > 0 ? r.zve / zve : 1 / rows.length;
+        steuer.push({ est: e * a, soli: soli * a, kist: k * a });
+      });
+    } else {
+      rows.forEach((r) => {
+        // Nicht zusammenveranlagt: je Elternteil der halbe Kinderfreibetrag (Regelfall)
+        const kfb = h.verheiratet ? kfb_gesamt : kfb_gesamt / 2;
+        const e = est(r.zve, false, p);
+        const e_kfb = est(Math.max(0, r.zve - kfb), false, p);
+        const fg = p.soli.freigrenze;
+        const soli = e_kfb > fg ? Math.min(e_kfb * p.soli.satz, (e_kfb - fg) * p.soli.milderung) : 0;
+        steuer.push({ est: e, soli, kist: e_kfb * kist });
+      });
+    }
+    const out = rows.map((r, i) => {
+      const s = steuer[i];
+      const netto = r.brutto - r.sv.summe - s.est - s.soli - s.kist;
+      return { brutto: r.brutto, sozialabgaben: r.sv.summe, est: r2(s.est), soli: r2(s.soli),
+               kist: r2(s.kist), netto_jahr: r2(netto), netto_monat: r2(netto / 12), zve: r.zve };
+    });
+    const netto_jahr = out.reduce((a, x) => a + x.netto_jahr, 0);
+    return { personen: out, netto_jahr: r2(netto_jahr), netto_monat: r2(netto_jahr / 12) };
+  }
+
+  /* Risiko-Kurzcheck. antworten: {frageId: 0..4 | null (trifft nicht zu)}
+   * fragen: [{id, block, gewichte:{art: 0..3}}]. Wertung wie im Excel-Prototyp:
+   * je Block Mittelwert(gewicht × punkte) / Mittelwert(gewicht × 4), über Blöcke summiert. */
+  function risikoAuswertung(fragen, antworten) {
+    const proBlock = {};
+    fragen.forEach((f) => {
+      const a = antworten[f.id];
+      if (a === null || a === undefined) return;
+      (proBlock[f.block] = proBlock[f.block] || []).push({ f, a });
+    });
+    const ist = {}, max = {};
+    Object.values(proBlock).forEach((liste) => {
+      const n = liste.length;
+      liste.forEach(({ f, a }) => {
+        Object.entries(f.gewichte).forEach(([art, w]) => {
+          ist[art] = (ist[art] || 0) + (w * a) / n;
+          max[art] = (max[art] || 0) + (w * 4) / n;
+        });
+      });
+    });
+    const ergebnis = {};
+    Object.keys(max).forEach((art) => {
+      if (max[art] <= 0) return;
+      const q = ist[art] / max[art];
+      ergebnis[art] = { quote: q, ampel: q >= 0.6 ? "rot" : q >= 0.3 ? "gelb" : q > 0 ? "gruen" : "keine" };
+    });
+    return ergebnis;
+  }
+
+  function budget(b) {
+    const einnahmen = b.netto_monat + (b.kindergeld_monat || 0) + (b.sonstige_einnahmen || 0);
+    const u1 = einnahmen - b.fixkosten;
+    const u2 = u1 - b.sparen;
+    const reserveMonate = b.fixkosten > 0 ? b.liquide / b.fixkosten : null;
+    return {
+      einnahmen: r2(einnahmen), ueberschuss1: r2(u1), quote1: einnahmen > 0 ? u1 / einnahmen : 0,
+      ueberschuss2: r2(u2), quote2: einnahmen > 0 ? u2 / einnahmen : 0,
+      sparquote: einnahmen > 0 ? b.sparen / einnahmen : 0,
+      reserve_monate: reserveMonate,
+      reserve_ampel: reserveMonate === null ? "keine" : reserveMonate < 1 ? "rot" : reserveMonate < 3 ? "gelb" : "gruen"
+    };
+  }
+
+  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, risikoAuswertung, budget };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.Rechenkern = api;
+})(this);
+</script>
+<script>/* Fragen des Risiko-Kurzchecks. Auswahl aus dem Excel-Prototyp (Masterarbeit, Jan. 2026),
+ * Stand 10.10.2026. Kennzeichnung je Frage:
+ *   quelle: "Prototyp <Nr>"            wörtlich übernommen
+ *           "Prototyp <Nr>, angepasst" zweiter Satz auf die Antwortskala umformuliert
+ *           "neu"                      nicht im Prototyp
+ * Gewichte je Thema 0..3. Grundlage sind die Block-Gewichte des Prototyps, zusammengefasst
+ * zu Themen. Abweichungen und offene Punkte: Beratung/Prototyp_Analyse.md, Befunde 10–13 und 16.
+ * filter: nur zeigen, wenn zutreffend (kinder, tier, eigentum, familie)
+ */
+(function (root) {
+  const THEMEN = {
+    arbeitskraft: "Deine Arbeitskraft",
+    familie:      "Deine Familie, falls dir etwas passiert",
+    kinder:       "Absicherung deiner Kinder",
+    gesundheit:   "Gesundheit und Krankenhaus",
+    unfall:       "Unfall",
+    haftung:      "Schäden an anderen (Haftpflicht)",
+    recht:        "Rechtsstreit",
+    hausrat:      "Deine Einrichtung (Hausrat)",
+    gebaeude:     "Dein Haus (Wohngebäude)",
+    tier:         "Dein Haustier"
+  };
+
+  const SKALA = [
+    { wert: 4, text: "Existenzbedrohend" },
+    { wert: 3, text: "Stark belastend" },
+    { wert: 2, text: "Spürbar" },
+    { wert: 1, text: "Kaum" },
+    { wert: 0, text: "Gar nicht" },
+    { wert: null, text: "Trifft nicht zu" }
+  ];
+  const SKALA_ZUSTIMMUNG = [
+    { wert: 4, text: "Stimme voll zu" },
+    { wert: 3, text: "Eher ja" },
+    { wert: 2, text: "Teils, teils" },
+    { wert: 1, text: "Eher nein" },
+    { wert: 0, text: "Stimme nicht zu" },
+    { wert: null, text: "Trifft nicht zu" }
+  ];
+
+  const FRAGEN = [
+    { id: "k1", block: 1, quelle: "Prototyp 1.1.0.1",
+      text: "Stell dir vor, du hast einen Bandscheibenvorfall und darfst 12 Monate nicht arbeiten. Wie wirkt sich das auf dein Einkommen und deinen Alltag aus?",
+      gewichte: { arbeitskraft: 3, unfall: 2, gesundheit: 2 } },
+    { id: "k2", block: 1, quelle: "Prototyp 1.2.0.2, angepasst",
+      text: "Stell dir vor, dein Sehvermögen verschlechtert sich stark und dein Beruf funktioniert so nicht mehr. Wie hart würde dich das treffen?",
+      gewichte: { arbeitskraft: 3, unfall: 2, gesundheit: 2 } },
+    { id: "k3", block: 2, quelle: "Prototyp 2.3.0.1, angepasst",
+      text: "Stell dir vor, dein Körper „zieht die Notbremse“ und du kannst monatelang nicht arbeiten, etwa wegen Erschöpfung. Wie hart würde dich das finanziell treffen?",
+      gewichte: { arbeitskraft: 3, gesundheit: 1 } },
+    { id: "k4", block: 3, quelle: "Prototyp 3.0.0.1, angepasst",
+      text: "Stell dir vor, du kannst deinen heutigen Beruf nicht mehr ausüben und ein anderer Job bringt deutlich weniger ein. Wie hart würde dich das treffen?",
+      gewichte: { arbeitskraft: 3 } },
+    { id: "k5", block: 4, quelle: "Prototyp 4.0.0.1, angepasst",
+      text: "Stell dir vor, dein Einkommen fällt weg, aber die Fixkosten laufen weiter. Wie hart würde dich das treffen?",
+      gewichte: { arbeitskraft: 2, familie: 3 } },
+    { id: "k6", block: 4, quelle: "Prototyp 4.0.0.2/4.0.0.3, angepasst", filter: "familie",
+      text: "Stell dir vor, dir passiert etwas und deine Familie müsste ohne dein Einkommen auskommen, Kredite inklusive. Wie hart würde es sie treffen?",
+      gewichte: { familie: 3 } },
+    { id: "k7", block: 5, quelle: "Prototyp 5.1.1.1, angepasst", filter: "kinder",
+      text: "Stell dir vor, dein Kind muss für mehrere Wochen ins Krankenhaus und du willst bessere Unterbringung und Betreuung. Wie stark würden dich die Zusatzkosten belasten?",
+      gewichte: { kinder: 3, gesundheit: 3 } },
+    { id: "k8", block: 5, quelle: "Prototyp 5.1.2.1, angepasst", filter: "kinder",
+      text: "Stell dir vor, dein Kind verliert durch einen Unfall dauerhaft die Beweglichkeit eines Arms oder Beins und braucht Hilfsmittel und Umbauten. Wie hart würde euch das finanziell treffen?",
+      gewichte: { kinder: 3, unfall: 3 } },
+    { id: "k9", block: 5, quelle: "Prototyp 5.2.0.1, angepasst", filter: "tier",
+      text: "Stell dir vor, dein Tier braucht eine OP für 6.000 bis 10.000 €. Wie stark würde dich das belasten?",
+      gewichte: { tier: 3 } },
+    { id: "k10", block: 10, quelle: "neu",
+      text: "Stell dir vor, du verursachst aus Versehen einen Unfall, bei dem jemand schwer verletzt wird, und sollst Schadenersatz zahlen. Wie hart würde dich das treffen?",
+      gewichte: { haftung: 3 } },
+    { id: "k11", block: 6, quelle: "Prototyp 6.0.0.2, angepasst",
+      text: "Stell dir vor, du gerätst in einen langen Streit mit Vermieter oder Arbeitgeber. Wie stark würden dich Anwalts- und Gerichtskosten belasten?",
+      gewichte: { recht: 3 } },
+    { id: "k12", block: 7, quelle: "Prototyp 7.1.0.1, angepasst",
+      text: "Stell dir vor, ein Küchengerät fängt nachts Feuer und der Rauch zerstört Möbel, Kleidung und Elektronik. Wie hart würde es dich treffen, alles neu zu kaufen?",
+      gewichte: { hausrat: 3 } },
+    { id: "k13", block: 8, quelle: "Prototyp 8.4.0.1, angepasst", filter: "eigentum",
+      text: "Stell dir vor, Starkregen drückt Wasser in Keller oder Erdgeschoss. Wie hart würden dich Sanierung, Trocknung und Ersatz treffen?",
+      gewichte: { gebaeude: 3 } },
+    { id: "k14", block: 8, quelle: "Prototyp 8.2.0.1, angepasst", filter: "eigentum",
+      text: "Stell dir vor, ein Brand macht dein Haus monatelang unbewohnbar und du zahlst Miete und Kredit gleichzeitig. Wie hart würde dich das treffen?",
+      gewichte: { gebaeude: 3, familie: 2 } }
+    /* Prototyp 9.0.0.4 („Ich habe schon erlebt, dass mein Körper anders reagiert hat …“)
+     * bewusst NICHT übernommen: fragt nach eigener Gesundheitserfahrung (Art. 9 DSGVO).
+     * Entscheidung laut Bedarfsanalyse: keine Gesundheitsdaten im Vorab-Check. */
+  ];
+
+  const api = { THEMEN, SKALA, SKALA_ZUSTIMMUNG, FRAGEN };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.Fragen = api;
+})(this);
+</script>
+<script>
+"use strict";
+/* Versand: Hier die Adresse des Empfangsdienstes eintragen (offen, siehe STATUS.md).
+ * Leer = kein Versand, nur PDF. Erwartet POST mit JSON, Antwort 2xx. */
+const VERSAND = { url: "", ds_url: "" };
+
+const R = Rechenkern, F = Fragen;
+const $ = (id) => document.getElementById(id);
+const num = (id) => { const v = parseFloat(($(id).value || "").replace(",", ".")); return isFinite(v) && v > 0 ? v : 0; };
+const radio = (n) => { const e = document.querySelector(`input[name="${n}"]:checked`); return e ? e.value : ""; };
+const eur = (x) => (Math.round(x)).toLocaleString("de-DE") + " €";
+const pct = (x) => (Math.round(x * 100)).toLocaleString("de-DE") + " %";
+const steps = [...document.querySelectorAll(".step")];
+const LETZTER = steps.length - 1;
+let akt = 0;
+
+function hatPartner() { const f = radio("familie"); return f === "partner" || f === "verheiratet"; }
+function filterAktiv(f) {
+  if (!f) return true;
+  if (f === "kinder") return num("kinder") > 0;
+  if (f === "tier") return num("tiere") > 0;
+  if (f === "eigentum") return radio("wohnen") === "eigentum";
+  if (f === "familie") return hatPartner() || num("kinder") > 0;
+  return true;
+}
+
+function baueRisikofragen() {
+  const box = $("risikofragen"); box.innerHTML = "";
+  F.FRAGEN.filter((q) => filterAktiv(q.filter)).forEach((q) => {
+    const skala = q.skala === "zustimmung" ? F.SKALA_ZUSTIMMUNG : F.SKALA;
+    const d = document.createElement("div");
+    d.innerHTML = `<p class="q" id="lbl-${q.id}">${q.text}</p><div class="seg" role="radiogroup" aria-labelledby="lbl-${q.id}">` +
+      skala.map((s, i) => `<label><input type="radio" name="r_${q.id}" value="${s.wert === null ? "na" : s.wert}"><span>${s.text}</span></label>`).join("") + "</div>";
+    box.appendChild(d);
+  });
+  const v = $("vorhanden");
+  if (!v.childElementCount) {
+    Object.entries(F.THEMEN).forEach(([k, t]) => {
+      v.insertAdjacentHTML("beforeend", `<label><input type="checkbox" name="hat" value="${k}"><span>${t}</span></label>`);
+    });
+  }
+}
+
+function personenEingabe() {
+  const kinder = num("kinder");
+  const land = $("land").value;
+  const pers = [];
+  [1, 2].forEach((i) => {
+    if (i === 2 && !hatPartner()) return;
+    const art = radio("eart" + i), betrag = num("betrag" + i);
+    pers.push({ art, betrag, kv: radio("kv" + i) || "gkv", pkv: num("pkv" + i),
+                alter: num(i === 1 ? "alter" : "alter2") || 40, kinder_u25: kinder, sachsen: land === "SN" });
+  });
+  return pers;
+}
+
+function nettoMonat() {
+  const pers = personenEingabe();
+  const brutto = pers.filter((p) => p.art === "brutto" && p.betrag > 0);
+  const nettoDirekt = pers.filter((p) => p.art === "netto").reduce((a, p) => a + p.betrag, 0);
+  let geschaetzt = 0, info = null;
+  if (brutto.length) {
+    const verh = radio("familie") === "verheiratet";
+    // Splitting braucht beide Einkommen brutto; bei gemischter Angabe Einzelrechnung (Näherung)
+    const mitEinkommen = pers.filter((p) => p.betrag > 0);
+    const splitting = verh && mitEinkommen.every((p) => p.art === "brutto");
+    const r = R.nettoHaushalt({
+      personen: brutto.map((p) => ({ brutto: p.betrag, kv: p.kv, pkv_eigenanteil_monat: p.pkv, alter: p.alter, kinder_u25: p.kinder_u25, sachsen: p.sachsen })),
+      verheiratet: splitting, kinder: num("kinder"), kirche: radio("kirche") === "ja", bundesland: $("land").value
+    });
+    geschaetzt = r.netto_monat; info = r;
+  }
+  return { netto: nettoDirekt + geschaetzt, geschaetzt, info };
+}
+
+function fixkosten() {
+  return [...document.querySelectorAll("#fixkosten input")].reduce((a, e) => a + num(e.id), 0);
+}
+
+function risiko() {
+  const antworten = {};
+  F.FRAGEN.filter((q) => filterAktiv(q.filter)).forEach((q) => {
+    const v = radio("r_" + q.id);
+    if (v === "") return;
+    antworten[q.id] = v === "na" ? null : Number(v);
+  });
+  const fr = F.FRAGEN.map((q) => ({ id: q.id, block: q.block, gewichte: q.gewichte }));
+  return { antworten, ergebnis: R.risikoAuswertung(fr, antworten) };
+}
+
+function sammle() {
+  const n = nettoMonat(), fk = fixkosten();
+  const b = R.budget({ netto_monat: n.netto, kindergeld_monat: num("kinder") * R.P2026.kindergeld_monat,
+                       sonstige_einnahmen: num("sonstein"), fixkosten: fk, sparen: num("sparen"), liquide: num("liquide") });
+  const rk = risiko();
+  const hat = [...document.querySelectorAll('input[name="hat"]:checked')].map((e) => e.value);
+  const wuensche = [1, 2, 3].map((i) => ({ text: $("w" + i).value.trim(), jahr: num("w" + i + "j") || null })).filter((w) => w.text);
+  return {
+    version: "vorab-check 2026-10", erstellt: new Date().toISOString(),
+    person: { vorname: $("vorname").value.trim(), alter: num("alter"), familie: radio("familie"), kinder: num("kinder"),
+              tiere: num("tiere"), wohnen: radio("wohnen"), beruf: radio("beruf"), bundesland: $("land").value, kirche: radio("kirche") },
+    einkommen: { eingaben: personenEingabe(), netto_monat: n.netto, davon_geschaetzt: n.geschaetzt, sonstige: num("sonstein") },
+    fixkosten: Object.fromEntries([...document.querySelectorAll("#fixkosten input")].map((e) => [e.id, num(e.id)])),
+    fixkosten_summe: fk, sparen: num("sparen"),
+    vermoegen: { liquide: num("liquide"), depot: num("depot"), sonstiges: num("sonstverm"), schulden: num("schulden"), rente_erwartet: num("rente") },
+    budget: b, wuensche, ruhestand_alter: num("ruhestand") || null, sorge: $("sorge").value.trim(), schlaf: num("schlaf") || null,
+    risiko: { antworten: rk.antworten, ergebnis: rk.ergebnis, vorhanden: hat }
+  };
+}
+
+function zeigeErgebnis() {
+  const d = sammle(), b = d.budget;
+  $("erg-titel").textContent = d.person.vorname ? `${d.person.vorname}, dein Finanz-Check` : "Dein Finanz-Check";
+  $("kpi").innerHTML = [
+    ["Einnahmen", eur(b.einnahmen), d.einkommen.davon_geschaetzt ? "Netto teils geschätzt" : "inkl. Kindergeld"],
+    ["Feste Ausgaben", eur(d.fixkosten_summe), b.einnahmen ? pct(d.fixkosten_summe / b.einnahmen) + " der Einnahmen" : ""],
+    ["Überschuss I", eur(b.ueberschuss1), pct(b.quote1) + " nach Fixkosten"],
+    ["Sparen", eur(d.sparen), "Sparquote " + pct(b.sparquote)],
+    ["Überschuss II", eur(b.ueberschuss2), pct(b.quote2) + " frei verfügbar"]
+  ].map(([t, v, s]) => `<div><small>${t}</small><b>${v}</b><small>${s}</small></div>`).join("");
+  $("erg-netto-hinweis").textContent = d.einkommen.davon_geschaetzt
+    ? `Davon ${eur(d.einkommen.davon_geschaetzt)} netto aus deinem Brutto geschätzt (Rechengrößen 2026). Deine Gehaltsabrechnung kann abweichen.` : "";
+  const m = b.reserve_monate;
+  $("erg-reserve").innerHTML = m === null ? '<span class="amp keine"></span>Ohne feste Ausgaben können wir die Reserve nicht einschätzen.'
+    : `<span class="amp ${b.reserve_ampel}"></span>Dein Konto und Tagesgeld reichen für rund <b>${m.toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben. Unsere Faustregel: drei bis sechs Monate, als Selbstständiger eher mehr.`;
+  const T = F.THEMEN, e = d.risiko.ergebnis;
+  const zeilen = Object.keys(T).filter((k) => e[k]).sort((a, z) => e[z].quote - e[a].quote).map((k) => {
+    const hat = d.risiko.vorhanden.includes(k);
+    const txt = { rot: "trifft dich stark", gelb: "trifft dich spürbar", gruen: "trifft dich wenig", keine: "nicht bewertet" }[e[k].ampel];
+    const hinweis = hat ? "vorhanden, prüfen wir" : e[k].ampel === "rot" ? "zuerst besprechen" : "";
+    return `<tr><td><span class="amp ${e[k].ampel}"></span><b>${T[k]}</b><br><span class="hint" style="margin-left:20px">${txt}${hinweis ? " · " + hinweis : ""}</span></td></tr>`;
+  });
+  $("erg-risiko").innerHTML = zeilen.join("") || '<tr><td class="hint">Keine Antworten zu den Situationen.</td></tr>';
+  $("erg-wuensche").innerHTML = d.wuensche.map((w) => `<li>${esc(w.text)}${w.jahr ? " · bis " + w.jahr : ""}</li>`).join("");
+  $("erg-wuensche-box").hidden = !d.wuensche.length;
+}
+function esc(s) { return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function zeige(i) {
+  akt = Math.max(0, Math.min(LETZTER, i));
+  steps.forEach((s, k) => s.classList.toggle("on", k === akt));
+  $("bar").style.width = (akt / LETZTER * 100) + "%";
+  $("schritt-text").textContent = akt === 0 ? "" : akt === LETZTER ? "Ergebnis" : `Schritt ${akt} von ${LETZTER - 1}`;
+  $("zurueck").style.visibility = akt === 0 ? "hidden" : "visible";
+  $("weiter").style.display = akt === LETZTER ? "none" : "";
+  $("weiter").textContent = akt === 0 ? "Los geht's" : akt === LETZTER - 1 ? "Ergebnis zeigen" : "Weiter";
+  if (akt === 6) baueRisikofragen();
+  if (akt === LETZTER) zeigeErgebnis();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function aktualisiere() {
+  $("einkommen-partner").hidden = !hatPartner();
+  [1, 2].forEach((i) => {
+    const brutto = radio("eart" + i) === "brutto";
+    $("betrag" + i + "-label").textContent = brutto ? "Brutto im Jahr in € (inkl. Sonderzahlungen)" : "Netto im Monat in €";
+    document.querySelector(`.brutto-only[data-p="${i}"]`).hidden = !brutto;
+    document.querySelector(`.pkv-only[data-p="${i}"]`).hidden = !(brutto && radio("kv" + i) === "pkv");
+  });
+  const n = nettoMonat();
+  $("netto-schaetzung").textContent = n.geschaetzt ? `Geschätztes Netto aus Brutto: ${eur(n.geschaetzt)} im Monat.` : "";
+  const fk = fixkosten();
+  $("fk-summe").textContent = fk ? `Zusammen ${eur(fk)} im Monat.` : "";
+}
+
+$("f").addEventListener("input", aktualisiere);
+$("f").addEventListener("change", aktualisiere);
+$("weiter").addEventListener("click", () => zeige(akt + 1));
+$("zurueck").addEventListener("click", () => zeige(akt - 1));
+$("drucken").addEventListener("click", () => window.print());
+if (VERSAND.ds_url) $("ds-link").href = VERSAND.ds_url;
+
+$("senden").addEventListener("click", async () => {
+  const st = $("versand-status");
+  if (!$("einwilligung").checked) { st.textContent = "Bitte stimme der Übermittlung zu, sonst können wir nichts empfangen."; return; }
+  const mail = $("email").value.trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) { st.textContent = "Bitte gib eine gültige E-Mail-Adresse an."; return; }
+  if (!VERSAND.url) { st.textContent = "Der Versand ist in dieser Vorschau noch nicht eingerichtet. Speichere dein Ergebnis bitte als PDF."; return; }
+  const daten = sammle(); daten.kontakt = { email: mail }; daten.einwilligung = { erteilt: true, zeit: new Date().toISOString() };
+  $("senden").disabled = true; st.textContent = "Wird gesendet …";
+  try {
+    const res = await fetch(VERSAND.url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(daten) });
+    if (!res.ok) throw new Error(res.status);
+    st.textContent = "Danke! Deine Angaben sind bei uns angekommen. Wir melden uns bei dir.";
+  } catch (err) {
+    $("senden").disabled = false;
+    st.textContent = "Das hat leider nicht geklappt. Bitte versuche es später noch einmal oder speichere dein Ergebnis als PDF.";
+  }
+});
+
+zeige(0); aktualisiere();
+</script>
+</body>
+</html>
