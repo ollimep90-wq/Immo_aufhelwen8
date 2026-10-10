@@ -45,6 +45,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
 7. **DIN 77230:** Der Normtext lag nicht vor. Die Dokumente sagen deshalb „angelehnt“ und behaupten keine Konformität.
 8. **Alte Sie-Fassungen:** Kundenpräsentation und Gesprächsleitfaden in `Finanzanlagen/` sind teilweise durch die neuen Decks ersetzt. Zu entscheiden ist, ob sie bleiben.
 9. **Jans Rückmeldung** zu `03_Risikoabsicherung` und zu seiner Rolle in den anderen Decks.
+10. **Masterarbeit:** Die Kapitel 3–7 sind noch „XXX“, Anhang A ist leer, und das Literaturverzeichnis enthält fremde Einträge (RFID, Industrie 4.0). Das ist für die Arbeit selbst wichtig, nicht für die Decks.
 11. **Vor Kundeneinsatz anwaltlich klären** (Fachanwalt Bank- und Kapitalmarktrecht):
     - **§ 17 PAngV** bei den Zinsbeispielen in `06_Immobilien`. Effektivzins, Nettodarlehensbetrag und der Hinweis auf die Grundschuld sind ergänzt. Ob ein repräsentatives Beispiel nötig ist, ist offen.
     - **§ 34h Abs. 3 GewO:** Entgeltfluss beim Strategiedepot mit WealthKonzept und Erlaubnisumfang für die Vermittlung der Vermögensverwaltung.
@@ -59,4 +60,3 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
 14. **Gemeinsamer Auftritt:**
     - Die Namen sind aus der Unterzeile entfernt, die Fußzeilen lauten „… in Kooperation mit …“.
     - Die gemeinsame Marke bleibt. Klären: Risiko einer Außen-GbR (siehe Pitch).
-10. **Masterarbeit:** Die Kapitel 3–7 sind noch „XXX“, Anhang A ist leer, und das Literaturverzeichnis enthält fremde Einträge (RFID, Industrie 4.0). Das ist für die Arbeit selbst wichtig, nicht für die Decks.
