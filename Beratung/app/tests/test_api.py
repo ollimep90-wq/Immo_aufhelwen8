@@ -87,7 +87,7 @@ def test_ablauf_akte_einladung_einwilligung(umgebung):
     # Widerruf löscht die Angaben, Nachweis bleibt
     assert k.post("/api/kunde/widerruf", headers=H).status_code == 200
     a = oli.get(f"/api/akten/{akte}").json()
-    assert "vorab" not in a["abschnitte"] and a["einwilligung"]["widerrufen"]
+    assert a["abschnitte"] == {} and a["einwilligung"]["widerrufen"]   # auch Beraterabschnitte gelöscht
     assert k.put("/api/kunde/vorab", json={"daten": {"netto": 2}}, headers=H).status_code == 403
     # Löschen: nur Ersteller oder Admin
     assert jan.delete(f"/api/akten/{akte}", headers=H).status_code == 403
@@ -107,3 +107,16 @@ def test_groessenlimit(umgebung):
     akte = oli.post("/api/akten", json={"titel": "X"}, headers=H).json()["id"]
     r = oli.put(f"/api/akten/{akte}/abschnitte/notizen", json={"daten": {"t": "x" * 300_000}}, headers=H)
     assert r.status_code == 413
+
+
+def test_login_ohne_nutzer_gleiche_antwort(umgebung):
+    c = client()
+    r1 = c.post("/api/login", json={"email": "gibtsnicht@x.de", "passwort": "x"}, headers=H)
+    r2 = c.post("/api/login", json={"email": "oliver@x.de", "passwort": "falsch"}, headers=H)
+    assert r1.status_code == r2.status_code == 401 and r1.json() == r2.json()
+
+
+def test_statische_dateien_nur_web(umgebung):
+    c = TestClient(appmod.app, base_url="https://testserver")
+    for pfad in ("/../server/app.py", "/server/app.py", "/tools/sync.py", "/%2e%2e/server/app.py"):
+        assert c.get(pfad).status_code == 404, pfad

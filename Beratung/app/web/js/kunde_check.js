@@ -235,28 +235,44 @@ async function speichere() {
   }
 }
 
+function endStatus(ok, text) {
+  $("gespeichert-titel").textContent = ok === true ? "Gespeichert" : ok === "geloescht" ? "Gelöscht" : "Noch nicht gespeichert";
+  $("gespeichert-text").textContent = text;
+  $("nochmal").hidden = ok !== false;
+  $("export").hidden = ok === "geloescht";
+}
+async function speichereEnde() {
+  endStatus(null, "");
+  $("gespeichert-titel").textContent = "Wird gespeichert …";
+  try { await speichere(); endStatus(true, "Deine Angaben sind bei uns. Wir melden uns bei dir für das Gespräch."); }
+  catch (e) { endStatus(false, e.message); }
+}
 async function weiterKlick() {
   if (akt === 0) {
     if (!eingewilligt) {
-      if (!$("einwilligung").checked) { $("lade-fehler").textContent = "Bitte stimme zu, damit wir deine Angaben speichern können."; return; }
-      await A.post("/api/kunde/einwilligung", { text_version: einwVersion, text: $("einwilligung-text").textContent });
-      eingewilligt = true; $("lade-fehler").textContent = "";
+      if (!$("einwilligung").checked) { $("einw-fehler").textContent = "Bitte stimme zu, damit wir deine Angaben speichern können."; $("einwilligung").focus(); return; }
+      try { await A.post("/api/kunde/einwilligung", { text_version: einwVersion, text: $("einwilligung-text").textContent }); }
+      catch (e) { $("einw-fehler").textContent = e.message; return; }
+      eingewilligt = true; $("einw-fehler").textContent = ""; meineDatenZeigen();
     }
   } else {
     try { await speichere(); } catch (e) { return; }
   }
   zeige(akt + 1);
   if (akt === 6) risikoAntwortenSetzen();
-  if (akt === LETZTER) { try { await speichere(); } catch (e) { /* Hinweis steht schon da */ } }
+  if (akt === LETZTER) await speichereEnde();
+}
+function meineDatenZeigen() {
+  $("meine-daten").hidden = !eingewilligt;
+  $("einwilligung").checked = eingewilligt; $("einwilligung").disabled = eingewilligt;
 }
 
 async function ladeAkte() {
   const k = await A.get("/api/kunde/akte");
   einwVersion = k.einwilligung_aktuell;
   eingewilligt = !!(k.einwilligung && k.einwilligung.version === einwVersion);
-  $("einwilligung").checked = eingewilligt;
-  $("einwilligung").disabled = eingewilligt;
-  $("hallo").textContent = `Hallo ${k.name}, dein Finanz-Check`;
+  meineDatenZeigen();
+  $("hallo").textContent = `Hallo ${k.name}, schön, dass du da bist`;
   if (k.vorab) { version = k.vorab.version; formularSetzen(k.vorab.daten.formular); }
   $("f").hidden = false; $("abmelden").hidden = false;
   zeige(0); aktualisiere();
@@ -268,13 +284,13 @@ async function start() {
     try {
       const e = await A.get("/api/einladung/" + m[1]);
       $("einladung-titel").textContent = `Willkommen, ${e.name}`;
-      $("einladung-email").value = e.email;
+      $("einladung-email").value = e.email; $("einladung-email-text").textContent = e.email;
       $("einladung-box").hidden = false;
       $("einladung-form").addEventListener("submit", async (ev) => {
         ev.preventDefault();
         const p1 = $("neu-pw").value, p2 = $("neu-pw2").value;
-        if (p1.length < 10) { $("einladung-fehler").textContent = "Bitte mindestens 10 Zeichen."; return; }
-        if (p1 !== p2) { $("einladung-fehler").textContent = "Die Passwörter sind nicht gleich."; return; }
+        if (p1.length < 10) { $("einladung-fehler").textContent = "Dein Passwort braucht mindestens 10 Zeichen."; return; }
+        if (p1 !== p2) { $("einladung-fehler").textContent = "Die beiden Passwörter stimmen nicht überein."; return; }
         try {
           await A.post("/api/einladung/annehmen", { token: m[1], passwort: p1 });
           history.replaceState(null, "", "/kunde.html");
@@ -284,7 +300,10 @@ async function start() {
       });
       return;
     } catch (e) {
-      $("lade-fehler").textContent = e.message; return;
+      $("lade-fehler").innerHTML = e.status === 404
+        ? 'Dieser Einladungslink ist ungültig oder abgelaufen. Hast du schon ein Passwort festgelegt? Dann <a href="/">melde dich hier an</a>. Sonst schicken wir dir gern einen neuen Link.'
+        : App.esc(e.message);
+      return;
     }
   }
   try { await ladeAkte(); }
@@ -293,18 +312,27 @@ async function start() {
 
 $("abmelden").addEventListener("click", async () => { await A.post("/api/logout"); location.href = "/"; });
 $("drucken").addEventListener("click", () => window.print());
-$("export").addEventListener("click", async () => {
-  const d = await A.get("/api/kunde/export");
-  const url = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: "application/json" }));
-  const a = document.createElement("a"); a.href = url; a.download = "meine-daten.json"; a.click(); URL.revokeObjectURL(url);
-});
-$("widerruf").addEventListener("click", async () => {
-  if (!confirm("Einwilligung widerrufen? Deine Angaben im Finanz-Check werden dann gelöscht.")) return;
-  await A.post("/api/kunde/widerruf");
-  eingewilligt = false; version = null;
-  $("konto-status").textContent = "Widerrufen. Deine Angaben sind gelöscht.";
-  $("einwilligung").checked = false; $("einwilligung").disabled = false;
-});
+async function exportieren(status) {
+  try {
+    const d = await A.get("/api/kunde/export");
+    const url = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: "application/json" }));
+    const a = document.createElement("a"); a.href = url; a.download = "meine-daten.json"; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  } catch (e) { $(status).textContent = e.message; }
+}
+async function widerrufen(status) {
+  if (!confirm("Einwilligung widerrufen? Alle deine Angaben in der App werden dann gelöscht. Wenn du sie behalten willst, lade sie vorher herunter.")) return;
+  try { await A.post("/api/kunde/widerruf"); }
+  catch (e) { $(status).textContent = "Das Widerrufen hat nicht geklappt. Deine Angaben sind noch gespeichert. Bitte versuch es noch einmal oder schreib uns. (" + e.message + ")"; return; }
+  eingewilligt = false; version = null; meineDatenZeigen();
+  endStatus("geloescht", "Du hast deine Einwilligung widerrufen. Deine Angaben sind gelöscht. Was du jetzt noch siehst, steht nur in diesem Browserfenster.");
+  $(status).textContent = "Widerrufen. Deine Angaben sind gelöscht.";
+}
+$("export").addEventListener("click", () => exportieren("konto-status"));
+$("export0").addEventListener("click", () => exportieren("konto-status0"));
+$("widerruf").addEventListener("click", () => widerrufen("konto-status"));
+$("widerruf0").addEventListener("click", () => widerrufen("konto-status0"));
+$("nochmal").addEventListener("click", speichereEnde);
 
 start();
 

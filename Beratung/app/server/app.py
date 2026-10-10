@@ -35,6 +35,7 @@ ABSCHNITT_KUNDE = "vorab"
 ALLE_ABSCHNITTE = ABSCHNITTE_BERATER | {ABSCHNITT_VERSICHERUNG, ABSCHNITT_KUNDE}
 
 ph = PasswordHasher()
+_DUMMY = ph.hash("dummy-passwort-zum-zeitausgleich")
 app = FastAPI(title="Beratungs-App", docs_url=None, redoc_url=None, openapi_url=None)
 DB = dbmod.oeffne()
 
@@ -76,7 +77,7 @@ def bremse(schluessel, max_n=5, fenster=600):
     while q and q[0] < jetzt - fenster:
         q.popleft()
     if len(q) >= max_n:
-        raise HTTPException(429, "Zu viele Versuche. Bitte später erneut versuchen.")
+        raise HTTPException(429, f"Zu viele Versuche. Bitte warte {fenster // 60} Minuten.")
     q.append(jetzt)
 
 
@@ -165,7 +166,7 @@ class Einwilligung(BaseModel):
 
 def pruefe_groesse(daten):
     if len(json.dumps(daten)) > 200_000:
-        raise HTTPException(413, "Daten zu groß")
+        raise HTTPException(413, "Das ist zu viel Text auf einmal. Bitte kürze die Freitexte etwas.")
 
 
 # ---------- Anmeldung ----------
@@ -177,6 +178,7 @@ def login(d: Login, request: Request, resp: Response):
     u = DB.eins("SELECT * FROM users WHERE email=? AND aktiv=1", d.email.lower().strip())
     try:
         if not u or not u["pw_hash"]:
+            ph.verify(_DUMMY, d.passwort + "x")   # gleiche Laufzeit wie bei vorhandenem Nutzer
             raise VerifyMismatchError()
         ph.verify(u["pw_hash"], d.passwort)
     except (VerifyMismatchError, InvalidHashError):
@@ -347,7 +349,7 @@ def einladung_annehmen(d: Annahme, resp: Response):
 def eigene_akte(u):
     a = DB.eins("SELECT * FROM akten WHERE kunde_id=?", u["id"])
     if not a:
-        raise HTTPException(404, "Keine Akte")
+        raise HTTPException(404, "Für deinen Zugang ist noch nichts angelegt. Bitte melde dich bei uns.")
     return a
 
 
@@ -384,18 +386,20 @@ def kunde_vorab(d: Abschnitt, u=Depends(nur("kunde"))):
     pruefe_groesse(d.daten)
     v = DB.speichere_abschnitt(a["id"], ABSCHNITT_KUNDE, d.daten, u["id"], d.version)
     if v is None:
-        raise HTTPException(409, "Inzwischen wurde neuer gespeichert. Bitte neu laden.")
+        raise HTTPException(409, "Deine Angaben wurden inzwischen in einem anderen Fenster geändert. Bitte lade die Seite neu.")
     DB.protokoll(u["id"], a["id"], f"vorab v{v}")
     return {"version": v}
 
 
 @app.post("/api/kunde/widerruf")
 def kunde_widerruf(resp: Response, u=Depends(nur("kunde"))):
-    """Widerruf: Angaben des Kunden werden gelöscht, der Nachweis der Einwilligung bleibt."""
+    """Widerruf: alle Angaben der Akte werden gelöscht, auch was Berater daraus übernommen haben.
+    Es bleiben die leere Akte, der Zugang und der Nachweis der Einwilligung (Art. 7 Abs. 1 DSGVO).
+    Offen (BETRIEB.md): ob Aufbewahrungspflichten eine Sperre statt Löschung verlangen."""
     a = eigene_akte(u)
     DB.x("UPDATE einwilligungen SET widerrufen=? WHERE akte_id=? AND user_id=? AND widerrufen IS NULL", time.time(), a["id"], u["id"])
-    DB.x("DELETE FROM abschnitte WHERE akte_id=? AND schluessel=?", a["id"], ABSCHNITT_KUNDE)
-    DB.protokoll(u["id"], a["id"], "einwilligung widerrufen, vorab gelöscht")
+    DB.x("DELETE FROM abschnitte WHERE akte_id=?", a["id"])
+    DB.protokoll(u["id"], a["id"], "einwilligung widerrufen, alle angaben gelöscht")
     return {"ok": True}
 
 

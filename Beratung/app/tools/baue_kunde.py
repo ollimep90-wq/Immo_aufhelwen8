@@ -11,7 +11,8 @@ MARKE = (HIER / "tools/marke.html").read_text()
 
 EINWILLIGUNG = ("Ich bin einverstanden, dass meine Angaben in diesem Finanz-Check zur Vorbereitung und Durchführung "
                 "meiner Beratung gespeichert und von Oliver Rosenbaum und Jan Schnichels verarbeitet werden. "
-                "Ich kann die Einwilligung jederzeit hier in der App widerrufen; dann werden meine Angaben gelöscht.")
+                "Ich kann die Einwilligung jederzeit hier in der App unter „Meine Daten“ widerrufen. Dann werden alle meine Angaben in der App gelöscht, "
+                "auch was meine Berater daraus übernommen haben.")
 
 
 def ersetze(s, alt, neu, n=1):
@@ -29,22 +30,33 @@ form = form[:s0a] + f'''<section class="step on" data-step="0">
   <p class="lead">Ein paar Fragen zu deinem Leben, deinem Geld und deinen Plänen, in etwa 15 Minuten. Schätzungen reichen völlig, jede Frage kannst du überspringen. Am Ende siehst du ein erstes Bild.</p>
   <div class="card">
     <p style="margin:0 0 8px"><b>Deine Daten</b></p>
-    <p class="hint" style="margin:0 0 10px">Deine Angaben werden nach jedem Schritt gespeichert, damit wir uns gut vorbereiten können. Ohne deine Einwilligung speichern wir nichts. Das Ergebnis ist eine erste Einschätzung, keine Beratung.</p>
+    <p class="hint" style="margin:0 0 10px">Deine Antworten im Finanz-Check speichern wir erst, wenn du unten zustimmst, und dann jedes Mal, wenn du auf Weiter tippst. So können wir uns gut vorbereiten. Das Ergebnis ist eine erste Einschätzung, keine Beratung.</p>
     <label style="font-weight:400;display:flex;gap:10px;align-items:flex-start"><input type="checkbox" id="einwilligung" style="margin-top:4px"> <span id="einwilligung-text">{EINWILLIGUNG}</span></label>
     <p class="hint">Details in der <a class="ph" href="#" id="ds-link">[Datenschutzerklärung]</a>.</p>
+    <p class="err" id="einw-fehler" role="alert"></p>
+  </div>
+  <div class="card" id="meine-daten" hidden>
+    <h2 style="margin-top:0">Meine Daten</h2>
+    <p class="hint">Du hast eingewilligt. Hier kannst du deine Angaben herunterladen oder die Einwilligung widerrufen.</p>
+    <div class="nav" style="justify-content:flex-start">
+      <button type="button" class="quiet" id="export0">Meine Daten herunterladen (JSON-Datei)</button>
+      <button type="button" class="danger" id="widerruf0">Einwilligung widerrufen</button>
+    </div>
+    <p id="konto-status0" role="status"></p>
   </div>
 </section>''' + form[s0b:]
 # Versand-Box durch Kontobereich ersetzen
 va = form.index('<div class="card" id="versand-box">'); vb = form.index("</section>", va)
 form = form[:va] + '''<div class="card" id="konto-box">
-    <h2 style="margin-top:0">Gespeichert</h2>
-    <p id="gespeichert-text">Deine Angaben sind bei uns. Wir melden uns bei dir für das Gespräch.</p>
+    <h2 style="margin-top:0" id="gespeichert-titel">Wird gespeichert …</h2>
+    <p id="gespeichert-text"></p>
     <div class="nav" style="justify-content:flex-start">
-      <button type="button" class="ghost" id="drucken">Als PDF speichern</button>
-      <button type="button" class="quiet" id="export">Meine Daten herunterladen</button>
+      <button type="button" class="primary" id="nochmal" hidden>Erneut speichern</button>
+      <button type="button" class="ghost" id="drucken">Drucken oder als PDF speichern</button>
+      <button type="button" class="quiet" id="export">Meine Daten herunterladen (JSON-Datei)</button>
       <button type="button" class="danger" id="widerruf">Einwilligung widerrufen</button>
     </div>
-    <p class="err" id="konto-status" role="status"></p>
+    <p id="konto-status" role="status"></p>
   </div>
 ''' + form[vb:]
 
@@ -66,6 +78,7 @@ html = KOPF.replace("%TITEL%", "Dein Finanz-Check") + f'''<div class="wrap">
   <h1 id="einladung-titel">Willkommen</h1>
   <p class="lead">Leg ein Passwort fest, dann kannst du deinen Finanz-Check ausfüllen und später wieder aufrufen.</p>
   <form id="einladung-form" novalidate>
+    <p>Du meldest dich später mit <b id="einladung-email-text"></b> an.</p>
     <input type="email" id="einladung-email" autocomplete="username" readonly hidden>
     <label for="neu-pw">Passwort <span class="hint">mindestens 10 Zeichen</span></label><input id="neu-pw" type="password" autocomplete="new-password" minlength="10">
     <label for="neu-pw2">Passwort wiederholen</label><input id="neu-pw2" type="password" autocomplete="new-password">
