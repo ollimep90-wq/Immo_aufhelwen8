@@ -41,7 +41,7 @@
           <text x="0" y="240" font-weight="700" fill="#1D1D1F">Nebenkosten gesamt</text><text x="250" y="240" font-size="22" font-weight="700" fill="#2E8B3E">⟦Z:nk_summe⟧</text>
         </g>
       </svg>
-      <p class="fine">Grunderwerbsteuer NRW 6,5 %. Maklerprovision als Käuferanteil 3,57 % inklusive Umsatzsteuer, nur wenn ein Makler beteiligt ist. Notar und Grundbuch sind ein Erfahrungswert, die tatsächlichen Gebühren hängen vom Einzelfall ab.</p>
+      <p class="fine">Grunderwerbsteuer NRW 6,5 %, Stand Oktober 2026. Makler: üblicher Käuferanteil 3,57 % inklusive Umsatzsteuer, frei verhandelbar, nur wenn ein Makler beteiligt ist. Notar und Grundbuch inklusive Grundschuld sind ein Erfahrungswert, die tatsächlichen Gebühren hängen vom Einzelfall ab.</p>
     </div>
   </div>
   ⟦FOOT⟧
@@ -53,10 +53,10 @@
   <h2>Vom Kaufpreis zur Monatsrate</h2>
   <div class="row" style="margin-top:9mm;align-items:stretch">
     <div class="col tile"><p>Kaufpreis und Nebenkosten</p><div class="big" style="font-size:30pt;margin-top:3mm">⟦Z:fin_gesamt⟧</div><p style="margin-top:3mm">davon Eigenkapital ⟦Z:fin_ek⟧: die Nebenkosten und ⟦Z:fin_ek_ueber_nk⟧ vom Kaufpreis.</p></div>
-    <div class="col tile" style="background:var(--blue-l)"><p>Darlehen</p><div class="big" style="font-size:30pt;margin-top:3mm;color:var(--blue)">⟦Z:fin_darlehen⟧</div><p style="margin-top:3mm">⟦Z:fin_zins⟧ Sollzins, ⟦Z:fin_tilg⟧ anfängliche Tilgung, 10 Jahre Zinsbindung.</p></div>
+    <div class="col tile" style="background:var(--blue-l)"><p>Darlehen</p><div class="big" style="font-size:30pt;margin-top:3mm;color:var(--blue)">⟦Z:fin_darlehen⟧</div><p style="margin-top:3mm">⟦Z:fin_zins⟧ gebundener Sollzins, <b>⟦Z:fin_eff⟧ effektiver Jahreszins</b>, ⟦Z:fin_tilg⟧ anfängliche Tilgung, 10 Jahre Zinsbindung.</p></div>
     <div class="col tile" style="background:var(--green-l)"><p>Monatsrate</p><div class="big grad" style="font-size:30pt;margin-top:3mm">⟦Z:fin_rate⟧</div><p style="margin-top:3mm">Nach 10 Jahren sind noch rund ⟦Z:fin_rest10⟧ offen. Für diese Restschuld brauchst du eine Anschlussfinanzierung.</p></div>
   </div>
-  <p class="fine" style="margin-top:6mm">Rechenbeispiel mit angenommenem Zinssatz, kein Angebot. Der Zins für dich hängt von Markt, Eigenkapital, Einkommen und Objekt ab. Ohne Gebühren für Grundschuld und Bereitstellung.</p>
+  <p class="fine" style="margin-top:6mm">Rechenbeispiel mit angenommenem Zinssatz, kein Angebot. Nettodarlehensbetrag ⟦Z:fin_darlehen⟧. Der effektive Jahreszins enthält keine weiteren Kosten wie Bereitstellungszinsen; die Kosten der Grundschuld stecken in den Nebenkosten. Das Darlehen wird über eine Grundschuld auf der Immobilie besichert. Der Zins für dich hängt von Markt, Eigenkapital, Einkommen und Objekt ab.</p>
   ⟦FOOT⟧
 </section>
 
@@ -69,7 +69,7 @@
     <div class="col tile" style="background:var(--green-l)"><h3>3 % Tilgung</h3><div class="big grad" style="font-size:30pt;margin-top:3mm">⟦Z:fin_rate3⟧</div><p>im Monat</p><p style="margin-top:4mm">Restschuld nach 10 Jahren: <b>⟦Z:fin_rest10_3⟧</b><br>schuldenfrei nach rund <b>⟦Z:fin_lz3⟧ Jahren</b></p></div>
   </div>
   <p class="sub" style="margin-top:6mm">Je weniger nach der Zinsbindung offen ist, desto weniger trifft dich ein höherer Zins danach. Wie viel Rate dein Budget trägt, sehen wir in der Bedarfsanalyse.</p>
-  <p class="fine" style="margin-top:3mm">Rechenbeispiel: ⟦Z:fin_darlehen⟧ Darlehen, ⟦Z:fin_zins⟧ Sollzins über die ganze Laufzeit angenommen. Nach der Zinsbindung kann der Zins höher oder niedriger sein.</p>
+  <p class="fine" style="margin-top:3mm">Rechenbeispiel: ⟦Z:fin_darlehen⟧ Darlehen, ⟦Z:fin_zins⟧ Sollzins (⟦Z:fin_eff⟧ effektiv) über die ganze Laufzeit angenommen, besichert über eine Grundschuld. Nach der Zinsbindung kann der Zins höher oder niedriger sein.</p>
   ⟦FOOT⟧
 </section>
 
@@ -137,7 +137,7 @@
     <div style="width:115mm">
       <div class="eyebrow">Transparenz und Kontakt</div>
       <h2>Du weißt vorher, was es kostet.</h2>
-      <p class="sub" style="font-size:11.5pt">Bei der Vermittlung eines Darlehens erhalte ich eine Provision der Bank oder, als Honorarberater, ein Honorar von dir, nie beides. Die Höhe nenne ich dir vorab.</p>
+      <p class="sub" style="font-size:11.5pt">Bei der Vermittlung eines Darlehens erhalte ich <span style="background:#FFF3B0">[eine Provision der Bank]</span>. Die Höhe nenne ich dir vorab.</p>
       <div class="tile" style="margin-top:6mm;padding:5mm 6mm;background:var(--green-l)">⟦MARKE_ICON⟧<p style="margin-top:2mm"><b>Oliver Rosenbaum</b> · Vermögensaufbau, Altersvorsorge, Finanzierung<br>⟦KONTAKT-OLIVER⟧</p></div>
     </div>
     <div class="col">

@@ -27,7 +27,7 @@ AVFAKTEN = """
 <tr><td><b>Steuer, Grenzen</b></td><td>Sonderausgabenabzug bis 1.800 € plus Zulage, nachgelagerte Besteuerung. Höchstens 6.840 € Einzahlung pro Jahr, ab dem dritten neuen Vertrag keine Förderung.</td></tr>
 </table><p class="tiny" style="margin-top:2mm">Quelle: Gesetzestext BGBl. 2026 I Nr. 156. Günstigerprüfung, Zulageverfahren für Selbständige und Kostenverordnung stehen noch aus. """ + R + """</p></div>
 """
-RIESTERNOTE = """<div class="note red" style="margin-top:4mm;font-size:8.4pt"><b>Riester-Falle:</b> Wer ab 2027 einen <b>neuen</b> Vertrag abschließt, stellt automatisch <b>alle</b> bestehenden Riester-Verträge auf das neue Recht um. Vorher prüfen! Übertragung aus Riester: gesetzliches Recht, 3 Monate zum Quartalsende, höchstens 150 € Kosten, Zulagen bleiben erhalten. Die Riester-Garantie entfällt; im neuen Recht ist eine Garantievariante (80 % oder 100 %) wählbar. """ + R + """</div>
+RIESTERNOTE = """<div class="note red" style="margin-top:4mm;font-size:8.4pt"><b>Riester-Falle:</b> Wer ab 2027 einen <b>neuen</b> geförderten Vertrag abschließt, für den gilt bei <b>allen</b> bestehenden Riester-Verträgen die neue Förderung; die Vertragsbedingungen bleiben. Nach Anbieterquellen nicht umkehrbar, Fundstelle im Gesetz noch prüfen. Vorher prüfen! Übertragung aus Riester: gesetzliches Recht, 3 Monate zum Quartalsende, höchstens 150 € Kosten, Zulagen bleiben erhalten. Die Riester-Garantie entfällt; im neuen Recht ist eine Garantievariante (80 % oder 100 %) wählbar. """ + R + """</div>
 """
 
 AVKONZEPT_TABELLE = """
@@ -82,10 +82,10 @@ AVKUNDE = """
 <div class="card acc"><h3>Das Wichtigste</h3><ul class="small">
 <li><b>Bis zu 540 € Grundzulage</b> pro Jahr: 50 % auf die ersten 360 €, 25 % auf den Rest bis 1.800 €</li>
 <li><b>Bis zu 300 € je Kind</b> mit Kindergeld</li>
-<li><b>Einmalig 200 € Bonus</b> für Sparer unter 25 Jahren</li>
+<li><b>Einmalig 200 € Bonus</b> bei Abschluss vor dem 25. Geburtstag</li>
 <li><b>Neu: auch für viele Selbständige</b> (Voraussetzungen klären wir mit Ihnen)</li>
 <li>Anlage in Fonds und ETFs, ohne Garantiepflicht (Varianten mit Garantie sind möglich)</li>
-<li>Auszahlung ab 65 als Rente oder Auszahlplan, bis 30 % als Kapital</li>
+<li>Auszahlung frühestens ab 65, spätestens ab 70, als Rente oder Auszahlplan bis mindestens 85, bis 30 % als Kapital</li>
 </ul></div>
 <div class="card fill"><h3>So viel legt der Staat dazu</h3>
 <table style="font-size:8.8pt"><thead><tr><th>Ihr Beitrag pro Jahr</th><th>Kinder</th><th class="num">Zulagen</th></tr></thead><tbody>
@@ -96,7 +96,7 @@ AVKUNDE = """
 </tbody></table>
 <p class="tiny" style="margin-top:2mm">Vereinfachte Rechnung nach Gesetzesstand Oktober 2026, ohne steuerliche Effekte und ohne Berufseinsteigerbonus.</p></div>
 </div>
-<div class="note" style="margin-top:5mm"><b>Sie haben schon einen Riester-Vertrag?</b> Dann sprechen Sie mit uns, bevor Sie etwas Neues abschließen. Ein neuer Vertrag ab 2027 stellt automatisch alle bestehenden Riester-Verträge auf das neue Recht um. Bei Riester-Fondssparplänen prüfen wir gemeinsam, ob Weiterführen, Ruhenlassen oder Übertragen am besten ist. Riester-Rentenversicherungen bewertet unser Versicherungspartner.</div>
+<div class="note" style="margin-top:5mm"><b>Sie haben schon einen Riester-Vertrag?</b> Dann sprechen Sie mit uns, bevor Sie etwas Neues abschließen. Schließen Sie ab 2027 einen neuen geförderten Vertrag ab, gilt für alle Ihre bestehenden Riester-Verträge die neue Förderung. Die Bedingungen der alten Verträge bleiben. Bei Riester-Fondssparplänen prüfen wir gemeinsam, ob Weiterführen, Ruhenlassen oder Übertragen am besten ist. Riester-Rentenversicherungen bewertet unser Versicherungspartner.</div>
 <div class="card fill" style="margin-top:5mm"><h3>Beispiel: 150 € im Monat über 30 Jahre</h3><table style="font-size:8.8pt"><thead><tr><th>Angenommene Rendite nach Kosten</th><th class="num">mit Grundzulage</th><th class="num">ohne Zulage</th></tr></thead><tbody><tr><td>2 % pro Jahr</td><td class="num">ca. 95.600 €</td><td class="num">ca. 73.700 €</td></tr><tr><td>5,5 % pro Jahr</td><td class="num">ca. 172.800 €</td><td class="num">ca. 133.600 €</td></tr></tbody></table><p class="small" style="margin-top:2mm">Annahmen, keine Prognose. Bei Umschichtung in sicherere Anlagen vor Rentenbeginn kann die Rendite niedriger ausfallen. Die Auszahlungen sind einkommensteuerpflichtig. <b>Fonds und ETFs können an Wert verlieren.</b></p></div>
 """
 

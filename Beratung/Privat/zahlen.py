@@ -84,6 +84,8 @@ Z["fin_darlehen"], Z["fin_rate"] = eur(d), eur(rate)
 Z["fin_rest10"] = eur(restschuld(d, zins, rate, 10))
 Z["fin_zins"] = f"{zins*100:.1f} %".replace(".", ",")
 Z["fin_tilg"] = f"{tilg*100:.0f} %"
+# effektiver Jahreszins bei monatlicher Zahlung, ohne weitere Kosten (PAngV-Angabe)
+Z["fin_eff"] = f"{((1 + zins / 12) ** 12 - 1) * 100:.2f} %".replace(".", ",")
 def laufzeit(darlehen, zins, rate_monat):
     assert rate_monat > darlehen * zins / 12, "Rate deckt die Zinsen nicht"
     r, n = darlehen, 0
