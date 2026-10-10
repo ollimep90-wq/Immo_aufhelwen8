@@ -8,7 +8,7 @@
 /* Systemschriften statt Webfonts: keine Verbindung zu Drittanbietern (Datenschutz) */
 :root{
   --bg:#F5F5F7; --card:#FFFFFF; --ink:#1D1D1F; --mute:#6E6E73; --line:#D2D2D7;
-  --green:#2E7D32; --green2:#7CC243; --green-l:#E8F3E6; --blue:#3F6FB0; --blue-l:#E8EEFB;
+  --green:#2E7D32; --fill:#2E7D32; --green2:#7CC243; --green-l:#E8F3E6; --blue:#3F6FB0; --blue-l:#E8EEFB;
   --red:#D64545; --red-l:#FBEAEA; --amber:#C98A00; --amber-l:#FFF6E5; --hl:#FFF3B0;
 }
 @media (prefers-color-scheme: dark){
@@ -48,13 +48,13 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--green);outline-o
 .seg label{margin:0;font-weight:500;flex:1 1 auto}
 .seg input{position:absolute;opacity:0;pointer-events:none}
 .seg span{display:block;text-align:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer;font-size:15px}
-.seg input:checked+span{background:var(--green);border-color:var(--green);color:#fff}
+.seg input:checked+span{background:var(--fill);border-color:var(--fill);color:#fff}
 .seg input:focus-visible+span{outline:2px solid var(--green);outline-offset:2px}
 .q{margin:18px 0 8px;font-weight:500}
 .scale .seg span{font-size:14px;padding:9px 8px}
 .nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
 button{font:inherit;font-weight:600;border:0;border-radius:980px;padding:12px 22px;cursor:pointer}
-.primary{background:var(--green);color:#fff}
+.primary{background:var(--fill);color:#fff}
 .ghost{background:transparent;color:var(--green)}
 button:disabled{opacity:.4;cursor:not-allowed}
 .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -88,11 +88,11 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
 <!-- 0 Start -->
 <section class="step on" data-step="0">
   <div class="eyebrow">Vor unserem ersten Gespräch</div>
-  <h1>Dein Finanz-Check in 15 Minuten</h1>
-  <p class="lead">Ein paar Fragen zu deinem Leben, deinem Geld und dem, was dich treffen würde. Am Ende siehst du ein erstes Bild, und wir können im Gespräch direkt bei dem anfangen, was dir wichtig ist.</p>
+  <h1>Dein Finanz-Check in etwa 15 Minuten</h1>
+  <p class="lead">Ein paar Fragen zu deinem Leben, deinem Geld und deinen Plänen. Am Ende siehst du ein erstes Bild, und wir können im Gespräch direkt bei dem anfangen, was dir wichtig ist.</p>
   <div class="card">
     <p style="margin:0 0 8px"><b>Gut zu wissen</b></p>
-    <p style="margin:0" class="hint">Schätzungen reichen völlig. Jede Frage kannst du überspringen. Das Ergebnis ist eine erste Einschätzung auf Basis deiner Angaben und keine Beratung. Deine Angaben schickst du uns erst am Ende und nur, wenn du zustimmst.</p>
+    <p style="margin:0" class="hint">Schätzungen reichen völlig. Jede Frage kannst du überspringen. Das Ergebnis ist eine erste Einschätzung auf Basis deiner Angaben und keine Beratung. Deine Angaben schickst du uns erst am Ende und nur, wenn du zustimmst. Bis dahin bleibt alles nur auf deinem Gerät. Wenn du die Seite neu lädst, sind deine Eingaben weg.</p>
   </div>
 </section>
 
@@ -115,6 +115,11 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
       <div><label for="kinder">Kinder <span class="hint">mit Kindergeld</span></label><input id="kinder" type="number" min="0" max="12" value="0" inputmode="numeric"></div>
       <div><label for="tiere">Haustiere</label><input id="tiere" type="number" min="0" max="20" value="0" inputmode="numeric"></div>
     </div>
+    <div id="eltern-box"><label>Hast du Kinder, die schon erwachsen sind? <span class="hint">wichtig für den Pflegebeitrag</span></label>
+    <div class="seg">
+      <label><input type="radio" name="eltern" value="ja"><span>Ja</span></label>
+      <label><input type="radio" name="eltern" value="nein"><span>Nein</span></label>
+    </div></div>
     <label>Wohnen</label>
     <div class="seg">
       <label><input type="radio" name="wohnen" value="miete"><span>Zur Miete</span></label>
@@ -131,9 +136,7 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
     <div class="row">
       <div><label for="land">Bundesland</label><select id="land">
         <option value="">bitte wählen</option><option value="BW">Baden-Württemberg</option><option value="BY">Bayern</option><option value="BE">Berlin</option><option value="BB">Brandenburg</option><option value="HB">Bremen</option><option value="HH">Hamburg</option><option value="HE">Hessen</option><option value="MV">Mecklenburg-Vorpommern</option><option value="NI">Niedersachsen</option><option value="NW">Nordrhein-Westfalen</option><option value="RP">Rheinland-Pfalz</option><option value="SL">Saarland</option><option value="SN">Sachsen</option><option value="ST">Sachsen-Anhalt</option><option value="SH">Schleswig-Holstein</option><option value="TH">Thüringen</option></select></div>
-      <div><label>Kirchensteuer</label><div class="seg">
-        <label><input type="radio" name="kirche" value="ja"><span>Ja</span></label>
-        <label><input type="radio" name="kirche" value="nein"><span>Nein</span></label></div></div>
+      <div></div>
     </div>
   </div>
 </section>
@@ -156,7 +159,7 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
         <label><input type="radio" name="kv1" value="gkv" checked><span>Gesetzlich</span></label>
         <label><input type="radio" name="kv1" value="pkv"><span>Privat</span></label>
       </div>
-      <div class="pkv-only" data-p="1" hidden><label for="pkv1">Dein Anteil an KV und Pflege im Monat <span class="hint">nach Zuschuss des Arbeitgebers</span></label><input id="pkv1" type="number" min="0" inputmode="decimal"></div>
+      <div class="pkv-only" data-p="1" hidden><label for="pkv1">Dein Anteil an KV und Pflege im Monat <span class="hint">nach Zuschuss des Arbeitgebers, nur Basisanteil laut Beitragsbescheinigung</span></label><input id="pkv1" type="number" min="0" inputmode="decimal"></div>
       <p class="hint">Die Schätzung gilt für Angestellte, ganzjährig, ohne besondere Freibeträge, mit dem durchschnittlichen Zusatzbeitrag 2026.</p>
     </div>
   </div>
@@ -174,12 +177,15 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
         <label><input type="radio" name="kv2" value="gkv" checked><span>Gesetzlich</span></label>
         <label><input type="radio" name="kv2" value="pkv"><span>Privat</span></label>
       </div>
-      <div class="pkv-only" data-p="2" hidden><label for="pkv2">Anteil an KV und Pflege im Monat <span class="hint">nach Zuschuss des Arbeitgebers</span></label><input id="pkv2" type="number" min="0" inputmode="decimal"></div>
+      <div class="pkv-only" data-p="2" hidden><label for="pkv2">Anteil an KV und Pflege im Monat <span class="hint">nach Zuschuss des Arbeitgebers, nur Basisanteil laut Beitragsbescheinigung</span></label><input id="pkv2" type="number" min="0" inputmode="decimal"></div>
     </div>
   </div>
   <div class="card">
     <label for="sonstein" style="margin-top:0">Weitere Einnahmen im Monat <span class="hint">z. B. Miete, Nebenjob, Unterhalt; ohne Kindergeld</span></label>
     <input id="sonstein" type="number" min="0" step="10" inputmode="decimal">
+    <div id="kirche-box" hidden><label>Zahlst du Kirchensteuer? <span class="hint">nur für die Schätzung, wird nicht an uns übertragen</span></label><div class="seg">
+        <label><input type="radio" name="kirche" value="ja"><span>Ja</span></label>
+        <label><input type="radio" name="kirche" value="nein"><span>Nein</span></label></div></div>
     <p class="hint" id="netto-schaetzung"></p>
   </div>
 </section>
@@ -188,7 +194,7 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
 <section class="step" data-step="3">
   <div class="eyebrow">Schritt 3</div>
   <h1>Was rausgeht</h1>
-  <p class="lead">Deine festen Ausgaben im Monat. Jährliche Beträge bitte durch zwölf teilen. Grob geschätzt reicht.</p>
+  <p class="lead" id="fk-intro">Deine festen Ausgaben in € pro Monat. Jährliche Beträge bitte durch zwölf teilen. Grob geschätzt reicht.</p>
   <div class="card" id="fixkosten">
     <div class="row">
       <div><label for="fk_wohnen">Wohnen <span class="hint">Miete oder Rate, Nebenkosten, Strom</span></label><input id="fk_wohnen" type="number" min="0" step="10" inputmode="decimal"></div>
@@ -231,7 +237,7 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
     <div class="row"><div><label for="w2">Wunsch 2</label><input id="w2" type="text" placeholder="z. B. Mit 60 kürzertreten"></div><div><label for="w2j">Bis wann?</label><input id="w2j" type="number" min="2026" max="2090" placeholder="Jahr" inputmode="numeric"></div></div>
     <div class="row"><div><label for="w3">Wunsch 3</label><input id="w3" type="text" placeholder="z. B. Studium der Kinder"></div><div><label for="w3j">Bis wann?</label><input id="w3j" type="number" min="2026" max="2090" placeholder="Jahr" inputmode="numeric"></div></div>
     <label for="ruhestand">Mit welchem Alter möchtest du aufhören zu arbeiten oder kürzertreten?</label><input id="ruhestand" type="number" min="40" max="80" inputmode="numeric">
-    <label for="sorge">Was beschäftigt dich beim Thema Geld gerade am meisten?</label><textarea id="sorge"></textarea>
+    <label for="sorge">Was beschäftigt dich beim Thema Geld gerade am meisten? <span class="hint">bitte keine Angaben zu deiner Gesundheit</span></label><textarea id="sorge"></textarea>
     <label for="schlaf">Wie gut schläfst du beim Thema Geld? <span class="hint">1 = schlecht, 10 = sehr gut</span></label><input id="schlaf" type="number" min="1" max="10" inputmode="numeric">
   </div>
 </section>
@@ -243,8 +249,8 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
   <p class="lead">Ein paar Situationen zum Durchdenken. Es gibt kein Richtig oder Falsch, nur dein Bauchgefühl.</p>
   <div class="card scale" id="risikofragen"></div>
   <div class="card">
-    <label style="margin-top:0">Was hast du schon? <span class="hint">nur ankreuzen, was du sicher weißt</span></label>
-    <div class="seg" id="vorhanden"></div>
+    <label style="margin-top:0" id="lbl-hat">Wofür hast du schon eine Absicherung? <span class="hint">nur ankreuzen, was du sicher weißt</span></label>
+    <div class="seg" id="vorhanden" role="group" aria-labelledby="lbl-hat"></div>
   </div>
 </section>
 
@@ -256,12 +262,12 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
   <div class="card"><h2 style="margin-top:0">Dein Geld im Monat</h2><div class="kpi" id="kpi"></div><p class="hint" id="erg-netto-hinweis"></p></div>
   <div class="card"><h2 style="margin-top:0">Deine Notreserve</h2><p id="erg-reserve"></p></div>
   <div class="card"><h2 style="margin-top:0">Wie stark dich etwas treffen würde</h2><table id="erg-risiko"></table>
-    <p class="hint">Die Ampel zeigt, wie stark dich ein Ereignis laut deinen Antworten treffen würde, nicht, ob du schon abgesichert bist. Ob deine Verträge passen, prüft Jan Schnichels von Endlich Besser Beraten mit dir.</p></div>
+    <p class="hint">Die Ampel zeigt, wie stark dich ein Ereignis laut deinen Antworten treffen würde, nicht, ob du schon abgesichert bist. Ob deine Verträge passen, schaut sich Jan Schnichels von Endlich Besser Beraten mit dir an.</p></div>
   <div class="card" id="erg-wuensche-box"><h2 style="margin-top:0">Deine Wünsche</h2><ul id="erg-wuensche"></ul></div>
   <div class="card" id="versand-box">
     <h2 style="margin-top:0">An uns schicken</h2>
     <label for="email" style="margin-top:0">Deine E-Mail-Adresse <span class="hint">damit wir uns melden können</span></label><input id="email" type="email" autocomplete="email">
-    <label style="font-weight:400;display:flex;gap:10px;align-items:flex-start;margin-top:14px"><input type="checkbox" id="einwilligung" style="margin-top:4px"> <span>Ich bin einverstanden, dass meine Angaben zur Vorbereitung des Beratungsgesprächs an Oliver Rosenbaum und Jan Schnichels übermittelt und dafür gespeichert werden. Ich kann die Einwilligung jederzeit widerrufen. Details in der <a class="ph" href="#" id="ds-link">[Datenschutzerklärung]</a>.</span></label>
+    <label style="font-weight:400;display:flex;gap:10px;align-items:flex-start;margin-top:14px"><input type="checkbox" id="einwilligung" style="margin-top:4px"> <span>Ich bin einverstanden, dass meine Angaben und meine E-Mail-Adresse zur Vorbereitung des Beratungsgesprächs an Oliver Rosenbaum und Jan Schnichels übermittelt und dafür gespeichert werden. Widerrufen kann ich jederzeit per E-Mail an <span class="ph">[Adresse]</span>. Details in der <a class="ph" href="#" id="ds-link">[Datenschutzerklärung]</a>.</span></label>
     <div class="nav" style="justify-content:flex-start;flex-wrap:wrap">
       <button type="button" class="primary" id="senden">Absenden</button>
       <button type="button" class="ghost" id="drucken">Als PDF speichern</button>
@@ -287,7 +293,7 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
 "use strict";
 /* Versand: Hier die Adresse des Empfangsdienstes eintragen (offen, siehe STATUS.md).
  * Leer = kein Versand, nur PDF. Erwartet POST mit JSON, Antwort 2xx. */
-const VERSAND = { url: "", ds_url: "" };
+const VERSAND = { url: "", ds_url: "" };  /*VERSAND*/
 
 const R = Rechenkern, F = Fragen;
 const $ = (id) => document.getElementById(id);
@@ -334,7 +340,8 @@ function personenEingabe() {
     if (i === 2 && !hatPartner()) return;
     const art = radio("eart" + i), betrag = num("betrag" + i);
     pers.push({ art, betrag, kv: radio("kv" + i) || "gkv", pkv: num("pkv" + i),
-                alter: num(i === 1 ? "alter" : "alter2") || 40, kinder_u25: kinder, sachsen: land === "SN" });
+                alter: num(i === 1 ? "alter" : "alter2") || 40, kinder_u25: kinder, sachsen: land === "SN",
+                eltern: kinder > 0 || radio("eltern") === "ja" });
   });
   return pers;
 }
@@ -350,10 +357,16 @@ function nettoMonat() {
     const mitEinkommen = pers.filter((p) => p.betrag > 0);
     const splitting = verh && mitEinkommen.every((p) => p.art === "brutto");
     const r = R.nettoHaushalt({
-      personen: brutto.map((p) => ({ brutto: p.betrag, kv: p.kv, pkv_eigenanteil_monat: p.pkv, alter: p.alter, kinder_u25: p.kinder_u25, sachsen: p.sachsen })),
+      personen: brutto.map((p) => ({ brutto: p.betrag, kv: p.kv, pkv_eigenanteil_monat: p.pkv, alter: p.alter, kinder_u25: p.kinder_u25, sachsen: p.sachsen, eltern: p.eltern })),
+      alleinerziehend: radio("familie") === "single" && num("kinder") > 0,
       verheiratet: splitting, kinder: num("kinder"), kirche: radio("kirche") === "ja", bundesland: $("land").value
     });
     geschaetzt = r.netto_monat; info = r;
+    const hinweise = [];
+    if (verh && !splitting) hinweise.push("Ihr seid verheiratet, aber nur eine Angabe ist brutto. Dann rechnen wir ohne Ehegattensplitting, das Netto kann deutlich zu niedrig sein. Tragt am besten beide brutto ein.");
+    if (brutto.some((p) => p.betrag < 24000)) hinweise.push("Bei niedrigem Brutto (Minijob, Übergangsbereich) sind die Abzüge in der Schätzung zu hoch. Trag dein Netto besser direkt ein.");
+    if (num("kinder") > 0) hinweise.push("Mit Kindern kann das Netto nach der Steuererklärung höher sein (Kinderfreibetrag statt Kindergeld).");
+    info.hinweise = hinweise;
   }
   return { netto: nettoDirekt + geschaetzt, geschaetzt, info };
 }
@@ -383,7 +396,7 @@ function sammle() {
   return {
     version: "vorab-check 2026-10", erstellt: new Date().toISOString(),
     person: { vorname: $("vorname").value.trim(), alter: num("alter"), familie: radio("familie"), kinder: num("kinder"),
-              tiere: num("tiere"), wohnen: radio("wohnen"), beruf: radio("beruf"), bundesland: $("land").value, kirche: radio("kirche") },
+              tiere: num("tiere"), wohnen: radio("wohnen"), beruf: radio("beruf"), bundesland: $("land").value },
     einkommen: { eingaben: personenEingabe(), netto_monat: n.netto, davon_geschaetzt: n.geschaetzt, sonstige: num("sonstein") },
     fixkosten: Object.fromEntries([...document.querySelectorAll("#fixkosten input")].map((e) => [e.id, num(e.id)])),
     fixkosten_summe: fk, sparen: num("sparen"),
@@ -399,20 +412,20 @@ function zeigeErgebnis() {
   $("kpi").innerHTML = [
     ["Einnahmen", eur(b.einnahmen), d.einkommen.davon_geschaetzt ? "Netto teils geschätzt" : "inkl. Kindergeld"],
     ["Feste Ausgaben", eur(d.fixkosten_summe), b.einnahmen ? pct(d.fixkosten_summe / b.einnahmen) + " der Einnahmen" : ""],
-    ["Überschuss I", eur(b.ueberschuss1), pct(b.quote1) + " nach Fixkosten"],
-    ["Sparen", eur(d.sparen), "Sparquote " + pct(b.sparquote)],
-    ["Überschuss II", eur(b.ueberschuss2), pct(b.quote2) + " frei verfügbar"]
+    ["Bleibt nach festen Ausgaben", eur(b.ueberschuss1), pct(b.quote1) + " deiner Einnahmen"],
+    ["Sparen", eur(d.sparen), pct(b.sparquote) + " deiner Einnahmen"],
+    ["Bleibt nach dem Sparen", eur(b.ueberschuss2), pct(b.quote2) + " deiner Einnahmen"]
   ].map(([t, v, s]) => `<div><small>${t}</small><b>${v}</b><small>${s}</small></div>`).join("");
   $("erg-netto-hinweis").textContent = d.einkommen.davon_geschaetzt
     ? `Davon ${eur(d.einkommen.davon_geschaetzt)} netto aus deinem Brutto geschätzt (Rechengrößen 2026). Deine Gehaltsabrechnung kann abweichen.` : "";
   const m = b.reserve_monate;
   $("erg-reserve").innerHTML = m === null ? '<span class="amp keine"></span>Ohne feste Ausgaben können wir die Reserve nicht einschätzen.'
-    : `<span class="amp ${b.reserve_ampel}"></span>Dein Konto und Tagesgeld reichen für rund <b>${m.toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben. Unsere Faustregel: drei bis sechs Monate, als Selbstständiger eher mehr.`;
+    : `<span class="amp ${b.reserve_ampel}"></span>Dein Konto und Tagesgeld reichen für rund <b>${m.toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben. Als Faustregel gelten drei bis sechs Monate, wenn du selbstständig bist, eher mehr.`;
   const T = F.THEMEN, e = d.risiko.ergebnis;
   const zeilen = Object.keys(T).filter((k) => e[k]).sort((a, z) => e[z].quote - e[a].quote).map((k) => {
     const hat = d.risiko.vorhanden.includes(k);
-    const txt = { rot: "trifft dich stark", gelb: "trifft dich spürbar", gruen: "trifft dich wenig", keine: "nicht bewertet" }[e[k].ampel];
-    const hinweis = hat ? "vorhanden, prüfen wir" : e[k].ampel === "rot" ? "zuerst besprechen" : "";
+    const txt = { rot: "laut deinen Antworten: stark", gelb: "laut deinen Antworten: spürbar", gruen: "laut deinen Antworten: wenig", keine: "nicht bewertet" }[e[k].ampel];
+    const hinweis = hat ? "vorhanden, schaut sich Jan mit dir an" : e[k].ampel === "rot" ? "zuerst besprechen" : "";
     return `<tr><td><span class="amp ${e[k].ampel}"></span><b>${T[k]}</b><br><span class="hint" style="margin-left:20px">${txt}${hinweis ? " · " + hinweis : ""}</span></td></tr>`;
   });
   $("erg-risiko").innerHTML = zeilen.join("") || '<tr><td class="hint">Keine Antworten zu den Situationen.</td></tr>';
@@ -432,6 +445,7 @@ function zeige(i) {
   if (akt === 6) baueRisikofragen();
   if (akt === LETZTER) zeigeErgebnis();
   window.scrollTo({ top: 0, behavior: "smooth" });
+  const h = steps[akt].querySelector("h1"); if (h && akt > 0) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
 }
 
 function aktualisiere() {
@@ -442,8 +456,10 @@ function aktualisiere() {
     document.querySelector(`.brutto-only[data-p="${i}"]`).hidden = !brutto;
     document.querySelector(`.pkv-only[data-p="${i}"]`).hidden = !(brutto && radio("kv" + i) === "pkv");
   });
+  $("kirche-box").hidden = ![1, 2].some((i) => radio("eart" + i) === "brutto");
   const n = nettoMonat();
-  $("netto-schaetzung").textContent = n.geschaetzt ? `Geschätztes Netto aus Brutto: ${eur(n.geschaetzt)} im Monat.` : "";
+  $("netto-schaetzung").textContent = n.geschaetzt ? `Geschätztes Netto aus Brutto: ${eur(n.geschaetzt)} im Monat. ` + (n.info.hinweise || []).join(" ") : "";
+  $("eltern-box").hidden = num("kinder") > 0;
   const fk = fixkosten();
   $("fk-summe").textContent = fk ? `Zusammen ${eur(fk)} im Monat.` : "";
 }
@@ -457,7 +473,7 @@ if (VERSAND.ds_url) $("ds-link").href = VERSAND.ds_url;
 
 $("senden").addEventListener("click", async () => {
   const st = $("versand-status");
-  if (!$("einwilligung").checked) { st.textContent = "Bitte stimme der Übermittlung zu, sonst können wir nichts empfangen."; return; }
+  if (!$("einwilligung").checked) { st.textContent = "Zum Absenden brauchen wir deine Zustimmung. Du kannst dein Ergebnis auch nur als PDF speichern."; return; }
   const mail = $("email").value.trim();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) { st.textContent = "Bitte gib eine gültige E-Mail-Adresse an."; return; }
   if (!VERSAND.url) { st.textContent = "Der Versand ist in dieser Vorschau noch nicht eingerichtet. Speichere dein Ergebnis bitte als PDF."; return; }
@@ -473,6 +489,15 @@ $("senden").addEventListener("click", async () => {
   }
 });
 
+// Barrierefreiheit: Auswahlgruppen und Ausgabenfelder beschriften
+document.querySelectorAll(".seg").forEach((g) => {
+  if (g.hasAttribute("role")) return;
+  let l = g.previousElementSibling;
+  while (l && l.tagName !== "LABEL" && l.tagName !== "H2") l = l.previousElementSibling;
+  g.setAttribute("role", "radiogroup");
+  if (l) g.setAttribute("aria-label", l.textContent.trim());
+});
+document.querySelectorAll("#fixkosten input").forEach((e) => e.setAttribute("aria-describedby", "fk-intro"));
 zeige(0); aktualisiere();
 </script>
 </body>

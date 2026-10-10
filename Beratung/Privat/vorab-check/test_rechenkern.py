@@ -18,7 +18,7 @@ def tarif_2026(zve):
     if x <= 277825: return math.floor(0.42 * x - 11135.63)
     return math.floor(0.45 * x - 19470.38)
 
-def sv(b, kv="gkv", zb=0.029, alter=40, kinder=0, sachsen=False, pkv=0):
+def sv(b, kv="gkv", zb=0.029, alter=40, kinder=0, sachsen=False, pkv=0, eltern=False):
     bkv, brv = min(b, 69750), min(b, 101400)
     rv, av = brv * 0.093, brv * 0.013
     if kv == "pkv":
@@ -26,22 +26,23 @@ def sv(b, kv="gkv", zb=0.029, alter=40, kinder=0, sachsen=False, pkv=0):
     k = bkv * (0.073 + zb / 2)
     kvsp = bkv * (0.07 + zb / 2)
     s = 0.018 + (0.005 if sachsen else 0)
-    if kinder == 0 and alter >= 23: s += 0.006
+    if kinder == 0 and not eltern and alter >= 23: s += 0.006
     if kinder >= 2: s -= 0.0025 * (min(kinder, 5) - 1)
     return dict(kv=k, pv=bkv * s, rv=rv, av=av, kv_vsp=kvsp)
 
-def zve(b, **kw):
+def zve(b, entl=0, **kw):
     s = sv(b, **kw)
     kvpv = s["kv_vsp"] + s["pv"]
     vsp = s["rv"] + kvpv + max(0, min(s["av"], 1900 - kvpv))
-    return max(0, b - 1230 - 36 - vsp), s
+    return max(0, b - 1230 - 36 - vsp - entl), s
 
 def soli(e, fg):
     return min(e * 0.055, (e - fg) * 0.119) if e > fg else 0
 
-def netto(personen, verheiratet, kinder, kirche, land="NW"):
+def netto(personen, verheiratet, kinder, kirche, land="NW", allein=False):
     kist = (0.08 if land in ("BY", "BW") else 0.09) if kirche else 0
-    rows = [zve(p["brutto"], **{k: v for k, v in p.items() if k != "brutto"}) for p in personen]
+    e_ab = 4260 if (allein and not verheiratet) else 0
+    rows = [zve(p["brutto"], entl=e_ab, **{k: v for k, v in p.items() if k != "brutto"}) for p in personen]
     abz = [sum(v for k, v in s.items() if k != "kv_vsp") for _, s in rows]
     if verheiratet:
         z = sum(r[0] for r in rows)
@@ -68,6 +69,10 @@ for b1, b2, verh, kinder, kirche, land in itertools.product(
     if b1 == 0 and b2 == 0: continue
     pers = [dict(brutto=b1, kv="gkv", alter=38, kinder_u25=kinder), dict(brutto=b2, kv="gkv", alter=36, kinder_u25=kinder)]
     FAELLE.append(dict(personen=pers, verheiratet=verh, kinder=kinder, kirche=kirche, bundesland=land))
+# Alleinerziehende und Eltern erwachsener Kinder
+for b1, k, eltern in itertools.product([20000, 45000, 90000], [0, 1, 2], [False, True]):
+    FAELLE.append(dict(personen=[dict(brutto=b1, kv="gkv", alter=50, kinder_u25=k, eltern=eltern)], verheiratet=False,
+                       kinder=k, kirche=False, bundesland="NW", alleinerziehend=k > 0))
 
 if __name__ == "__main__":
     # Tarif stetig an den Zonengrenzen
@@ -75,8 +80,8 @@ if __name__ == "__main__":
         assert abs(tarif_2026(g) - tarif_2026(g + 1)) <= 1, g
     maxdiff = 0
     for f in FAELLE:
-        pers = [dict(brutto=p["brutto"], alter=p["alter"], kinder=p["kinder_u25"]) for p in f["personen"] if p["brutto"] > 0]
-        py = netto(pers, f["verheiratet"], f["kinder"], f["kirche"], f["bundesland"])
+        pers = [dict(brutto=p["brutto"], alter=p["alter"], kinder=p["kinder_u25"], eltern=p.get("eltern", False)) for p in f["personen"] if p["brutto"] > 0]
+        py = netto(pers, f["verheiratet"], f["kinder"], f["kirche"], f["bundesland"], f.get("alleinerziehend", False))
         j = js(f)["netto_jahr"]
         maxdiff = max(maxdiff, abs(py - j))
         assert abs(py - j) < 0.05, (f, py, j)

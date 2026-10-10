@@ -3,6 +3,7 @@
  *   quelle: "Prototyp <Nr>"            wörtlich übernommen
  *           "Prototyp <Nr>, angepasst" zweiter Satz auf die Antwortskala umformuliert
  *           "neu"                      nicht im Prototyp
+ * Unfall nur noch aus k8: k1/k2 (Bandscheibe, Sehen) sind keine Unfälle; Gewichtung mit Jan klären.
  * Gewichte je Thema 0..3. Grundlage sind die Block-Gewichte des Prototyps, zusammengefasst
  * zu Themen. Abweichungen und offene Punkte: Beratung/Prototyp_Analyse.md, Befunde 10–13 und 16.
  * filter: nur zeigen, wenn zutreffend (kinder, tier, eigentum, familie)
@@ -41,10 +42,10 @@
   const FRAGEN = [
     { id: "k1", block: 1, quelle: "Prototyp 1.1.0.1",
       text: "Stell dir vor, du hast einen Bandscheibenvorfall und darfst 12 Monate nicht arbeiten. Wie wirkt sich das auf dein Einkommen und deinen Alltag aus?",
-      gewichte: { arbeitskraft: 3, unfall: 2, gesundheit: 2 } },
+      gewichte: { arbeitskraft: 3, gesundheit: 2 } },
     { id: "k2", block: 1, quelle: "Prototyp 1.2.0.2, angepasst",
       text: "Stell dir vor, dein Sehvermögen verschlechtert sich stark und dein Beruf funktioniert so nicht mehr. Wie hart würde dich das treffen?",
-      gewichte: { arbeitskraft: 3, unfall: 2, gesundheit: 2 } },
+      gewichte: { arbeitskraft: 3, gesundheit: 2 } },
     { id: "k3", block: 2, quelle: "Prototyp 2.3.0.1, angepasst",
       text: "Stell dir vor, dein Körper „zieht die Notbremse“ und du kannst monatelang nicht arbeiten, etwa wegen Erschöpfung. Wie hart würde dich das finanziell treffen?",
       gewichte: { arbeitskraft: 3, gesundheit: 1 } },
@@ -52,16 +53,16 @@
       text: "Stell dir vor, du kannst deinen heutigen Beruf nicht mehr ausüben und ein anderer Job bringt deutlich weniger ein. Wie hart würde dich das treffen?",
       gewichte: { arbeitskraft: 3 } },
     { id: "k5", block: 4, quelle: "Prototyp 4.0.0.1, angepasst",
-      text: "Stell dir vor, dein Einkommen fällt weg, aber die Fixkosten laufen weiter. Wie hart würde dich das treffen?",
+      text: "Stell dir vor, dein Einkommen fällt weg, aber deine festen Ausgaben laufen weiter. Wie hart würde dich das treffen?",
       gewichte: { arbeitskraft: 2, familie: 3 } },
     { id: "k6", block: 4, quelle: "Prototyp 4.0.0.2/4.0.0.3, angepasst", filter: "familie",
       text: "Stell dir vor, dir passiert etwas und deine Familie müsste ohne dein Einkommen auskommen, Kredite inklusive. Wie hart würde es sie treffen?",
       gewichte: { familie: 3 } },
     { id: "k7", block: 5, quelle: "Prototyp 5.1.1.1, angepasst", filter: "kinder",
-      text: "Stell dir vor, dein Kind muss für mehrere Wochen ins Krankenhaus und du willst bessere Unterbringung und Betreuung. Wie stark würden dich die Zusatzkosten belasten?",
+      text: "Stell dir vor, dein Kind muss für mehrere Wochen ins Krankenhaus und du möchtest die ganze Zeit dabei sein. Wie stark würden dich die Zusatzkosten belasten?",
       gewichte: { kinder: 3, gesundheit: 3 } },
     { id: "k8", block: 5, quelle: "Prototyp 5.1.2.1, angepasst", filter: "kinder",
-      text: "Stell dir vor, dein Kind verliert durch einen Unfall dauerhaft die Beweglichkeit eines Arms oder Beins und braucht Hilfsmittel und Umbauten. Wie hart würde euch das finanziell treffen?",
+      text: "Stell dir vor, dein Kind hat nach einem Unfall dauerhafte Folgen und braucht Hilfsmittel oder Umbauten. Wie hart würde euch das finanziell treffen?",
       gewichte: { kinder: 3, unfall: 3 } },
     { id: "k9", block: 5, quelle: "Prototyp 5.2.0.1, angepasst", filter: "tier",
       text: "Stell dir vor, dein Tier braucht eine OP für 6.000 bis 10.000 €. Wie stark würde dich das belasten?",

@@ -19,7 +19,8 @@
              s4: 0.42, k4: 11135.63, s5: 0.45, k5: 19470.38 },
     an_pauschbetrag: 1230,
     sonderausgaben_pauschbetrag: 36,
-    kinderfreibetrag: 9756,          // je Kind, zusammenveranlagt
+    kinderfreibetrag: 9756,          // Freibeträge für Kinder § 32 Abs. 6 je Kind, zusammenveranlagt
+    entlastung_alleinerziehend: 4260, // § 24b EStG, Steuerklasse II
     kindergeld_monat: 259,
     soli: { freigrenze: 20350, satz: 0.055, milderung: 0.119 },
     kist: { BY: 0.08, BW: 0.08, sonst: 0.09 },
@@ -64,7 +65,7 @@
       kv_vsp = bkv * (p.kv_satz_ermaessigt + zb) / 2;
       let pvsatz = p.pv_satz / 2 + (person.sachsen ? p.pv_an_sachsen_plus : 0);
       const k = person.kinder_u25 || 0;
-      if (k === 0 && (person.alter || 0) >= 23) pvsatz += p.pv_kinderlos;
+      if (k === 0 && !person.eltern && (person.alter || 0) >= 23) pvsatz += p.pv_kinderlos;
       if (k >= 2) pvsatz -= (Math.min(k, p.pv_abschlag_max_kinder) - 1) * p.pv_abschlag_je_kind;
       pv = bkv * pvsatz;
     }
@@ -86,7 +87,8 @@
     const personen = h.personen.filter((x) => x && x.brutto > 0);
     const rows = personen.map((x) => {
       const sv = sozialabgaben(x, p);
-      const zve = Math.max(0, x.brutto - p.an_pauschbetrag - p.sonderausgaben_pauschbetrag - vorsorgepauschale(sv, x));
+      const entl = !h.verheiratet && h.alleinerziehend ? p.entlastung_alleinerziehend : 0;
+      const zve = Math.max(0, x.brutto - p.an_pauschbetrag - p.sonderausgaben_pauschbetrag - vorsorgepauschale(sv, x) - entl);
       return { brutto: x.brutto, sv, zve: r2(zve) };
     });
     const kfb_gesamt = (h.kinder || 0) * p.kinderfreibetrag;
@@ -106,7 +108,7 @@
     } else {
       rows.forEach((r) => {
         // Nicht zusammenveranlagt: je Elternteil der halbe Kinderfreibetrag (Regelfall)
-        const kfb = h.verheiratet ? kfb_gesamt : kfb_gesamt / 2;
+        const kfb = kfb_gesamt / 2;
         const e = est(r.zve, false, p);
         const e_kfb = est(Math.max(0, r.zve - kfb), false, p);
         const fg = p.soli.freigrenze;

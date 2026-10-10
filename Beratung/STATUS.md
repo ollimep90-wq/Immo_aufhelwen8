@@ -39,6 +39,18 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
    - Datenschutzerklärung und Impressum.
    - Hosting.
    - Rechtliche Prüfung der Einwilligung.
+   - Wer ist verantwortlich, Oliver allein oder beide gemeinsam (Art. 26 DSGVO)?
+   - Speicherdauer.
+   - Nachweis der Einwilligung auf dem Server.
+   - Verzeichnis der Verarbeitungstätigkeiten.
+   - Impressum nach § 5 DDG.
+
+   Bewusst umgesetzt:
+   - Die Kirchensteuer wird nur im Browser verwendet und nicht übertragen.
+   - Keine Fragen zur eigenen Gesundheit. Freitext mit Bitte, keine Gesundheitsangaben zu machen.
+   - Keine Webfonts, keine Cookies, kein lokaler Speicher.
+   - Der Live-Build bricht ab, solange Platzhalter offen sind (`python3 build.py --live URL DS`).
+   - Mit Jan zu klären: Gewichtung der Themen im Kurzcheck, vor allem Unfall.
 3. Den gleichen Satz für **Gewerbe und Unternehmen** erstellen.
 4. **§34i-Modell wählen:** Provision oder Honorar.
    - Nach § 34i Abs. 5 GewO schließen sich Vermittlung und Honorarberatung aus, eine Wahl je Kunde ist nicht möglich.
