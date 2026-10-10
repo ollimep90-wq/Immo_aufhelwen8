@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2E7D32">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/img/icon.svg">
+<link rel="stylesheet" href="/css/app.css">
+<title>Dein Finanz-Check</title>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div class="marke"><svg height="30" viewBox="0 0 60 60" style="display:block"><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/><rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></svg><span>Ganzheitliche Finanzberatung</span></div><span class="hint" id="schritt-text"></span><button type="button" class="ghost" id="abmelden" hidden>Abmelden</button></div>
+<div class="progress" aria-hidden="true"><div id="bar"></div></div>
+<div class="card" id="einladung-box" hidden>
+  <h1 id="einladung-titel">Willkommen</h1>
+  <p class="lead">Leg ein Passwort fest, dann kannst du deinen Finanz-Check ausfüllen und später wieder aufrufen.</p>
+  <form id="einladung-form" novalidate>
+    <input type="email" id="einladung-email" autocomplete="username" readonly hidden>
+    <label for="neu-pw">Passwort <span class="hint">mindestens 10 Zeichen</span></label><input id="neu-pw" type="password" autocomplete="new-password" minlength="10">
+    <label for="neu-pw2">Passwort wiederholen</label><input id="neu-pw2" type="password" autocomplete="new-password">
+    <div class="nav"><button class="primary" type="submit">Zugang anlegen</button></div>
+    <p class="err" id="einladung-fehler" role="alert"></p>
+  </form>
+</div>
+<p class="err" id="lade-fehler" role="alert"></p>
+<form id="f" novalidate hidden>
+
+<!-- 0 Start -->
+<section class="step on" data-step="0">
+  <div class="eyebrow">Vor unserem ersten Gespräch</div>
+  <h1 id="hallo">Dein Finanz-Check</h1>
+  <p class="lead">Ein paar Fragen zu deinem Leben, deinem Geld und deinen Plänen, in etwa 15 Minuten. Schätzungen reichen völlig, jede Frage kannst du überspringen. Am Ende siehst du ein erstes Bild.</p>
+  <div class="card">
+    <p style="margin:0 0 8px"><b>Deine Daten</b></p>
+    <p class="hint" style="margin:0 0 10px">Deine Angaben werden nach jedem Schritt gespeichert, damit wir uns gut vorbereiten können. Ohne deine Einwilligung speichern wir nichts. Das Ergebnis ist eine erste Einschätzung, keine Beratung.</p>
+    <label style="font-weight:400;display:flex;gap:10px;align-items:flex-start"><input type="checkbox" id="einwilligung" style="margin-top:4px"> <span id="einwilligung-text">Ich bin einverstanden, dass meine Angaben in diesem Finanz-Check zur Vorbereitung und Durchführung meiner Beratung gespeichert und von Oliver Rosenbaum und Jan Schnichels verarbeitet werden. Ich kann die Einwilligung jederzeit hier in der App widerrufen; dann werden meine Angaben gelöscht.</span></label>
+    <p class="hint">Details in der <a class="ph" href="#" id="ds-link">[Datenschutzerklärung]</a>.</p>
+  </div>
+</section>
+
+<!-- 1 Über dich -->
+<section class="step" data-step="1">
+  <div class="eyebrow">Schritt 1</div>
+  <h1>Über dich</h1>
+  <div class="card">
+    <div class="row">
+      <div><label for="vorname">Vorname</label><input id="vorname" type="text" autocomplete="given-name"></div>
+      <div><label for="alter">Alter</label><input id="alter" type="number" min="16" max="99" inputmode="numeric"></div>
+    </div>
+    <label>Familienstand</label>
+    <div class="seg" data-name="familie">
+      <label><input type="radio" name="familie" value="single"><span>Allein</span></label>
+      <label><input type="radio" name="familie" value="partner"><span>In Partnerschaft</span></label>
+      <label><input type="radio" name="familie" value="verheiratet"><span>Verheiratet</span></label>
+    </div>
+    <div class="row">
+      <div><label for="kinder">Kinder <span class="hint">mit Kindergeld</span></label><input id="kinder" type="number" min="0" max="12" value="0" inputmode="numeric"></div>
+      <div><label for="tiere">Haustiere</label><input id="tiere" type="number" min="0" max="20" value="0" inputmode="numeric"></div>
+    </div>
+    <div id="eltern-box"><label>Hast du Kinder, die schon erwachsen sind? <span class="hint">wichtig für den Pflegebeitrag</span></label>
+    <div class="seg">
+      <label><input type="radio" name="eltern" value="ja"><span>Ja</span></label>
+      <label><input type="radio" name="eltern" value="nein"><span>Nein</span></label>
+    </div></div>
+    <label>Wohnen</label>
+    <div class="seg">
+      <label><input type="radio" name="wohnen" value="miete"><span>Zur Miete</span></label>
+      <label><input type="radio" name="wohnen" value="eigentum"><span>Im Eigentum</span></label>
+      <label><input type="radio" name="wohnen" value="sonst"><span>Anders</span></label>
+    </div>
+    <label>Beruf</label>
+    <div class="seg">
+      <label><input type="radio" name="beruf" value="angestellt"><span>Angestellt</span></label>
+      <label><input type="radio" name="beruf" value="selbststaendig"><span>Selbstständig</span></label>
+      <label><input type="radio" name="beruf" value="beamt"><span>Verbeamtet</span></label>
+      <label><input type="radio" name="beruf" value="sonst"><span>Anderes</span></label>
+    </div>
+    <div class="row">
+      <div><label for="land">Bundesland</label><select id="land">
+        <option value="">bitte wählen</option><option value="BW">Baden-Württemberg</option><option value="BY">Bayern</option><option value="BE">Berlin</option><option value="BB">Brandenburg</option><option value="HB">Bremen</option><option value="HH">Hamburg</option><option value="HE">Hessen</option><option value="MV">Mecklenburg-Vorpommern</option><option value="NI">Niedersachsen</option><option value="NW">Nordrhein-Westfalen</option><option value="RP">Rheinland-Pfalz</option><option value="SL">Saarland</option><option value="SN">Sachsen</option><option value="ST">Sachsen-Anhalt</option><option value="SH">Schleswig-Holstein</option><option value="TH">Thüringen</option></select></div>
+      <div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 Einkommen -->
+<section class="step" data-step="2">
+  <div class="eyebrow">Schritt 2</div>
+  <h1>Was reinkommt</h1>
+  <p class="lead">Du kannst dein Netto direkt eintragen oder dein Brutto, dann schätzen wir das Netto für dich.</p>
+  <div class="card" id="einkommen-du">
+    <h2 style="margin-top:0">Du</h2>
+    <div class="seg">
+      <label><input type="radio" name="eart1" value="netto" checked><span>Netto im Monat</span></label>
+      <label><input type="radio" name="eart1" value="brutto"><span>Brutto im Jahr</span></label>
+    </div>
+    <label for="betrag1"><span id="betrag1-label">Netto im Monat in €</span></label><input id="betrag1" type="number" min="0" step="10" inputmode="decimal">
+    <div class="brutto-only" data-p="1" hidden>
+      <label>Krankenversicherung</label>
+      <div class="seg">
+        <label><input type="radio" name="kv1" value="gkv" checked><span>Gesetzlich</span></label>
+        <label><input type="radio" name="kv1" value="pkv"><span>Privat</span></label>
+      </div>
+      <div class="pkv-only" data-p="1" hidden><label for="pkv1">Dein Anteil an KV und Pflege im Monat <span class="hint">nach Zuschuss des Arbeitgebers, nur Basisanteil laut Beitragsbescheinigung</span></label><input id="pkv1" type="number" min="0" inputmode="decimal"></div>
+      <p class="hint">Die Schätzung gilt für Angestellte, ganzjährig, ohne besondere Freibeträge, mit dem durchschnittlichen Zusatzbeitrag 2026.</p>
+    </div>
+  </div>
+  <div class="card" id="einkommen-partner" hidden>
+    <h2 style="margin-top:0">Dein Partner, deine Partnerin</h2>
+    <div class="row"><div><label for="alter2">Alter</label><input id="alter2" type="number" min="16" max="99" inputmode="numeric"></div><div></div></div>
+    <div class="seg" style="margin-top:12px">
+      <label><input type="radio" name="eart2" value="netto" checked><span>Netto im Monat</span></label>
+      <label><input type="radio" name="eart2" value="brutto"><span>Brutto im Jahr</span></label>
+    </div>
+    <label for="betrag2"><span id="betrag2-label">Netto im Monat in €</span></label><input id="betrag2" type="number" min="0" step="10" inputmode="decimal">
+    <div class="brutto-only" data-p="2" hidden>
+      <label>Krankenversicherung</label>
+      <div class="seg">
+        <label><input type="radio" name="kv2" value="gkv" checked><span>Gesetzlich</span></label>
+        <label><input type="radio" name="kv2" value="pkv"><span>Privat</span></label>
+      </div>
+      <div class="pkv-only" data-p="2" hidden><label for="pkv2">Anteil an KV und Pflege im Monat <span class="hint">nach Zuschuss des Arbeitgebers, nur Basisanteil laut Beitragsbescheinigung</span></label><input id="pkv2" type="number" min="0" inputmode="decimal"></div>
+    </div>
+  </div>
+  <div class="card">
+    <label for="sonstein" style="margin-top:0">Weitere Einnahmen im Monat <span class="hint">z. B. Miete, Nebenjob, Unterhalt; ohne Kindergeld</span></label>
+    <input id="sonstein" type="number" min="0" step="10" inputmode="decimal">
+    <div id="kirche-box" hidden><label>Zahlst du Kirchensteuer? <span class="hint">nur für die Schätzung, wird nicht an uns übertragen</span></label><div class="seg">
+        <label><input type="radio" name="kirche" value="ja"><span>Ja</span></label>
+        <label><input type="radio" name="kirche" value="nein"><span>Nein</span></label></div></div>
+    <p class="hint" id="netto-schaetzung"></p>
+  </div>
+</section>
+
+<!-- 3 Ausgaben -->
+<section class="step" data-step="3">
+  <div class="eyebrow">Schritt 3</div>
+  <h1>Was rausgeht</h1>
+  <p class="lead" id="fk-intro">Deine festen Ausgaben in € pro Monat. Jährliche Beträge bitte durch zwölf teilen. Grob geschätzt reicht.</p>
+  <div class="card" id="fixkosten">
+    <div class="row">
+      <div><label for="fk_wohnen">Wohnen <span class="hint">Miete oder Rate, Nebenkosten, Strom</span></label><input id="fk_wohnen" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_essen">Essen und Drogerie</label><input id="fk_essen" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_mobil">Mobilität <span class="hint">Auto, Tanken, Tickets</span></label><input id="fk_mobil" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_kinder">Kinder <span class="hint">Kita, Schule, Hobbys</span></label><input id="fk_kinder" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_vers">Versicherungen</label><input id="fk_vers" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_vertr">Verträge und Abos <span class="hint">Handy, Internet, Streaming, Sport</span></label><input id="fk_vertr" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_kredit">Kredite und Leasing</label><input id="fk_kredit" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_urlaub">Urlaub und Freizeit</label><input id="fk_urlaub" type="number" min="0" step="10" inputmode="decimal"></div>
+      <div><label for="fk_sonst">Sonstiges</label><input id="fk_sonst" type="number" min="0" step="10" inputmode="decimal"></div>
+    </div>
+    <p class="hint" id="fk-summe" style="margin-top:12px"></p>
+  </div>
+</section>
+
+<!-- 4 Sparen und Vermögen -->
+<section class="step" data-step="4">
+  <div class="eyebrow">Schritt 4</div>
+  <h1>Was schon da ist</h1>
+  <div class="card">
+    <label for="sparen" style="margin-top:0">Was sparst du jeden Monat? <span class="hint">Sparpläne, Daueraufträge, Vorsorgeverträge</span></label><input id="sparen" type="number" min="0" step="10" inputmode="decimal">
+    <div class="row">
+      <div><label for="liquide">Konto und Tagesgeld</label><input id="liquide" type="number" min="0" step="100" inputmode="decimal"></div>
+      <div><label for="depot">Depots und Fonds</label><input id="depot" type="number" min="0" step="100" inputmode="decimal"></div>
+      <div><label for="sonstverm">Sonstiges Vermögen <span class="hint">ohne selbst genutzte Immobilie</span></label><input id="sonstverm" type="number" min="0" step="100" inputmode="decimal"></div>
+      <div><label for="schulden">Offene Kredite <span class="hint">Restschuld gesamt</span></label><input id="schulden" type="number" min="0" step="100" inputmode="decimal"></div>
+    </div>
+    <label for="rente">Erwartete gesetzliche Rente im Monat <span class="hint">steht in deiner Renteninformation, falls du sie zur Hand hast</span></label><input id="rente" type="number" min="0" step="10" inputmode="decimal">
+  </div>
+</section>
+
+<!-- 5 Wünsche -->
+<section class="step" data-step="5">
+  <div class="eyebrow">Schritt 5</div>
+  <h1>Wo soll dein Leben hin?</h1>
+  <p class="lead">Stell dir vor, es ist in zehn Jahren und alles ist gut gelaufen. Was hat sich erfüllt? Ein Stichwort genügt.</p>
+  <div class="card" id="wuensche">
+    <div class="row"><div><label for="w1">Wunsch 1</label><input id="w1" type="text" placeholder="z. B. Eigenes Haus"></div><div><label for="w1j">Bis wann?</label><input id="w1j" type="number" min="2026" max="2090" placeholder="Jahr" inputmode="numeric"></div></div>
+    <div class="row"><div><label for="w2">Wunsch 2</label><input id="w2" type="text" placeholder="z. B. Mit 60 kürzertreten"></div><div><label for="w2j">Bis wann?</label><input id="w2j" type="number" min="2026" max="2090" placeholder="Jahr" inputmode="numeric"></div></div>
+    <div class="row"><div><label for="w3">Wunsch 3</label><input id="w3" type="text" placeholder="z. B. Studium der Kinder"></div><div><label for="w3j">Bis wann?</label><input id="w3j" type="number" min="2026" max="2090" placeholder="Jahr" inputmode="numeric"></div></div>
+    <label for="ruhestand">Mit welchem Alter möchtest du aufhören zu arbeiten oder kürzertreten?</label><input id="ruhestand" type="number" min="40" max="80" inputmode="numeric">
+    <label for="sorge">Was beschäftigt dich beim Thema Geld gerade am meisten? <span class="hint">bitte keine Angaben zu deiner Gesundheit</span></label><textarea id="sorge"></textarea>
+    <label for="schlaf">Wie gut schläfst du beim Thema Geld? <span class="hint">1 = schlecht, 10 = sehr gut</span></label><input id="schlaf" type="number" min="1" max="10" inputmode="numeric">
+  </div>
+</section>
+
+<!-- 6 Absicherung -->
+<section class="step" data-step="6">
+  <div class="eyebrow">Schritt 6</div>
+  <h1>Was würde dich treffen?</h1>
+  <p class="lead">Ein paar Situationen zum Durchdenken. Es gibt kein Richtig oder Falsch, nur dein Bauchgefühl.</p>
+  <div class="card scale" id="risikofragen"></div>
+  <div class="card">
+    <label style="margin-top:0" id="lbl-hat">Wofür hast du schon eine Absicherung? <span class="hint">nur ankreuzen, was du sicher weißt</span></label>
+    <div class="seg" id="vorhanden" role="group" aria-labelledby="lbl-hat"></div>
+  </div>
+</section>
+
+<!-- 7 Ergebnis -->
+<section class="step print" data-step="7">
+  <div class="eyebrow">Dein erstes Bild</div>
+  <h1 id="erg-titel">Dein Finanz-Check</h1>
+  <p class="lead">Auf Basis deiner Angaben. Eine erste Einschätzung, keine Beratung. Im Gespräch schauen wir genau hin.</p>
+  <div class="card"><h2 style="margin-top:0">Dein Geld im Monat</h2><div class="kpi" id="kpi"></div><p class="hint" id="erg-netto-hinweis"></p></div>
+  <div class="card"><h2 style="margin-top:0">Deine Notreserve</h2><p id="erg-reserve"></p></div>
+  <div class="card"><h2 style="margin-top:0">Wie stark dich etwas treffen würde</h2><table id="erg-risiko"></table>
+    <p class="hint">Die Ampel zeigt, wie stark dich ein Ereignis laut deinen Antworten treffen würde, nicht, ob du schon abgesichert bist. Ob deine Verträge passen, schaut sich Jan Schnichels von Endlich Besser Beraten mit dir an.</p></div>
+  <div class="card" id="erg-wuensche-box"><h2 style="margin-top:0">Deine Wünsche</h2><ul id="erg-wuensche"></ul></div>
+  <div class="card" id="konto-box">
+    <h2 style="margin-top:0">Gespeichert</h2>
+    <p id="gespeichert-text">Deine Angaben sind bei uns. Wir melden uns bei dir für das Gespräch.</p>
+    <div class="nav" style="justify-content:flex-start">
+      <button type="button" class="ghost" id="drucken">Als PDF speichern</button>
+      <button type="button" class="quiet" id="export">Meine Daten herunterladen</button>
+      <button type="button" class="danger" id="widerruf">Einwilligung widerrufen</button>
+    </div>
+    <p class="err" id="konto-status" role="status"></p>
+  </div>
+</section>
+
+<div class="nav">
+  <button type="button" class="ghost" id="zurueck">Zurück</button>
+  <button type="button" class="primary" id="weiter">Los geht's</button>
+</div>
+</form>
+<footer><span class="ph">[Impressum]</span> · <span class="ph">[Datenschutz]</span> · Rechengrößen Stand 2026. Netto aus Brutto ist eine Schätzung.</footer>
+</div>
+<script src="/js/api.js"></script>
+<script src="/js/rechenkern.js"></script>
+<script src="/js/fragen.js"></script>
+<script src="/js/kunde_check.js"></script>
+</body></html>

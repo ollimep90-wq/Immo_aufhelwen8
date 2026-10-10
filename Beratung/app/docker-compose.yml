@@ -1,0 +1,23 @@
+# Betrieb: App hinter Caddy (automatisches HTTPS). Domain in Caddyfile eintragen.
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - daten:/daten
+    expose:
+      - "8000"
+  caddy:
+    image: caddy:2.8.4
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_daten:/data
+    depends_on:
+      - app
+volumes:
+  daten:
+  caddy_daten:

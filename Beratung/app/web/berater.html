@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2E7D32">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/img/icon.svg">
+<link rel="stylesheet" href="/css/app.css">
+<title>Beratung · Ganzheitliche Finanzberatung</title>
+</head>
+<body>
+<div class="wrap weit">
+<div class="top"><div class="marke"><svg height="30" viewBox="0 0 60 60" style="display:block"><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/><rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></svg><span>Ganzheitliche Finanzberatung</span></div><span><span class="hint" id="wer"></span> <button type="button" class="ghost" id="abmelden">Abmelden</button></span></div>
+<p class="err" id="fehler" role="alert"></p>
+
+<section id="liste">
+  <div class="top"><h1 style="margin:0">Kundenakten</h1><button type="button" class="primary" id="neu">Neue Akte</button></div>
+  <form class="card" id="neu-form" hidden>
+    <label for="neu-titel" style="margin-top:0">Name der Akte <span class="hint">z. B. Familie Muster</span></label>
+    <input id="neu-titel" type="text" maxlength="120">
+    <div class="nav" style="justify-content:flex-start"><button class="primary" type="submit">Anlegen</button><button class="ghost" type="button" id="neu-abbruch">Abbrechen</button></div>
+  </form>
+  <div class="card"><table><thead><tr><th>Akte</th><th>Kundenzugang</th><th>Vorab-Check</th><th class="n">Zuletzt geändert</th></tr></thead><tbody id="akten"></tbody></table></div>
+</section>
+
+<section id="akte" hidden>
+  <button type="button" class="ghost" id="zurueck" style="padding-left:0">← Alle Akten</button>
+  <h1 id="akte-titel"></h1>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="inhalt"></div>
+  <div class="speicher" id="speicher" hidden>
+    <button type="button" class="primary" id="speichern">Speichern</button>
+    <span class="hint" id="speicher-status"></span>
+  </div>
+</section>
+<footer>Rechengrößen Stand 2026. Alle Rechnungen sind Näherungen auf Basis der Angaben und Annahmen, keine Prognose.</footer>
+</div>
+<script src="/js/api.js"></script>
+<script src="/js/rechenkern.js"></script>
+<script src="/js/fragen.js"></script>
+<script src="/js/vorsorge.js"></script>
+<script src="/js/berater.js"></script>
+</body></html>

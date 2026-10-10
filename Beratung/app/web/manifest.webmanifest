@@ -1,0 +1,10 @@
+{
+  "name": "Ganzheitliche Finanzberatung",
+  "short_name": "Finanzberatung",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F5F7",
+  "theme_color": "#2E7D32",
+  "lang": "de",
+  "icons": [{ "src": "/img/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

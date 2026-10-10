@@ -1,0 +1,1285 @@
+{
+ "stand": "Excel-Prototyp Januar 2026, exportiert 10.10.2026",
+ "arten": [
+  "bu",
+  "grundfaehigkeit",
+  "unfall",
+  "risikoleben",
+  "pkv",
+  "krankenzusatz",
+  "zahnzusatz",
+  "rechtsschutz",
+  "hausrat",
+  "wohngebaeude",
+  "tierkranken",
+  "tier_op",
+  "haftpflicht"
+ ],
+ "bloecke": [
+  {
+   "nr": 1,
+   "titel": "Körperliche Grenzen (inkl. Nervensystem)"
+  },
+  {
+   "nr": 2,
+   "titel": "Mentale & psychische Belastungen"
+  },
+  {
+   "nr": 3,
+   "titel": "Berufliche Realität nach Einschränkung"
+  },
+  {
+   "nr": 4,
+   "titel": "Haushalt, Familie, Verpflichtungen"
+  },
+  {
+   "nr": 5,
+   "titel": "Verantwortung für andere (inkl. Tiere)"
+  },
+  {
+   "nr": 6,
+   "titel": "Recht, Konflikte, externe Ereignisse"
+  },
+  {
+   "nr": 7,
+   "titel": "Sachschäden & Alltagsgefahren (Hausrat)"
+  },
+  {
+   "nr": 8,
+   "titel": "Gebäude, Natur & Technik (Wohngebäude)"
+  },
+  {
+   "nr": 9,
+   "titel": "Selbstbild vs. Körperrealität"
+  },
+  {
+   "nr": 10,
+   "titel": "Schäden an anderen"
+  }
+ ],
+ "fragen": [
+  {
+   "id": "p1_1_0_1",
+   "nr": "1.1.0.1",
+   "block": 1,
+   "text": "Stell dir vor, du hast einen Bandscheibenvorfall und darfst 12 Monate nicht arbeiten.\nWie wirkt sich das auf dein Einkommen und deinen Alltag aus?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.1.0.1"
+  },
+  {
+   "id": "p1_1_0_2",
+   "nr": "1.1.0.2",
+   "block": 1,
+   "text": "Stell dir vor, du kannst dauerhaft nicht länger als 30 Minuten sitzen oder stehen.\nKönntest du deinen heutigen Beruf noch ausüben?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.1.0.2"
+  },
+  {
+   "id": "p1_1_0_3",
+   "nr": "1.1.0.3",
+   "block": 1,
+   "text": "Stell dir vor, deine Hand oder Schulter ist dauerhaft eingeschränkt.\nKönntest du deine tägliche Arbeit noch erledigen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.1.0.3"
+  },
+  {
+   "id": "p1_2_0_1",
+   "nr": "1.2.0.1",
+   "block": 1,
+   "text": "Stell dir vor, du verlierst für längere Zeit deine Stimme.\nKönntest du in deinem Beruf noch arbeiten?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.2.0.1"
+  },
+  {
+   "id": "p1_2_0_2",
+   "nr": "1.2.0.2",
+   "block": 1,
+   "text": "Stell dir vor, dein Sehvermögen verschlechtert sich stark.\nWürde dein aktueller Beruf noch funktionieren?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.2.0.2"
+  },
+  {
+   "id": "p1_2_0_3",
+   "nr": "1.2.0.3",
+   "block": 1,
+   "text": "Stell dir vor, du hast dauerhaft starke Kopfschmerzen oder Migräne.\nWie stark würde das deine Arbeitsfähigkeit beeinflussen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.2.0.3"
+  },
+  {
+   "id": "p1_3_0_1",
+   "nr": "1.3.0.1",
+   "block": 1,
+   "text": "Stell dir vor, du bist nach 3–4 Stunden Arbeit körperlich erschöpft.\nReicht das für deinen aktuellen Job?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.3.0.1"
+  },
+  {
+   "id": "p1_3_0_2",
+   "nr": "1.3.0.2",
+   "block": 1,
+   "text": "Stell dir vor, du hast häufige Arzttermine und Therapien.\nWie gut lässt sich das mit deiner Arbeit vereinbaren?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.3.0.2"
+  },
+  {
+   "id": "p1_4_1_1",
+   "nr": "1.4.1.1",
+   "block": 1,
+   "text": "Stell dir vor, deine Hände zittern leicht und unkontrolliert.\nWürdest du deinen Beruf noch sicher ausüben können?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.1.1"
+  },
+  {
+   "id": "p1_4_1_2",
+   "nr": "1.4.1.2",
+   "block": 1,
+   "text": "Stell dir vor, du hast Probleme mit Gleichgewicht oder Koordination.\nKönntest du dich im Alltag und im Job sicher bewegen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.1.2"
+  },
+  {
+   "id": "p1_4_2_1",
+   "nr": "1.4.2.1",
+   "block": 1,
+   "text": "Stell dir vor, Lärm, Licht oder viele Menschen überfordern dich schnell.\nWäre Arbeiten in deiner Umgebung noch möglich?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.2.1"
+  },
+  {
+   "id": "p1_4_2_2",
+   "nr": "1.4.2.2",
+   "block": 1,
+   "text": "Stell dir vor, dein Gehirn ist schneller erschöpft als dein Wille.\nKönntest du trotzdem zuverlässig arbeiten?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.2.2"
+  },
+  {
+   "id": "p1_4_3_1",
+   "nr": "1.4.3.1",
+   "block": 1,
+   "text": "Stell dir vor, feinmotorische Tätigkeiten fallen dir schwer.\nWie stark wäre dein Beruf davon betroffen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.3.1"
+  },
+  {
+   "id": "p1_4_3_2",
+   "nr": "1.4.3.2",
+   "block": 1,
+   "text": "Stell dir vor, deine Reaktionszeit ist deutlich verlangsamt.\nHätte das sicherheitsrelevante Folgen in deinem Job?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.3.2"
+  },
+  {
+   "id": "p1_4_4_1",
+   "nr": "1.4.4.1",
+   "block": 1,
+   "text": "Stell dir vor, du hast wiederkehrende Ausfälle oder „Blackouts“.\nKönntest du verlässlich arbeiten?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.4.1"
+  },
+  {
+   "id": "p1_4_4_2",
+   "nr": "1.4.4.2",
+   "block": 1,
+   "text": "Stell dir vor, dein Nervensystem reagiert unvorhersehbar.\nWie planbar wäre dein Arbeitsalltag noch?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.4.2"
+  },
+  {
+   "id": "p1_4_5_1",
+   "nr": "1.4.5.1",
+   "block": 1,
+   "text": "Stell dir vor, dein Körper macht Dinge, die du nicht steuern kannst.\nWie stark würde dich das psychisch und beruflich einschränken?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.5.1"
+  },
+  {
+   "id": "p1_4_5_2",
+   "nr": "1.4.5.2",
+   "block": 1,
+   "text": "Stell dir vor, du kannst deinem Körper nicht mehr voll vertrauen.\nWürdest du dich noch in stressigen Situationen sicher fühlen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 3,
+    "unfall": 2,
+    "pkv": 2,
+    "krankenzusatz": 2,
+    "zahnzusatz": 2
+   },
+   "quelle": "Prototyp 1.4.5.2"
+  },
+  {
+   "id": "p2_1_0_1",
+   "nr": "2.1.0.1",
+   "block": 2,
+   "text": "Stell dir vor, du kannst dich nur noch kurze Zeit konzentrieren.\nWäre produktives Arbeiten noch möglich?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "pkv": 1,
+    "krankenzusatz": 1
+   },
+   "quelle": "Prototyp 2.1.0.1"
+  },
+  {
+   "id": "p2_1_0_2",
+   "nr": "2.1.0.2",
+   "block": 2,
+   "text": "Stell dir vor, Fehler häufen sich, obwohl du dich bemühst.\nWelche Folgen hätte das im Job?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "pkv": 1,
+    "krankenzusatz": 1
+   },
+   "quelle": "Prototyp 2.1.0.2"
+  },
+  {
+   "id": "p2_2_0_1",
+   "nr": "2.2.0.1",
+   "block": 2,
+   "text": "Stell dir vor, du hast starke innere Unruhe oder Angstzustände.\nKönntest du weiterhin zuverlässig arbeiten?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "pkv": 1,
+    "krankenzusatz": 1
+   },
+   "quelle": "Prototyp 2.2.0.1"
+  },
+  {
+   "id": "p2_2_0_2",
+   "nr": "2.2.0.2",
+   "block": 2,
+   "text": "Stell dir vor, du hast Schlafstörungen über Monate.\nWie würde sich das auf deine Leistungsfähigkeit auswirken?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "pkv": 1,
+    "krankenzusatz": 1
+   },
+   "quelle": "Prototyp 2.2.0.2"
+  },
+  {
+   "id": "p2_3_0_1",
+   "nr": "2.3.0.1",
+   "block": 2,
+   "text": "Stell dir vor, dein Körper „zieht die Notbremse“ und du kannst nicht mehr.\nWie lange könntest du finanziell ohne Einkommen auskommen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "pkv": 1,
+    "krankenzusatz": 1
+   },
+   "quelle": "Prototyp 2.3.0.1"
+  },
+  {
+   "id": "p2_3_0_2",
+   "nr": "2.3.0.2",
+   "block": 2,
+   "text": "Stell dir vor, du brauchst längere Zeit zur Regeneration.\nHättest du den Druck, zu früh wieder arbeiten zu müssen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "pkv": 1,
+    "krankenzusatz": 1
+   },
+   "quelle": "Prototyp 2.3.0.2"
+  },
+  {
+   "id": "p3_0_0_1",
+   "nr": "3.0.0.1",
+   "block": 3,
+   "text": "Stell dir vor, du kannst deinen heutigen Beruf nicht mehr ausüben.\nWie realistisch ist ein anderer Job mit ähnlichem Einkommen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 2
+   },
+   "quelle": "Prototyp 3.0.0.1"
+  },
+  {
+   "id": "p3_0_0_2",
+   "nr": "3.0.0.2",
+   "block": 3,
+   "text": "Stell dir vor, du müsstest dich komplett neu orientieren.\nWie lange könntest du ohne volles Einkommen überbrücken?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 2
+   },
+   "quelle": "Prototyp 3.0.0.2"
+  },
+  {
+   "id": "p3_0_0_3",
+   "nr": "3.0.0.3",
+   "block": 3,
+   "text": "Stell dir vor, dein Einkommen sinkt dauerhaft um 30–50 %.\nWelche Bereiche deines Lebens wären betroffen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 3,
+    "grundfaehigkeit": 2
+   },
+   "quelle": "Prototyp 3.0.0.3"
+  },
+  {
+   "id": "p4_0_0_1",
+   "nr": "4.0.0.1",
+   "block": 4,
+   "text": "Stell dir vor, dein Einkommen fällt weg, aber die Fixkosten bleiben.\nWie lange reichen Rücklagen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 2,
+    "risikoleben": 3,
+    "zahnzusatz": 2,
+    "rechtsschutz": 2,
+    "hausrat": 1
+   },
+   "quelle": "Prototyp 4.0.0.1"
+  },
+  {
+   "id": "p4_0_0_2",
+   "nr": "4.0.0.2",
+   "block": 4,
+   "text": "Stell dir vor, Kredite können nicht mehr bedient werden.\nWelche Konsequenzen hätte das (Haus, Auto, Lebensstandard)?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 2,
+    "risikoleben": 3,
+    "zahnzusatz": 2,
+    "rechtsschutz": 2,
+    "hausrat": 1
+   },
+   "quelle": "Prototyp 4.0.0.2"
+  },
+  {
+   "id": "p4_0_0_3",
+   "nr": "4.0.0.3",
+   "block": 4,
+   "text": "Stell dir vor, dein Partner müsste mehr arbeiten oder einspringen.\nWie würde das eure Lebensqualität beeinflussen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "bu": 2,
+    "risikoleben": 3,
+    "zahnzusatz": 2,
+    "rechtsschutz": 2,
+    "hausrat": 1
+   },
+   "quelle": "Prototyp 4.0.0.3"
+  },
+  {
+   "id": "p5_1_1_1",
+   "nr": "5.1.1.1",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind muss für mehrere Wochen ins Krankenhaus.\nWürdest du Zusatzkosten für bessere Unterbringung und ärztliche Betreuung übernehmen wollen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.1.1"
+  },
+  {
+   "id": "p5_1_1_2",
+   "nr": "5.1.1.2",
+   "block": 5,
+   "text": "Stell dir vor, du möchtest dauerhaft beim Kind bleiben können.\nKönntest du Verdienstausfall und Zusatzkosten tragen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.1.2"
+  },
+  {
+   "id": "p5_1_1_3",
+   "nr": "5.1.1.3",
+   "block": 5,
+   "text": "Stell dir vor, es sind mehrere Krankenhausaufenthalte über Jahre nötig.\nWäre das finanziell langfristig tragbar?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder",
+    "partner"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.1.3"
+  },
+  {
+   "id": "p5_1_2_1",
+   "nr": "5.1.2.1",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind verliert durch einen Unfall dauerhaft die Beweglichkeit eines Arms oder Beins.\nWie stark würde das euren Alltag verändern?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.2.1"
+  },
+  {
+   "id": "p5_1_2_2",
+   "nr": "5.1.2.2",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind benötigt Hilfsmittel, Umbauten oder spezielle Förderung.\nKönntest du diese Kosten ohne finanzielle Sorgen tragen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.2.2"
+  },
+  {
+   "id": "p5_1_2_3",
+   "nr": "5.1.2.3",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind kann bestimmte Sport- oder Freizeitaktivitäten nicht mehr ausüben.\nWürdest du zusätzliche Angebote finanzieren, um das auszugleichen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.2.3"
+  },
+  {
+   "id": "p5_1_3_1",
+   "nr": "5.1.3.1",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind hat Konzentrations- oder Wahrnehmungsstörungen.\nWürdest du zusätzliche Therapien privat finanzieren?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.3.1"
+  },
+  {
+   "id": "p5_1_3_2",
+   "nr": "5.1.3.2",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind benötigt langfristige Fördermaßnahmen.\nKönnte das problemlos aus dem laufenden Budget bezahlt werden?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.3.2"
+  },
+  {
+   "id": "p5_1_3_3",
+   "nr": "5.1.3.3",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind kann bestimmte Grundfähigkeiten nicht mehr erlernen oder ausüben.\nWie sehr würde dich das emotional und finanziell belasten?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.3.3"
+  },
+  {
+   "id": "p5_1_4_1",
+   "nr": "5.1.4.1",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind wird später nur eingeschränkt selbstständig leben können.\nWäre es für euch finanziell möglich, dauerhaft zu unterstützen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.4.1"
+  },
+  {
+   "id": "p5_1_4_2",
+   "nr": "5.1.4.2",
+   "block": 5,
+   "text": "Stell dir vor, dein Kind wird auf Unterstützung im Erwachsenenalter angewiesen sein.\nWie stark würde das eure eigene Altersvorsorge beeinflussen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.4.2"
+  },
+  {
+   "id": "p5_1_5_1",
+   "nr": "5.1.5.1",
+   "block": 5,
+   "text": "Stell dir vor, ein Partner muss Arbeitszeit reduzieren oder ganz aufhören zu arbeiten.\nKönnte der Haushalt das finanziell tragen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder",
+    "partner"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.5.1"
+  },
+  {
+   "id": "p5_1_5_2",
+   "nr": "5.1.5.2",
+   "block": 5,
+   "text": "Stell dir vor, sich der Alltag dauerhaft um Pflege und Betreuung dreht.\nWie stark würde das eure Lebensplanung verändern?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder",
+    "partner"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.5.2"
+  },
+  {
+   "id": "p5_1_5_3",
+   "nr": "5.1.5.3",
+   "block": 5,
+   "text": "Stell dir vor, auch Geschwisterkinder bekommen weniger Aufmerksamkeit und Möglichkeiten.\nWürdest du versuchen, das finanziell auszugleichen (Förderung, Betreuung)?",
+   "skala": "betroffenheit",
+   "filter": [
+    "kinder"
+   ],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.5.3"
+  },
+  {
+   "id": "p5_1_6_1",
+   "nr": "5.1.6.1",
+   "block": 5,
+   "text": "Stell dir vor, staatliche Leistungen decken nur einen Teil der tatsächlichen Kosten.\nKönntest du die Lücke selbst tragen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.6.1"
+  },
+  {
+   "id": "p5_1_6_2",
+   "nr": "5.1.6.2",
+   "block": 5,
+   "text": "Stell dir vor, Anträge und Genehmigungen dauern Monate.\nHättest du genug finanzielle Reserven für diese Zeit?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "grundfaehigkeit": 3,
+    "unfall": 3,
+    "risikoleben": 3,
+    "pkv": 3,
+    "krankenzusatz": 3
+   },
+   "quelle": "Prototyp 5.1.6.2"
+  },
+  {
+   "id": "p5_2_0_1",
+   "nr": "5.2.0.1",
+   "block": 5,
+   "text": "Stell dir vor, dein Tier braucht eine OP für 6.000–10.000 €.\nKönntest du diese Entscheidung unabhängig vom Geld treffen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "tier"
+   ],
+   "gewichte": {
+    "tier_op": 3
+   },
+   "quelle": "Prototyp 5.2.0.1"
+  },
+  {
+   "id": "p5_2_0_2",
+   "nr": "5.2.0.2",
+   "block": 5,
+   "text": "Stell dir vor, die Behandlung kostet mehr als deine Rücklagen.\nWürdest du trotzdem alles medizinisch Mögliche tun?",
+   "skala": "betroffenheit",
+   "filter": [
+    "tier"
+   ],
+   "gewichte": {
+    "tierkranken": 3
+   },
+   "quelle": "Prototyp 5.2.0.2"
+  },
+  {
+   "id": "p5_2_0_3",
+   "nr": "5.2.0.3",
+   "block": 5,
+   "text": "Stell dir vor, Geld entscheidet über Leben oder Tod deines Tieres.\nWie sehr würde dich diese Situation belasten?",
+   "skala": "betroffenheit",
+   "filter": [
+    "tier"
+   ],
+   "gewichte": {
+    "tierkranken": 3,
+    "tier_op": 3
+   },
+   "quelle": "Prototyp 5.2.0.3"
+  },
+  {
+   "id": "p6_0_0_1",
+   "nr": "6.0.0.1",
+   "block": 6,
+   "text": "Stell dir vor, du hast einen schweren Verkehrsunfall mit Streitfrage.\nWürdest du dein Recht durchsetzen, auch wenn es teuer wird?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "rechtsschutz": 3
+   },
+   "quelle": "Prototyp 6.0.0.1"
+  },
+  {
+   "id": "p6_0_0_2",
+   "nr": "6.0.0.2",
+   "block": 6,
+   "text": "Stell dir vor, du gerätst in einen langen Streit mit Vermieter/Arbeitgeber.\nKönntest du Anwalts- und Gerichtskosten tragen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "rechtsschutz": 3
+   },
+   "quelle": "Prototyp 6.0.0.2"
+  },
+  {
+   "id": "p6_0_0_3",
+   "nr": "6.0.0.3",
+   "block": 6,
+   "text": "Stell dir vor, du müsstest auf dein Recht verzichten, weil es zu teuer ist.\nWie sehr würde dich das belasten?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "rechtsschutz": 3
+   },
+   "quelle": "Prototyp 6.0.0.3"
+  },
+  {
+   "id": "p7_1_0_1",
+   "nr": "7.1.0.1",
+   "block": 7,
+   "text": "Stell dir vor, ein Küchengerät fängt nachts Feuer und der Rauch zerstört Möbel, Kleidung und Elektronik.\nKönntest du alles kurzfristig neu anschaffen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.1.0.1"
+  },
+  {
+   "id": "p7_1_0_2",
+   "nr": "7.1.0.2",
+   "block": 7,
+   "text": "Stell dir vor, ein Akku (Handy, E-Bike, Werkzeug) verursacht einen Schwelbrand.\nWie hoch schätzt du den Schaden in deiner Wohnung ein?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.1.0.2"
+  },
+  {
+   "id": "p7_2_0_1",
+   "nr": "7.2.0.1",
+   "block": 7,
+   "text": "Stell dir vor, eine Waschmaschine läuft aus, während du nicht zuhause bist.\nWie groß wäre der Schaden an Möbeln, Böden und Elektronik?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.2.0.1"
+  },
+  {
+   "id": "p7_2_0_2",
+   "nr": "7.2.0.2",
+   "block": 7,
+   "text": "Stell dir vor, Wasser tropft wochenlang unbemerkt hinter Schränken.\nKönntest du Schimmelbeseitigung und neue Einrichtung bezahlen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.2.0.2"
+  },
+  {
+   "id": "p7_3_0_1",
+   "nr": "7.3.0.1",
+   "block": 7,
+   "text": "Stell dir vor, nach einem Einbruch fehlen Technik, Schmuck und persönliche Dinge.\nKönntest du alles ersetzen, ohne dein Vermögen anzugreifen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.3.0.1"
+  },
+  {
+   "id": "p7_3_0_2",
+   "nr": "7.3.0.2",
+   "block": 7,
+   "text": "Stell dir vor, Türen und Fenster sind beschädigt, die Wohnung nicht mehr sicher.\nKönntest du Reparaturen und Ersatz sofort zahlen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.3.0.2"
+  },
+  {
+   "id": "p7_4_0_1",
+   "nr": "7.4.0.1",
+   "block": 7,
+   "text": "Stell dir vor, ein Blitz oder Stromschwankung zerstört mehrere Geräte gleichzeitig.\nWie teuer wäre der Ersatz von TV, PC, Router, Küchengeräten?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.4.0.1"
+  },
+  {
+   "id": "p7_4_0_2",
+   "nr": "7.4.0.2",
+   "block": 7,
+   "text": "Stell dir vor, Smart-Home-Technik oder Server fallen komplett aus.\nKönntest du diese Infrastruktur problemlos neu beschaffen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.4.0.2"
+  },
+  {
+   "id": "p7_5_0_1",
+   "nr": "7.5.0.1",
+   "block": 7,
+   "text": "Stell dir vor, dein Hausrat wird bei Umzug oder Reise beschädigt oder gestohlen.\nWäre das finanziell gut abzufangen?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.5.0.1"
+  },
+  {
+   "id": "p7_5_0_2",
+   "nr": "7.5.0.2",
+   "block": 7,
+   "text": "Stell dir vor, Kinder oder Haustiere beschädigen wertvolle Gegenstände.\nWäre das für dich finanziell und emotional tragbar?",
+   "skala": "betroffenheit",
+   "filter": [],
+   "gewichte": {
+    "hausrat": 3
+   },
+   "quelle": "Prototyp 7.5.0.2"
+  },
+  {
+   "id": "p8_1_0_1",
+   "nr": "8.1.0.1",
+   "block": 8,
+   "text": "Stell dir vor, ein Rohr platzt nachts und mehrere Räume stehen unter Wasser.\nKönntest du Sanierung, Trocknung und Renovierung vorfinanzieren?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.1.0.1"
+  },
+  {
+   "id": "p8_1_0_2",
+   "nr": "8.1.0.2",
+   "block": 8,
+   "text": "Stell dir vor, ein Heizungsdefekt verursacht Folgeschäden am Gebäude.\nKönntest du Reparatur und Nutzungsausfall tragen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.1.0.2"
+  },
+  {
+   "id": "p8_2_0_1",
+   "nr": "8.2.0.1",
+   "block": 8,
+   "text": "Stell dir vor, ein Brand macht dein Haus monatelang unbewohnbar.\nKönntest du parallel Miete und Kredit bezahlen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.2.0.1"
+  },
+  {
+   "id": "p8_2_0_2",
+   "nr": "8.2.0.2",
+   "block": 8,
+   "text": "Stell dir vor, ein technischer Defekt löst einen Schwelbrand in Wänden aus.\nKönntest du Kernsanierung finanzieren?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.2.0.2"
+  },
+  {
+   "id": "p8_3_0_1",
+   "nr": "8.3.0.1",
+   "block": 8,
+   "text": "Stell dir vor, ein Sturm deckt Teile des Dachs ab.\nKönntest du Dachdecker und Folgeschäden zahlen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.3.0.1"
+  },
+  {
+   "id": "p8_3_0_2",
+   "nr": "8.3.0.2",
+   "block": 8,
+   "text": "Stell dir vor, Hagel beschädigt Dach, Fenster und Fassade.\nWie hoch wäre der Gesamtschaden realistisch?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.3.0.2"
+  },
+  {
+   "id": "p8_4_0_1",
+   "nr": "8.4.0.1",
+   "block": 8,
+   "text": "Stell dir vor, Starkregen drückt Abwasser in Keller oder Erdgeschoss.\nKönntest du Sanierung, Trocknung und Ersatz zahlen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.4.0.1"
+  },
+  {
+   "id": "p8_4_0_2",
+   "nr": "8.4.0.2",
+   "block": 8,
+   "text": "Stell dir vor, Heizungsanlage oder Elektrik im Keller wird zerstört.\nKönnte das deine Wohnnutzung langfristig einschränken?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.4.0.2"
+  },
+  {
+   "id": "p8_5_0_1",
+   "nr": "8.5.0.1",
+   "block": 8,
+   "text": "Stell dir vor, dein Grundstück wird durch Überschwemmung beschädigt.\nKönntest du die Kosten für Wiederherstellung tragen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.5.0.1"
+  },
+  {
+   "id": "p8_5_0_2",
+   "nr": "8.5.0.2",
+   "block": 8,
+   "text": "Stell dir vor, Erdbewegungen beschädigen Fundament oder Leitungen.\nWie existenzbedrohend wäre das für dich?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.5.0.2"
+  },
+  {
+   "id": "p8_6_0_1",
+   "nr": "8.6.0.1",
+   "block": 8,
+   "text": "Stell dir vor, Baumängel zeigen sich erst Jahre später.\nKönntest du große Reparaturen selbst finanzieren?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.6.0.1"
+  },
+  {
+   "id": "p8_6_0_2",
+   "nr": "8.6.0.2",
+   "block": 8,
+   "text": "Stell dir vor, Teile des Hauses müssen erneuert werden, ohne Versicherungsleistung.\nWie stark würde das deine Altersvorsorge oder Rücklagen treffen?",
+   "skala": "betroffenheit",
+   "filter": [
+    "eigentum"
+   ],
+   "gewichte": {
+    "risikoleben": 2,
+    "wohngebaeude": 3
+   },
+   "quelle": "Prototyp 8.6.0.2"
+  },
+  {
+   "id": "p9_0_0_1",
+   "nr": "9.0.0.1",
+   "block": 9,
+   "text": "Ich halte mich mental für sehr belastbar.",
+   "skala": "zustimmung",
+   "filter": [],
+   "gewichte": {
+    "bu": 2,
+    "grundfaehigkeit": 1,
+    "unfall": 1,
+    "risikoleben": 1,
+    "pkv": 2,
+    "krankenzusatz": 2
+   },
+   "quelle": "Prototyp 9.0.0.1"
+  },
+  {
+   "id": "p9_0_0_2",
+   "nr": "9.0.0.2",
+   "block": 9,
+   "text": "Ich glaube, mein Körper wird mir immer „signalisieren“, bevor es kritisch wird.",
+   "skala": "zustimmung",
+   "filter": [],
+   "gewichte": {
+    "bu": 2,
+    "grundfaehigkeit": 1,
+    "unfall": 1,
+    "risikoleben": 1,
+    "pkv": 2,
+    "krankenzusatz": 2
+   },
+   "quelle": "Prototyp 9.0.0.2"
+  },
+  {
+   "id": "p9_0_0_3",
+   "nr": "9.0.0.3",
+   "block": 9,
+   "text": "Ich glaube, dass man Krankheiten und Erschöpfung oft nicht planen kann.",
+   "skala": "zustimmung",
+   "filter": [],
+   "gewichte": {
+    "bu": 2,
+    "grundfaehigkeit": 1,
+    "unfall": 1,
+    "risikoleben": 1,
+    "pkv": 2,
+    "krankenzusatz": 2
+   },
+   "quelle": "Prototyp 9.0.0.3"
+  },
+  {
+   "id": "p9_0_0_4",
+   "nr": "9.0.0.4",
+   "block": 9,
+   "text": "Ich habe schon erlebt, dass mein Körper anders reagiert hat als gedacht.",
+   "skala": "zustimmung",
+   "filter": [],
+   "gewichte": {
+    "bu": 2,
+    "grundfaehigkeit": 1,
+    "unfall": 1,
+    "risikoleben": 1,
+    "pkv": 2,
+    "krankenzusatz": 2
+   },
+   "quelle": "Prototyp 9.0.0.4"
+  },
+  {
+   "id": "n10_1",
+   "nr": "10.0.0.1",
+   "block": 10,
+   "skala": "betroffenheit",
+   "filter": [],
+   "text": "Stell dir vor, du verursachst aus Versehen einen Unfall, bei dem jemand schwer verletzt wird, und sollst Schadenersatz zahlen. Wie hart würde dich das treffen?",
+   "gewichte": {
+    "haftpflicht": 3
+   },
+   "quelle": "neu"
+  }
+ ]
+}
