@@ -40,7 +40,7 @@ EMAIL_RE = re.compile(r"^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,30}$")
 # Einwilligungstext: Version und Wortlaut werden mit Hash gespeichert (Nachweis Art. 7 Abs. 1 DSGVO)
 EINWILLIGUNG_VERSION = "2026-10-v3"   # v3: eine Verantwortliche (gemeinsame GmbH)
 
-ABSCHNITTE_BERATER = {"haushalt", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen"}
+ABSCHNITTE_BERATER = {"haushalt", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen", "bericht"}
 # Keine Gesundheitsdaten speichern (Art. 9 DSGVO): Block 9 „Selbstbild“ des Prototyps wird nicht erfasst
 VERBOTENE_FELDER = re.compile(r"^q_p9_")
 ABSCHNITT_VERSICHERUNG = "absicherung_bewertung"
@@ -621,6 +621,17 @@ def kunde_widerruf(u=Depends(nur("kunde"))):
         con.execute("DELETE FROM abschnitte WHERE akte_id=?", (a["id"],))
     DB.protokoll(u["id"], a["id"], "einwilligung widerrufen, alle angaben gelöscht")
     return {"ok": True}
+
+
+@app.get("/api/kunde/bericht")
+def kunde_bericht(u=Depends(nur("kunde"))):
+    """Freigegebener Finanzbericht (Schnappschuss ohne interne Notizen) oder 404."""
+    a = eigene_akte(u)
+    b = DB.abschnitt(a["id"], "bericht")
+    if not b or not b["daten"].get("freigegeben_am") or not isinstance(b["daten"].get("schnappschuss"), dict):
+        raise HTTPException(404, "Noch kein Bericht freigegeben")
+    DB.protokoll(u["id"], a["id"], "bericht angesehen")
+    return b["daten"]["schnappschuss"]
 
 
 @app.get("/api/kunde/export")

@@ -267,3 +267,19 @@ def test_archivauszug_pruefwert(umgebung):
     p = a.pop("pruefwert")
     assert p == hashlib.sha256(json.dumps(a, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
     assert umgebung.eins("SELECT 1 AS x FROM protokoll WHERE akte_id=? AND aktion='archiv-auszug'", akte)
+
+
+def test_kundenbericht_nur_nach_freigabe(umgebung):
+    oli = client("oliver@x.de")
+    akte = oli.post("/api/akten", json={"titel": "A"}, headers=H).json()["id"]
+    e = oli.post(f"/api/akten/{akte}/einladung", json={"email": "k@k.de", "name": "K"}, headers=H).json()
+    k = TestClient(appmod.app, base_url="https://testserver")
+    k.post("/api/einladung/annehmen", json={"token": e["token"], "passwort": "kunde-passwort"}, headers=H)
+    oli.put(f"/api/akten/{akte}/abschnitte/ziele", json={"daten": {"notizen": "intern: Kunde zögert"}}, headers=H)
+    assert k.get("/api/kunde/bericht").status_code == 404
+    snap = {"vorname": "K", "budget": {"einnahmen": 3000}, "naechste_schritte": "Notreserve aufbauen"}
+    assert oli.put(f"/api/akten/{akte}/abschnitte/bericht", json={"daten": {"schnappschuss": snap}}, headers=H).status_code == 200
+    assert k.get("/api/kunde/bericht").status_code == 404          # ohne Freigabe nicht sichtbar
+    oli.put(f"/api/akten/{akte}/abschnitte/bericht", json={"daten": {"schnappschuss": snap, "freigegeben_am": 1}, "version": 1}, headers=H)
+    r = k.get("/api/kunde/bericht")
+    assert r.status_code == 200 and r.json() == snap and "intern" not in r.text

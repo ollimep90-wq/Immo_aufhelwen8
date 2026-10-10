@@ -85,6 +85,7 @@ async function ladeAkte() {
   if (k.vorab) { version = k.vorab.version; formularSetzen(k.vorab.daten.formular); }
   $("f").hidden = false; $("abmelden").hidden = false;
   zeige(0); aktualisiere();
+  try { berichtDaten = await A.get("/api/kunde/bericht"); $("bericht-box").hidden = false; } catch (e) { berichtDaten = null; }
 }
 
 async function start() {
@@ -142,5 +143,23 @@ $("export0").addEventListener("click", () => exportieren("konto-status0"));
 $("widerruf").addEventListener("click", () => widerrufen("konto-status"));
 $("widerruf0").addEventListener("click", () => widerrufen("konto-status0"));
 $("nochmal").addEventListener("click", speichereEnde);
+
+let berichtDaten = null;
+function berichtRendern(ziel) {
+  if (!document.getElementById("bericht-css")) { const st = document.createElement("style"); st.id = "bericht-css"; st.textContent = Bericht.CSS; document.head.appendChild(st); }
+  const m = document.querySelector(".marke");
+  ziel.innerHTML = Bericht.html(berichtDaten, { marke: m ? m.innerHTML : "" });
+}
+$("bericht-zeigen").addEventListener("click", () => {
+  const v = $("bericht-ansicht"), offen = !v.hidden;
+  v.hidden = offen; $("f").hidden = !offen;
+  $("bericht-zeigen").textContent = offen ? "Ansehen" : "Zurück zum Finanz-Check";
+  if (!offen) { berichtRendern(v); v.scrollIntoView({ behavior: "smooth" }); }
+});
+$("bericht-drucken").addEventListener("click", () => {
+  let box = $("druck"); if (!box) { box = document.createElement("div"); box.id = "druck"; document.body.appendChild(box); }
+  berichtRendern(box); document.body.classList.add("druckmodus"); window.print();
+  setTimeout(() => document.body.classList.remove("druckmodus"), 500);
+});
 
 start();

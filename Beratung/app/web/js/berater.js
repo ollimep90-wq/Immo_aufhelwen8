@@ -20,7 +20,7 @@
     ["SL", "Saarland"], ["SN", "Sachsen"], ["ST", "Sachsen-Anhalt"], ["SH", "Schleswig-Holstein"], ["TH", "Thüringen"]];
   const TABS = [["ueberblick", "Überblick", null], ["haushalt", "Haushalt & Netto", "haushalt"], ["budget", "Budget", "budget"],
     ["vorsorge", "Vermögen & Vorsorge", "altersvorsorge"], ["risiko", "Risiko-Check", "risiko"],
-    ["absicherung", "Absicherung", "absicherung_bewertung"], ["ziele", "Ziele & Notizen", "ziele"], ["zugang", "Zugang & Daten", null]];
+    ["absicherung", "Absicherung", "absicherung_bewertung"], ["ziele", "Ziele & Notizen", "ziele"], ["bericht", "Kundenbericht", null], ["zugang", "Zugang & Daten", null]];
 
   let ich = null, akte = null, tab = "ueberblick", fragenVoll = null, geaendert = false;
 
@@ -263,6 +263,17 @@
         `</div><div class="card"><h2 style="margin-top:0">Notizen zum Gespräch</h2><textarea data-f="notizen" aria-label="Notizen" style="min-height:200px"></textarea>
         <p class="hint">Keine Gesundheitsdetails hier notieren.</p></div>`;
     },
+    bericht() {
+      const b = daten("bericht") || {};
+      return `<p class="info">Der Kundenbericht bereitet die Ergebnisse verständlich und mit Grafiken für den Kunden auf. Er enthält keine internen Notizen und keine einzelnen Risiko-Antworten.</p>
+        <div class="card"><label for="schritte" style="margin-top:0">Nächste Schritte <span class="hint">sieht der Kunde; eine Zeile je Schritt. Empfehlungen zu Versicherungen nur von Jan.</span></label>
+        <textarea id="schritte" maxlength="2000">${esc(b.naechste_schritte || "")}</textarea>
+        <div class="nav" style="justify-content:flex-start"><button type="button" class="quiet" id="b-vorschau">Vorschau aktualisieren</button>
+        <button type="button" class="quiet" id="b-druck">Drucken oder als PDF</button>
+        ${akte.kunde ? '<button type="button" class="primary" id="b-frei">Für den Kunden freigeben</button>' : ""}</div>
+        <p class="hint" id="b-status">${b.freigegeben_am ? "Zuletzt freigegeben am " + datum(b.freigegeben_am) + ". Der Kunde sieht den Bericht in seinem Bereich." : akte.kunde ? "Noch nicht freigegeben." : "Freigeben geht, sobald der Kunde einen Zugang hat. Als PDF geht es jetzt schon."}</p></div>
+        <div id="b-ansicht"></div>`;
+    },
     zugang() {
       const e = akte.einwilligung;
       return `<div class="card"><h2 style="margin-top:0">Kundenzugang</h2>${akte.kunde ? `<p>Aktiv: <b>${esc(akte.kunde.name)}</b> (${esc(akte.kunde.email)})</p>` :
@@ -314,6 +325,49 @@
   };
 
   /* ---------- Tabs: Knöpfe ---------- */
+  /* ---------- Kundenbericht: Schnappschuss nur mit freigebbaren Werten ---------- */
+  const THEMA = { bu: "Deine Arbeitskraft", grundfaehigkeit: "Deine Arbeitskraft", risikoleben: "Deine Familie, falls dir etwas passiert",
+    pkv: "Gesundheit und Krankenhaus", krankenzusatz: "Gesundheit und Krankenhaus", zahnzusatz: "Gesundheit und Krankenhaus", unfall: "Unfall",
+    rechtsschutz: "Rechtsstreit", hausrat: "Deine Einrichtung", wohngebaeude: "Dein Haus", haftpflicht: "Schäden an anderen (Haftpflicht)",
+    tierkranken: "Dein Haustier", tier_op: "Dein Haustier" };
+  function schnappschuss(text) {
+    const h = daten("haushalt") || {}, hr = daten("haushalt") ? haushaltRechnung(h) : null, bIn = daten("budget"), va = vorab() || {};
+    const av = daten("altersvorsorge") || {};
+    let budget = null;
+    if (bIn) {
+      const b = budgetRechnung(bIn, hr);
+      budget = { einnahmen: b.einnahmen, fixkosten: b.fixkosten, sparen: num(bIn.sparen), ueberschuss1: b.ueberschuss1, ueberschuss2: b.ueberschuss2,
+        sparquote: b.sparquote, reserve_monate: zahl(b.reserve_monate), ausgaben: FIX.map(([k, n]) => ({ name: n, betrag: num(bIn[k]) })) };
+    } else if (va.budget) {
+      const fk = va.fixkosten && typeof va.fixkosten === "object" ? va.fixkosten : {};
+      budget = { einnahmen: zahl(va.budget.einnahmen), fixkosten: zahl(va.fixkosten_summe), sparen: zahl(va.sparen), ueberschuss1: zahl(va.budget.ueberschuss1),
+        ueberschuss2: zahl(va.budget.ueberschuss2), sparquote: zahl(va.budget.sparquote), reserve_monate: zahl(va.budget.reserve_monate),
+        ausgaben: FIX.map(([k, n]) => ({ name: n, betrag: zahl(fk[k]) })) };
+    }
+    const vs = daten("altersvorsorge") ? vorsorgeRechnung(av, h, hr) : null;
+    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: num(av.gesetzl), luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
+      rentenalter: num(av.rentenalter) || 67, annahmen: { rendite: vs.annahmen.rendite, kosten: vs.annahmen.kosten, inflation: vs.annahmen.inflation } } : null;
+    const zd = daten("ziele");
+    const ziele = zd ? [1, 2, 3, 4, 5].map((i) => ({ text: zd["z" + i], jahr: num(zd["zj" + i]) || null, betrag: num(zd["zb" + i]) || null })).filter((z) => z.text)
+      : (Array.isArray(va.wuensche) ? va.wuensche.filter((w) => w && w.text).map((w) => ({ text: String(w.text), jahr: zahl(w.jahr) || null })) : []);
+    const rk = risikoRechnung(daten("risiko")) || {}, ab = daten("absicherung_bewertung") || {};
+    const themen = {};
+    Object.keys(THEMA).forEach((k) => {
+      if (!rk[k] && !ab["s_" + k]) return;
+      const t = themen[THEMA[k]] = themen[THEMA[k]] || { name: THEMA[k], quote: -1, einschaetzung: [] };
+      if (rk[k] && rk[k].quote > t.quote) { t.quote = rk[k].quote; t.ampel = rk[k].ampel; }
+      if (ab["s_" + k]) t.einschaetzung.push(ARTEN[k] + ": " + (BEW[ab["s_" + k]] || ""));
+    });
+    const absicherung = Object.values(themen).sort((a, z) => z.quote - a.quote).map((t) => ({ name: t.name, ampel: AMP(t.ampel), einschaetzung: t.einschaetzung.join(", ") }));
+    const vermoegen = { vermoegen: num(bIn && bIn.liquide) + num(av.depot) + num(av.immobilien) + num(av.sonstverm), schulden: num(av.schulden) };
+    return { erstellt: Date.now() / 1000, berater: ich.name, vorname: h.name1 || (va.person && va.person.vorname) || "",
+      budget, vorsorge, ziele, absicherung, vermoegen, naechste_schritte: text };
+  }
+  function berichtZeigen(ziel, snap) {
+    if (!$("bericht-css")) { const st = document.createElement("style"); st.id = "bericht-css"; st.textContent = Bericht.CSS; document.head.appendChild(st); }
+    ziel.innerHTML = Bericht.html(snap, { marke: document.querySelector(".marke") ? document.querySelector(".marke").innerHTML : "" });
+  }
+
   const BINDEN = {
     ueberblick() {
       $("drucken").addEventListener("click", () => window.print());
@@ -328,6 +382,30 @@
     budget() { uebernehmen((va) => Object.assign({}, va.fixkosten, { sparen: va.sparen, liquide: va.vermoegen && va.vermoegen.liquide, sonstige: va.einkommen && va.einkommen.sonstige })); },
     vorsorge() { uebernehmen((va) => ({ depot: va.vermoegen && va.vermoegen.depot, sonstverm: va.vermoegen && va.vermoegen.sonstiges,
       schulden: va.vermoegen && va.vermoegen.schulden, gesetzl: va.vermoegen && va.vermoegen.rente_erwartet, rentenalter: va.ruhestand_alter })); },
+    bericht() {
+      // vor jeder Vorschau/Freigabe frisch laden (z. B. Jans neue Bewertung)
+      const auffrischen = async () => { try { const n = await api.get("/api/akten/" + akte.id); akte.abschnitte = n.abschnitte; } catch (e) { fehler(e.message); } };
+      const vorschau = async () => { await auffrischen(); berichtZeigen($("b-ansicht"), schnappschuss($("schritte").value.trim())); };
+      vorschau();
+      $("b-vorschau").addEventListener("click", vorschau);
+      $("b-druck").addEventListener("click", async () => {
+        await vorschau();
+        let box = $("druck"); if (!box) { box = document.createElement("div"); box.id = "druck"; document.body.appendChild(box); }
+        berichtZeigen(box, schnappschuss($("schritte").value.trim()));
+        document.body.classList.add("druckmodus"); window.print(); setTimeout(() => document.body.classList.remove("druckmodus"), 500);
+      });
+      if ($("b-frei")) $("b-frei").addEventListener("click", async () => {
+        if (!confirm("Bericht für den Kunden freigeben? Er sieht ihn dann in seinem Bereich.")) return;
+        await vorschau();
+        const snap = schnappschuss($("schritte").value.trim());
+        const d = { naechste_schritte: snap.naechste_schritte, schnappschuss: snap, freigegeben_am: Date.now() / 1000 };
+        try {
+          const r = await api.put(`/api/akten/${akte.id}/abschnitte/bericht`, { daten: d, version: version("bericht") });
+          akte.abschnitte.bericht = { daten: d, version: r.version };
+          $("b-status").textContent = "Freigegeben am " + datum(d.freigegeben_am) + ". Der Kunde sieht den Bericht in seinem Bereich."; fehler();
+        } catch (e) { fehler(e.message); }
+      });
+    },
     ziele() { uebernehmen((va) => { const o = {}; (va.wuensche || []).forEach((w, i) => { o["z" + (i + 1)] = w.text; o["zj" + (i + 1)] = w.jahr || ""; }); if (va.sorge) o.notizen = "Sorge laut Vorab-Check: " + va.sorge; return o; }); },
     async zugang() {
       if ($("einladen")) $("einladen").addEventListener("click", async () => {

@@ -88,12 +88,19 @@ html = KOPF.replace("%TITEL%", "Dein Finanz-Check") + f'''<div class="wrap">
   </form>
 </div>
 <p class="err" id="lade-fehler" role="alert"></p>
+<div class="card" id="bericht-box" hidden>
+  <h2 style="margin-top:0">Dein Finanzbericht ist da</h2>
+  <p class="hint">Deine Ergebnisse aus der Beratung, übersichtlich mit Grafiken.</p>
+  <div class="nav" style="justify-content:flex-start"><button type="button" class="primary" id="bericht-zeigen">Ansehen</button><button type="button" class="ghost" id="bericht-drucken">Drucken oder als PDF</button></div>
+</div>
+<div id="bericht-ansicht" hidden></div>
 {form}
 <footer><span class="ph">[Impressum]</span> · <span class="ph">[Datenschutz]</span> · Rechengrößen Stand 2026. Netto aus Brutto ist eine Schätzung.</footer>
 </div>
 <script src="/js/api.js"></script>
 <script src="/js/rechenkern.js"></script>
 <script src="/js/fragen.js"></script>
+<script src="/js/bericht.js"></script>
 <script src="/js/kunde_check.js"></script>
 </body></html>
 '''
