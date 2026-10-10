@@ -35,7 +35,7 @@ def test_ohne_header_abgelehnt(umgebung):
 
 def test_login_falsch_und_bremse(umgebung):
     c = client()
-    for _ in range(5):
+    for _ in range(10):
         assert c.post("/api/login", json={"email": "oliver@x.de", "passwort": "falsch"}, headers=H).status_code == 401
     assert c.post("/api/login", json={"email": "oliver@x.de", "passwort": PW}, headers=H).status_code == 429
 
@@ -64,12 +64,13 @@ def test_ablauf_akte_einladung_einwilligung(umgebung):
     assert oli.put(f"/api/akten/{akte}/abschnitte/unsinn", json={"daten": {}}, headers=H).status_code == 404
     # Versionskonflikt
     v1 = oli.put(f"/api/akten/{akte}/abschnitte/budget", json={"daten": {"a": 1}}, headers=H).json()["version"]
+    assert oli.put(f"/api/akten/{akte}/abschnitte/budget", json={"daten": {"a": 9}}, headers=H).status_code == 409   # ohne Version kein Überschreiben
     assert jan.put(f"/api/akten/{akte}/abschnitte/budget", json={"daten": {"a": 2}, "version": v1}, headers=H).status_code == 200
     assert oli.put(f"/api/akten/{akte}/abschnitte/budget", json={"daten": {"a": 3}, "version": v1}, headers=H).status_code == 409
     # Einladung
     e = oli.post(f"/api/akten/{akte}/einladung", json={"email": "Kunde@Mail.de", "name": "Lena"}, headers=H).json()
     k = TestClient(appmod.app, base_url="https://testserver")
-    assert k.get(f"/api/einladung/{e['token']}").json()["email"] == "kunde@mail.de"
+    assert k.post("/api/einladung/pruefen", json={"token": e["token"]}, headers=H).json()["email"] == "kunde@mail.de"
     assert k.post("/api/einladung/annehmen", json={"token": e["token"], "passwort": "kunde-passwort"}, headers=H).status_code == 200
     assert k.post("/api/einladung/annehmen", json={"token": e["token"], "passwort": "kunde-passwort"}, headers=H).status_code == 404
     # Kunde: ohne Einwilligung kein Speichern
@@ -78,6 +79,8 @@ def test_ablauf_akte_einladung_einwilligung(umgebung):
     assert k.post("/api/kunde/einwilligung", json={"text_version": "alt", "text": "x"}, headers=H).status_code == 409
     assert k.post("/api/kunde/einwilligung", json={"text_version": vers, "text": "Ich bin einverstanden"}, headers=H).status_code == 200
     assert k.put("/api/kunde/vorab", json={"daten": {"netto": 1}}, headers=H).status_code == 200
+    r = k.put("/api/kunde/vorab", content=b'{"daten": {"x": NaN}, "version": 1}', headers={**H, "Content-Type": "application/json"})
+    assert r.status_code in (400, 422), r.status_code
     # Kunde kommt nicht an Berater-Endpunkte
     assert k.get("/api/akten").status_code == 403
     assert k.get(f"/api/akten/{akte}").status_code == 403
@@ -89,6 +92,16 @@ def test_ablauf_akte_einladung_einwilligung(umgebung):
     a = oli.get(f"/api/akten/{akte}").json()
     assert a["abschnitte"] == {} and a["einwilligung"]["widerrufen"]   # auch Beraterabschnitte gelöscht
     assert k.put("/api/kunde/vorab", json={"daten": {"netto": 2}}, headers=H).status_code == 403
+    # nach Widerruf schreibt auch kein Berater mehr (auch nicht mit alter Version)
+    assert oli.put(f"/api/akten/{akte}/abschnitte/budget", json={"daten": {"a": 1}, "version": 3}, headers=H).status_code == 409
+    assert oli.put(f"/api/akten/{akte}/abschnitte/budget", json={"daten": {"a": 1}}, headers=H).status_code == 409
+    exp = k.get("/api/kunde/export").json()
+    assert exp["angaben"] == {} and {"name": "Oliver"} in exp["berater_mit_zugriff"]
+    # Zuordnen/Entziehen nur Ersteller oder Admin
+    assert jan.post(f"/api/akten/{akte}/berater", json={"user_id": 1}, headers=H).status_code == 403
+    assert oli.delete(f"/api/akten/{akte}/berater/{jan_id}", headers=H).status_code == 200
+    assert jan.get(f"/api/akten/{akte}").status_code == 404
+    assert oli.post(f"/api/akten/{akte}/berater", json={"user_id": jan_id}, headers=H).status_code == 200
     # Löschen: nur Ersteller oder Admin
     assert jan.delete(f"/api/akten/{akte}", headers=H).status_code == 403
     assert oli.delete(f"/api/akten/{akte}", headers=H).status_code == 200
@@ -120,3 +133,55 @@ def test_statische_dateien_nur_web(umgebung):
     c = TestClient(appmod.app, base_url="https://testserver")
     for pfad in ("/../server/app.py", "/server/app.py", "/tools/sync.py", "/%2e%2e/server/app.py"):
         assert c.get(pfad).status_code == 404, pfad
+
+
+def test_zweite_einladung_kapert_nicht(umgebung):
+    oli = client("oliver@x.de")
+    akte = oli.post("/api/akten", json={"titel": "A"}, headers=H).json()["id"]
+    t1 = oli.post(f"/api/akten/{akte}/einladung", json={"email": "a@k.de", "name": "A"}, headers=H).json()["token"]
+    t2 = oli.post(f"/api/akten/{akte}/einladung", json={"email": "b@k.de", "name": "B"}, headers=H).json()["token"]
+    k = TestClient(appmod.app, base_url="https://testserver")
+    # nur die neueste Einladung gilt
+    assert k.post("/api/einladung/annehmen", json={"token": t1, "passwort": "kunde-passwort"}, headers=H).status_code == 404
+    assert k.post("/api/einladung/annehmen", json={"token": t2, "passwort": "kunde-passwort"}, headers=H).status_code == 200
+    assert oli.post(f"/api/akten/{akte}/einladung", json={"email": "c@k.de", "name": "C"}, headers=H).status_code == 409
+
+
+def test_block9_und_tiefe_abgelehnt(umgebung):
+    oli = client("oliver@x.de")
+    akte = oli.post("/api/akten", json={"titel": "A"}, headers=H).json()["id"]
+    assert oli.put(f"/api/akten/{akte}/abschnitte/risiko", json={"daten": {"q_p9_0_0_4": "3"}}, headers=H).status_code == 422
+    tief = {}
+    x = tief
+    for _ in range(50):
+        x["a"] = {}
+        x = x["a"]
+    assert oli.put(f"/api/akten/{akte}/abschnitte/notizen", json={"daten": tief}, headers=H).status_code == 422
+    r = oli.post("/api/login", json={"email": "oliver@x.de", "passwort": 123}, headers=H)
+    assert r.status_code == 422 and "input" not in r.text
+
+
+def test_bremse_normalisiert_und_begrenzt(umgebung):
+    c = client()
+    codes = [c.post("/api/login", json={"email": " oliver@x.de" + " " * i, "passwort": "falsch"}, headers=H).status_code for i in range(12)]
+    assert 429 in codes
+    appmod._versuche.clear()
+    for i in range(appmod.MAX_SCHLUESSEL + 50):
+        try:
+            appmod.bremse(f"t{i}")
+        except Exception:
+            pass
+    assert len(appmod._versuche) <= appmod.MAX_SCHLUESSEL
+
+
+def test_leerlauf_abmeldung(umgebung, monkeypatch):
+    c = client("oliver@x.de")
+    assert c.get("/api/ich").status_code == 200
+    umgebung.x("UPDATE sessions SET letzte=letzte-?", appmod.LEERLAUF + 5)
+    assert c.get("/api/ich").status_code == 401
+
+
+def test_grosse_anfrage_frueh_abgelehnt(umgebung):
+    c = client("oliver@x.de")
+    r = c.post("/api/akten", content=b"x" * (appmod.MAX_BODY + 10), headers={**H, "Content-Type": "application/json"})
+    assert r.status_code == 413

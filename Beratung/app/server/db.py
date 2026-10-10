@@ -8,6 +8,7 @@ import json, os, sqlite3, time, threading
 SCHEMA = """
 PRAGMA journal_mode=WAL;
 PRAGMA foreign_keys=ON;
+PRAGMA secure_delete=ON;
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
@@ -21,7 +22,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash TEXT PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  ablauf REAL NOT NULL
+  ablauf REAL NOT NULL,
+  letzte REAL NOT NULL DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS akten (
   id INTEGER PRIMARY KEY,
@@ -55,8 +57,8 @@ CREATE TABLE IF NOT EXISTS einladungen (
 );
 CREATE TABLE IF NOT EXISTS einwilligungen (
   id INTEGER PRIMARY KEY,
-  akte_id INTEGER NOT NULL REFERENCES akten(id) ON DELETE CASCADE,
-  user_id INTEGER NOT NULL REFERENCES users(id),
+  akte_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
   text_version TEXT NOT NULL,
   text_hash TEXT NOT NULL,
   zeit REAL NOT NULL,
@@ -71,7 +73,25 @@ CREATE TABLE IF NOT EXISTS protokoll (
 );
 """
 
-_lock = threading.Lock()
+_lock = threading.RLock()
+MAX_TIEFE = 20
+
+
+def tiefe(o, n=0):
+    if n > MAX_TIEFE:
+        raise ValueError("zu tief verschachtelt")
+    if isinstance(o, dict):
+        for v in o.values():
+            tiefe(v, n + 1)
+    elif isinstance(o, list):
+        for v in o:
+            tiefe(v, n + 1)
+
+
+def als_json(daten):
+    """Nur speichern, was später auch wieder ausgeliefert werden kann (kein NaN, begrenzte Tiefe)."""
+    tiefe(daten)
+    return json.dumps(daten, ensure_ascii=False, allow_nan=False)
 
 
 class DB:
@@ -80,6 +100,27 @@ class DB:
         self.con = sqlite3.connect(pfad, check_same_thread=False, isolation_level=None)
         self.con.row_factory = sqlite3.Row
         self.con.executescript(SCHEMA)
+        spalten = [r["name"] for r in self.con.execute("PRAGMA table_info(sessions)")]
+        if "letzte" not in spalten:
+            self.con.execute("ALTER TABLE sessions ADD COLUMN letzte REAL NOT NULL DEFAULT 0")
+
+    def tx(self):
+        """Transaktion mit Schreibsperre: with db.tx() as cur: ..."""
+        db = self
+
+        class _T:
+            def __enter__(self):
+                _lock.acquire()
+                db.con.execute("BEGIN IMMEDIATE")
+                return db.con
+
+            def __exit__(self, typ, wert, tb):
+                try:
+                    db.con.execute("ROLLBACK" if typ else "COMMIT")
+                finally:
+                    _lock.release()
+                return False
+        return _T()
 
     def q(self, sql, *args):
         with _lock:
@@ -108,22 +149,37 @@ class DB:
         return r
 
     def speichere_abschnitt(self, akte_id, schluessel, daten, user_id, version=None):
-        """Optimistische Sperre: version = zuletzt gelesene Version (None = neu)."""
-        alt = self.eins("SELECT version FROM abschnitte WHERE akte_id=? AND schluessel=?", akte_id, schluessel)
+        """Optimistische Sperre in einer Transaktion.
+        Neu anlegen nur mit version=None; ändern nur mit passender version. Sonst None (Konflikt)."""
+        js = als_json(daten)
         jetzt = time.time()
-        if alt is None:
-            self.x("INSERT INTO abschnitte (akte_id,schluessel,daten,version,geaendert_von,geaendert) VALUES (?,?,?,?,?,?)",
-                   akte_id, schluessel, json.dumps(daten, ensure_ascii=False), 1, user_id, jetzt)
-            neu = 1
-        else:
-            if version is not None and version != alt["version"]:
-                return None  # Konflikt
-            neu = alt["version"] + 1
-            self.x("UPDATE abschnitte SET daten=?, version=?, geaendert_von=?, geaendert=? WHERE akte_id=? AND schluessel=?",
-                   json.dumps(daten, ensure_ascii=False), neu, user_id, jetzt, akte_id, schluessel)
-        self.x("UPDATE akten SET geaendert=? WHERE id=?", jetzt, akte_id)
+        with self.tx() as con:
+            if version is None:
+                cur = con.execute("INSERT INTO abschnitte (akte_id,schluessel,daten,version,geaendert_von,geaendert) "
+                                  "VALUES (?,?,?,1,?,?) ON CONFLICT(akte_id,schluessel) DO NOTHING",
+                                  (akte_id, schluessel, js, user_id, jetzt))
+                if cur.rowcount != 1:
+                    return None
+                neu = 1
+            else:
+                cur = con.execute("UPDATE abschnitte SET daten=?, version=version+1, geaendert_von=?, geaendert=? "
+                                  "WHERE akte_id=? AND schluessel=? AND version=?",
+                                  (js, user_id, jetzt, akte_id, schluessel, version))
+                if cur.rowcount != 1:
+                    return None
+                neu = version + 1
+            con.execute("UPDATE akten SET geaendert=? WHERE id=?", (jetzt, akte_id))
         return neu
 
+    def aufraeumen(self, protokoll_tage, einwilligung_tage):
+        """Löschlauf: abgelaufene Sitzungen, benutzte/abgelaufene Einladungen, alte Protokoll- und Nachweisdaten."""
+        jetzt = time.time()
+        with self.tx() as con:
+            con.execute("DELETE FROM sessions WHERE ablauf < ?", (jetzt,))
+            con.execute("DELETE FROM einladungen WHERE ablauf < ? OR benutzt IS NOT NULL", (jetzt,))
+            con.execute("DELETE FROM protokoll WHERE zeit < ?", (jetzt - protokoll_tage * 86400,))
+            con.execute("DELETE FROM einwilligungen WHERE COALESCE(widerrufen, zeit) < ? "
+                        "AND akte_id NOT IN (SELECT id FROM akten)", (jetzt - einwilligung_tage * 86400,))
 
 def oeffne(pfad=None):
     return DB(pfad or os.environ.get("APP_DB", "beratung.sqlite"))

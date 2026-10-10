@@ -8,28 +8,36 @@ Rollen
 
 Start lokal:  APP_DB=dev.sqlite APP_UNSICHER=1 uvicorn server.app:app --reload
 """
-import hashlib, json, os, secrets, time, pathlib
-from collections import defaultdict, deque
+import hashlib, json, os, re, secrets, time, pathlib
+from collections import OrderedDict, deque
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHashError
 from fastapi import FastAPI, HTTPException, Request, Response, Depends
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field, EmailStr  # noqa: F401  (EmailStr optional)
+from pydantic import BaseModel, Field
 
 from . import db as dbmod
 
 WEB = pathlib.Path(__file__).resolve().parent.parent / "web"
 SESSION_DAUER = 8 * 3600
 EINLADUNG_DAUER = 14 * 24 * 3600
-COOKIE = "sid"
 UNSICHER = os.environ.get("APP_UNSICHER") == "1"   # nur lokal: Cookie ohne Secure
+COOKIE = "sid" if UNSICHER else "__Host-sid"        # __Host-: nur Secure, Pfad /, keine Domain (gegen Cookie-Tossing)
+LEERLAUF = 30 * 60                                  # Abmeldung nach 30 Minuten ohne Aktivität
+MAX_BODY = 512 * 1024
+PROTOKOLL_TAGE = int(os.environ.get("APP_PROTOKOLL_TAGE", "730"))        # Annahme, festzulegen (BETRIEB.md)
+EINWILLIGUNG_TAGE = int(os.environ.get("APP_EINWILLIGUNG_TAGE", "1095"))  # Nachweis nach Löschung, Annahme
+EMAIL_RE = re.compile(r"^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,30}$")
 
 # Einwilligungstext: Version und Wortlaut werden mit Hash gespeichert (Nachweis Art. 7 Abs. 1 DSGVO)
-EINWILLIGUNG_VERSION = "2026-10-v1"
+EINWILLIGUNG_VERSION = "2026-10-v2"
 
 ABSCHNITTE_BERATER = {"haushalt", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen"}
+# Keine Gesundheitsdaten speichern (Art. 9 DSGVO): Block 9 „Selbstbild“ des Prototyps wird nicht erfasst
+VERBOTENE_FELDER = re.compile(r"^q_p9_")
 ABSCHNITT_VERSICHERUNG = "absicherung_bewertung"
 ABSCHNITT_KUNDE = "vorab"
 ALLE_ABSCHNITTE = ABSCHNITTE_BERATER | {ABSCHNITT_VERSICHERUNG, ABSCHNITT_KUNDE}
@@ -57,6 +65,12 @@ async def sicherheit(request: Request, call_next):
     if request.method in ("POST", "PUT", "DELETE", "PATCH") and request.url.path.startswith("/api/"):
         if request.headers.get("x-requested-with") != "app":
             return JSONResponse({"detail": "Anfrage abgelehnt"}, status_code=403)
+        try:
+            laenge = int(request.headers.get("content-length") or 0)
+        except ValueError:
+            laenge = MAX_BODY + 1
+        if laenge > MAX_BODY or (laenge == 0 and request.headers.get("transfer-encoding")):
+            return JSONResponse({"detail": "Das ist zu viel Text auf einmal. Bitte kürze die Freitexte etwas."}, status_code=413)
     resp = await call_next(request)
     resp.headers["Content-Security-Policy"] = (
         "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
@@ -69,23 +83,47 @@ async def sicherheit(request: Request, call_next):
     return resp
 
 
-_versuche = defaultdict(deque)
+@app.exception_handler(RequestValidationError)
+async def eingabefehler(request: Request, exc: RequestValidationError):
+    # ohne Echo der Eingaben (sonst stünden z. B. Passwörter in der Antwort)
+    felder = sorted({".".join(str(x) for x in e.get("loc", [])[1:]) for e in exc.errors()})
+    return JSONResponse({"detail": "Bitte prüf deine Eingaben.", "felder": felder}, status_code=422)
+
+
+_versuche = OrderedDict()
+MAX_SCHLUESSEL = 10_000
 
 
 def bremse(schluessel, max_n=5, fenster=600):
-    q, jetzt = _versuche[schluessel], time.time()
+    """Begrenzt Versuche je Schlüssel (pro Prozess). Leere Einträge werden entfernt, Gesamtzahl gedeckelt."""
+    jetzt = time.time()
+    q = _versuche.pop(schluessel, None) or deque()
     while q and q[0] < jetzt - fenster:
         q.popleft()
     if len(q) >= max_n:
+        _versuche[schluessel] = q
         raise HTTPException(429, f"Zu viele Versuche. Bitte warte {fenster // 60} Minuten.")
     q.append(jetzt)
+    _versuche[schluessel] = q
+    while len(_versuche) > MAX_SCHLUESSEL:
+        _versuche.popitem(last=False)
+
+
+def ip(request):
+    return request.client.host if request.client else "-"
+
+
+def norm_email(e):
+    return (e or "").strip().lower()
 
 
 # ---------- Sitzung ----------
 
 def neue_sitzung(resp: Response, user_id):
     token = secrets.token_urlsafe(32)
-    DB.x("INSERT INTO sessions (token_hash,user_id,ablauf) VALUES (?,?,?)", h(token), user_id, time.time() + SESSION_DAUER)
+    jetzt = time.time()
+    DB.aufraeumen(PROTOKOLL_TAGE, EINWILLIGUNG_TAGE)
+    DB.x("INSERT INTO sessions (token_hash,user_id,ablauf,letzte) VALUES (?,?,?,?)", h(token), user_id, jetzt + SESSION_DAUER, jetzt)
     resp.set_cookie(COOKIE, token, max_age=SESSION_DAUER, httponly=True, samesite="strict", secure=not UNSICHER, path="/")
 
 
@@ -93,10 +131,14 @@ def nutzer(request: Request):
     token = request.cookies.get(COOKIE)
     if not token:
         raise HTTPException(401, "Nicht angemeldet")
-    s = DB.eins("SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.ablauf>? AND u.aktiv=1",
-                h(token), time.time())
-    if not s:
+    jetzt = time.time()
+    s = DB.eins("SELECT u.*, s.letzte AS _letzte FROM sessions s JOIN users u ON u.id=s.user_id "
+                "WHERE s.token_hash=? AND s.ablauf>? AND u.aktiv=1", h(token), jetzt)
+    if not s or jetzt - (s.pop("_letzte") or 0) > LEERLAUF:
+        if s is not None or token:
+            DB.x("DELETE FROM sessions WHERE token_hash=?", h(token))
         raise HTTPException(401, "Sitzung abgelaufen")
+    DB.x("UPDATE sessions SET letzte=? WHERE token_hash=?", jetzt, h(token))
     s.pop("pw_hash", None)
     return s
 
@@ -156,7 +198,7 @@ class Annahme(BaseModel):
 
 class Abschnitt(BaseModel):
     daten: dict
-    version: int | None = None
+    version: int | None = Field(default=None, ge=1, le=1_000_000_000)
 
 
 class Einwilligung(BaseModel):
@@ -164,18 +206,37 @@ class Einwilligung(BaseModel):
     text: str = Field(max_length=5000)
 
 
-def pruefe_groesse(daten):
-    if len(json.dumps(daten)) > 200_000:
+def pruefe_daten(daten):
+    try:
+        js = dbmod.als_json(daten)
+    except (ValueError, RecursionError):
+        raise HTTPException(422, "Bitte prüf deine Eingaben.")
+    if len(js) > 200_000:
         raise HTTPException(413, "Das ist zu viel Text auf einmal. Bitte kürze die Freitexte etwas.")
+
+
+def speichern_oder_409(akte_id, schluessel, daten, user_id, version, meldung):
+    v = DB.speichere_abschnitt(akte_id, schluessel, daten, user_id, version)
+    if v is None:
+        raise HTTPException(409, meldung)
+    return v
+
+
+def widerrufen(akte_id):
+    e = DB.eins("SELECT widerrufen FROM einwilligungen WHERE akte_id=? ORDER BY zeit DESC LIMIT 1", akte_id)
+    return bool(e and e["widerrufen"])
 
 
 # ---------- Anmeldung ----------
 
 @app.post("/api/login")
 def login(d: Login, request: Request, resp: Response):
-    bremse("login:" + d.email.lower())
-    bremse("ip:" + (request.client.host if request.client else "-"), max_n=20)
-    u = DB.eins("SELECT * FROM users WHERE email=? AND aktiv=1", d.email.lower().strip())
+    email = norm_email(d.email)
+    bremse("ip:" + ip(request), max_n=20)
+    if not EMAIL_RE.match(email):
+        raise HTTPException(401, "E-Mail oder Passwort falsch")
+    bremse("login:" + email, max_n=10)
+    u = DB.eins("SELECT * FROM users WHERE email=? AND aktiv=1", email)
     try:
         if not u or not u["pw_hash"]:
             ph.verify(_DUMMY, d.passwort + "x")   # gleiche Laufzeit wie bei vorhandenem Nutzer
@@ -215,10 +276,13 @@ def berater_liste(u=Depends(nur("admin", "berater"))):
 def berater_anlegen(d: NeuerBerater, u=Depends(nur("admin"))):
     if d.bereich not in ("anlage", "versicherung"):
         raise HTTPException(422, "bereich muss anlage oder versicherung sein")
-    if DB.eins("SELECT 1 AS x FROM users WHERE email=?", d.email.lower()):
+    email = norm_email(d.email)
+    if not EMAIL_RE.match(email):
+        raise HTTPException(422, "Ungültige E-Mail")
+    if DB.eins("SELECT 1 AS x FROM users WHERE email=?", email):
         raise HTTPException(409, "E-Mail existiert bereits")
     i = DB.x("INSERT INTO users (email,name,rolle,bereich,pw_hash,erstellt) VALUES (?,?,?,?,?,?)",
-             d.email.lower().strip(), d.name, "berater", d.bereich, ph.hash(d.passwort), time.time())
+             email, d.name.strip(), "berater", d.bereich, ph.hash(d.passwort), time.time())
     DB.protokoll(u["id"], None, f"berater angelegt {i}")
     return {"id": i}
 
@@ -246,13 +310,31 @@ def akte_anlegen(d: NeueAkte, u=Depends(nur("admin", "berater"))):
     return {"id": i}
 
 
+def darf_verwalten(u, a):
+    return u["rolle"] == "admin" or a["erstellt_von"] == u["id"]
+
+
 @app.post("/api/akten/{akte_id}/berater")
 def akte_zuordnen(akte_id: int, d: Zuordnung, u=Depends(nur("admin", "berater"))):
-    akte_fuer(u, akte_id)
-    if not DB.eins("SELECT 1 AS x FROM users WHERE id=? AND rolle IN ('berater','admin')", d.user_id):
+    a = akte_fuer(u, akte_id)
+    if not darf_verwalten(u, a):
+        raise HTTPException(403, "Berater zuordnen darf, wer die Akte angelegt hat, oder der Admin")
+    if not DB.eins("SELECT 1 AS x FROM users WHERE id=? AND rolle='berater' AND aktiv=1", d.user_id):
         raise HTTPException(404, "Berater nicht gefunden")
     DB.x("INSERT OR IGNORE INTO akte_berater (akte_id,user_id) VALUES (?,?)", akte_id, d.user_id)
     DB.protokoll(u["id"], akte_id, f"berater zugeordnet {d.user_id}")
+    return {"ok": True}
+
+
+@app.delete("/api/akten/{akte_id}/berater/{user_id}")
+def akte_entziehen(akte_id: int, user_id: int, u=Depends(nur("admin", "berater"))):
+    a = akte_fuer(u, akte_id)
+    if not darf_verwalten(u, a):
+        raise HTTPException(403, "Entziehen darf, wer die Akte angelegt hat, oder der Admin")
+    if user_id == a["erstellt_von"]:
+        raise HTTPException(409, "Wer die Akte angelegt hat, bleibt zugeordnet")
+    DB.x("DELETE FROM akte_berater WHERE akte_id=? AND user_id=?", akte_id, user_id)
+    DB.protokoll(u["id"], akte_id, f"berater entzogen {user_id}")
     return {"ok": True}
 
 
@@ -261,21 +343,31 @@ def einladen(akte_id: int, d: Einladung, u=Depends(nur("admin", "berater"))):
     a = akte_fuer(u, akte_id)
     if a["kunde_id"]:
         raise HTTPException(409, "Die Akte hat schon einen Kundenzugang")
+    email = norm_email(d.email)
+    if not EMAIL_RE.match(email):
+        raise HTTPException(422, "Ungültige E-Mail")
     token = secrets.token_urlsafe(24)
-    DB.x("INSERT INTO einladungen (token_hash,akte_id,email,name,ablauf) VALUES (?,?,?,?,?)",
-         h(token), akte_id, d.email.lower().strip(), d.name, time.time() + EINLADUNG_DAUER)
+    with DB.tx() as con:   # nur die neueste Einladung einer Akte gilt
+        con.execute("DELETE FROM einladungen WHERE akte_id=?", (akte_id,))
+        con.execute("INSERT INTO einladungen (token_hash,akte_id,email,name,ablauf) VALUES (?,?,?,?,?)",
+                    (h(token), akte_id, email, d.name.strip(), time.time() + EINLADUNG_DAUER))
     DB.protokoll(u["id"], akte_id, "einladung erstellt")
     return {"token": token, "pfad": f"/kunde.html#einladung={token}", "gueltig_tage": EINLADUNG_DAUER // 86400}
+
+
+def akte_daten(akte_id):
+    rows = DB.q("SELECT schluessel FROM abschnitte WHERE akte_id=?", akte_id)
+    return {r["schluessel"]: DB.abschnitt(akte_id, r["schluessel"]) for r in rows}
 
 
 @app.get("/api/akten/{akte_id}")
 def akte_lesen(akte_id: int, u=Depends(nur("admin", "berater"))):
     a = akte_fuer(u, akte_id)
-    rows = DB.q("SELECT schluessel FROM abschnitte WHERE akte_id=?", akte_id)
-    a["abschnitte"] = {r["schluessel"]: DB.abschnitt(akte_id, r["schluessel"]) for r in rows}
+    a["abschnitte"] = akte_daten(akte_id)
     a["berater"] = DB.q("SELECT u.id, u.name, u.bereich FROM akte_berater b JOIN users u ON u.id=b.user_id WHERE b.akte_id=?", akte_id)
     a["einwilligung"] = DB.eins("SELECT text_version, zeit, widerrufen FROM einwilligungen WHERE akte_id=? ORDER BY zeit DESC LIMIT 1", akte_id)
     a["kunde"] = DB.eins("SELECT name, email FROM users WHERE id=?", a["kunde_id"]) if a["kunde_id"] else None
+    a["darf_verwalten"] = darf_verwalten(u, a)
     DB.protokoll(u["id"], akte_id, "akte gelesen")
     return a
 
@@ -289,10 +381,13 @@ def abschnitt_schreiben(akte_id: int, schluessel: str, d: Abschnitt, u=Depends(n
         raise HTTPException(403, "Die Bewertung der Absicherung schreibt nur der Versicherungsmakler")
     if schluessel not in ALLE_ABSCHNITTE:
         raise HTTPException(404, "Unbekannter Abschnitt")
-    pruefe_groesse(d.daten)
-    v = DB.speichere_abschnitt(akte_id, schluessel, d.daten, u["id"], d.version)
-    if v is None:
-        raise HTTPException(409, "Inzwischen hat jemand anderes gespeichert. Bitte neu laden.")
+    if widerrufen(akte_id):
+        raise HTTPException(409, "Der Kunde hat seine Einwilligung widerrufen. Die Akte kann nicht mehr bearbeitet werden.")
+    if any(VERBOTENE_FELDER.match(k) for k in d.daten):
+        raise HTTPException(422, "Antworten zu Block 9 (Selbstbild) werden nicht gespeichert")
+    pruefe_daten(d.daten)
+    v = speichern_oder_409(akte_id, schluessel, d.daten, u["id"], d.version,
+                           "Inzwischen hat jemand anderes gespeichert. Bitte neu laden.")
     DB.protokoll(u["id"], akte_id, f"abschnitt {schluessel} v{v}")
     return {"version": v}
 
@@ -307,40 +402,52 @@ def akte_export(akte_id: int, u=Depends(nur("admin", "berater"))):
 @app.delete("/api/akten/{akte_id}")
 def akte_loeschen(akte_id: int, u=Depends(nur("admin", "berater"))):
     a = akte_fuer(u, akte_id)
-    if u["rolle"] != "admin" and a["erstellt_von"] != u["id"]:
+    if not darf_verwalten(u, a):
         raise HTTPException(403, "Löschen darf, wer die Akte angelegt hat, oder der Admin")
     kunde = a["kunde_id"]
-    DB.x("DELETE FROM akten WHERE id=?", akte_id)
-    if kunde:
-        DB.x("DELETE FROM sessions WHERE user_id=?", kunde)
-        DB.x("UPDATE users SET aktiv=0, pw_hash=NULL, email=?, name='gelöscht' WHERE id=?", f"geloescht-{kunde}@invalid", kunde)
+    with DB.tx() as con:
+        con.execute("DELETE FROM akten WHERE id=?", (akte_id,))
+        if kunde:
+            con.execute("DELETE FROM sessions WHERE user_id=?", (kunde,))
+            con.execute("UPDATE users SET aktiv=0, pw_hash=NULL, email=?, name='gelöscht' WHERE id=?", (f"geloescht-{kunde}@invalid", kunde))
     DB.protokoll(u["id"], akte_id, "akte gelöscht")
     return {"ok": True}
 
 
 # ---------- Kunde ----------
 
-@app.get("/api/einladung/{token}")
-def einladung_lesen(token: str):
-    bremse("einl:" + token[:8], max_n=20)
-    e = DB.eins("SELECT name, email FROM einladungen WHERE token_hash=? AND ablauf>? AND benutzt IS NULL", h(token), time.time())
+class TokenPruefung(BaseModel):
+    token: str = Field(max_length=200)
+
+
+@app.post("/api/einladung/pruefen")
+def einladung_lesen(d: TokenPruefung, request: Request):
+    # Token im Body statt im Pfad: landet nicht im Zugriffsprotokoll
+    bremse("ip:" + ip(request), max_n=20)
+    e = DB.eins("SELECT name, email FROM einladungen WHERE token_hash=? AND ablauf>? AND benutzt IS NULL", h(d.token), time.time())
     if not e:
         raise HTTPException(404, "Die Einladung ist ungültig oder abgelaufen")
     return e
 
 
 @app.post("/api/einladung/annehmen")
-def einladung_annehmen(d: Annahme, resp: Response):
-    bremse("einl:" + d.token[:8], max_n=20)
-    e = DB.eins("SELECT * FROM einladungen WHERE token_hash=? AND ablauf>? AND benutzt IS NULL", h(d.token), time.time())
-    if not e:
-        raise HTTPException(404, "Die Einladung ist ungültig oder abgelaufen")
-    if DB.eins("SELECT 1 AS x FROM users WHERE email=?", e["email"]):
-        raise HTTPException(409, "Für diese E-Mail gibt es schon einen Zugang. Bitte anmelden.")
-    uid = DB.x("INSERT INTO users (email,name,rolle,pw_hash,erstellt) VALUES (?,?,?,?,?)",
-               e["email"], e["name"], "kunde", ph.hash(d.passwort), time.time())
-    DB.x("UPDATE akten SET kunde_id=? WHERE id=?", uid, e["akte_id"])
-    DB.x("UPDATE einladungen SET benutzt=? WHERE token_hash=?", time.time(), h(d.token))
+def einladung_annehmen(d: Annahme, request: Request, resp: Response):
+    bremse("ip:" + ip(request), max_n=20)
+    jetzt = time.time()
+    with DB.tx() as con:
+        e = con.execute("SELECT * FROM einladungen WHERE token_hash=? AND ablauf>? AND benutzt IS NULL", (h(d.token), jetzt)).fetchone()
+        if not e:
+            raise HTTPException(404, "Die Einladung ist ungültig oder abgelaufen")
+        e = dict(e)
+        if con.execute("SELECT 1 FROM users WHERE email=?", (e["email"],)).fetchone():
+            raise HTTPException(409, "Für diese E-Mail gibt es schon einen Zugang. Bitte melde dich an.")
+        cur = con.execute("INSERT INTO users (email,name,rolle,pw_hash,erstellt) VALUES (?,?,?,?,?)",
+                          (e["email"], e["name"], "kunde", ph.hash(d.passwort), jetzt))
+        uid = cur.lastrowid
+        cur = con.execute("UPDATE akten SET kunde_id=? WHERE id=? AND kunde_id IS NULL", (uid, e["akte_id"]))
+        if cur.rowcount != 1:   # Akte hat schon einen Kunden: keine Übernahme
+            raise HTTPException(409, "Diese Einladung ist nicht mehr gültig. Bitte melde dich bei uns.")
+        con.execute("DELETE FROM einladungen WHERE akte_id=?", (e["akte_id"],))
     neue_sitzung(resp, uid)
     DB.protokoll(uid, e["akte_id"], "einladung angenommen")
     return {"ok": True}
@@ -362,7 +469,7 @@ def aktive_einwilligung(akte_id, user_id):
 def kunde_akte(u=Depends(nur("kunde"))):
     a = eigene_akte(u)
     e = aktive_einwilligung(a["id"], u["id"])
-    return {"name": u["name"], "vorab": DB.abschnitt(a["id"], ABSCHNITT_KUNDE),
+    return {"name": u["name"], "email": u["email"], "vorab": DB.abschnitt(a["id"], ABSCHNITT_KUNDE),
             "einwilligung": {"version": e["text_version"], "zeit": e["zeit"]} if e else None,
             "einwilligung_aktuell": EINWILLIGUNG_VERSION}
 
@@ -370,7 +477,7 @@ def kunde_akte(u=Depends(nur("kunde"))):
 @app.post("/api/kunde/einwilligung")
 def kunde_einwilligung(d: Einwilligung, u=Depends(nur("kunde"))):
     if d.text_version != EINWILLIGUNG_VERSION:
-        raise HTTPException(409, "Der Einwilligungstext hat sich geändert. Bitte Seite neu laden.")
+        raise HTTPException(409, "Der Einwilligungstext hat sich geändert. Bitte lade die Seite neu.")
     a = eigene_akte(u)
     DB.x("INSERT INTO einwilligungen (akte_id,user_id,text_version,text_hash,zeit) VALUES (?,?,?,?,?)",
          a["id"], u["id"], d.text_version, hashlib.sha256(d.text.encode()).hexdigest(), time.time())
@@ -383,31 +490,34 @@ def kunde_vorab(d: Abschnitt, u=Depends(nur("kunde"))):
     a = eigene_akte(u)
     if not aktive_einwilligung(a["id"], u["id"]):
         raise HTTPException(403, "Ohne Einwilligung können wir nichts speichern")
-    pruefe_groesse(d.daten)
-    v = DB.speichere_abschnitt(a["id"], ABSCHNITT_KUNDE, d.daten, u["id"], d.version)
-    if v is None:
-        raise HTTPException(409, "Deine Angaben wurden inzwischen in einem anderen Fenster geändert. Bitte lade die Seite neu.")
+    pruefe_daten(d.daten)
+    v = speichern_oder_409(a["id"], ABSCHNITT_KUNDE, d.daten, u["id"], d.version,
+                           "Deine Angaben wurden inzwischen in einem anderen Fenster geändert. Bitte lade die Seite neu.")
     DB.protokoll(u["id"], a["id"], f"vorab v{v}")
     return {"version": v}
 
 
 @app.post("/api/kunde/widerruf")
-def kunde_widerruf(resp: Response, u=Depends(nur("kunde"))):
+def kunde_widerruf(u=Depends(nur("kunde"))):
     """Widerruf: alle Angaben der Akte werden gelöscht, auch was Berater daraus übernommen haben.
-    Es bleiben die leere Akte, der Zugang und der Nachweis der Einwilligung (Art. 7 Abs. 1 DSGVO).
-    Offen (BETRIEB.md): ob Aufbewahrungspflichten eine Sperre statt Löschung verlangen."""
+    Grundlage: Die App ist ein reines Vorbereitungswerkzeug; gesetzliche Beratungsdokumentation
+    (z. B. § 22/23 FinVermV ab Auftragsannahme) wird außerhalb der App geführt (BETRIEB.md).
+    Es bleiben Zugang (Name, E-Mail) und der Nachweis der Einwilligung (Art. 7 Abs. 1 DSGVO)."""
     a = eigene_akte(u)
-    DB.x("UPDATE einwilligungen SET widerrufen=? WHERE akte_id=? AND user_id=? AND widerrufen IS NULL", time.time(), a["id"], u["id"])
-    DB.x("DELETE FROM abschnitte WHERE akte_id=?", a["id"])
+    with DB.tx() as con:
+        con.execute("UPDATE einwilligungen SET widerrufen=? WHERE akte_id=? AND user_id=? AND widerrufen IS NULL", (time.time(), a["id"], u["id"]))
+        con.execute("DELETE FROM abschnitte WHERE akte_id=?", (a["id"],))
     DB.protokoll(u["id"], a["id"], "einwilligung widerrufen, alle angaben gelöscht")
     return {"ok": True}
 
 
 @app.get("/api/kunde/export")
 def kunde_export(u=Depends(nur("kunde"))):
+    """Alle in der App gespeicherten Daten zur Person (Hilfe für Art. 15/20 DSGVO)."""
     a = eigene_akte(u)
     DB.protokoll(u["id"], a["id"], "selbstauskunft")
-    return {"name": u["name"], "email": u["email"], "vorab": DB.abschnitt(a["id"], ABSCHNITT_KUNDE),
+    return {"name": u["name"], "email": u["email"], "angaben": akte_daten(a["id"]),
+            "berater_mit_zugriff": DB.q("SELECT u.name FROM akte_berater b JOIN users u ON u.id=b.user_id WHERE b.akte_id=?", a["id"]),
             "einwilligungen": DB.q("SELECT text_version, zeit, widerrufen FROM einwilligungen WHERE user_id=?", u["id"])}
 
 

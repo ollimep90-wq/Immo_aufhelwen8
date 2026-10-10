@@ -25,6 +25,10 @@
   let ich = null, akte = null, tab = "ueberblick", fragenVoll = null, geaendert = false;
 
   /* ---------- Hilfen ---------- */
+  // Werte aus Kundendaten nie ungeprüft in HTML/Attribute: Ampel nur aus fester Liste, Zahlen nur als Zahl
+  const AMP = (x) => (["rot", "gelb", "gruen", "keine"].includes(x) ? x : "keine");
+  const zahl = (x) => { const n = Number(x); return isFinite(n) ? n : null; };
+  const monate = (x) => { const n = zahl(x); return n == null ? "–" : n.toLocaleString("de-DE", { maximumFractionDigits: 1 }); };
   const daten = (s) => (akte.abschnitte[s] && akte.abschnitte[s].daten) || null;
   const version = (s) => (akte.abschnitte[s] && akte.abschnitte[s].version) || null;
   const vorab = () => { const v = daten("vorab"); return v && v.auswertung; };
@@ -75,7 +79,7 @@
   function risikoRechnung(r) {
     if (!r || !fragenVoll) return null;
     const k = filterKontext(), antworten = {};
-    fragenVoll.fragen.filter((q) => sichtbar(q, k)).forEach((q) => {
+    fragenVoll.fragen.filter((q) => q.block !== 9 && sichtbar(q, k)).forEach((q) => {
       const v = r["q_" + q.id];
       if (v === undefined || v === "") return;
       antworten[q.id] = v === "na" ? null : Number(v);
@@ -119,7 +123,9 @@
       zeigeTab(b.dataset.tab);
     }));
     const abschnitt = TABS.find(([k]) => k === t)[2];
-    const darfSchreiben = abschnitt && !(abschnitt === "absicherung_bewertung" && ich.bereich !== "versicherung");
+    const gesperrt = !!(akte.einwilligung && akte.einwilligung.widerrufen);
+    const darfSchreiben = abschnitt && !gesperrt && !(abschnitt === "absicherung_bewertung" && ich.bereich !== "versicherung");
+    if (gesperrt) fehler("Der Kunde hat seine Einwilligung widerrufen. Die Angaben sind gelöscht, die Akte ist nur noch lesbar.");
     $("speicher").hidden = !darfSchreiben; $("speicher-status").textContent = "";
     $("inhalt").innerHTML = RENDER[t]();
     const box = $("inhalt");
@@ -161,7 +167,7 @@
         <div><small>Überschuss I</small><b>${eur(bb.ueberschuss1)}</b><small>${pct(bb.quote1)}</small></div>
         <div><small>Sparquote</small><b>${pct(bb.sparquote)}</b></div>
         <div><small>Überschuss II</small><b>${eur(bb.ueberschuss2)}</b><small>${pct(bb.quote2)}</small></div>
-        <div><small>Notreserve</small><b><span class="amp ${bb.reserve_ampel}"></span>${bb.reserve_monate == null ? "–" : bb.reserve_monate.toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " Mon."}</b></div></div>`;
+        <div><small>Notreserve</small><b><span class="amp ${AMP(bb.reserve_ampel)}"></span>${monate(bb.reserve_monate)} Mon.</b></div></div>`;
       html += "</div>";
       html += `<div class="card"><h2 style="margin-top:0">Altersvorsorge</h2>${vs ? `<div class="kpi">
         <div><small>Lücke heute</small><b>${eur(vs.luecke)}</b><small>pro Monat, heutige Kaufkraft</small></div>
@@ -171,12 +177,12 @@
       html += `<div class="card"><h2 style="margin-top:0">Absicherung</h2>`;
       if (arten.length) html += `<table><thead><tr><th>Bereich</th><th class="n">Betroffenheit</th><th>Bewertung Jan</th></tr></thead><tbody>` +
         arten.map((k) => `<tr><td><span class="amp ${rk[k].ampel}"></span>${ARTEN[k]}</td><td class="n">${pct(rk[k].quote)}</td><td>${esc(BEW[ab["s_" + k]] || "–")}</td></tr>`).join("") + "</tbody></table>";
-      else if (va && va.risiko) html += '<p class="hint">Nur Kurzcheck des Kunden vorhanden:</p>' + Object.entries(va.risiko.ergebnis || {}).map(([k, e]) =>
-        `<div><span class="amp ${e.ampel}"></span>${esc(Fragen.THEMEN[k] || k)} · ${pct(e.quote)}</div>`).join("");
+      else if (va && va.risiko && va.risiko.ergebnis && typeof va.risiko.ergebnis === "object") html += '<p class="hint">Nur Kurzcheck des Kunden vorhanden:</p>' + Object.entries(va.risiko.ergebnis).map(([k, e]) =>
+        `<div><span class="amp ${AMP(e && e.ampel)}"></span>${esc(Fragen.THEMEN[k] || k)} · ${pct(zahl(e && e.quote))}</div>`).join("");
       else html += '<p class="hint">Risiko-Check noch nicht ausgefüllt.</p>';
       html += "</div>";
       const zl = [1, 2, 3, 4, 5].map((i) => ziele["z" + i]).filter(Boolean);
-      const vw = va && va.wuensche ? va.wuensche.map((w) => w.text + (w.jahr ? " · " + w.jahr : "")) : [];
+      const vw = va && Array.isArray(va.wuensche) ? va.wuensche.filter((w) => w && typeof w === "object").map((w) => String(w.text || "") + (w.jahr ? " · " + w.jahr : "")) : [];
       html += `<div class="card"><h2 style="margin-top:0">Ziele</h2>${(zl.length ? zl : vw).map((z) => `<div>· ${esc(z)}</div>`).join("") || '<p class="hint">Noch keine.</p>'}</div>`;
       html += `<div class="nav"><button type="button" class="quiet" id="drucken">Ergebnisbogen drucken</button></div>`;
       return html;
@@ -227,7 +233,12 @@
       fragenVoll.bloecke.forEach((b) => {
         const qs = fragenVoll.fragen.filter((q) => q.block === b.nr && sichtbar(q, k));
         if (!qs.length) return;
-        html += `<div class="card"><h2 style="margin-top:0">${b.nr} · ${esc(b.titel)}</h2>` + (b.nr === 9 ? '<p class="note">Selbstbild und eigene Erfahrungen: nur im Gespräch mit Jan, keine Gesundheitsdetails notieren.</p>' : "") +
+        if (b.nr === 9) {   // Gesundheitsbezug (Art. 9 DSGVO): nur als Gesprächsimpuls, Antworten werden nicht gespeichert
+          html += `<div class="card"><h2 style="margin-top:0">${b.nr} · ${esc(b.titel)}</h2><p class="note">Nur als Gesprächsimpuls. Antworten werden bewusst nicht gespeichert und fließen nicht in die Wertung ein.</p>` +
+            qs.map((q) => `<p class="q">${esc(q.text)}</p>`).join("") + "</div>";
+          return;
+        }
+        html += `<div class="card"><h2 style="margin-top:0">${b.nr} · ${esc(b.titel)}</h2>` +
           qs.map((q) => `<p class="q" id="l_${q.id}">${esc(q.text)}${q.quelle === "neu" ? ' <span class="badge">neu</span>' : ""}</p>
           <div class="seg" role="radiogroup" aria-labelledby="l_${q.id}">${skala(q).map((s) => `<label><input type="radio" name="q_${q.id}" data-f="q_${q.id}" value="${s.wert === null ? "na" : s.wert}"><span>${s.text}</span></label>`).join("")}</div>`).join("") + "</div>";
       });
@@ -256,12 +267,13 @@
         <div class="nav" style="justify-content:flex-start"><button type="button" class="primary" id="einladen">Einladungslink erzeugen</button></div>
         <p id="einladung-link" class="info" hidden></p>`}
         <p>Einwilligung: ${e ? (e.widerrufen ? `<span class="err">widerrufen am ${datum(e.widerrufen)}</span>` : `erteilt am ${datum(e.zeit)} (Text ${esc(e.text_version)})`) : "keine"}</p></div>
-        <div class="card"><h2 style="margin-top:0">Berater</h2><p>${akte.berater.map((b) => esc(b.name) + (b.bereich ? ` <span class="badge">${b.bereich}</span>` : "")).join(", ")}</p>
-        <div class="row"><div><label for="zuordnen-wer">Weiteren Berater zuordnen</label><select id="zuordnen-wer"></select></div>
-        <div style="align-self:end"><button type="button" class="quiet" id="zuordnen">Zuordnen</button></div></div></div>
+        <div class="card"><h2 style="margin-top:0">Berater mit Zugriff</h2><table><tbody>${akte.berater.map((b) => `<tr><td>${esc(b.name)} <span class="badge">${esc(b.bereich || "")}</span></td>
+        <td class="n">${akte.darf_verwalten && b.id !== akte.erstellt_von ? `<button type="button" class="ghost entziehen" data-id="${Number(b.id)}">Zugriff entziehen</button>` : ""}</td></tr>`).join("")}</tbody></table>
+        ${akte.darf_verwalten ? `<div class="row"><div><label for="zuordnen-wer">Weiteren Berater zuordnen</label><select id="zuordnen-wer"></select></div>
+        <div style="align-self:end"><button type="button" class="quiet" id="zuordnen">Zuordnen</button></div></div>` : '<p class="hint">Zuordnen darf, wer die Akte angelegt hat.</p>'}</div>
         <div class="card"><h2 style="margin-top:0">Daten</h2><div class="nav" style="justify-content:flex-start">
         <button type="button" class="quiet" id="export">Akte exportieren (JSON)</button>
-        <button type="button" class="danger" id="loeschen">Akte endgültig löschen</button></div>
+        ${akte.darf_verwalten ? '<button type="button" class="danger" id="loeschen">Akte endgültig löschen</button>' : ""}</div>
         <p class="hint">Löschen entfernt alle Angaben und den Kundenzugang. Das lässt sich nicht rückgängig machen.</p></div>`;
     }
   };
@@ -281,7 +293,7 @@
       $("budget-erg").innerHTML = b ? `<div><small>Einnahmen</small><b>${eur(b.einnahmen)}</b></div><div><small>Feste Ausgaben</small><b>${eur(b.fixkosten)}</b></div>
         <div><small>Überschuss I</small><b>${eur(b.ueberschuss1)}</b><small>${pct(b.quote1)}</small></div><div><small>Sparquote</small><b>${pct(b.sparquote)}</b></div>
         <div><small>Überschuss II</small><b>${eur(b.ueberschuss2)}</b><small>${pct(b.quote2)}</small></div>
-        <div><small>Notreserve</small><b><span class="amp ${b.reserve_ampel}"></span>${b.reserve_monate == null ? "–" : b.reserve_monate.toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " Monate"}</b></div>` : "";
+        <div><small>Notreserve</small><b><span class="amp ${AMP(b.reserve_ampel)}"></span>${monate(b.reserve_monate)} Monate</b></div>` : "";
     },
     vorsorge() {
       const h = daten("haushalt"), vs = vorsorgeRechnung(lies($("inhalt")), h, haushaltRechnung(h));
@@ -323,19 +335,25 @@
           fehler();
         } catch (e) { fehler(e.message); }
       });
-      const alle = await api.get("/api/berater");
-      const schon = akte.berater.map((b) => b.id);
-      $("zuordnen-wer").innerHTML = alle.filter((b) => !schon.includes(b.id)).map((b) => `<option value="${b.id}">${esc(b.name)}</option>`).join("") || "<option value=''>–</option>";
-      $("zuordnen").addEventListener("click", async () => {
-        const id = Number($("zuordnen-wer").value); if (!id) return;
-        try { await api.post(`/api/akten/${akte.id}/berater`, { user_id: id }); oeffneAkte(akte.id, "zugang"); } catch (e) { fehler(e.message); }
-      });
+      document.querySelectorAll(".entziehen").forEach((k) => k.addEventListener("click", async () => {
+        if (!confirm("Diesem Berater den Zugriff auf die Akte entziehen?")) return;
+        try { await api.del(`/api/akten/${akte.id}/berater/${k.dataset.id}`); oeffneAkte(akte.id, "zugang"); } catch (e) { fehler(e.message); }
+      }));
+      if ($("zuordnen")) {
+        const alle = await api.get("/api/berater");
+        const schon = akte.berater.map((b) => b.id);
+        $("zuordnen-wer").innerHTML = alle.filter((b) => !schon.includes(b.id) && b.bereich).map((b) => `<option value="${Number(b.id)}">${esc(b.name)}</option>`).join("") || "<option value=''>–</option>";
+        $("zuordnen").addEventListener("click", async () => {
+          const id = Number($("zuordnen-wer").value); if (!id) return;
+          try { await api.post(`/api/akten/${akte.id}/berater`, { user_id: id }); oeffneAkte(akte.id, "zugang"); } catch (e) { fehler(e.message); }
+        });
+      }
       $("export").addEventListener("click", async () => {
         const d = await api.get(`/api/akten/${akte.id}/export`);
         const url = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: "application/json" }));
         const a = document.createElement("a"); a.href = url; a.download = `akte-${akte.id}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 2000);
       });
-      $("loeschen").addEventListener("click", async () => {
+      if ($("loeschen")) $("loeschen").addEventListener("click", async () => {
         if (prompt(`Zum Löschen den Namen der Akte eintippen: ${akte.titel}`) !== akte.titel) return;
         try { await api.del(`/api/akten/${akte.id}`); geaendert = false; zeigeListe(); } catch (e) { fehler(e.message); }
       });

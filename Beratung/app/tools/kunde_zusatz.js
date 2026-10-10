@@ -91,7 +91,7 @@ async function start() {
   const m = location.hash.match(/einladung=([\w-]+)/);
   if (m) {
     try {
-      const e = await A.get("/api/einladung/" + m[1]);
+      const e = await A.post("/api/einladung/pruefen", { token: m[1] });
       $("einladung-titel").textContent = `Willkommen, ${e.name}`;
       $("einladung-email").value = e.email; $("einladung-email-text").textContent = e.email;
       $("einladung-box").hidden = false;

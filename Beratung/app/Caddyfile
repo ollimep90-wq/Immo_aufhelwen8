@@ -1,6 +1,9 @@
 # Domain eintragen, z. B. beratung.example.de – Caddy holt das Zertifikat selbst.
 DOMAIN.EINTRAGEN {
 	encode gzip
+	request_body {
+		max_size 512KB
+	}
 	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
 	log {
 		# keine Zugriffsprotokolle mit IP-Adressen auf Dauer: nur Fehler
