@@ -16,7 +16,7 @@ shutil.copytree(WEB, aus)
 
 def pfade(t):
     t = re.sub(r'<link rel="manifest"[^>]*>\n?', "", t)
-    for alt, neu in [('"/css/', '"css/'), ('"/js/', '"js/'), ('"/img/', '"img/'), ('"/data/', '"data/'),
+    for alt, neu in [('"/css/', '"css/'), ('"/js/', '"js/'), ('"/img/', '"img/'), ('"/data/', '"data/'), ('"/vendor/', '"vendor/'),
                      ('"/kunde.html', '"kunde.html'), ('"/berater.html', '"berater.html'),
                      ('location.href = "/"', 'location.href = "anmeldung.html"'), ('href="/"', 'href="anmeldung.html"')]:
         t = t.replace(alt, neu)
@@ -33,7 +33,7 @@ for f in list(aus.rglob("*.html")) + list(aus.rglob("*.js")):
         t = t.replace(alt, 'const m = location.hash.match(/einladung=([\\w-]+)/) || (window.DEMO && DEMO.offeneEinladung());')
     f.write_text(t)
 
-rest = [str(f.relative_to(aus)) for f in aus.rglob("*") if f.is_file() and re.search(r'"/(?!api/)[a-z]', f.read_text(errors="ignore"))]
+rest = [str(f.relative_to(aus)) for f in aus.rglob("*") if f.is_file() and f.suffix in (".html", ".js", ".css") and re.search(r'"/(?!api/)[a-z]', f.read_text(errors="ignore"))]
 assert not rest, f"absolute Pfade übrig: {rest}"
 
 qr = segno.make("otpauth://totp/Beratungs-App%20Demo?secret=DEMODEMODEMODEMODEMODEMODEMODEMO&issuer=Demo", error="m")

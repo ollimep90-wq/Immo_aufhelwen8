@@ -61,6 +61,9 @@ form = form[:va] + '''<div class="card" id="konto-box">
   </div>
 ''' + form[vb:]
 
+# Schritt 3: Kontoauszüge einlesen (lokal im Browser)
+form = ersetze(form, '<div class="card" id="fixkosten">', '<div id="kontoauszug"></div>\n  <div class="card" id="fixkosten">')
+
 skripte = re.findall(r"<script>(.*?)</script>", SRC, flags=re.S)
 js = skripte[2]
 js = ersetze(js, 'const VERSAND = { url: "", ds_url: "" };  /*VERSAND*/\n', "")
@@ -101,6 +104,8 @@ html = KOPF.replace("%TITEL%", "Dein Finanz-Check") + f'''<div class="wrap">
 <script src="/js/rechenkern.js"></script>
 <script src="/js/fragen.js"></script>
 <script src="/js/bericht.js"></script>
+<script src="/js/kontoauszug.js"></script>
+<script src="/js/kontoauszug_ui.js"></script>
 <script src="/js/kunde_check.js"></script>
 </body></html>
 '''

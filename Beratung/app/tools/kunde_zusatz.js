@@ -6,7 +6,7 @@ let version = null, eingewilligt = false, einwVersion = null;
 function formularLesen() {
   const o = { felder: {}, radios: {}, hat: [] };
   document.querySelectorAll("#f input, #f select, #f textarea").forEach((e) => {
-    if (e.id === "einwilligung") return;
+    if (e.id === "einwilligung" || e.closest("#kontoauszug")) return;   // Kontoauszug-Bereich bleibt im Browser
     if (e.type === "radio") { if (e.checked) o.radios[e.name] = e.value; }
     else if (e.type === "checkbox") { if (e.name === "hat" && e.checked) o.hat.push(e.value); }
     else if (e.id) o.felder[e.id] = e.value;
@@ -143,6 +143,19 @@ $("export0").addEventListener("click", () => exportieren("konto-status0"));
 $("widerruf").addEventListener("click", () => widerrufen("konto-status"));
 $("widerruf0").addEventListener("click", () => widerrufen("konto-status0"));
 $("nochmal").addEventListener("click", speichereEnde);
+
+/* Kontoauszüge: Monatssummen in die Felder, ausgelöst nur durch den Kunden */
+KontoauszugUI.einbauen($("kontoauszug"), { anwenden(m) {
+  const setze = (id, wert) => { const e = $(id); if (!e || !(wert > 0)) return; e.value = Math.round(wert); e.dispatchEvent(new Event("input", { bubbles: true })); };
+  ["wohnen", "essen", "mobil", "kinder", "vers", "vertr", "kredit", "urlaub", "sonst"].forEach((k) => {
+    const e = $("fk_" + k); if (e) { e.value = m[k] > 0 ? Math.round(m[k]) : ""; e.dispatchEvent(new Event("input", { bubbles: true })); } });
+  setze("sparen", m.sparen);
+  setze("sonstein", m.einnahme);
+  // Gehalt nur übernehmen, wenn es eindeutig ist: allein, Netto gewählt, Feld noch leer
+  const allein = document.querySelector('input[name="familie"][value="single"]');
+  const netto = document.querySelector('input[name="eart1"][value="netto"]');
+  if (allein && allein.checked && netto && netto.checked && !$("betrag1").value) setze("betrag1", m.gehalt);
+} });
 
 let berichtDaten = null, berichtDunkel = Bericht.standardDunkel();
 function berichtRendern(ziel) {

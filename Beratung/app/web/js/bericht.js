@@ -120,23 +120,96 @@
   }
 
   /* ---------- Bericht ---------- */
+  /* ---------- Vision Board: Ziele als Bildkacheln ---------- */
+  const SYMBOLE = {
+    haus: '<path d="M8 24 L24 10 L40 24"/><path d="M12 21 V38 H36 V21"/><path d="M21 38 V29 H27 V38"/>',
+    reise: '<path d="M6 26 L42 14 L36 22 L42 30 Z" /><path d="M20 22 L14 34 L20 32 L26 24"/>',
+    ruhestand: '<circle cx="24" cy="18" r="6"/><path d="M24 6 V8 M24 28 V30 M12 18 H14 M34 18 H36 M15.5 9.5 L17 11 M31 25 L32.5 26.5 M15.5 26.5 L17 25 M31 11 L32.5 9.5"/><path d="M8 40 Q24 32 40 40"/>',
+    bildung: '<path d="M6 20 L24 12 L42 20 L24 28 Z"/><path d="M14 24 V32 Q24 38 34 32 V24"/><path d="M42 20 V30"/>',
+    auto: '<path d="M8 30 V24 L13 16 H35 L40 24 V30 Z"/><circle cx="15" cy="32" r="4"/><circle cx="33" cy="32" r="4"/>',
+    herz: '<path d="M24 38 C10 28 8 20 12 15 C16 10 22 12 24 17 C26 12 32 10 36 15 C40 20 38 28 24 38 Z"/>',
+    schild: '<path d="M24 6 L38 12 V22 C38 31 32 37 24 41 C16 37 10 31 10 22 V12 Z"/><path d="M18 23 L23 28 L31 19"/>',
+    stern: '<path d="M24 7 L28.5 18 L40 18.5 L31 26 L34 37.5 L24 31 L14 37.5 L17 26 L8 18.5 L19.5 18 Z"/>'
+  };
+  function symbol(text) {
+    const t = String(text || "").toLowerCase();
+    if (/haus|wohnung|eigenheim|immobilie|abbezahl|kredit/.test(t)) return "haus";
+    if (/reise|urlaub|welt|ferien/.test(t)) return "reise";
+    if (/rente|ruhestand|aufhören|aufhoeren|früher|frueher|arbeit/.test(t)) return "ruhestand";
+    if (/kind|studium|ausbildung|schule|bildung/.test(t)) return "bildung";
+    if (/auto|wagen|fahrzeug|motorrad/.test(t)) return "auto";
+    if (/hochzeit|heirat|familie|baby/.test(t)) return "herz";
+    if (/reserve|notgroschen|sicherheit|absicher/.test(t)) return "schild";
+    return "stern";
+  }
+  function visionBoard(ziele, v, jahr, wir) {
+    const kacheln = (ziele || []).filter((x) => x && x.text).map((x) => ({ text: x.text, jahr: zahl(x.jahr) || null, betrag: zahl(x.betrag) || null, sym: symbol(x.text) }));
+    if (v && zahl(v.wunsch) > 0) {
+      const r = kacheln.find((k) => k.sym === "ruhestand");
+      const zusatz = `${eur(v.wunsch)} im Monat zum Leben`;
+      if (r) r.unter = zusatz; else kacheln.push({ text: wir ? "Ein entspannter Ruhestand" : "Ein entspannter Ruhestand", jahr: null, sym: "ruhestand", unter: zusatz });
+    }
+    if (!kacheln.length) return "";
+    const farben = [F.spar, F.fix, F.frei];
+    return `<div class="b-board">${kacheln.map((k, i) => { const f = farben[i % farben.length];
+      return `<div class="b-vision" style="--vf:${f}"><svg viewBox="0 0 48 48" width="52" height="52" aria-hidden="true" fill="none" stroke="${f}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${SYMBOLE[k.sym]}</svg>
+        <div><b>${esc(k.text)}</b><span>${[k.jahr ? `${k.jahr}${k.jahr > jahr ? ` · in ${k.jahr - jahr} Jahren` : ""}` : "", k.betrag ? eur(k.betrag) : "", k.unter || ""].filter(Boolean).map(esc).join(" · ")}</span></div></div>`; }).join("")}</div>`;
+  }
+
+  /* ---------- Weg: vom Heute über die nächsten Schritte zu den Zielen ---------- */
+  function weg(schritte, ziele, v, jahr) {
+    const punkte = [{ art: "heute", titel: "Heute", text: "Der Ausgangspunkt ist das, was schon da ist." }];
+    schritte.forEach((s, i) => punkte.push({ art: "schritt", titel: `Schritt ${i + 1}`, text: s }));
+    if (v && zahl(v.sparrate) > 0) punkte.push({ art: "schritt", titel: "Jeden Monat", text: `Rund ${eur(v.sparrate)} für das Alter zurücklegen (Rechenbeispiel).` });
+    (ziele || []).filter((x) => x && x.text).map((x) => ({ j: zahl(x.jahr), t: x.text })).filter((x) => x.j >= jahr).sort((a, b) => a.j - b.j)
+      .forEach((x) => punkte.push({ art: "ziel", titel: String(x.j), text: esc(x.t) }));   // Schritte sind schon escaped
+    if (punkte.length < 2) return "";
+    const farbe = { heute: F.leise, schritt: F.spar, ziel: F.fix };
+    return `<ol class="b-weg">${punkte.map((p) => `<li class="b-weg-${p.art}" style="--wf:${farbe[p.art]}"><span class="b-weg-punkt"></span><div><b>${esc(p.titel)}</b><span>${p.text}</span></div></li>`).join("")}</ol>`;
+  }
+
+  /* ---------- Bericht als Geschichte: Wo du stehst – Wo du hinwillst – Wie du dahin kommst ---------- */
   function html(d, opt) {
     opt = opt || {};
     F = opt.dunkel ? DUNKEL : HELL;
     const ak = (farbe) => ` style="--akzent:${farbe}"`;
     const jahr = new Date(d.erstellt * 1000).getFullYear();
     const b = d.budget, v = d.vorsorge, m = d.vermoegen;
+    const wir = !!(v && zahl(v.haushalt) === 2);
+    const W = wir ? { stehst: "Wo ihr steht", willst: "Wo ihr hinwollt", kommst: "Wie ihr dahin kommt", dein: "euer", euch: "euch" }
+      : { stehst: "Wo du stehst", willst: "Wo du hinwillst", kommst: "Wie du dahin kommst", dein: "dein", euch: "dich" };
+    const schritte = d.naechste_schritte ? esc(d.naechste_schritte).split(/\n+/).map((z) => z.trim()).filter(Boolean) : [];
+    const kapitel = (nr, titel, satz, farbe) => `<div class="b-kapitel" style="--kf:${farbe}"><span>${nr}</span><div><h2 class="b-kap-titel">${titel}</h2><p>${satz}</p></div></div>`;
     let h = `<article class="bericht${opt.dunkel ? " dunkel" : ""}"><div class="b-marke">${opt.marke || ""}</div>
       <header class="b-titel"><p class="b-eyebrow">Dein Finanzbericht</p><h1>${esc(d.vorname ? d.vorname + ", so steht es um dein Geld" : "So steht es um dein Geld")}</h1>
         <p>Stand ${new Date(d.erstellt * 1000).toLocaleDateString("de-DE")} · erstellt von ${esc(d.berater)}</p></header>`;
-    if (d.ziele && d.ziele.length) h += `<section${ak(F.spar)}><h2>Deine Ziele</h2><p class="b-lead">Das ist dir wichtig. Daran messen wir die Zahlen unten.</p>${zeitstrahl(d.ziele, jahr)}</section>`;
+    // Auf einen Blick
+    const blick = [
+      b ? ["Heute", zahl(b.ueberschuss2) >= 0 ? `${eur(b.ueberschuss2)} frei im Monat` : `${eur(-zahl(b.ueberschuss2))} fehlen im Monat`, F.fix] : null,
+      (d.ziele && d.ziele.length) || v ? ["Ziel", (d.ziele || []).filter((x) => x && x.text).slice(0, 2).map((x) => esc(x.text)).join(" · ") || `${eur(v.wunsch)} im Monat im Ruhestand`, F.spar] : null,
+      v || schritte.length ? ["Weg", [schritte.length ? `${schritte.length} nächste ${schritte.length === 1 ? "Schritt" : "Schritte"}` : "", v && zahl(v.sparrate) > 0 ? `${eur(v.sparrate)} im Monat fürs Alter` : ""].filter(Boolean).join(" · "), F.frei] : null
+    ].filter(Boolean);
+    if (blick.length) h += `<div class="b-blick">${blick.map(([t, x, f]) => `<div style="--bf:${f}"><small>${t}</small><b>${x}</b></div>`).join("")}</div>`;
+
+    // 1 Wo du stehst
+    h += kapitel(1, W.stehst, wir ? "Euer Geld heute: was reinkommt, was rausgeht, was schon da ist und wie gut ihr abgesichert seid." : "Dein Geld heute: was reinkommt, was rausgeht, was schon da ist und wie gut du abgesichert bist.", F.fix);
     if (b) h += `<section${ak(F.fix)}><h2>Dein Geld im Monat</h2><p class="b-lead">${zahl(b.ueberschuss2) >= 0 ? `Von ${eur(b.einnahmen)} Einnahmen bleiben nach festen Ausgaben und Sparen <b>${eur(b.ueberschuss2)}</b> frei.` : `Nach festen Ausgaben und Sparen fehlen im Monat rund <b>${eur(-zahl(b.ueberschuss2))}</b>.`}</p>
       ${geldFluss(b)}<div class="b-kacheln"><div class="b-k-gruen"><small>Sparquote</small><b>${pct(b.sparquote)}</b></div><div><small>Frei nach festen Ausgaben</small><b>${eur(b.ueberschuss1)}</b></div><div class="${zahl(b.ueberschuss2) >= 0 ? "b-k-gelb" : "b-k-rot"}"><small>Frei nach dem Sparen</small><b>${eur(b.ueberschuss2)}</b></div></div></section>`;
     if (b && b.reserve_monate != null) h += `<section${ak(F.frei)}><h2>Deine Notreserve</h2><p class="b-lead">Dein Konto und Tagesgeld reichen für rund <b>${zahl(b.reserve_monate).toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben.</p>${reserveSkala(b.reserve_monate)}</section>`;
     if (m && (m.vermoegen || m.schulden)) h += `<section${ak(F.fix)}><h2>Was du schon hast</h2><div class="b-kacheln"><div class="b-k-blau"><small>Vermögen</small><b>${eur(m.vermoegen)}</b></div><div><small>Offene Kredite (Restschuld)</small><b>${eur(m.schulden)}</b></div><div><small>Unterm Strich</small><b>${eur(zahl(m.vermoegen) - zahl(m.schulden))}</b></div></div></section>`;
+    if (d.absicherung && d.absicherung.length) h += `<section${ak(F.fix)}><h2>Deine Absicherung</h2><p class="b-lead">Wie stark dich ein Ereignis laut deinen Antworten treffen würde, und ${d.ansprechpartner_versicherung ? `die Einschätzung deines Versicherungsmaklers ${esc(d.ansprechpartner_versicherung)}` : "unsere erste Einschätzung"}.</p>${absicherung(d.absicherung)}</section>`;
+
+    // 2 Wo du hinwillst
+    const board = visionBoard(d.ziele, v, jahr, wir);
+    if (board || (d.ziele && d.ziele.length)) {
+      h += kapitel(2, W.willst, `Das ist ${W.euch} wichtig. Daran messen wir alle Zahlen.`, F.spar);
+      h += `<section${ak(F.spar)}><h2>${wir ? "Euer" : "Dein"} Vision Board</h2>${board}${zeitstrahl(d.ziele, jahr)}</section>`;
+    }
+
+    // 3 Wie du dahin kommst
+    if (v || schritte.length) h += kapitel(3, W.kommst, `Was zwischen heute und ${wir ? "euren" : "deinen"} Zielen liegt, und die ersten Schritte dorthin.`, F.frei);
     if (v) {
-      const wir = zahl(v.haushalt) === 2, pz = (x) => (zahl(x) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %";
-      // ältere Berichte: vorzeitig als Objekt und gerechnet_fuer
+      const pz = (x) => (zahl(x) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %";
       const vz = Array.isArray(v.vorzeitig) ? v.vorzeitig : v.vorzeitig ? [{ name: "", beginn_alter: v.vorzeitig.beginn_alter, abschlag: v.vorzeitig.abschlag }] : [];
       const fehlt = Array.isArray(v.fehlt) ? v.fehlt : [];
       const kopf = wir ? "Gerechnet für euren Haushalt: beide Renten und weitere Einkünfte, so wie es aussieht, wenn alle Renten laufen."
@@ -149,8 +222,8 @@
       <p class="b-lead">Als Ziel rechnen wir mit ${eur(v.wunsch)} im Monat in heutiger Kaufkraft${v.annahmen && v.annahmen.zielquote ? `, das sind ${pct(v.annahmen.zielquote)} ${wir ? "eures heutigen Haushaltsnettos" : "deines heutigen Nettos"}` : ""}. ${rente}${zahl(v.weitere) > 0 ? ` Dazu kommen weitere Einkünfte, zum Beispiel aus Vermietung oder Kapital, mit rund ${eur(v.weitere)} netto.` : ""}</p>
       <div class="b-zwei">${renteSaeulen(v)}<div class="b-kacheln b-spalte"><div class="b-k-rot"><small>Lücke pro Monat (heutige Kaufkraft)</small><b>${eur(v.luecke)}</b></div><div><small>Nötiges Kapital ${wir ? "zum ersten Rentenbeginn" : "mit " + (v.rentenalter || 67)} (heutige Kaufkraft)</small><b>${eur(v.kapital)}</b></div>${zahl(v.vorhanden) > 0 ? `<div><small>Davon schon angespart (hochgerechnet)</small><b>${eur(v.vorhanden)}</b></div>` : ""}<div class="b-k-gruen"><small>${zahl(v.vorhanden) > 0 ? "Rechnerische Sparrate für den Rest" : "Rechnerische Sparrate"}</small><b>${eur(v.sparrate)}</b><small>Rechenbeispiel, steigt jährlich mit der Inflation</small></div></div></div></section>`;
     }
-    if (d.absicherung && d.absicherung.length) h += `<section${ak(F.fix)}><h2>Deine Absicherung</h2><p class="b-lead">Wie stark dich ein Ereignis laut deinen Antworten treffen würde, und ${d.ansprechpartner_versicherung ? `die Einschätzung deines Versicherungsmaklers ${esc(d.ansprechpartner_versicherung)}` : "unsere erste Einschätzung"}.</p>${absicherung(d.absicherung)}</section>`;
-    if (d.naechste_schritte) h += `<section class="b-schritte"${ak(F.spar)}><h2>Deine nächsten Schritte</h2><ol>${esc(d.naechste_schritte).split(/\n+/).map((z) => z.trim()).filter(Boolean).map((z) => `<li>${z}</li>`).join("")}</ol></section>`;
+    const w = weg(schritte, d.ziele, v, jahr);
+    if (w) h += `<section${ak(F.frei)}><h2>${wir ? "Euer" : "Dein"} Weg</h2>${w}</section>`;
     const A = (v && v.annahmen) || {}, p1 = (x) => (zahl(x) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %";
     h += `<footer class="b-fuss"><p>Dieser Bericht fasst deine Angaben und unsere Rechnungen zusammen. Alle Werte sind Näherungen und Rechenbeispiele auf Basis von Annahmen${v ? ` (Ziel ${p1(A.zielquote)} vom heutigen Netto, Rendite ${p1(A.rendite)} vor Kosten, Kosten ${p1(A.kosten)}, Inflation ${p1(A.inflation)}, Auszahlung über ${zahl(A.rentendauer)} Jahre mit ${p1(A.entnahme_real)} realer Verzinsung${v.gesetzlich_brutto ? ", gesetzliche Rente netto nach den Abgaben- und Steuerregeln von 2026" : ""})` : ""}, keine Prognose. Geldanlagen können an Wert verlieren.</p>
       <p>Der Bericht ist keine Empfehlung für ein bestimmtes Produkt. Bevor du einen Vertrag abschließt, bekommst du die gesetzlich vorgeschriebenen Unterlagen und eine eigene Beratung. Die Einschätzungen zur Absicherung sind ein erster Überblick, keine Versicherungsberatung im Einzelfall. Der Bericht ersetzt keine Rechts- oder Steuerberatung.</p></footer></article>`;
@@ -180,6 +253,21 @@
   @media (max-width:600px){.b-zwei{grid-template-columns:1fr}}
   .b-tab{width:100%;border-collapse:collapse;font-size:14px} .b-tab th{text-align:left;color:var(--b-leise);font-size:12px;font-weight:600;padding:6px 4px;border-bottom:1px solid var(--b-linie)}
   .b-tab td{padding:8px 4px;border-bottom:1px solid var(--b-linie2)}
+  .b-blick{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:14px 0 6px}
+  .b-blick div{border-radius:14px;padding:12px 14px;background:var(--b-karte);border-top:4px solid var(--bf)} .b-blick small{display:block;color:var(--b-leise);font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+  .b-blick b{font-size:16px;line-height:1.35}
+  .b-kapitel{display:flex;gap:14px;align-items:center;margin:30px 0 4px;padding:14px 16px;border-radius:14px;background:var(--b-karte);break-after:avoid;break-inside:avoid}
+  .b-kapitel>span{flex:0 0 40px;height:40px;border-radius:50%;background:var(--kf);color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center}
+  .b-kapitel h2.b-kap-titel{font-size:24px;margin:0} .b-kapitel h2.b-kap-titel::before{display:none} .b-kapitel p{margin:2px 0 0;color:var(--b-leise)}
+  .b-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:12px 0 8px}
+  .b-vision{display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--b-karte);border:1px solid var(--b-linie);box-shadow:inset 5px 0 0 var(--vf);break-inside:avoid}
+  .b-vision svg{flex:0 0 auto} .b-vision b{display:block;font-size:16px} .b-vision span{display:block;color:var(--b-leise);font-size:13px}
+  .b-weg{list-style:none;margin:12px 0 0;padding:0}
+  .b-weg li{position:relative;display:flex;gap:14px;padding:0 0 16px 0;break-inside:avoid}
+  .b-weg li::after{content:"";position:absolute;left:10px;top:22px;bottom:0;width:2px;background:var(--b-linie)} .b-weg li:last-child::after{display:none}
+  .b-weg-punkt{flex:0 0 22px;height:22px;border-radius:50%;background:var(--wf);box-shadow:0 0 0 4px var(--b-grund);position:relative;z-index:1;margin-top:1px}
+  .b-weg-ziel .b-weg-punkt{border-radius:6px} .b-weg-heute .b-weg-punkt{background:var(--b-grund);box-shadow:inset 0 0 0 3px var(--wf)}
+  .b-weg b{display:block} .b-weg span{color:var(--b-leise)} .b-weg-schritt b{color:var(--b-tinte)}
   .b-schritte ol{list-style:none;counter-reset:schritt;margin:10px 0 0;padding:0} .b-schritte li{counter-increment:schritt;display:flex;gap:12px;align-items:baseline;margin:8px 0;font-weight:500}
   .b-schritte li::before{content:counter(schritt);flex:0 0 26px;height:26px;line-height:26px;border-radius:50%;text-align:center;font-weight:700;font-size:13px;background:var(--b-gruen-l);color:var(--b-tinte);box-shadow:inset 0 0 0 2px var(--b-ring)}
   .b-liste{margin:8px 0 0;padding-left:18px}
