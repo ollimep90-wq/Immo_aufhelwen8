@@ -302,3 +302,18 @@ def test_weitere_einkuenfte_und_kurse(umgebung, monkeypatch):
     monkeypatch.setattr(urllib.request, "urlopen", lambda *a, **k: kaputt())
     r = oli.get("/api/kurse").json()
     assert r["kurse"]["USD"] == 1.1206 and "letzter bekannter Stand" in r["hinweis"]
+
+
+def test_admin_ist_zugleich_berater(umgebung):
+    ph = PasswordHasher()
+    umgebung.x("INSERT INTO users (email,name,rolle,bereich,pw_hash,erstellt) VALUES (?,?,?,?,?,?)", "jan2@x.de", "Jan als Admin", "admin", "versicherung", ph.hash(PW), time.time())
+    oli = client("oliver@x.de")
+    akte = oli.post("/api/akten", json={"titel": "A"}, headers=H).json()["id"]
+    jan_id = umgebung.eins("SELECT id FROM users WHERE email='jan2@x.de'")["id"]
+    assert oli.post(f"/api/akten/{akte}/berater", json={"user_id": jan_id}, headers=H).status_code == 200   # zuordenbar
+    jan = client("jan2@x.de")
+    assert any(a["id"] == akte for a in jan.get("/api/akten").json())                                        # sieht alle Akten
+    r = jan.put(f"/api/akten/{akte}/abschnitte/absicherung_bewertung", json={"daten": {"s_bu": "fehlt"}}, headers=H)
+    assert r.status_code == 200                                                                               # schreibt als Versicherung
+    admin = client("admin@x.de")
+    assert admin.put(f"/api/akten/{akte}/abschnitte/absicherung_bewertung", json={"daten": {"s_bu": "passt"}, "version": 1}, headers=H).status_code == 403

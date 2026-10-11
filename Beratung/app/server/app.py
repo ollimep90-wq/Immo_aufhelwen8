@@ -465,7 +465,8 @@ def akte_zuordnen(akte_id: int, d: Zuordnung, u=Depends(nur("admin", "berater"))
     a = akte_fuer(u, akte_id)
     if not darf_verwalten(u, a):
         raise HTTPException(403, "Berater zuordnen darf, wer die Akte angelegt hat, oder der Admin")
-    if not DB.eins("SELECT 1 AS x FROM users WHERE id=? AND rolle='berater' AND aktiv=1", d.user_id):
+    # zuordnen lassen sich Berater und Admins mit Bereich (Admin und Berater zugleich, z. B. Oliver und Jan)
+    if not DB.eins("SELECT 1 AS x FROM users WHERE id=? AND aktiv=1 AND (rolle='berater' OR (rolle='admin' AND bereich IS NOT NULL))", d.user_id):
         raise HTTPException(404, "Berater nicht gefunden")
     DB.x("INSERT OR IGNORE INTO akte_berater (akte_id,user_id) VALUES (?,?)", akte_id, d.user_id)
     DB.protokoll(u["id"], akte_id, f"berater zugeordnet {d.user_id}")

@@ -34,9 +34,9 @@ Stand: 10.10.2026. Die App läuft lokal und ist getestet: 19 API-Tests und ein B
    python3 -m server.verwaltung schluessel-erzeugen     # alternativ im Container, siehe README
    echo "APP_SCHLUESSEL=<Schlüssel>" > .env && chmod 600 .env
    docker compose up -d --build
-   docker compose exec app python -m server.verwaltung admin-anlegen admin@… "Name"
-   docker compose exec app python -m server.verwaltung berater-anlegen oliver@… "Oliver Rosenbaum" anlage
-   docker compose exec app python -m server.verwaltung berater-anlegen jan@… "Jan Schnichels" versicherung
+   # Oliver und Jan sind Admin und Berater zugleich (Entscheidung 11.10.2026): sehen alle Akten, arbeiten in ihrem Bereich
+   docker compose exec app python -m server.verwaltung admin-anlegen oliver@… "Oliver Rosenbaum" anlage
+   docker compose exec app python -m server.verwaltung admin-anlegen jan@… "Jan Schnichels" versicherung
    ```
    - SSH nur mit Schlüssel, Passwortanmeldung abschalten.
    - Automatische Sicherheitsupdates einschalten (`unattended-upgrades`).
@@ -103,7 +103,5 @@ Für die Geeignetheitserklärung nach § 18 FinVermV ist der Auszug nur eine Gru
   - Empfänger: IONOS als Auftragsverarbeiter.
   - Speicherdauer und Rechte der Kunden.
 - [ ] **Verzeichnis der Verarbeitungstätigkeiten** (Art. 30 DSGVO) und **TOM-Beschreibung** (Art. 32 DSGVO), dazu eine kurze Schwellwertanalyse für eine Datenschutz-Folgenabschätzung.
-- [ ] **Rollen intern regeln:**
-  - Wer ist Admin?
-  - Der Admin sieht alle Akten. Gewollt?
+- [x] **Rollen** (Entscheidung 11.10.2026): Oliver und Jan sind Admin und Berater zugleich. Admins sehen alle Akten, das ist gewollt. Die Bewertung der Absicherung schreibt weiterhin nur der Bereich Versicherung (Jan).
 - [ ] **Docker-Ablauf** beim ersten Aufsetzen testen, ebenso die Rücksicherung.

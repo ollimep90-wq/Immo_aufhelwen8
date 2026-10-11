@@ -1,6 +1,7 @@
 """Verwaltung auf der Kommandozeile.
 
-  python3 -m server.verwaltung admin-anlegen <email> <name>      (fragt das Passwort ab)
+  python3 -m server.verwaltung admin-anlegen <email> <name> [anlage|versicherung]
+        (fragt das Passwort ab; mit Bereich ist der Admin zugleich Berater, z. B. Oliver und Jan)
   python3 -m server.verwaltung berater-anlegen <email> <name> anlage|versicherung
   python3 -m server.verwaltung 2fa-zuruecksetzen <email>     (z. B. Handy verloren; nächste Anmeldung richtet neu ein)
   python3 -m server.verwaltung schluessel-erzeugen           (einmalig: Schlüssel für APP_SCHLUESSEL)
@@ -31,8 +32,8 @@ def main(argv):
     d = dbmod.oeffne()
     email, name = argv[1].lower().strip(), argv[2]
     rolle = "admin" if argv[0] == "admin-anlegen" else "berater"
-    bereich = argv[3] if rolle == "berater" and len(argv) > 3 else None
-    if rolle == "berater" and bereich not in ("anlage", "versicherung"):
+    bereich = argv[3] if len(argv) > 3 else None
+    if (rolle == "berater" or bereich is not None) and bereich not in ("anlage", "versicherung"):
         print("bereich: anlage oder versicherung"); return 1
     pw = getpass.getpass("Passwort (mind. 12 Zeichen): ")
     if len(pw) < 12 or pw != getpass.getpass("Wiederholen: "):

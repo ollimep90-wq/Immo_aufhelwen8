@@ -53,7 +53,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
    - Der Live-Build bricht ab, solange Platzhalter offen sind (`python3 build.py --live URL DS`).
    - Mit Jan zu klären: Gewichtung der Themen im Kurzcheck, vor allem Unfall.
 3. Den gleichen Satz für **Gewerbe und Unternehmen** erstellen.
-4. **§34i-Modell wählen:** Provision oder Honorar.
+4. ~~**§34i-Modell wählen:** Provision oder Honorar.~~ *Entschieden 11.10.2026: Provision.* Die Platzhalter in Decks und Pflichtangaben sind ersetzt („eine Provision von der Bank, die dir das Darlehen gibt“; Pflichtangabe: „eine Provision des Darlehensgebers“). Die Höhe wird vorab genannt. Bisheriger Stand zur Nachverfolgung:
    - Nach § 34i Abs. 5 GewO schließen sich Vermittlung und Honorarberatung aus, eine Wahl je Kunde ist nicht möglich.
    - *Korrektur 10.10.2026:* Die Decks sagten vorher „Provision der Bank oder, als Honorarberater, ein Honorar von dir, nie beides“. Das klang wie eine Wahl je Kunde und war deshalb falsch.
    - Jetzt steht dort der gelbe Platzhalter „[eine Provision der Bank]“, bis du entschieden hast.
