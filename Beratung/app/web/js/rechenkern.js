@@ -269,6 +269,43 @@
   }
   const est_ = (zve, verh, p) => est(zve, verh, p);
 
+  /* Netto im Alter für den ganzen Haushalt (1–2 Personen).
+   * h: {verheiratet, kirche, bundesland, kinderlos, personen: [{brutto_monat, rentenbeginn_jahr, kv, zusatzbeitrag,
+   *     pkv_beitrag_monat, weitere: {cash, tarif, kapital, bav_monat}}]}
+   * Verheiratet: Zusammenveranlagung (Splitting, gemeinsamer Sparer-Pauschbetrag), sonst getrennt.
+   * Annahme: beide Personen sind in Rente (Zustand, wenn beide Renten laufen). */
+  function nettoRenteHaushalt(h, p) {
+    p = p || P2026;
+    const kist = h.kirche ? (p.kist[h.bundesland] || p.kist.sonst) : 0;
+    const rows = h.personen.map((e) => {
+      const brutto = Math.max(0, e.brutto_monat || 0), w = e.weitere || {};
+      const x = renteZve(Object.assign({ kinderlos: h.kinderlos }, e), brutto, p);
+      const zb = e.zusatzbeitrag != null ? e.zusatzbeitrag : p.zusatzbeitrag_schnitt, bav = Math.max(0, w.bav_monat || 0);
+      const kvBav = e.kv === "pkv" ? 0 : Math.max(0, bav - p.bav.kv_freibetrag_monat) * (p.kv_satz + zb) * 12;
+      const pvBav = e.kv === "pkv" || bav <= p.bav.pv_freigrenze_monat ? 0 : bav * (p.pv_satz + (h.kinderlos ? p.pv_kinderlos : 0)) * 12;
+      return { brutto, x, w, kvBav, pvBav };
+    });
+    const basis = rows.map((r) => r.x.zve);
+    const grund = steuerTarif(basis, !!h.verheiratet, 0, kist, p);
+    const ms = mehrsteuer({ basis, tarif: rows.map((r) => (r.w.tarif || 0) - r.kvBav - r.pvBav), kapital: rows.map((r) => r.w.kapital || 0),
+      verheiratet: !!h.verheiratet, kinder: 0, kirche: h.kirche, bundesland: h.bundesland }, p);
+    // Anzeige je Person: Steuer auf die Renten nach Anteil am zvE (bei getrennter Veranlagung exakt je Person)
+    const zSum = basis.reduce((a, z) => a + z, 0);
+    const personen = rows.map((r, i) => {
+      const steuer = h.verheiratet ? grund * (zSum > 0 ? r.x.zve / zSum : 1 / rows.length) : steuerTarif([r.x.zve], false, 0, kist, p);
+      const a = r.x.a, j = r.brutto * 12;
+      return { brutto_monat: r2(r.brutto), kv_monat: r2(a.kv / 12), pv_monat: r2(a.pv / 12), zuschuss_monat: r2(a.zuschuss / 12),
+               steuer_monat: r2(steuer / 12), besteuerungsanteil: r.x.anteil,
+               rente_netto_monat: r2((j - a.kv - a.pv + a.zuschuss - steuer) / 12),
+               weitere_cash_monat: r2((r.w.cash || 0) / 12), weitere_sv_monat: r2((r.kvBav + r.pvBav) / 12) };
+    });
+    const renten = personen.reduce((s, x) => s + x.rente_netto_monat, 0);
+    const cash = personen.reduce((s, x) => s + x.weitere_cash_monat, 0), sv = personen.reduce((s, x) => s + x.weitere_sv_monat, 0);
+    return { personen, rente_netto_monat: r2(renten), weitere_netto_monat: r2(cash - sv - ms.gesamt / 12), weitere_cash_monat: r2(cash),
+             weitere_sv_monat: r2(sv), weitere_steuer_monat: r2(ms.gesamt / 12), kapital_verfahren: ms.verfahren,
+             netto_monat: r2(renten + cash - sv - ms.gesamt / 12) };
+  }
+
   /* Vorzeitige Altersrente aus den zwei Werten der Renteninformation.
    * bisher: Rente aus den bisherigen Beiträgen; hochrechnung: Rente bei Beiträgen bis zur Regelaltersgrenze.
    * Annahme wie in der Renteninformation: gleichmäßiger Zuwachs je Jahr bis zur Regelaltersgrenze.
@@ -328,7 +365,7 @@
     };
   }
 
-  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, renteVorzeitig, einkunft, steuerTarif, mehrsteuer, risikoAuswertung, budget };
+  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, nettoRenteHaushalt, renteVorzeitig, einkunft, steuerTarif, mehrsteuer, risikoAuswertung, budget };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Rechenkern = api;
 })(this);

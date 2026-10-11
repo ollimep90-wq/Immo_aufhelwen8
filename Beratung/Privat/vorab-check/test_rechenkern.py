@@ -163,6 +163,29 @@ if __name__ == "__main__":
         py = py_mehr(basis, tarif, kap, verh, kist)
         assert abs(j["gesamt"] - py) < 0.02, (m, j, py); n += 1
     print(f"Weitere Einkünfte, Mehrsteuer: {n} Fälle gleich")
+    # Haushalt im Alter: eigene Rechnung aus rente_zve und py_mehr
+    def py_haushalt(pers, verh, kist):
+        rows = []
+        for b, jahr, kv, pkv, w in pers:
+            z, abz = rente_zve(b, jahr, kv=kv, pkv=pkv)
+            bav = w.get("bav", 0)
+            kvb = 0 if kv == "pkv" else max(0, bav - 197.75) * (0.146 + 0.029) * 12
+            pvb = 0 if kv == "pkv" or bav <= 197.75 else bav * 0.036 * 12
+            rows.append((b, z, abz, w, kvb, pvb))
+        basis = [r[1] for r in rows]
+        grund = st_tarif(basis, verh, kist)
+        mehr = py_mehr(basis, [r[3].get("tarif", 0) - r[4] - r[5] for r in rows], [r[3].get("kapital", 0) for r in rows], verh, kist)
+        return (sum(b * 12 - abz["kv"] - abz["pv"] + abz["zu"] + w.get("cash", 0) - kvb - pvb for b, z, abz, w, kvb, pvb in rows) - grund - mehr) / 12
+    n = 0
+    for b1, b2, verh, kist, w1 in itertools.product([900, 1600, 2400], [0, 700, 1500], [False, True], [0, 0.09],
+            [{}, dict(cash=10800, tarif=10800), dict(cash=3000, kapital=2600), dict(cash=3120, tarif=3120, bav=260)]):
+        pers = [(b1, 2050, "gkv", 0, w1)] + ([(b2, 2053, "gkv", 0, {})] if b2 else [])
+        h = dict(verheiratet=verh, kirche=kist > 0, bundesland="NW", kinderlos=False, personen=[dict(brutto_monat=b, rentenbeginn_jahr=j, kv=kv,
+            weitere=dict(cash=w.get("cash", 0), tarif=w.get("tarif", 0), kapital=w.get("kapital", 0), bav_monat=w.get("bav", 0))) for b, j, kv, pkv, w in pers])
+        j = json.loads(subprocess.check_output(["node", "-e", f"const R=require('{HIER/'rechenkern.js'}');console.log(JSON.stringify(R.nettoRenteHaushalt({json.dumps(h)})))"]))
+        py = py_haushalt(pers, verh, kist)
+        assert abs(j["netto_monat"] - py) < 0.05, (h, j["netto_monat"], py); n += 1
+    print(f"Haushalt im Alter: {n} Fälle gleich")
     def ek(e, z):
         return json.loads(subprocess.check_output(["node", "-e", f"const R=require('{HIER/'rechenkern.js'}');console.log(JSON.stringify(R.einkunft({json.dumps(e)}, '{z}')))"]))
     r = ek(dict(art="kapital", kapart="aktien", waehrung="USD", kurs=1.1206, betrag=1200), "heute")

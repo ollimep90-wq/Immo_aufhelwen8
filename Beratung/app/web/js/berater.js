@@ -112,31 +112,52 @@
       kindergeld_monat: hr ? hr.kindergeld : 0, sonstige_einnahmen: num(b.sonstige), fixkosten: fk, sparen: num(b.sparen), liquide: num(b.liquide) }));
   }
   /* Gesetzliche Rente netto aus brutto (Renteninformation), Regeln 2026, Person 1 */
+  /* Netto im Alter für den ganzen Haushalt: Renten beider Personen (inkl. vorzeitigem Beginn) und alle weiteren Einkünfte.
+   * Felder Person 1: gesetzl_brutto, gesetzl_bisher, rentenalter, jahre45, pkv_alter; Person 2 mit Endung 2.
+   * Ältere Akten: partner_rente gilt als Bruttorente von Person 2. */
   function renteNetto(v, h, ek) {
-    if (!v || !(num(v.gesetzl_brutto) > 0)) return null;
+    if (!v) return null;
     h = h || {};
-    const alter = num(h.alter1) || num(v.alter);
-    if (!alter) return null;
-    const jahr = new Date().getFullYear(), beginnAlter = num(v.rentenalter) || 67, beginn = jahr + Math.max(0, beginnAlter - alter);
-    // Regelaltersgrenze 67 gilt für Jahrgänge ab 1964 (§ 35 SGB VI); ältere: § 235 SGB VI, hier nicht automatisch
-    const rag67 = jahr - alter >= 1964;
-    const vz = rag67 && beginnAlter < 67 && num(v.gesetzl_bisher) > 0
-      ? R.renteVorzeitig({ bisher: num(v.gesetzl_bisher), hochrechnung: num(v.gesetzl_brutto), alter, beginn_alter: beginnAlter, versicherungsjahre_45: v.jahre45 === "ja" }) : null;
-    const brutto = vz ? vz.brutto : num(v.gesetzl_brutto);
-    return Object.assign({ rentenbeginn_jahr: beginn, vorzeitig: vz, rag67, beginn_alter: beginnAlter, hochrechnung: num(v.gesetzl_brutto) }, R.nettoRente({ brutto_monat: brutto, rentenbeginn_jahr: beginn,
-      kv: h.kv1 === "pkv" ? "pkv" : "gkv", zusatzbeitrag: h.zb1 ? num(h.zb1) / 100 : undefined, pkv_beitrag_monat: num(v.pkv_alter),
-      kinderlos: !(num(h.kinder_u25) > 0 || h.eltern === "ja"), verheiratet: h.familie === "verheiratet",
-      partner_brutto_monat: num(v.partner_rente), kirche: h.kirche === "ja", bundesland: h.land, weitere: weitereSumme(ek === undefined ? (akte ? daten("einkuenfte") : null) : ek, "alter").s[0] }));
+    if (ek === undefined) ek = akte ? daten("einkuenfte") : null;
+    const jahr = new Date().getFullYear(), ws = weitereSumme(ek, "alter");
+    const paar = ["partner", "verheiratet"].includes(h.familie);
+    const zwei = paar && (num(h.alter2) > 0 || num(h.brutto2) > 0 || num(h.netto2) > 0 || num(v.gesetzl_brutto2) > 0 || num(v.partner_rente) > 0 || ws.s[1].cash > 0);
+    const info = [], personen = [];
+    [1, 2].slice(0, zwei ? 2 : 1).forEach((i) => {
+      const x = i === 1 ? "" : "2";
+      const alter = num(h["alter" + i]) || num(h.alter1) || num(v.alter);
+      const hoch = num(v["gesetzl_brutto" + x]) || (i === 2 ? num(v.partner_rente) : 0);
+      const beginnAlter = num(v["rentenalter" + x]) || (i === 2 ? 67 : 67);
+      if (!alter) { info.push({ i, name: h["name" + i] || "Person " + i, fehlt_alter: true }); personen.push({ brutto_monat: 0, rentenbeginn_jahr: jahr, weitere: ws.s[i - 1] }); return; }
+      const beginn = jahr + Math.max(0, beginnAlter - alter);
+      // Regelaltersgrenze 67 gilt für Jahrgänge ab 1964 (§ 35 SGB VI); ältere: § 235 SGB VI, hier nicht automatisch
+      const rag67 = jahr - alter >= 1964;
+      const vz = hoch > 0 && rag67 && beginnAlter < 67 && num(v["gesetzl_bisher" + x]) > 0
+        ? R.renteVorzeitig({ bisher: num(v["gesetzl_bisher" + x]), hochrechnung: hoch, alter, beginn_alter: beginnAlter, versicherungsjahre_45: v["jahre45" + x] === "ja" }) : null;
+      const kv = h["kv" + i] === "pkv" ? "pkv" : "gkv";
+      info.push({ i, name: h["name" + i] || "Person " + i, alter, beginn_alter: beginnAlter, rentenbeginn_jahr: beginn, rag67, vorzeitig: vz, hochrechnung: hoch,
+        fehlt: !(hoch > 0), unvollstaendig: kv === "pkv" && !(num(v["pkv_alter" + x]) > 0) });
+      personen.push({ brutto_monat: vz ? vz.brutto : hoch, rentenbeginn_jahr: beginn, kv, zusatzbeitrag: h["zb" + i] ? num(h["zb" + i]) / 100 : undefined,
+        pkv_beitrag_monat: num(v["pkv_alter" + x]), weitere: ws.s[i - 1] });
+    });
+    if (!personen.some((pp) => pp.brutto_monat > 0) && !ws.anzahl && !num(v.gesetzl)) return null;
+    const haus = R.nettoRenteHaushalt({ verheiratet: h.familie === "verheiratet", kirche: h.kirche === "ja", bundesland: h.land,
+      kinderlos: !(num(h.kinder_u25) > 0 || h.eltern === "ja"), personen });
+    // gesetzliche Rente von Hand (netto), nur wenn für Person 1 kein Bruttobetrag da ist
+    const hand = info[0] && info[0].fehlt ? num(v.gesetzl) : 0;
+    const jahreBis = info.filter((x) => x.alter).map((x) => Math.max(0, x.beginn_alter - x.alter));
+    return { haus, info, zwei, hand, rente_netto_monat: haus.rente_netto_monat + hand, weitere_netto_monat: haus.weitere_netto_monat,
+      netto_monat: haus.netto_monat + hand, jahre_bis: jahreBis.length ? Math.min(...jahreBis) : 0, brutto_monat: personen.reduce((a, pp) => a + pp.brutto_monat, 0) };
   }
   function vorsorgeRechnung(v, h, hr) {
     if (!v) return null;
-    const alter = num(h && h.alter1) || num(v.alter);
-    const jahre = Math.max(0, (num(v.rentenalter) || 67) - alter);
     const rn = renteNetto(v, h);
+    const alter = num(h && h.alter1) || num(v.alter);
+    // Sparzeit bis zum ersten Rentenbeginn im Haushalt (vorsichtig)
+    const jahre = rn ? rn.jahre_bis : Math.max(0, (num(v.rentenalter) || 67) - alter);
     if (!jahre) return null;
-    // Standard: Person 1 (die gesetzliche Rente ist eine Einzelangabe); Haushalt nur bewusst über netto_basis
-    const p1 = hr && hr.rechnung && hr.rechnung.personen[0];
-    const netto = num(v.netto_basis) || (h && num(h.netto1)) || (p1 ? p1.netto_monat : 0);
+    // Ziel bezogen auf das Haushaltsnetto heute (Lohn und weitere Einkünfte, ohne Kindergeld); von Hand über netto_basis
+    const netto = num(v.netto_basis) || (hr ? hr.netto_monat : 0);
     return V.rentenluecke({ netto, gesetzl_netto: rn ? rn.netto_monat : num(v.gesetzl), jahre_bis_rente: jahre, vorhanden: num(v.av_kapital) },
       { zielquote: num(v.zielquote) / 100 || V.STANDARD.zielquote, rendite: v.rendite !== "" && v.rendite != null ? num(v.rendite) / 100 : V.STANDARD.rendite,
         kosten: v.kosten !== "" && v.kosten != null ? num(v.kosten) / 100 : V.STANDARD.kosten, inflation: v.inflation !== "" && v.inflation != null ? num(v.inflation) / 100 : V.STANDARD.inflation,
@@ -324,15 +345,15 @@
         ${feld("depot", "Depots und Fonds")}${feld("immobilien", "Immobilien (Verkehrswert)")}${feld("sonstverm", "Sonstiges Vermögen")}
         ${feld("schulden", "Kredite (Restschuld)")}${feld("av_kapital", 'Kapital fürs Alter heute <span class="hint">z. B. Riester, bAV-Wert</span>')}<div></div></div></div>
         <div class="card"><h2 style="margin-top:0">Rentenlücke</h2><div class="row3">
-        ${feld("rentenalter", "Rentenbeginn mit Alter")}${feld("gesetzl_brutto", 'Gesetzliche Rente brutto, Hochrechnung <span class="hint">Renteninformation: bei Beiträgen bis zur Regelaltersgrenze</span>')}
-        ${feld("gesetzl_bisher", 'Rente aus bisherigen Beiträgen <span class="hint">Renteninformation: bislang erreichte Anwartschaft; nötig bei Beginn vor 67</span>')}
-        ${seg("jahre45", "45 Versicherungsjahre bis Rentenbeginn?", [["ja", "Ja"], ["nein", "Nein"]])}
-        ${feld("netto_basis", 'Netto heute <span class="hint">leer = Person 1 aus Haushalt</span>')}
-        ${feld("partner_rente", 'Rente Ehepartner brutto <span class="hint">nur verheiratet, für das Splitting; leer = gleich hohe Einkünfte angenommen</span>')}
-        ${feld("pkv_alter", 'PKV-Beitrag im Alter/Monat <span class="hint">nur privat versichert</span>')}
-        ${feld("gesetzl", 'Gesetzliche Rente netto <span class="hint">nur von Hand, wenn brutto leer</span>')}</div>
+        ${feld("netto_basis", 'Netto heute <span class="hint">leer = Haushaltsnetto aus Lohn und weiteren Einkünften</span>')}<div></div><div></div></div>
+        ${[["", 1], ["2", 2]].map(([x, i]) => `<h3>${esc((daten("haushalt") || {})["name" + i] || "Person " + i)}${i === 2 ? ' <span class="hint">nur bei Partnerschaft oder Ehe</span>' : ""}</h3><div class="row3">
+        ${feld("rentenalter" + x, "Rentenbeginn mit Alter")}${feld("gesetzl_brutto" + x, 'Gesetzliche Rente brutto, Hochrechnung <span class="hint">Renteninformation: bei Beiträgen bis zur Regelaltersgrenze</span>')}
+        ${feld("gesetzl_bisher" + x, 'Rente aus bisherigen Beiträgen <span class="hint">Renteninformation; nötig bei Beginn vor 67</span>')}
+        ${seg("jahre45" + x, "45 Versicherungsjahre bis Rentenbeginn?", [["ja", "Ja"], ["nein", "Nein"]])}
+        ${feld("pkv_alter" + x, 'PKV-Beitrag im Alter/Monat <span class="hint">nur privat versichert</span>')}
+        ${i === 1 ? feld("gesetzl", 'Gesetzliche Rente netto <span class="hint">nur von Hand, wenn brutto leer</span>') : "<div></div>"}</div>`).join("")}
         <div class="info" id="rente-netto" style="margin-top:10px"></div>
-        <p class="hint">Gerechnet wird für eine Person (Standard: Person 1). Für Person 2 oder den Haushalt Netto und gesetzliche Renten hier passend eintragen.</p>
+        <p class="hint">Gerechnet wird für den ganzen Haushalt: beide Renten und alle weiteren Einkünfte, bei Ehepaaren mit Splitting. Gesparte Zeit bis zum ersten Rentenbeginn.</p>
         <h3>Annahmen <span class="hint">leer = Standard wie in den Präsentationen</span></h3><div class="row3">
         ${feld("zielquote", "Ziel in % vom Netto (80)")}${feld("rendite", "Rendite vor Kosten % (6)")}${feld("kosten", "Kosten % (1,3)")}
         ${feld("inflation", "Inflation % (2)")}${feld("entnahme", "Reale Rendite in der Auszahlung % (1)")}${feld("rentendauer", "Auszahlungsdauer Jahre (25)")}</div>
@@ -379,6 +400,7 @@
         <textarea id="schritte" maxlength="2000">${esc(b.naechste_schritte || "")}</textarea>
         <div class="nav" style="justify-content:flex-start"><button type="button" class="quiet" id="b-vorschau">Vorschau aktualisieren</button>
         <button type="button" class="quiet" id="b-druck">Drucken oder als PDF</button>
+        <button type="button" class="quiet" id="b-thema" aria-pressed="false">Dunkle Darstellung</button>
         ${akte.kunde ? '<button type="button" class="primary" id="b-frei">Für den Kunden freigeben</button>' : ""}</div>
         <p class="hint" id="b-status">${b.freigegeben_am ? "Zuletzt freigegeben am " + datum(b.freigegeben_am) + ". Der Kunde sieht den Bericht in seinem Bereich." : akte.kunde ? "Noch nicht freigegeben." : "Freigeben geht, sobald der Kunde einen Zugang hat. Als PDF geht es jetzt schon."}</p></div>
         <div id="b-ansicht"></div>`;
@@ -458,19 +480,20 @@
     },
     vorsorge() {
       const h = daten("haushalt"), ein = lies($("inhalt")), vs = vorsorgeRechnung(ein, h, haushaltRechnung(h)), rn = renteNetto(ein, h);
-      $("rente-netto").hidden = !(num(ein.gesetzl_brutto) > 0);
-      $("rente-netto").innerHTML = rn ? `<b>Gesetzliche Rente netto: ${eur(rn.rente_netto_monat)}</b> im Monat (heutige Kaufkraft)${rn.weitere_cash_monat ? `<br><b>Weitere Einkünfte im Alter netto: ${eur(rn.weitere_cash_monat - rn.weitere_sv_monat - rn.weitere_steuer_monat)}</b>
-        <span class="small">(${eur(rn.weitere_cash_monat)} Zufluss${rn.weitere_sv_monat ? " − Kranken- und Pflegeversicherung auf die Betriebsrente " + eur(rn.weitere_sv_monat) : ""} − Mehrsteuer ${eur(rn.weitere_steuer_monat)}${rn.kapital_verfahren === "tarif" ? "; Kapitalerträge mit persönlichem Satz, weil günstiger" : rn.kapital_verfahren === "abgeltung" ? "; Kapitalerträge mit Abgeltungsteuer" : ""})</span>` : ""}<br>
-        <span class="small">${eur(rn.brutto_monat)} brutto − Krankenversicherung ${eur(rn.kv_monat)} − Pflegeversicherung ${eur(rn.pv_monat)}${rn.zuschuss_monat ? " + Zuschuss der Rentenversicherung " + eur(rn.zuschuss_monat) : ""} − Steuern ${eur(rn.steuer_monat - rn.weitere_steuer_monat)}.
-        Rentenbeginn ${rn.rentenbeginn_jahr}, steuerpflichtig ${(rn.besteuerungsanteil * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} %. Regeln 2026 (Krankenversicherung, Zusatzbeitrag und Kirchensteuer laut Tab Haushalt, Person 1; ohne Zusatzbeitrag im Haushalt gilt der Durchschnitt 2,9 %).
-        Annahmen: Pflichtversicherung in der Krankenversicherung der Rentner. Weitere Einkünfte laut Tab Weitere Einkünfte, nur Person 1. Der Rentenfreibetrag bleibt in Euro gleich, deshalb steigt die Steuer im Rentenverlauf etwas; der Wert gilt für den Rentenbeginn.</span>
-        ${rn.vorzeitig ? `<br><span class="small">Beginn mit ${rn.beginn_alter} statt 67: Aus ${eur(rn.hochrechnung)} Hochrechnung werden ${eur(rn.vorzeitig.brutto_ohne_abschlag)} (weniger Beitragsjahre, gleichmäßiger Zuwachs angenommen), nach ${(rn.vorzeitig.abschlag * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} % Abschlag ${eur(rn.vorzeitig.brutto)} brutto. Der Abschlag gilt lebenslang (§ 77 SGB VI).</span>
-          ${rn.vorzeitig.zulaessig ? "" : '<br><span class="small" style="color:var(--red)">Eine Altersrente vor 63 gibt es regulär nicht (Ausnahme: schwerbehinderte Menschen, § 37 SGB VI). Bitte den Rentenbeginn prüfen.</span>'}
-          ${rn.beginn_alter < 65 || ein.jahre45 !== "ja" ? '<br><span class="small">Vorausgesetzt sind 35 Jahre Wartezeit (§ 36 SGB VI). Mit 45 Jahren gibt es die Rente ab 65 ohne Abschlag (§ 38 SGB VI).</span>' : ""}`
-        : rn.beginn_alter < 67 && !rn.rag67 ? '<br><span class="small" style="color:var(--red)">Jahrgang vor 1964: Die Regelaltersgrenze liegt unter 67 (§ 235 SGB VI). Vorzeitige Rente hier bitte von Hand rechnen.</span>'
-        : rn.beginn_alter < 67 ? '<br><span class="small" style="color:var(--red)">Rentenbeginn vor 67: Bitte die Rente aus bisherigen Beiträgen eintragen. Erst dann rechnet die App die fehlenden Beitragsjahre und den Abschlag heraus.</span>' : ""}
-        ${rn.unvollstaendig ? '<br><span class="small" style="color:var(--red)">Privat versichert: Bitte den PKV-Beitrag im Alter eintragen, sonst fehlt er in der Rechnung.</span>' : ""}`
-        : num(ein.gesetzl_brutto) > 0 ? "Für die Netto-Rechnung fehlt das Alter (Tab Haushalt)." : "";
+      $("rente-netto").hidden = !rn;
+      const pz = (x) => (x * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %";
+      $("rente-netto").innerHTML = rn ? `<b>Netto im Alter, Haushalt: ${eur(rn.netto_monat)}</b> im Monat (heutige Kaufkraft, wenn alle Renten laufen)<br>` +
+        rn.info.map((x, k) => { const pp = rn.haus.personen[k];
+          if (x.fehlt_alter) return `<br><b>${esc(x.name)}:</b> <span class="small" style="color:var(--red)">Alter fehlt im Tab Haushalt.</span>`;
+          return `<br><b>${esc(x.name)}: gesetzliche Rente netto ${eur(pp.rente_netto_monat + (k === 0 ? rn.hand : 0))}</b>` + (x.fehlt ? (k === 0 && rn.hand ? ' <span class="small">(netto von Hand)</span>' : ' <span class="small" style="color:var(--red)">Bruttorente fehlt</span>') :
+            `<br><span class="small">${eur(pp.brutto_monat)} brutto − Krankenversicherung ${eur(pp.kv_monat)} − Pflegeversicherung ${eur(pp.pv_monat)}${pp.zuschuss_monat ? " + Zuschuss der Rentenversicherung " + eur(pp.zuschuss_monat) : ""} − Steuern ${eur(pp.steuer_monat)}. Beginn ${x.rentenbeginn_jahr} mit ${x.beginn_alter}, steuerpflichtig ${pz(pp.besteuerungsanteil)}.</span>`)
+            + (x.vorzeitig ? `<br><span class="small">Beginn vor 67: Aus ${eur(x.hochrechnung)} Hochrechnung werden ${eur(x.vorzeitig.brutto_ohne_abschlag)} (weniger Beitragsjahre), nach ${pz(x.vorzeitig.abschlag)} Abschlag ${eur(x.vorzeitig.brutto)} brutto. Der Abschlag gilt lebenslang (§ 77 SGB VI).${x.vorzeitig.zulaessig ? "" : ' <span style="color:var(--red)">Vor 63 gibt es regulär keine Altersrente (Ausnahme: § 37 SGB VI).</span>'}</span>`
+              : !x.fehlt && x.beginn_alter < 67 && !x.rag67 ? '<br><span class="small" style="color:var(--red)">Jahrgang vor 1964: Regelaltersgrenze unter 67 (§ 235 SGB VI), vorzeitige Rente bitte von Hand rechnen.</span>'
+              : !x.fehlt && x.beginn_alter < 67 ? '<br><span class="small" style="color:var(--red)">Beginn vor 67: Bitte die Rente aus bisherigen Beiträgen eintragen, dann rechnet die App fehlende Jahre und Abschlag heraus.</span>' : "")
+            + (x.unvollstaendig ? '<br><span class="small" style="color:var(--red)">Privat versichert: Bitte den PKV-Beitrag im Alter eintragen.</span>' : "");
+        }).join("") +
+        (rn.haus.weitere_cash_monat ? `<br><br><b>Weitere Einkünfte im Alter netto: ${eur(rn.weitere_netto_monat)}</b> <span class="small">(${eur(rn.haus.weitere_cash_monat)} Zufluss${rn.haus.weitere_sv_monat ? " − Kranken- und Pflegeversicherung auf Betriebsrenten " + eur(rn.haus.weitere_sv_monat) : ""} − Mehrsteuer ${eur(rn.haus.weitere_steuer_monat)}${rn.haus.kapital_verfahren === "tarif" ? "; Kapitalerträge mit persönlichem Satz, weil günstiger" : rn.haus.kapital_verfahren === "abgeltung" ? "; Kapitalerträge mit Abgeltungsteuer" : ""})</span>` : "") +
+        `<br><br><span class="small">Regeln 2026: Krankenversicherung, Zusatzbeitrag und Kirchensteuer laut Tab Haushalt (ohne Zusatzbeitrag gilt der Durchschnitt 2,9 %)${(daten("haushalt") || {}).familie === "verheiratet" ? ", Zusammenveranlagung mit Splitting" : ", getrennte Veranlagung"}. Annahmen: Pflichtversicherung in der Krankenversicherung der Rentner; der Rentenfreibetrag bleibt in Euro gleich, deshalb steigt die Steuer im Rentenverlauf etwas. 35 Jahre Wartezeit für eine Rente vor 67 (§ 36 SGB VI), mit 45 Jahren ab 65 ohne Abschlag (§ 38 SGB VI).</span>` : "";
       $("vorsorge-erg").innerHTML = vs ? `<div><small>Wunsch</small><b>${eur(vs.wunsch)}</b></div><div><small>Lücke heute</small><b>${eur(vs.luecke)}</b><small>nominal ${eur(vs.luecke_nominal)}</small></div>
         <div><small>Kapitalbedarf</small><b>${eur(vs.kapital)}</b></div><div><small>Davon gedeckt</small><b>${eur(vs.vorhanden_real)}</b></div>
         <div><small>Sparrate</small><b>${eur(vs.sparrate)}</b><small>real ${(vs.real_anspar * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} % p. a.</small></div>` : '<div><small>Für die Rechnung fehlen Alter (Tab Haushalt) oder Rentenbeginn.</small></div>';
@@ -521,10 +544,11 @@
     }
     const vs = daten("altersvorsorge") ? vorsorgeRechnung(av, h, hr) : null;
     const rn = renteNetto(av, h);
-    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: rn ? rn.rente_netto_monat : num(av.gesetzl), weitere: rn && rn.weitere_cash_monat ? Math.round((rn.weitere_cash_monat - rn.weitere_sv_monat - rn.weitere_steuer_monat) * 100) / 100 : 0, gesetzlich_brutto: rn ? rn.brutto_monat : null, vorzeitig: rn && rn.vorzeitig ? { abschlag: rn.vorzeitig.abschlag, beginn_alter: rn.beginn_alter } : null, luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
-      rentenalter: num(av.rentenalter) || 67, vorhanden: vs.vorhanden_real,
-      // gerechnet wird für Person 1, außer der Berater hat bewusst ein Haushaltsnetto eingetragen
-      gerechnet_fuer: (num(h.brutto2) || num(h.netto2)) && !num(av.netto_basis) ? (h.name1 || "Person 1") : "",
+    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: rn ? rn.rente_netto_monat : num(av.gesetzl), weitere: rn ? rn.weitere_netto_monat : 0,
+      gesetzlich_brutto: rn ? rn.brutto_monat : null, luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate, vorhanden: vs.vorhanden_real,
+      rentenalter: num(av.rentenalter) || 67, haushalt: rn ? rn.info.length : 1,
+      vorzeitig: rn ? rn.info.filter((x) => x.vorzeitig).map((x) => ({ name: x.name, beginn_alter: x.beginn_alter, abschlag: x.vorzeitig.abschlag })) : [],
+      fehlt: rn ? rn.info.filter((x) => x.fehlt && !(x.i === 1 && rn.hand)).map((x) => x.name) : [],
       annahmen: { zielquote: vs.annahmen.zielquote, rendite: vs.annahmen.rendite, kosten: vs.annahmen.kosten, inflation: vs.annahmen.inflation,
         entnahme_real: vs.annahmen.entnahme_real, rentendauer: vs.annahmen.rentendauer } } : null;
     const zd = daten("ziele");
@@ -545,9 +569,10 @@
     return { erstellt: Date.now() / 1000, berater: ich.name, ansprechpartner_versicherung: vers ? vers.name : "", vorname: h.name1 || (va.person && va.person.vorname) || "",
       budget, vorsorge, ziele, absicherung, vermoegen, naechste_schritte: text };
   }
+  let berichtDunkel = Bericht.standardDunkel();
   function berichtZeigen(ziel, snap) {
     if (!$("bericht-css")) { const st = document.createElement("style"); st.id = "bericht-css"; st.textContent = Bericht.CSS; document.head.appendChild(st); }
-    ziel.innerHTML = Bericht.html(snap, { marke: document.querySelector(".marke") ? document.querySelector(".marke").innerHTML : "" });
+    ziel.innerHTML = Bericht.html(snap, { marke: document.querySelector(".marke") ? document.querySelector(".marke").innerHTML : "", dunkel: berichtDunkel });
   }
 
   const BINDEN = {
@@ -568,13 +593,16 @@
       // vor jeder Vorschau/Freigabe frisch laden (z. B. Jans neue Bewertung)
       const auffrischen = async () => { try { const n = await api.get("/api/akten/" + akte.id); akte.abschnitte = n.abschnitte; } catch (e) { fehler(e.message); } };
       const vorschau = async () => { await auffrischen(); berichtZeigen($("b-ansicht"), schnappschuss($("schritte").value.trim())); };
+      const themaKnopf = () => { $("b-thema").textContent = berichtDunkel ? "Helle Darstellung" : "Dunkle Darstellung"; $("b-thema").setAttribute("aria-pressed", String(berichtDunkel)); };
+      themaKnopf();
+      $("b-thema").addEventListener("click", () => { berichtDunkel = !berichtDunkel; themaKnopf(); vorschau(); });
       vorschau();
       $("b-vorschau").addEventListener("click", vorschau);
       $("b-druck").addEventListener("click", async () => {
         await vorschau();
         let box = $("druck"); if (!box) { box = document.createElement("div"); box.id = "druck"; document.body.appendChild(box); }
         berichtZeigen(box, schnappschuss($("schritte").value.trim()));
-        document.body.classList.add("druckmodus"); window.print(); setTimeout(() => document.body.classList.remove("druckmodus"), 500);
+        Bericht.druckStil(berichtDunkel); document.body.classList.add("druckmodus"); window.print(); setTimeout(() => document.body.classList.remove("druckmodus"), 500);
       });
       if ($("b-frei")) $("b-frei").addEventListener("click", async () => {
         if (!confirm("Bericht für den Kunden freigeben? Er sieht ihn dann in seinem Bereich.")) return;
@@ -633,6 +661,8 @@
     liquide: "Konto und Tagesgeld", netto_manuell: "Netto/Monat (manuell)", depot: "Depots und Fonds", immobilien: "Immobilien",
     sonstverm: "Sonstiges Vermögen", schulden: "Kredite (Restschuld)", av_kapital: "Kapital fürs Alter heute", rentenalter: "Rentenbeginn mit",
     gesetzl: "Gesetzliche Rente netto (von Hand)", gesetzl_brutto: "Gesetzliche Rente brutto, Hochrechnung bis Regelaltersgrenze", gesetzl_bisher: "Rente aus bisherigen Beiträgen", jahre45: "45 Versicherungsjahre bis Rentenbeginn",
+    rentenalter2: "Person 2: Rentenbeginn mit", gesetzl_brutto2: "Person 2: gesetzliche Rente brutto, Hochrechnung", gesetzl_bisher2: "Person 2: Rente aus bisherigen Beiträgen",
+    jahre452: "Person 2: 45 Versicherungsjahre", pkv_alter2: "Person 2: PKV-Beitrag im Alter/Monat",
     partner_rente: "Rente Ehepartner brutto", pkv_alter: "PKV-Beitrag im Alter/Monat",
     ...Object.fromEntries([1, 2, 3, 4, 5, 6].flatMap((i) => [["we_art", "Art"], ["we_name", "Bezeichnung"], ["we_person", "Person"], ["we_wann", "Wann"], ["we_wae", "Währung"],
       ["we_kurs", "Kurs je 1 €"], ["we_modus", "Erfassung"], ["we_kapart", "Art der Erträge"], ["we_betrag", "Betrag"], ["we_betrag_alter", "Betrag im Alter/Monat"],
@@ -678,6 +708,7 @@
     h += `<p class="hint">Rechnungen sind Näherungen auf Basis der Angaben und Annahmen, keine Prognose. Der Prüfwert belegt den Inhalt zum Zeitpunkt des Auszugs (JSON-Export mit gleichem Prüfwert über „Zugang & Daten“).</p>`;
     let box = $("druck"); if (!box) { box = document.createElement("div"); box.id = "druck"; document.body.appendChild(box); }
     box.innerHTML = h;
+    Bericht.druckStil(false);
     document.body.classList.add("druckmodus");
     window.print();
     setTimeout(() => document.body.classList.remove("druckmodus"), 500);

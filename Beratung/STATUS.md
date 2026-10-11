@@ -102,6 +102,15 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
         - Die Einkünfte wirken heute aufs Netto und Budget, im Alter auf die Rentenlücke (Person 1). Quellen und Grenzen stehen in `Privat/vorab-check/QUELLEN.md`.
         - *Korrektur:* Vorher hieß es in der Rentenrechnung „keine weiteren Einkünfte im Alter“, und Betriebsrenten fehlten ganz.
       - *Fehler behoben:* Auf langen Seiten ging der erste Klick auf „Speichern“ direkt nach einer Eingabe ins Leere, weil die Leiste beim Fokuswechsel sprang.
+      - **Ganzer Haushalt im Alter (Entscheidung Oliver, 11.10.2026):**
+        - Gerechnet werden beide Renten, jeweils auch mit vorzeitigem Beginn, und alle weiteren Einkünfte beider Personen. Ehepaare werden mit Splitting zusammen veranlagt.
+        - Das Ziel bezieht sich auf das Haushaltsnetto heute, also Lohn und weitere Einkünfte ohne Kindergeld.
+        - Die Sparzeit läuft bis zum ersten Rentenbeginn.
+        - *Korrektur:* Vorher wurde nur Person 1 gerechnet und das Ziel aus ihrem Netto abgeleitet. Bei Paaren war die Lücke dadurch nicht vergleichbar.
+      - **Kundenbericht:**
+        - Farbiger gestaltet: Kopfband, Farbmarken je Abschnitt, getönte Kacheln, nummerierte nächste Schritte.
+        - Hell oder dunkel wählbar, auch als PDF. Das dunkle PDF hat keinen weißen Rand.
+        - Die dunklen Diagrammfarben sind mit dem Palette-Validator geprüft.
     - **Klick-Demo** ohne Server, mit erfundenen Daten: `app/demo/`.
 14. **Gemeinsamer Auftritt:**
     - Die Namen sind aus der Unterzeile entfernt, die Fußzeilen lauten „… in Kooperation mit …“.

@@ -144,12 +144,15 @@ $("widerruf").addEventListener("click", () => widerrufen("konto-status"));
 $("widerruf0").addEventListener("click", () => widerrufen("konto-status0"));
 $("nochmal").addEventListener("click", speichereEnde);
 
-let berichtDaten = null;
+let berichtDaten = null, berichtDunkel = Bericht.standardDunkel();
 function berichtRendern(ziel) {
   if (!document.getElementById("bericht-css")) { const st = document.createElement("style"); st.id = "bericht-css"; st.textContent = Bericht.CSS; document.head.appendChild(st); }
   const m = document.querySelector(".marke");
-  ziel.innerHTML = Bericht.html(berichtDaten, { marke: m ? m.innerHTML : "" });
+  ziel.innerHTML = Bericht.html(berichtDaten, { marke: m ? m.innerHTML : "", dunkel: berichtDunkel });
 }
+function themaKnopf() { $("bericht-thema").textContent = berichtDunkel ? "Helle Darstellung" : "Dunkle Darstellung"; $("bericht-thema").setAttribute("aria-pressed", String(berichtDunkel)); }
+themaKnopf();
+$("bericht-thema").addEventListener("click", () => { berichtDunkel = !berichtDunkel; themaKnopf(); if (!$("bericht-ansicht").hidden) berichtRendern($("bericht-ansicht")); });
 $("bericht-zeigen").addEventListener("click", () => {
   const v = $("bericht-ansicht"), offen = !v.hidden;
   v.hidden = offen; $("f").hidden = !offen;
@@ -158,7 +161,7 @@ $("bericht-zeigen").addEventListener("click", () => {
 });
 $("bericht-drucken").addEventListener("click", () => {
   let box = $("druck"); if (!box) { box = document.createElement("div"); box.id = "druck"; document.body.appendChild(box); }
-  berichtRendern(box); document.body.classList.add("druckmodus"); window.print();
+  berichtRendern(box); Bericht.druckStil(berichtDunkel); document.body.classList.add("druckmodus"); window.print();
   setTimeout(() => document.body.classList.remove("druckmodus"), 500);
 });
 
