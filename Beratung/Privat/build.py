@@ -1,12 +1,14 @@
 """Baut die Privat-Unterlagen: Bedarfsanalyse (A4) und Präsentationen (16:9).
 
 Zahlen kommen ausschließlich aus zahlen.py (⟦Z:schluessel⟧), Pflichtangaben und Marke aus shared/brand.py.
-Aufruf: python3 build.py
+Aufruf: python3 build.py            (du- und Sie-Fassung, Sie-Dateien mit Endung _Sie)
+        python3 build.py alter      (nur ein Dokument)
 """
 import pathlib, re, sys
 ROOT = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent.parent / "shared"))
-from brand import marke, marke_icon, KONTAKT_OLIVER, PFLICHTHINWEIS_DU, R, A, render  # noqa: E402
+from brand import marke, marke_icon, KONTAKT_OLIVER, PFLICHTHINWEIS, PFLICHTHINWEIS_DU, R, A, render  # noqa: E402
+import anrede  # noqa: E402  (du/Sie: shared/anrede.py, Tabelle shared/sie.json)
 from zahlen import Z  # noqa: E402
 
 DECK_HEAD = (ROOT / "assets" / "deck_head.html").read_text()
@@ -55,10 +57,10 @@ DOCS = [
     ("immobilien", "06_Immobilien_und_Finanzierung", "Immobilien und Finanzierung", "deck", FOOT_KUNDE, True),
 ]
 
-def fill(body, foot, art):
+def fill(body, foot, art, sie=False):
     body = re.sub(r"⟦Z:(\w+)⟧", lambda m: Z[m.group(1)], body)
     for k, v in TOKENS.items():
-        body = body.replace(k, v)
+        body = body.replace(k, PFLICHTHINWEIS if (sie and k == "⟦PFLICHTHINWEIS⟧") else v)
     n = 0
     def numbered(_):
         nonlocal n
@@ -73,9 +75,15 @@ for src, out, title, art, foot, kunde in DOCS:
     p = ROOT / "src" / f"{src}.html"
     if not p.exists():
         continue
-    body = fill(p.read_text(), foot, art)
-    head = (DECK_HEAD if art == "deck" else BASE_CSS + DOC_HEAD)
-    html = f'<!doctype html><html lang="de"><head><meta charset="utf-8"><title>{title}</title>{head}</head><body>{body}</body></html>' if art == "doc" else \
-           f'<!doctype html><html lang="de"><head><meta charset="utf-8"><title>{title}</title>{head.split("</style>")[0]}</style></head><body>{head.split("</style>",1)[1]}{body}</body></html>'
-    seiten = render(html, ROOT / f"{out}.pdf", title, forbid_tags=kunde)
-    print(out, seiten, "Seiten")
+    for sie in (False, True):
+        quelle = p.read_text()
+        if sie:
+            quelle = anrede.pruefe(anrede.zu_sie(quelle), src)
+        t = title.replace("mit dir", "mit Ihnen") if sie else title
+        body = fill(quelle, foot, art, sie)
+        head = (DECK_HEAD if art == "deck" else BASE_CSS + DOC_HEAD)
+        html = f'<!doctype html><html lang="de"><head><meta charset="utf-8"><title>{t}</title>{head}</head><body>{body}</body></html>' if art == "doc" else \
+               f'<!doctype html><html lang="de"><head><meta charset="utf-8"><title>{t}</title>{head.split("</style>")[0]}</style></head><body>{head.split("</style>",1)[1]}{body}</body></html>'
+        name = out + ("_Sie" if sie else "")
+        seiten = render(html, ROOT / f"{name}.pdf", t, forbid_tags=kunde)
+        print(name, seiten, "Seiten")

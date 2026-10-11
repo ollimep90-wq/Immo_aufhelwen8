@@ -14,7 +14,9 @@
   // Anrede: du oder ihr (Paar im Haushalt). Wird in html() gesetzt, wie F.
   const DU = { du: "du", Du: "Du", dein: "dein", Dein: "Dein", deine: "deine", Deine: "Deine", deines: "deines", deinen: "deinen", deiner: "deiner", dich: "dich", hast: "hast", Hast: "Hast" };
   const IHR = { du: "ihr", Du: "Ihr", dein: "euer", Dein: "Euer", deine: "eure", Deine: "Eure", deines: "eures", deinen: "euren", deiner: "eurer", dich: "euch", hast: "habt", Hast: "Habt" };
-  let P = DU;
+  const SIE = { du: "Sie", Du: "Sie", dein: "Ihr", Dein: "Ihr", deine: "Ihre", Deine: "Ihre", deines: "Ihres", deinen: "Ihren", deiner: "Ihrer", dich: "Sie", hast: "haben", Hast: "Haben" };
+  let P = DU, M = "du";   // M: du | ihr | sie
+  const A3 = (du, ihr, sie) => (M === "sie" ? sie : M === "ihr" ? ihr : du);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const zahl = (x) => { const n = Number(x); return isFinite(n) ? n : 0; };
   const eur = (x) => Math.round(zahl(x)).toLocaleString("de-DE") + " €";
@@ -136,7 +138,7 @@
     if (v && zahl(v.wunsch) > 0) {
       const r = kacheln.find((k) => k.sym === "ruhestand");
       const zusatz = `${eur(v.wunsch)} im Monat zum Leben (heutige Kaufkraft)`;
-      if (r) r.unter = zusatz; else kacheln.push({ text: wir ? "Euer Ruhestand" : "Dein Ruhestand", jahr: null, sym: "ruhestand", unter: zusatz });
+      if (r) r.unter = zusatz; else kacheln.push({ text: `${P.Dein} Ruhestand`, jahr: null, sym: "ruhestand", unter: zusatz });
     }
     if (!kacheln.length) return "";
     const farben = [F.spar, F.fix, F.frei];
@@ -163,15 +165,17 @@
     const ak = (farbe) => ` style="--akzent:${farbe}"`;
     const jahr = new Date(d.erstellt * 1000).getFullYear();
     const b = d.budget, v = d.vorsorge, m = d.vermoegen;
+    // Anzahl (Paar) und Anrede (du/Sie) sind getrennt: „wir“ steuert Plural der Sachen, P die Pronomen
     const wir = d.paar === true || !!(v && zahl(v.haushalt) === 2);
-    P = wir ? IHR : DU;
-    const W = wir ? { stehst: "Wo ihr steht", willst: "Wo ihr hinwollt", kommst: "Wie ihr dahin kommt", dein: "euer", euch: "euch" }
-      : { stehst: "Wo du stehst", willst: "Wo du hinwillst", kommst: "Wie du dahin kommst", dein: "dein", euch: "dich" };
+    M = d.anrede === "sie" ? "sie" : wir ? "ihr" : "du";
+    P = M === "sie" ? SIE : M === "ihr" ? IHR : DU;
+    const W = { stehst: A3("Wo du stehst", "Wo ihr steht", "Wo Sie stehen"), willst: A3("Wo du hinwillst", "Wo ihr hinwollt", "Wo Sie hinwollen"),
+      kommst: A3("Wie du dahin kommst", "Wie ihr dahin kommt", "Wie Sie dahin kommen"), dir: A3("dir", "euch", "Ihnen") };
     const schritte = d.naechste_schritte ? esc(d.naechste_schritte).split(/\n+/).map((z) => z.trim()).filter(Boolean) : [];
     const kapitel = (nr, titel, satz, farbe) => `<div class="b-kapitel" style="--kf:${farbe}"><span>${nr}</span><div><h2 class="b-kap-titel">${titel}</h2><p>${satz}</p></div></div>`;
     const namen = [d.vorname, wir ? d.vorname2 : ""].filter(Boolean).join(" und ");
     let h = `<article class="bericht${opt.dunkel ? " dunkel" : ""}"><div class="b-marke">${opt.marke || ""}</div>
-      <header class="b-titel"><p class="b-eyebrow">${P.Dein} Finanzbericht</p><h1>${esc(namen ? namen + ", so steht es um " + P.dein + " Geld" : "So steht es um " + P.dein + " Geld")}</h1>
+      <header class="b-titel"><p class="b-eyebrow">${P.Dein} Finanzbericht</p><h1>${esc(namen && M !== "sie" ? namen + ", so steht es um " + P.dein + " Geld" : "So steht es um " + P.dein + " Geld")}</h1>
         <p>Stand ${new Date(d.erstellt * 1000).toLocaleDateString("de-DE")} · erstellt von ${esc(d.berater)}</p></header>`;
     // Auf einen Blick
     const zt = (d.ziele || []).filter((x) => x && x.text);
@@ -185,41 +189,41 @@
     if (blick.length) h += `<div class="b-blick">${blick.map(([t, x, f]) => `<div style="--bf:${f}"><small>${t}</small><b>${x}</b></div>`).join("")}</div>`;
 
     // 1 Wo du stehst
-    h += kapitel(1, W.stehst, wir ? "Euer Geld heute: was reinkommt, was rausgeht, was schon da ist und wie gut ihr abgesichert seid." : "Dein Geld heute: was reinkommt, was rausgeht, was schon da ist und wie gut du abgesichert bist.", F.fix);
+    h += kapitel(1, W.stehst, `${P.Dein} Geld heute: was reinkommt, was rausgeht, was schon da ist und wie gut ${P.du} abgesichert ${A3("bist", "seid", "sind")}.`, F.fix);
     if (b) h += `<section${ak(F.fix)}><h2>${P.Dein} Geld im Monat</h2><p class="b-lead">${zahl(b.ueberschuss2) >= 0 ? `Von ${eur(b.einnahmen)} Einnahmen bleiben nach festen Ausgaben und Sparen <b>${eur(b.ueberschuss2)}</b> frei.` : `Nach festen Ausgaben und Sparen fehlen im Monat rund <b>${eur(-zahl(b.ueberschuss2))}</b>.`}</p>
       ${geldFluss(b)}<div class="b-kacheln"><div class="b-k-gruen"><small>Sparquote</small><b>${pct(b.sparquote)}</b></div><div><small>Frei nach festen Ausgaben</small><b>${eur(b.ueberschuss1)}</b></div><div class="${zahl(b.ueberschuss2) >= 0 ? "" : "b-k-rot"}"><small>Frei nach dem Sparen</small><b>${eur(b.ueberschuss2)}</b></div></div></section>`;
-    if (b && b.reserve_monate != null) h += `<section${ak(F.frei)}><h2>${P.Deine} Notreserve</h2><p class="b-lead">${wir ? "Eure Konten und Tagesgelder reichen" : "Dein Konto und Tagesgeld reichen"} für rund <b>${zahl(b.reserve_monate).toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben.</p>${reserveSkala(b.reserve_monate)}</section>`;
+    if (b && b.reserve_monate != null) h += `<section${ak(F.frei)}><h2>${P.Deine} Notreserve</h2><p class="b-lead">${wir ? `${P.Deine} Konten und Tagesgelder reichen` : `${P.Dein} Konto und Tagesgeld reichen`} für rund <b>${zahl(b.reserve_monate).toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben.</p>${reserveSkala(b.reserve_monate)}</section>`;
     if (m && (m.vermoegen || m.schulden)) h += `<section${ak(F.fix)}><h2>Was ${P.du} schon ${P.hast}</h2><div class="b-kacheln"><div class="b-k-blau"><small>Vermögen</small><b>${eur(m.vermoegen)}</b></div><div><small>Offene Kredite (Restschuld)</small><b>${eur(m.schulden)}</b></div><div><small>Unterm Strich</small><b>${eur(zahl(m.vermoegen) - zahl(m.schulden))}</b></div></div></section>`;
     if (d.absicherung && d.absicherung.length) h += `<section${ak(F.fix)}><h2>${P.Deine} Absicherung</h2><p class="b-lead">Wie stark ${P.dich} ein Ereignis laut ${P.deinen} Antworten treffen würde, und ${d.ansprechpartner_versicherung ? `eine erste Einschätzung von ${esc(d.ansprechpartner_versicherung)}, Versicherungsmakler` : "unsere erste Einschätzung"}.</p>${absicherung(d.absicherung)}</section>`;
 
     // 2 Wo du hinwillst
     const board = visionBoard(d.ziele, v, jahr, wir);
     if (board || (d.ziele && d.ziele.length)) {
-      h += kapitel(2, W.willst, `Das ist ${W.euch} wichtig. Danach richten wir die Rechnung aus.`, F.spar);
+      h += kapitel(2, W.willst, `Das ist ${W.dir} wichtig. Danach richten wir die Rechnung aus.`, F.spar);   // vorher „Das ist dich wichtig“ (Fehler 11.10.2026)
       h += `<section${ak(F.spar)}><h2>${P.Dein} Vision Board</h2>${board}</section>`;
     }
 
     // 3 Wie du dahin kommst
-    if (v || schritte.length) h += kapitel(3, W.kommst, `Was zwischen heute und ${wir ? "euren" : "deinen"} Zielen liegt, und die ersten Schritte dorthin.`, F.frei);
+    if (v || schritte.length) h += kapitel(3, W.kommst, `Was zwischen heute und ${P.deinen} Zielen liegt, und die ersten Schritte dorthin.`, F.frei);
     if (v) {
       const pz = (x) => (zahl(x) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %";
       const vz = Array.isArray(v.vorzeitig) ? v.vorzeitig : v.vorzeitig ? [{ name: "", beginn_alter: v.vorzeitig.beginn_alter, abschlag: v.vorzeitig.abschlag }] : [];
       const fehlt = Array.isArray(v.fehlt) ? v.fehlt : [];
-      const kopf = wir ? "Gerechnet für euren Haushalt: beide Renten und weitere Einkünfte, so wie es aussieht, wenn alle Renten laufen."
-        : v.gerechnet_fuer ? (v.gerechnet_fuer === d.vorname ? "Gerechnet nur für dich" : `Gerechnet nur für ${esc(v.gerechnet_fuer)}`) + ", die Rente deines Partners oder deiner Partnerin ist noch nicht enthalten." : "";
+      const kopf = wir ? `Gerechnet für ${P.deinen} Haushalt: beide Renten und weitere Einkünfte, so wie es aussieht, wenn alle Renten laufen.`
+        : v.gerechnet_fuer ? (v.gerechnet_fuer === d.vorname ? `Gerechnet nur für ${P.dich}` : `Gerechnet nur für ${esc(v.gerechnet_fuer)}`) + `, die Rente ${P.deines} Partners oder ${P.deiner} Partnerin ist noch nicht enthalten.` : "";
       const frueh = vz.length ? ` (${vz.map((x) => `${x.name ? esc(x.name) + " beginnt" : "Beginn"} mit ${zahl(x.beginn_alter)}: weniger Beitragsjahre und ${pz(x.abschlag)} Abschlag`).join("; ")})` : " laut Renteninformation";
       const rente = v.gesetzlich_brutto
-        ? `${wir ? "Eure gesetzlichen Renten bringen zusammen" : "Deine gesetzliche Rente bringt"} rund ${eur(v.gesetzlich_brutto)} brutto${frueh}. Nach Kranken- und Pflegeversicherung und Steuern bleiben davon rund ${eur(v.gesetzlich)}.`
-        : `${wir ? "Eure gesetzlichen Renten" : "Deine gesetzliche Rente"} nach Abzügen ${wir ? "decken" : "deckt"} davon rund ${eur(v.gesetzlich)} (Schätzung auf Basis ${wir ? "eurer" : "deiner"} Angaben).`;
-      h += `<section${ak(F.spar)}><h2>${wir ? "Euer" : "Dein"} Leben nach der Arbeit</h2><p class="b-lead">Rechenbeispiel mit Annahmen (siehe unten), keine Prognose. ${kopf}${fehlt.length ? ` Die Rente von ${fehlt.map(esc).join(" und ")} fehlt noch in der Rechnung.` : ""}</p>
-      <p class="b-lead">Als Ziel rechnen wir mit ${eur(v.wunsch)} im Monat in heutiger Kaufkraft${v.annahmen && v.annahmen.zielquote ? `, das sind ${pct(v.annahmen.zielquote)} ${wir ? "eures heutigen Haushaltsnettos" : "deines heutigen Nettos"}` : ""}. ${rente}${zahl(v.weitere) > 0 ? ` Dazu kommen weitere Einkünfte, zum Beispiel aus Vermietung oder Kapital, mit rund ${eur(v.weitere)} netto.` : ""}</p>
+        ? `${wir ? `${P.Deine} gesetzlichen Renten bringen zusammen` : `${P.Deine} gesetzliche Rente bringt`} rund ${eur(v.gesetzlich_brutto)} brutto${frueh}. Nach Kranken- und Pflegeversicherung und Steuern bleiben davon rund ${eur(v.gesetzlich)}.`
+        : `${wir ? `${P.Deine} gesetzlichen Renten` : `${P.Deine} gesetzliche Rente`} nach Abzügen ${wir ? "decken" : "deckt"} davon rund ${eur(v.gesetzlich)} (Schätzung auf Basis ${P.deiner} Angaben).`;
+      h += `<section${ak(F.spar)}><h2>${P.Dein} Leben nach der Arbeit</h2><p class="b-lead">Rechenbeispiel mit Annahmen (siehe unten), keine Prognose. ${kopf}${fehlt.length ? ` Die Rente von ${fehlt.map(esc).join(" und ")} fehlt noch in der Rechnung.` : ""}</p>
+      <p class="b-lead">Als Ziel rechnen wir mit ${eur(v.wunsch)} im Monat in heutiger Kaufkraft${v.annahmen && v.annahmen.zielquote ? `, das sind ${pct(v.annahmen.zielquote)} ${P.deines} heutigen ${wir ? "Haushaltsnettos" : "Nettos"}` : ""}. ${rente}${zahl(v.weitere) > 0 ? ` Dazu kommen weitere Einkünfte, zum Beispiel aus Vermietung oder Kapital, mit rund ${eur(v.weitere)} netto.` : ""}</p>
       <div class="b-zwei">${renteSaeulen(v)}<div class="b-kacheln b-spalte"><div class="b-k-rot"><small>Lücke pro Monat (heutige Kaufkraft)</small><b>${eur(v.luecke)}</b></div><div><small>Nötiges Kapital ${wir ? "zum ersten Rentenbeginn" : "mit " + (v.rentenalter || 67)} (heutige Kaufkraft)</small><b>${eur(v.kapital)}</b></div>${zahl(v.vorhanden) > 0 ? `<div><small>Davon schon angespart (hochgerechnet)</small><b>${eur(v.vorhanden)}</b></div>` : ""}<div class="b-k-gruen"><small>${zahl(v.vorhanden) > 0 ? "Rechnerische Sparrate für den Rest" : "Rechnerische Sparrate"}</small><b>${eur(v.sparrate)}</b><small>Rechenbeispiel, steigt jährlich mit der Inflation</small></div></div></div></section>`;
     }
     const w = weg(schritte, d.ziele, v, jahr);
     if (w) h += `<section${ak(F.frei)}><h2>${P.Dein} Weg</h2>${w}</section>`;
     const A = (v && v.annahmen) || {}, p1 = (x) => (zahl(x) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %";
     h += `<footer class="b-fuss"><p>Dieser Bericht fasst ${P.deine} Angaben und unsere Rechnungen zusammen. Alle Werte sind Näherungen und Rechenbeispiele auf Basis von Annahmen${v && v.annahmen ? ` (Ziel ${p1(A.zielquote)} vom heutigen Netto, Rendite ${p1(A.rendite)} vor Kosten, Kosten ${p1(A.kosten)}, Inflation ${p1(A.inflation)}, Auszahlung über ${zahl(A.rentendauer)} Jahre mit ${p1(A.entnahme_real)} realer Verzinsung${v.gesetzlich_brutto ? ", gesetzliche Rente netto nach den Abgaben- und Steuerregeln von 2026" : ""})` : ""}, keine Prognose. Geldanlagen können an Wert verlieren.</p>
-      <p>Der Bericht ist keine Empfehlung für ein bestimmtes Produkt. ${wir ? "Bevor ihr einen Vertrag abschließt, bekommt ihr" : "Bevor du einen Vertrag abschließt, bekommst du"} die gesetzlich vorgeschriebenen Unterlagen und eine eigene Beratung. Die Einschätzungen zur Absicherung sind ein erster Überblick. Eine Beratung zu einzelnen Versicherungen machen wir gesondert. Der Bericht ersetzt keine Rechts- oder Steuerberatung.</p></footer></article>`;
+      <p>Der Bericht ist keine Empfehlung für ein bestimmtes Produkt. ${A3("Bevor du einen Vertrag abschließt, bekommst du", "Bevor ihr einen Vertrag abschließt, bekommt ihr", "Bevor Sie einen Vertrag abschließen, bekommen Sie")} die gesetzlich vorgeschriebenen Unterlagen und eine eigene Beratung. Die Einschätzungen zur Absicherung sind ein erster Überblick. Eine Beratung zu einzelnen Versicherungen machen wir gesondert. Der Bericht ersetzt keine Rechts- oder Steuerberatung.</p></footer></article>`;
     return h;
   }
 

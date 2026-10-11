@@ -92,7 +92,7 @@ async def sicherheit(request: Request, call_next):
 async def eingabefehler(request: Request, exc: RequestValidationError):
     # ohne Echo der Eingaben (sonst stünden z. B. Passwörter in der Antwort)
     felder = sorted({".".join(str(x) for x in e.get("loc", [])[1:]) for e in exc.errors()})
-    return JSONResponse({"detail": "Bitte prüf deine Eingaben.", "felder": felder}, status_code=422)
+    return JSONResponse({"detail": "Bitte die Eingaben prüfen.", "felder": felder}, status_code=422)
 
 
 _versuche = OrderedDict()
@@ -216,7 +216,7 @@ def pruefe_daten(daten):
     try:
         js = dbmod.als_json(daten)
     except (ValueError, RecursionError):
-        raise HTTPException(422, "Bitte prüf deine Eingaben.")
+        raise HTTPException(422, "Bitte die Eingaben prüfen.")
     if len(js) > 200_000:
         raise HTTPException(413, "Das ist zu viel Text auf einmal. Bitte kürze die Freitexte etwas.")
 
@@ -273,11 +273,11 @@ class Code(BaseModel):
 def vorsitzung(request: Request):
     token = request.cookies.get(COOKIE_PRE)
     if not token:
-        raise HTTPException(401, "Bitte melde dich erneut an.")
+        raise HTTPException(401, "Bitte erneut anmelden.")
     v = DB.eins("SELECT v.versuche, u.* FROM vorsitzungen v JOIN users u ON u.id=v.user_id "
                 "WHERE v.token_hash=? AND v.ablauf>? AND u.aktiv=1", h(token), time.time())
     if not v:
-        raise HTTPException(401, "Die Anmeldung ist abgelaufen. Bitte melde dich erneut an.")
+        raise HTTPException(401, "Die Anmeldung ist abgelaufen. Bitte erneut anmelden.")
     v["_token"] = token
     return v
 
@@ -286,7 +286,7 @@ def versuch_zaehlen(v):
     DB.x("UPDATE vorsitzungen SET versuche=versuche+1 WHERE token_hash=?", h(v["_token"]))
     if v["versuche"] + 1 >= MAX_CODE_VERSUCHE:
         DB.x("DELETE FROM vorsitzungen WHERE token_hash=?", h(v["_token"]))
-        raise HTTPException(429, "Zu viele falsche Codes. Bitte melde dich erneut an.")
+        raise HTTPException(429, "Zu viele falsche Codes. Bitte erneut anmelden.")
 
 
 def abschliessen(resp: Response, v, aktion):
@@ -317,7 +317,7 @@ def zfa_bestaetigen(d: Code, request: Request, resp: Response):
     schritt = sicher.pruefe_totp(DB.krypto.ent(v["totp_geheim"]), d.code, v["totp_letzter"])
     if schritt is None:
         versuch_zaehlen(v)
-        raise HTTPException(401, "Der Code stimmt nicht. Prüf die Uhrzeit deines Handys und versuch es noch einmal.")
+        raise HTTPException(401, "Der Code stimmt nicht. Bitte die Uhrzeit am Handy prüfen und es noch einmal versuchen.")
     codes = sicher.wiederherstellungscodes()
     with DB.tx() as con:
         con.execute("UPDATE users SET totp_aktiv=1, totp_letzter=? WHERE id=?", (schritt, v["id"]))
@@ -592,13 +592,13 @@ def einladung_annehmen(d: Annahme, request: Request, resp: Response):
             raise HTTPException(404, "Die Einladung ist ungültig oder abgelaufen")
         e = dict(e)
         if con.execute("SELECT 1 FROM users WHERE email=?", (e["email"],)).fetchone():
-            raise HTTPException(409, "Für diese E-Mail gibt es schon einen Zugang. Bitte melde dich an.")
+            raise HTTPException(409, "Für diese E-Mail gibt es schon einen Zugang. Bitte anmelden.")
         cur = con.execute("INSERT INTO users (email,name,rolle,pw_hash,erstellt) VALUES (?,?,?,?,?)",
                           (e["email"], e["name"], "kunde", ph.hash(d.passwort), jetzt))
         uid = cur.lastrowid
         cur = con.execute("UPDATE akten SET kunde_id=? WHERE id=? AND kunde_id IS NULL", (uid, e["akte_id"]))
         if cur.rowcount != 1:   # Akte hat schon einen Kunden: keine Übernahme
-            raise HTTPException(409, "Diese Einladung ist nicht mehr gültig. Bitte melde dich bei uns.")
+            raise HTTPException(409, "Diese Einladung ist nicht mehr gültig. Bitte bei uns melden.")
         con.execute("DELETE FROM einladungen WHERE akte_id=?", (e["akte_id"],))
     neue_sitzung(resp, uid)
     DB.protokoll(uid, e["akte_id"], "einladung angenommen")
@@ -608,7 +608,7 @@ def einladung_annehmen(d: Annahme, request: Request, resp: Response):
 def eigene_akte(u):
     a = DB.eins("SELECT * FROM akten WHERE kunde_id=?", u["id"])
     if not a:
-        raise HTTPException(404, "Für deinen Zugang ist noch nichts angelegt. Bitte melde dich bei uns.")
+        raise HTTPException(404, "Für diesen Zugang ist noch nichts angelegt. Bitte bei uns melden.")
     return a
 
 
@@ -629,7 +629,7 @@ def kunde_akte(u=Depends(nur("kunde"))):
 @app.post("/api/kunde/einwilligung")
 def kunde_einwilligung(d: Einwilligung, u=Depends(nur("kunde"))):
     if d.text_version != EINWILLIGUNG_VERSION:
-        raise HTTPException(409, "Der Einwilligungstext hat sich geändert. Bitte lade die Seite neu.")
+        raise HTTPException(409, "Der Einwilligungstext hat sich geändert. Bitte die Seite neu laden.")
     a = eigene_akte(u)
     DB.x("INSERT INTO einwilligungen (akte_id,user_id,text_version,text_hash,zeit) VALUES (?,?,?,?,?)",
          a["id"], u["id"], d.text_version, hashlib.sha256(d.text.encode()).hexdigest(), time.time())
@@ -644,7 +644,7 @@ def kunde_vorab(d: Abschnitt, u=Depends(nur("kunde"))):
         raise HTTPException(403, "Ohne Einwilligung können wir nichts speichern")
     pruefe_daten(d.daten)
     v = speichern_oder_409(a["id"], ABSCHNITT_KUNDE, d.daten, u["id"], d.version,
-                           "Deine Angaben wurden inzwischen in einem anderen Fenster geändert. Bitte lade die Seite neu.")
+                           "Die Angaben wurden inzwischen in einem anderen Fenster geändert. Bitte die Seite neu laden.")
     DB.protokoll(u["id"], a["id"], f"vorab v{v}")
     return {"version": v}
 

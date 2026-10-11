@@ -6,13 +6,13 @@
     if (daten !== undefined) { opt.headers["Content-Type"] = "application/json"; opt.body = JSON.stringify(daten); }
     let r;
     try { r = await fetch(pfad, opt); }
-    catch (e) { const f = new Error("Keine Verbindung. Bitte prüf dein Internet und versuch es noch einmal."); f.status = 0; throw f; }
+    catch (e) { const f = new Error("Keine Verbindung. Bitte die Internetverbindung prüfen und es noch einmal versuchen."); f.status = 0; throw f; }
     let body = null;
     try { body = await r.json(); } catch (e) { body = null; }
     if (!r.ok) {
       let text = body && typeof body.detail === "string" ? body.detail : null;
-      if (!text) text = r.status === 422 ? "Bitte prüf deine Eingaben." : "Da ist bei uns etwas schiefgelaufen. Bitte versuch es gleich noch einmal.";
-      if (r.status === 401 && pfad !== "/api/login") text = "Du bist nicht mehr angemeldet. Bitte melde dich neu an. Was du in diesem Schritt eingegeben hast, ist noch nicht gespeichert.";
+      if (!text) text = r.status === 422 ? "Bitte die Eingaben prüfen." : "Da ist bei uns etwas schiefgelaufen. Bitte gleich noch einmal versuchen.";
+      if (r.status === 401 && pfad !== "/api/login") text = "Die Anmeldung ist abgelaufen. Bitte neu anmelden. Die Eingaben in diesem Schritt sind noch nicht gespeichert.";
       const fehler = new Error(text);
       fehler.status = r.status; throw fehler;
     }
