@@ -660,7 +660,8 @@ def kunde_widerruf(u=Depends(nur("kunde"))):
     """Widerruf: alle Angaben der Akte werden gelöscht, auch was Berater daraus übernommen haben.
     Grundlage: Die App ist ein reines Vorbereitungswerkzeug; gesetzliche Beratungsdokumentation
     (z. B. § 22/23 FinVermV ab Auftragsannahme) wird außerhalb der App geführt (BETRIEB.md).
-    Es bleiben Zugang (Name, E-Mail) und der Nachweis der Einwilligung (Art. 7 Abs. 1 DSGVO)."""
+    Es bleiben Zugang (Name, E-Mail), der Nachweis der Einwilligung (Art. 7 Abs. 1 DSGVO)
+    und die Anrede-Einstellung des Beraters (Abschnitt „einstellungen“)."""
     a = eigene_akte(u)
     with DB.tx() as con:
         con.execute("UPDATE einwilligungen SET widerrufen=? WHERE akte_id=? AND user_id=? AND widerrufen IS NULL", (time.time(), a["id"], u["id"]))
@@ -686,7 +687,9 @@ def kunde_export(u=Depends(nur("kunde"))):
     """Alle in der App gespeicherten Daten zur Person (Hilfe für Art. 15/20 DSGVO)."""
     a = eigene_akte(u)
     DB.protokoll(u["id"], a["id"], "selbstauskunft")
-    return {"name": u["name"], "email": u["email"], "angaben": akte_daten(a["id"]),
+    daten = akte_daten(a["id"])
+    einstellungen = daten.pop("einstellungen", None)   # Einstellung des Beraters, keine Angabe des Kunden
+    return {"name": u["name"], "email": u["email"], "angaben": daten, "einstellungen_berater": einstellungen,
             "berater_mit_zugriff": DB.q("SELECT u.name FROM akte_berater b JOIN users u ON u.id=b.user_id WHERE b.akte_id=?", a["id"]),
             "einwilligungen": DB.q("SELECT text_version, zeit, widerrufen FROM einwilligungen WHERE user_id=?", u["id"])}
 

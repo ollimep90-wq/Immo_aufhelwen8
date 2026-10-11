@@ -20,7 +20,7 @@ Kein „Rosenbaum Finanzberatung“-Branding mehr.
 - **Kerngeschäft:**
   - Versicherungen und Absicherungs-Check: Jan, §34d, Courtage.
   - Finanzanlagen: Oliver, §34h.
-  - Immobilienkredite: Oliver, §34i. Vermittlung mit Bankprovision und Honorarberatung schließen sich aus (§34i Abs. 5). Ein Modell muss gewählt werden, die Entscheidung ist offen.
+  - Immobilienkredite: Oliver, §34i. Vermittlung mit Bankprovision und Honorarberatung schließen sich aus (§34i Abs. 5). *Entschieden 11.10.2026: Provision* (siehe `Beratung/STATUS.md`, Punkt 4). Vorher stand hier „die Entscheidung ist offen“.
 - **Produkte Finanzanlagen:**
   - Strategiedepot über WealthKonzept: eine Strategie je Risikoklasse, 1,0 % p. a. inklusive USt und WealthKonzept. Ab 50 €/Monat oder 1.000 € einmalig (bestätigt).
   - ETF-Standarddepot bei der FondsDepot Bank: 1–2 ETFs, 0,5 % flat.
@@ -41,7 +41,7 @@ Kein „Rosenbaum Finanzberatung“-Branding mehr.
    - Wie hoch ist Olivers Anteil an den 1 % (WealthKonzept ca. 0,3 %?).
    - Wer zahlt ihn aus? Zahlung über WealthKonzept wäre eine Zuwendung Dritter, für §34h kritisch. Mit Anwalt klären.
 2. **ETF-Standarddepot:** Ist die USt in den 0,5 % enthalten? Depotgebühr und Einzug des Serviceentgelts bei der FondsDepot Bank klären.
-3. **§34i-Modell** wählen (Vermittlung oder Honorarberatung).
+3. ~~**§34i-Modell** wählen (Vermittlung oder Honorarberatung).~~ *Erledigt 11.10.2026: Provision.*
 4. **Platzhalter:** Registernummern, IHK, Kontaktdaten Oliver, Höhe der Darlehensprovision.
 5. **Edelmetalle:** Partnerhändler, Vergütung, Aufteilung Jan/Oliver.
 6. **Name und Marke:** Marken-, Register- und Domainprüfung; IHK-Anfrage zur Firmierung.

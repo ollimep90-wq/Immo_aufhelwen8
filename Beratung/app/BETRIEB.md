@@ -1,13 +1,13 @@
 # Betrieb: was vor dem Livegang nötig ist
 
-Stand: 10.10.2026. Die App läuft lokal und ist getestet: 19 API-Tests und ein Browserablauf mit Zwei-Faktor-Anmeldung. Online ist sie noch nicht.
+Stand: 11.10.2026. Die App läuft lokal und ist getestet: automatische Tests (`pytest tests`) und Browserabläufe mit Zwei-Faktor-Anmeldung, zuletzt am 11.10.2026 auch in der Sie-Fassung. Online ist sie noch nicht.
 
 ## Grundentscheidungen
 
 - **Betreiberin ist die gemeinsame GmbH** (Name offen). Sie ist die einzige Verantwortliche im Sinne der DSGVO. Eine Vereinbarung nach Art. 26 zwischen zwei Firmen entfällt damit. Den Platzhalter `[Name GmbH, Anschrift]` im Einwilligungstext (Version `2026-10-v3`) vor dem Livegang füllen.
 - **Reines Vorbereitungswerkzeug.**
   - Kommt ein Auftrag zustande, wird die gesetzliche Beratungsdokumentation außerhalb der App geführt und archiviert. Fristen siehe unten.
-  - Der Widerruf löscht deshalb alle Angaben in der App.
+  - Der Widerruf löscht deshalb alle Angaben in der App. Erhalten bleiben nur der Zugang (Name, E-Mail), der Nachweis der Einwilligung und die Anrede-Einstellung der Akte (du/Sie). Die Anrede ist keine Angabe des Kunden, sondern eine Einstellung des Beraters (Entscheidung 11.10.2026).
 - **Keine Gesundheitsdaten.** Die Antworten zu Block 9 „Selbstbild“ werden nicht gespeichert, der Server lehnt sie ab.
 - **Zwei-Faktor-Anmeldung** (TOTP) ist für Berater und Admin Pflicht.
   - Sie wird bei der ersten Anmeldung eingerichtet. Dabei gibt es 10 Wiederherstellungscodes, jeder gilt einmal.
@@ -102,6 +102,7 @@ Für die Geeignetheitserklärung nach § 18 FinVermV ist der Auszug nur eine Gru
   - Zwecke und Rechtsgrundlagen: Einwilligung für den Vorab-Check, Vertragsanbahnung für die Beratung.
   - Empfänger: IONOS als Auftragsverarbeiter.
   - Speicherdauer und Rechte der Kunden.
+  - Dass die vom Berater gewählte Anrede (du/Sie) nach einem Widerruf bis zur Löschung der Akte gespeichert bleibt. Rechtsgrundlage dafür noch prüfen lassen.
 - [ ] **Verzeichnis der Verarbeitungstätigkeiten** (Art. 30 DSGVO) und **TOM-Beschreibung** (Art. 32 DSGVO), dazu eine kurze Schwellwertanalyse für eine Datenschutz-Folgenabschätzung.
 - [x] **Rollen** (Entscheidung 11.10.2026): Oliver und Jan sind Admin und Berater zugleich. Admins sehen alle Akten, das ist gewollt. Die Bewertung der Absicherung schreibt weiterhin nur der Bereich Versicherung (Jan).
 - [ ] **Docker-Ablauf** beim ersten Aufsetzen testen, ebenso die Rücksicherung.

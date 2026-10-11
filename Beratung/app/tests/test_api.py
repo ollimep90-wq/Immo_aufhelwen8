@@ -102,7 +102,7 @@ def test_ablauf_akte_einladung_einwilligung(umgebung):
     # Widerruf löscht die Angaben, Nachweis bleibt
     assert k.post("/api/kunde/widerruf", headers=H).status_code == 200
     a = oli.get(f"/api/akten/{akte}").json()
-    assert a["abschnitte"] == {} and a["einwilligung"]["widerrufen"]   # auch Beraterabschnitte gelöscht
+    assert a["abschnitte"] == {} and a["einwilligung"]["widerrufen"]   # auch Beraterabschnitte gelöscht (außer der Anrede-Einstellung, hier nicht gesetzt)
     assert k.put("/api/kunde/vorab", json={"daten": {"netto": 2}}, headers=H).status_code == 403
     # nach Widerruf schreibt auch kein Berater mehr (auch nicht mit alter Version)
     assert oli.put(f"/api/akten/{akte}/abschnitte/budget", json={"daten": {"a": 1}, "version": 3}, headers=H).status_code == 409
@@ -336,3 +336,6 @@ def test_anrede_je_akte(umgebung):
     assert k.post("/api/kunde/einwilligung", json={"text_version": vers, "text": "ok"}, headers=H).status_code == 200
     assert k.post("/api/kunde/widerruf", headers=H).status_code == 200
     assert k.get("/api/kunde/akte").json()["anrede"] == "sie"
+    # Selbstauskunft: die Anrede steht getrennt von den (gelöschten) Angaben
+    exp = k.get("/api/kunde/export").json()
+    assert exp["angaben"] == {} and exp["einstellungen_berater"]["daten"] == {"anrede": "sie"}

@@ -155,7 +155,7 @@
       }
       if (rest === "/berater" && m === "POST") {
         const a = akteFuer(u, id); if (!darfVerwalten(u, a)) throw new F(403, "Berater zuordnen darf, wer die Akte angelegt hat, oder der Admin");
-        const b = user(Number(d.user_id)); if (!b || b.rolle !== "berater") throw new F(404, "Berater nicht gefunden");
+        const b = user(Number(d.user_id)); if (!b || !(b.rolle === "berater" || (b.rolle === "admin" && b.bereich))) throw new F(404, "Berater nicht gefunden");
         if (!st.akte_berater.some((x) => x.akte_id === id && x.user_id === b.id)) st.akte_berater.push({ akte_id: id, user_id: b.id });
         return { ok: true };
       }
@@ -222,7 +222,8 @@
         if (!b || !b.daten.freigegeben_am || !b.daten.schnappschuss) throw new F(404, "Noch kein Bericht freigegeben");
         return b.daten.schnappschuss;
       }
-      if (m === "GET" && p === "/api/kunde/export") return { name: u.name, email: u.email, angaben: akteDaten(a.id),
+      if (m === "GET" && p === "/api/kunde/export") return { name: u.name, email: u.email,
+        angaben: Object.fromEntries(Object.entries(akteDaten(a.id)).filter(([k]) => k !== "einstellungen")), einstellungen_berater: abschnitt(a.id, "einstellungen"),
         berater_mit_zugriff: st.akte_berater.filter((b) => b.akte_id === a.id).map((b) => ({ name: (user(b.user_id) || {}).name })),
         einwilligungen: st.einwilligungen.filter((e) => e.user_id === u.id).map((e) => ({ text_version: e.text_version, zeit: e.zeit, widerrufen: e.widerrufen || null })) };
     }

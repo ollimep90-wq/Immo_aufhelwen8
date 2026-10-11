@@ -1,6 +1,6 @@
 # Beratungskonzept — Stand
 
-Stand: 10.10.2026. Arbeitstitel „Ganzheitliche Finanzberatung“. Der endgültige Name ist noch offen.
+Stand: 11.10.2026. Arbeitstitel „Ganzheitliche Finanzberatung“. Der endgültige Name ist noch offen.
 
 ## Was es gibt (Privatkunden)
 
@@ -60,7 +60,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
 5. **Platzhalter:** Register-Nummern, IHK, Kontaktdaten.
 6. **Name und Marke.**
 7. **DIN 77230:** Der Normtext lag nicht vor. Die Dokumente sagen deshalb „angelehnt“ und behaupten keine Konformität.
-8. **Alte Sie-Fassungen:** Kundenpräsentation und Gesprächsleitfaden in `Finanzanlagen/` sind teilweise durch die neuen Decks ersetzt. Zu entscheiden ist, ob sie bleiben.
+8. **Alte Sie-Fassungen:** Kundenpräsentation und Gesprächsleitfaden in `Finanzanlagen/` sind teilweise durch die neuen Decks ersetzt. Seit 11.10.2026 gibt es zu den Privat-Decks 01–06 eigene `_Sie`-Fassungen (Punkt 16, „Anrede du/Sie“). Zu entscheiden: Können die alten Sie-Fassungen archiviert werden?
 9. **Jans Rückmeldung** zu `03_Risikoabsicherung` und zu seiner Rolle in den anderen Decks.
 10. **Masterarbeit:** Die Kapitel 3–7 sind noch „XXX“, Anhang A ist leer, und das Literaturverzeichnis enthält fremde Einträge (RFID, Industrie 4.0). Das ist für die Arbeit selbst wichtig, nicht für die Decks.
 11. **Vor Kundeneinsatz anwaltlich klären** (Fachanwalt Bank- und Kapitalmarktrecht):
@@ -98,7 +98,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
       - Statt „deines Versicherungsmaklers“ stand dort zwischenzeitlich der Name des Ansprechpartners. *Erledigt 11.10.2026:* Oliver hat bestätigt, dass Jan Versicherungsmakler ist (siehe unten).
       - **Netto-Rente (11.10.2026):** Die App rechnet die gesetzliche Rente selbst von brutto (Renteninformation) auf netto um. Grundlage sind Kranken- und Pflegeversicherung der Rentner, der Besteuerungsanteil nach Rentenbeginn und der Tarif 2026. Die Regeln stehen in `Privat/vorab-check/QUELLEN.md`. *Erledigt:* Die Rechtsprüfung vom 11.10.2026 hat alle Werte bestätigt.
         - *Korrektur:* Vorher ging der Bruttobetrag des Kunden ungeprüft als netto in die Rechnung. Beispiel Lena: Die Lücke war mit 2.038 € zu klein. Richtig sind rund 2.260 €, weil von 1.500 € brutto rund 1.278 € netto bleiben.
-      - Jan und Oliver sind Versicherungsmakler (§ 34d Abs. 1, Angabe Oliver 11.10.2026). Der Bericht nennt deshalb „deinen Versicherungsmakler“ mit Namen.
+      - Jan und Oliver sind Versicherungsmakler (§ 34d Abs. 1, Angabe Oliver 11.10.2026). Die Versicherungsthemen liegen trotzdem bei Jan: Nur der Bereich Versicherung bewertet die Absicherung, und der Bericht nennt ihn als „deinen Versicherungsmakler“ mit Namen.
       - **Vorzeitige Rente (11.10.2026):** Die App rechnet mit beiden Werten der Renteninformation fehlende Beitragsjahre und den Abschlag (§ 77 SGB VI) heraus.
       - **Weitere Einkünfte (11.10.2026):** neuer Tab mit 6 Einträgen.
         - Arten: Vermietung (pauschal oder EÜR), Kapitalerträge mit Günstigerprüfung, Betriebsrente, private Rente, Sonstiges.
@@ -127,10 +127,10 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
         - *Fehler behoben:* Der Dateiname wäre beim Speichern mitgeschickt worden.
       - **Direkte Kontoanbindung:** Konzept und offene Rechtsfragen in `app/KONTOANBINDUNG.md`. Noch nicht gebaut, weil zuerst die Rechtslage geklärt werden muss.
       - **Anrede du/Sie (Entscheidung Oliver, 11.10.2026: Schalter in Decks und App):**
-        - Decks: Zu jedem Privat-Dokument gibt es eine `_Sie`-Fassung. Die Sätze stehen in `shared/sie.json`, der Build bricht bei du-Resten ab.
+        - Decks: Zu den Privat-Dokumenten 01–06 gibt es je eine `_Sie`-Fassung (Dateiname mit `_Sie`). `07_Vorab-Check.html` gibt es nur in der du-Form; ob es noch gebraucht wird, ist offen (Punkt 2). Die Sätze stehen in `shared/sie.json`, der Build bricht bei du-Resten ab.
         - App: Der Berater stellt die Anrede je Akte unter „Zugang & Daten“ ein. Standard ist du, Paare werden mit „ihr“ angesprochen, „Sie“ gilt für alle.
         - Der Kundenbereich wechselt dann auf `kunde_sie.html`, und neue Berichte erscheinen in der Sie-Form. Bereits freigegebene Berichte bleiben, wie sie sind. Freitexte prüft der Berater selbst, die App weist auf du-Formen hin.
-        - Die Einstellung bleibt nach einem Widerruf erhalten, weil sie keine Angabe des Kunden ist.
+        - Die Einstellung bleibt nach einem Widerruf erhalten, weil sie keine Angabe des Kunden ist. In der Selbstauskunft steht sie getrennt unter „einstellungen_berater“. Nach einem Widerruf ist sie nicht mehr änderbar.
         - Geprüft am 11.10.2026: API-Test und Browsertest aller Schritte, ohne du-Reste.
     - **Klick-Demo** ohne Server, mit erfundenen Daten: `app/demo/`. Die Akte „Tom Beispiel“ steht dort auf Sie.
 14. **Gemeinsamer Auftritt:**

@@ -4,7 +4,7 @@ Eine Web-App für Kunden und Berater. Sie ersetzt den Excel-Prototyp und läuft 
 
 | Bereich | Wer | Was |
 |---|---|---|
-| `kunde.html` | Kunde (per Einladungslink) | Finanz-Check in du-Form. Speichert nach jedem Schritt, aber nur mit Einwilligung. Widerruf und Selbstauskunft möglich |
+| `kunde.html` | Kunde (per Einladungslink) | Finanz-Check in du-Form, je Akte auf Sie umstellbar (dann `kunde_sie.html`, Weiterleitung automatisch). Speichert nach jedem Schritt, aber nur mit Einwilligung. Widerruf und Selbstauskunft möglich |
 | `berater.html` | Oliver, Jan | Kundenakten mit sieben Arbeitsbereichen, siehe unten |
 | Server | – | Python/FastAPI, SQLite. Rollen und Rechte: siehe `server/app.py` (Kopfkommentar) |
 
@@ -26,7 +26,7 @@ Dazu kommt der Bereich Zugang & Daten.
 - **Berater:** sieht nur Akten, denen er zugeordnet ist.
   - Die Bewertung der Absicherung schreibt nur der Bereich `versicherung` (§ 34d GewO).
   - Die Angaben des Kunden ändert kein Berater.
-- **Admin:** legt Berater an und sieht alle Akten.
+- **Admin:** legt Berater an und sieht alle Akten. Im Betrieb sind Oliver und Jan Admin mit Bereich, also zugleich Berater (BETRIEB.md).
 
 ## Lokal starten
 
@@ -34,7 +34,7 @@ Dazu kommt der Bereich Zugang & Daten.
 cd Beratung/app
 pip install -r requirements-dev.txt
 python3 tools/sync.py          # Rechenkern/Fragen aus Privat/vorab-check übernehmen
-python3 tools/baue_kunde.py    # Kundenbereich aus dem Vorab-Check erzeugen
+python3 tools/baue_kunde.py    # Kundenbereich aus dem Vorab-Check erzeugen, dazu die Sie-Fassung aus shared/sie.json (bricht bei du-Resten ab)
 export APP_DB=dev.sqlite APP_UNSICHER=1 APP_SCHLUESSEL=$(python3 -m server.verwaltung schluessel-erzeugen 2>/dev/null)
 python3 -m server.verwaltung berater-anlegen oliver@… "Oliver Rosenbaum" anlage
 python3 -m uvicorn server.app:app --port 8000

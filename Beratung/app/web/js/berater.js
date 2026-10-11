@@ -430,10 +430,10 @@
       const e = akte.einwilligung;
       return `<div class="card"><h2 style="margin-top:0">Kundenzugang</h2>${akte.kunde ? `<p>Aktiv: <b>${esc(akte.kunde.name)}</b> (${esc(akte.kunde.email)})</p>` :
         `<p class="hint">Noch kein Zugang. Erzeuge einen Einladungslink und schick ihn dem Kunden. Er ist 14 Tage gültig.</p>
-        <div class="row">${feld("e_name", 'Vorname für die Anrede <span class="hint">sieht der Kunde</span>', "text")}${feld("e_email", "E-Mail", "email")}</div>
+        <div class="row">${feld("e_name", 'Name für die Anrede <span class="hint">sieht der Kunde; bei Sie z. B. „Herr Beispiel“</span>', "text")}${feld("e_email", "E-Mail", "email")}</div>
         <div class="nav" style="justify-content:flex-start"><button type="button" class="primary" id="einladen">Einladungslink erzeugen</button></div>
         <p id="einladung-link" class="info" hidden></p>`}
-        <div class="row"><div><label for="anrede-wahl">Anrede im Kundenbereich und im Bericht</label><select id="anrede-wahl">
+        <div class="row"><div><label for="anrede-wahl">Anrede im Kundenbereich und im Bericht</label><select id="anrede-wahl"${e && e.widerrufen ? " disabled" : ""}>
           <option value="du"${anredeSie() ? "" : " selected"}>du (Paare: ihr)</option><option value="sie"${anredeSie() ? " selected" : ""}>Sie</option></select></div>
           <div style="align-self:end"><span id="anrede-status" class="hint" role="status"></span></div></div>
         <p>Einwilligung: ${e ? (e.widerrufen ? `<span class="err">widerrufen am ${datum(e.widerrufen)}</span>` : `erteilt am ${datum(e.zeit)} (Text ${esc(e.text_version)})`) : "keine"}</p></div>
