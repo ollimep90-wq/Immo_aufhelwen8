@@ -48,6 +48,12 @@ Stand: 10.10.2026. Die App läuft lokal und ist getestet: 19 API-Tests und ein B
    - Die Rücksicherung einmal testen, mit Schlüssel.
 6. **2FA zurücksetzen,** wenn ein Handy verloren geht: `python -m server.verwaltung 2fa-zuruecksetzen <email>`. Damit enden auch alle Sitzungen dieses Kontos.
 
+## Ausgehende Verbindung
+
+- Für Wechselkurse ruft der Server die EZB-Referenzkurse ab (`https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml`), höchstens alle 6 Stunden.
+- Dabei werden keine Kundendaten übertragen.
+- Die Firewall muss ausgehendes HTTPS erlauben. Ist die EZB nicht erreichbar, gilt der letzte bekannte Stand, sonst trägt der Berater den Kurs von Hand ein.
+
 ## Fristen und Löschung
 
 Diese Fristen beruhen auf der Prüfung vom 10.10.2026. Die Normtexte stammen aus nicht-amtlichen Fassungen, weil gesetze-im-internet.de nicht erreichbar war. Vor Verwendung am amtlichen Text prüfen.
