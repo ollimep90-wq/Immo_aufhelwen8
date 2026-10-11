@@ -501,8 +501,18 @@
     let budget = null;
     if (bIn) {
       const b = budgetRechnung(bIn, hr);
+      // Herkunft der Einnahmen für den Geldfluss im Bericht; passt die Summe nicht, zeigt der Bericht nur „Einnahmen“
+      const quellen = [], wer = (i) => h["name" + i] || "Person " + i;
+      if (hr && hr.rechnung) { let k = 0; [1, 2].forEach((i) => { if (num(h["brutto" + i]) > 0) quellen.push({ name: "Gehalt " + wer(i), betrag: hr.rechnung.personen[k++].netto_monat }); }); }
+      [1, 2].forEach((i) => { if (num(h["netto" + i]) > 0) quellen.push({ name: "Netto " + wer(i), betrag: num(h["netto" + i]) }); });
+      if (!hr && num(bIn.netto_manuell) > 0) quellen.push({ name: "Netto", betrag: num(bIn.netto_manuell) });
+      if (hr && hr.weitere && hr.weitere.netto_monat) quellen.push({ name: "Weitere Einkünfte", betrag: hr.weitere.netto_monat });
+      if (hr && hr.kindergeld) quellen.push({ name: "Kindergeld", betrag: hr.kindergeld });
+      if (num(bIn.sonstige)) quellen.push({ name: "Sonstige Einnahmen", betrag: num(bIn.sonstige) });
+      const passt = quellen.every((q) => q.betrag > 0) && Math.abs(quellen.reduce((x, q) => x + q.betrag, 0) - b.einnahmen) < 1;
       budget = { einnahmen: b.einnahmen, fixkosten: b.fixkosten, sparen: num(bIn.sparen), ueberschuss1: b.ueberschuss1, ueberschuss2: b.ueberschuss2,
-        sparquote: b.sparquote, reserve_monate: endlich(b.reserve_monate), ausgaben: FIX.map(([k, n]) => ({ name: n, betrag: num(bIn[k]) })) };
+        sparquote: b.sparquote, reserve_monate: endlich(b.reserve_monate), ausgaben: FIX.map(([k, n]) => ({ name: n, betrag: num(bIn[k]) })),
+        quellen: passt ? quellen : null };
     } else if (va.budget) {
       const fk = va.fixkosten && typeof va.fixkosten === "object" ? va.fixkosten : {};
       budget = { einnahmen: zahl(va.budget.einnahmen), fixkosten: zahl(va.fixkosten_summe), sparen: zahl(va.sparen), ueberschuss1: zahl(va.budget.ueberschuss1),

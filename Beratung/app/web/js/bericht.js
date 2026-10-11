@@ -12,36 +12,52 @@
   const pct = (x) => Math.round(zahl(x) * 100).toLocaleString("de-DE") + " %";
 
   /* ---------- Grafiken ---------- */
-  function geldBalken(b) {
-    const ein = Math.max(zahl(b.einnahmen), 1), fix = Math.max(0, zahl(b.fixkosten)), spar = Math.max(0, zahl(b.sparen));
-    const frei = Math.max(0, ein - fix - spar), ueber = fix + spar > ein;
-    const W = 640, H = 120, x0 = 0, bw = W, teile = [["Feste Ausgaben", fix, F.fix], ["Sparen", spar, F.spar], ["Frei verfügbar", frei, F.frei]];
-    const summe = Math.max(ein, fix + spar);
-    let x = x0, svg = "";
-    teile.forEach(([n, v, c], i) => {
-      const w = v / summe * bw; if (w <= 0) return;
-      const breite = Math.max(0, w - (i < 2 ? 2 : 0));
-      svg += `<rect x="${x.toFixed(1)}" y="24" width="${breite.toFixed(1)}" height="36" rx="4" fill="${c}"><title>${n}: ${eur(v)}</title></rect>`;
-      if (w > 70) svg += `<text x="${(x + 8).toFixed(1)}" y="47" font-size="13" font-weight="600" fill="#fff">${pct(v / ein)}</text>`;
-      x += w;
-    });
-    const legende = teile.map(([n, v, c]) => `<div class="b-leg"><span style="background:${c}"></span><b>${eur(v)}</b> ${n}</div>`).join("");
-    return `<svg viewBox="0 0 ${W} ${H - 40}" width="100%" role="img" aria-label="Aufteilung deiner Einnahmen">${svg}
-      <text x="0" y="16" font-size="12" fill="${F.leise}">Einnahmen ${eur(ein)} im Monat = 100 %</text></svg>
-      <div class="b-legenden">${legende}</div>${ueber ? '<p class="b-hinweis">Feste Ausgaben und Sparen sind zusammen höher als die Einnahmen.</p>' : ""}`;
-  }
-
-  function ausgabenBalken(liste) {
-    const l = (liste || []).filter((x) => zahl(x.betrag) > 0).sort((a, z) => zahl(z.betrag) - zahl(a.betrag));
-    if (!l.length) return "";
-    const max = zahl(l[0].betrag), zeile = 30, W = 640, lab = 190;
-    const svg = l.map((x, i) => {
-      const w = zahl(x.betrag) / max * (W - lab - 90), y = i * zeile;
-      return `<text x="0" y="${y + 19}" font-size="13" fill="${F.tinte}">${esc(x.name)}</text>
-        <rect x="${lab}" y="${y + 6}" width="${Math.max(2, w).toFixed(1)}" height="18" rx="4" fill="${F.fix}"><title>${esc(x.name)}: ${eur(x.betrag)}</title></rect>
-        <text x="${(lab + w + 8).toFixed(1)}" y="${y + 19}" font-size="13" font-weight="600" fill="${F.tinte}">${eur(x.betrag)}</text>`;
-    }).join("");
-    return `<svg viewBox="0 0 ${W} ${l.length * zeile}" width="100%" role="img" aria-label="Deine festen Ausgaben">${svg}</svg>`;
+  /* Geldfluss (Sankey) wie eine Cashflow-Darstellung: Einnahmen → Geld im Monat → feste Ausgaben, Sparen, frei → Ausgabenposten.
+   * Farben: nur drei Gruppen (feste Ausgaben, Sparen, frei); die Posten tragen Namen und Betrag direkt am Knoten. */
+  function geldFluss(b) {
+    const ein = zahl(b.einnahmen), fix = Math.max(0, zahl(b.fixkosten)), spar = Math.max(0, zahl(b.sparen));
+    if (!(ein > 0)) return "";
+    const frei = ein - fix - spar;
+    const quellen = (Array.isArray(b.quellen) && b.quellen.length ? b.quellen : [{ name: "Einnahmen", betrag: ein }]).map((q) => ({ name: q.name, wert: zahl(q.betrag), farbe: F.leise }));
+    if (frei < 0) quellen.push({ name: "Fehlbetrag", wert: -frei, farbe: F.rot });
+    const ziele = [{ name: "Feste Ausgaben", wert: fix, farbe: F.fix }, { name: "Sparen", wert: spar, farbe: F.spar }, { name: "Frei verfügbar", wert: Math.max(0, frei), farbe: F.frei }].filter((x) => x.wert > 0);
+    const posten = (b.ausgaben || []).filter((x) => zahl(x.betrag) > 0).map((x) => ({ name: x.name, wert: zahl(x.betrag), farbe: F.fix }));
+    const W = 800, H = 330, oben = 30, NW = 12, GAP = 10, X = [175, 320, 465, 610];
+    const summe = Math.max(ein - Math.min(0, frei), fix + spar);
+    const maxPost = posten.reduce((a, x) => a + x.wert, 0) || 1;
+    const k = Math.min((H - (quellen.length - 1) * GAP) / summe, (H - (ziele.length - 1) * GAP) / summe, posten.length ? (H - (posten.length - 1) * GAP) / maxPost : Infinity);
+    const stapel = (liste, start) => { let y = start; liste.forEach((n) => { n.h = Math.max(2, n.wert * k); n.y = y; y += n.h + GAP; }); return y - GAP; };
+    const hA = stapel(quellen, oben), mitte = { y: oben, h: summe * k };
+    // mittlere Spalte mittig zur linken
+    stapel(ziele, oben);
+    const fest = ziele.find((z) => z.name === "Feste Ausgaben");
+    if (posten.length) { const hoehe = posten.reduce((a, x) => a + Math.max(2, x.wert * k), 0) + (posten.length - 1) * GAP;
+      stapel(posten, Math.max(oben, Math.min(fest ? fest.y + fest.h / 2 - hoehe / 2 : oben, oben + H - hoehe))); }
+    const band = (x1, y1, x2, y2, h, farbe, op, titel) => { const xm = (x1 + x2) / 2;
+      return `<path d="M${x1} ${y1.toFixed(1)}C${xm} ${y1.toFixed(1)} ${xm} ${y2.toFixed(1)} ${x2} ${y2.toFixed(1)}L${x2} ${(y2 + h).toFixed(1)}C${xm} ${(y2 + h).toFixed(1)} ${xm} ${(y1 + h).toFixed(1)} ${x1} ${(y1 + h).toFixed(1)}Z" fill="${farbe}" fill-opacity="${op}"><title>${esc(titel)}</title></path>`; };
+    let svg = "";
+    // Bänder: Quellen → Mitte
+    let ym = mitte.y;
+    quellen.forEach((q) => { svg += band(X[0] + NW, q.y, X[1], ym, q.h, q.farbe === F.rot ? F.rot : "#AEAEB2", 0.35, q.name + ": " + eur(q.wert)); ym += q.h; });
+    // Mitte → Ziele
+    ym = mitte.y;
+    ziele.forEach((z) => { svg += band(X[1] + NW, ym, X[2], z.y, z.h, z.farbe, 0.3, z.name + ": " + eur(z.wert)); ym += z.h; });
+    // feste Ausgaben → Posten
+    if (fest) { let yf = fest.y; posten.forEach((p) => { const h = fest.h * p.wert / maxPost; svg += band(X[2] + NW, yf, X[3], p.y, h, F.fix, 0.22, p.name + ": " + eur(p.wert)); yf += h; }); }
+    // Knoten
+    const knoten = (x, n) => `<rect x="${x}" y="${n.y.toFixed(1)}" width="${NW}" height="${n.h.toFixed(1)}" rx="3" fill="${n.farbe}"><title>${esc(n.name)}: ${eur(n.wert)}</title></rect>`;
+    svg += quellen.map((q) => knoten(X[0], q)).join("") + `<rect x="${X[1]}" y="${mitte.y}" width="${NW}" height="${mitte.h.toFixed(1)}" rx="3" fill="${F.tinte}"><title>Dein Geld im Monat: ${eur(ein)}</title></rect>`
+      + ziele.map((z) => knoten(X[2], z)).join("") + posten.map((p) => knoten(X[3], p)).join("");
+    // Beschriftungen: Abstand mindestens 15, damit sich nichts überlappt
+    const verteile = (liste) => { const ys = liste.map((n) => n.y + n.h / 2); for (let i = 1; i < ys.length; i++) ys[i] = Math.max(ys[i], ys[i - 1] + 15);
+      const ueber = ys.length ? ys[ys.length - 1] - (oben + H) : 0; if (ueber > 0) for (let i = ys.length - 1; i >= 0; i--) ys[i] = Math.min(ys[i] - ueber, i < ys.length - 1 ? ys[i + 1] - 15 : Infinity); return ys; };
+    const halo = `stroke="#fff" stroke-width="4" paint-order="stroke" stroke-linejoin="round"`;
+    const label = (x, y, anker, name, wert, fett) => `<text x="${x}" y="${(y + 4).toFixed(1)}" font-size="12.5" text-anchor="${anker}" fill="${F.tinte}" ${halo}>${fett ? `<tspan font-weight="700">${esc(name)}</tspan>` : esc(name)} <tspan font-weight="600">${eur(wert)}</tspan></text>`;
+    verteile(quellen).forEach((y, i) => { svg += label(X[0] - 6, y, "end", quellen[i].name, quellen[i].wert); });
+    svg += `<text x="${X[1] + NW / 2}" y="${oben - 10}" font-size="12.5" text-anchor="middle" fill="${F.tinte}"><tspan font-weight="700">Im Monat</tspan> ${eur(ein)}</text>`;
+    verteile(ziele).forEach((y, i) => { svg += label(X[2] + NW + 6, y, "start", ziele[i].name, ziele[i].wert, true); });
+    verteile(posten).forEach((y, i) => { svg += label(X[3] + NW + 6, y, "start", posten[i].name, posten[i].wert); });
+    return `<div class="b-fluss"><svg viewBox="0 0 ${W} ${oben + H + 10}" width="100%" role="img" aria-label="Geldfluss: Einnahmen ${eur(ein)}, feste Ausgaben ${eur(fix)}, Sparen ${eur(spar)}, ${frei >= 0 ? "frei " + eur(frei) : "Fehlbetrag " + eur(-frei)}">${svg}</svg></div>`;
   }
 
   function reserveSkala(m) {
@@ -93,9 +109,9 @@
   const STATUS = { rot: ["stark", F.rot, "●"], gelb: ["spürbar", F.gelb, "●"], gruen: ["wenig", F.gruen, "●"] };
   function absicherung(liste) {
     if (!liste || !liste.length) return "";
-    return `<table class="b-tab"><thead><tr><th>Bereich</th><th>Wie stark es dich treffen würde</th><th>Einschätzung</th></tr></thead><tbody>` +
+    return `<div class="b-tabwrap"><table class="b-tab"><thead><tr><th>Bereich</th><th>Wie stark es dich treffen würde</th><th>Einschätzung</th></tr></thead><tbody>` +
       liste.map((x) => { const s = STATUS[x.ampel] || ["keine Angabe", F.grau, "○"];
-        return `<tr><td>${esc(x.name)}</td><td><span style="color:${s[1]}" aria-hidden="true">${s[2]}</span> ${s[0]}</td><td>${esc(x.einschaetzung || "besprechen wir noch")}</td></tr>`; }).join("") + "</tbody></table>";
+        return `<tr><td>${esc(x.name)}</td><td><span style="color:${s[1]}" aria-hidden="true">${s[2]}</span> ${s[0]}</td><td>${esc(x.einschaetzung || "besprechen wir noch")}</td></tr>`; }).join("") + "</tbody></table></div>";
   }
 
   /* ---------- Bericht ---------- */
@@ -109,8 +125,7 @@
         <p class="b-lead">Stand ${new Date(d.erstellt * 1000).toLocaleDateString("de-DE")} · erstellt von ${esc(d.berater)}</p></header>`;
     if (d.ziele && d.ziele.length) h += `<section><h2>Deine Ziele</h2><p class="b-lead">Das ist dir wichtig. Daran messen wir die Zahlen unten.</p>${zeitstrahl(d.ziele, jahr)}</section>`;
     if (b) h += `<section><h2>Dein Geld im Monat</h2><p class="b-lead">${zahl(b.ueberschuss2) >= 0 ? `Von ${eur(b.einnahmen)} Einnahmen bleiben nach festen Ausgaben und Sparen <b>${eur(b.ueberschuss2)}</b> frei.` : `Nach festen Ausgaben und Sparen fehlen im Monat rund <b>${eur(-zahl(b.ueberschuss2))}</b>.`}</p>
-      ${geldBalken(b)}<div class="b-kacheln"><div><small>Sparquote</small><b>${pct(b.sparquote)}</b></div><div><small>Frei nach festen Ausgaben</small><b>${eur(b.ueberschuss1)}</b></div><div><small>Frei nach dem Sparen</small><b>${eur(b.ueberschuss2)}</b></div></div></section>`;
-    if (b && b.ausgaben && b.ausgaben.some((x) => zahl(x.betrag) > 0)) h += `<section><h2>Wohin deine festen Ausgaben gehen</h2>${ausgabenBalken(b.ausgaben)}</section>`;
+      ${geldFluss(b)}<div class="b-kacheln"><div><small>Sparquote</small><b>${pct(b.sparquote)}</b></div><div><small>Frei nach festen Ausgaben</small><b>${eur(b.ueberschuss1)}</b></div><div><small>Frei nach dem Sparen</small><b>${eur(b.ueberschuss2)}</b></div></div></section>`;
     if (b && b.reserve_monate != null) h += `<section><h2>Deine Notreserve</h2><p class="b-lead">Dein Konto und Tagesgeld reichen für rund <b>${zahl(b.reserve_monate).toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben.</p>${reserveSkala(b.reserve_monate)}</section>`;
     if (m && (m.vermoegen || m.schulden)) h += `<section><h2>Was du schon hast</h2><div class="b-kacheln"><div><small>Vermögen</small><b>${eur(m.vermoegen)}</b></div><div><small>Offene Kredite (Restschuld)</small><b>${eur(m.schulden)}</b></div><div><small>Unterm Strich</small><b>${eur(zahl(m.vermoegen) - zahl(m.schulden))}</b></div></div></section>`;
     if (v) h += `<section><h2>Dein Leben nach der Arbeit</h2><p class="b-lead">Rechenbeispiel mit Annahmen (siehe unten), keine Prognose.${v.gerechnet_fuer ? (v.gerechnet_fuer === d.vorname ? " Gerechnet nur für dich" : ` Gerechnet nur für ${esc(v.gerechnet_fuer)}`) + ", die Rente der zweiten Person im Haushalt ist nicht enthalten." : ""}</p>
@@ -130,8 +145,7 @@
   .bericht section{padding:22px 0;border-top:1px solid #E5E5EA;break-inside:avoid}
   .b-eyebrow{color:${F.spar};font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase;margin:18px 0 0}
   .b-lead{color:${F.leise};margin:0 0 14px} .b-marke svg{display:block}
-  .b-legenden{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:8px;font-size:13px;color:${F.leise}}
-  .b-leg span{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:0} .b-leg b{color:${F.tinte}}
+  .b-fluss{overflow-x:auto} .b-tabwrap{overflow-x:auto} .b-tab th,.b-tab td{overflow-wrap:anywhere} .b-fluss svg{min-width:560px}
   .b-kacheln{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
   .b-kacheln div{background:#F5F5F7;border-radius:14px;padding:12px} .b-kacheln small{display:block;color:${F.leise};font-size:12px} .b-kacheln b{font-size:21px;letter-spacing:-.01em}
   .b-zwei{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center} .b-spalte{grid-template-columns:1fr;margin-top:0}
