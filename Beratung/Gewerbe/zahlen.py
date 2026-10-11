@@ -40,6 +40,22 @@ Z["gv_mindest"] = eur(240)
 # Betriebliche Krankenversicherung: Sachbezugsfreigrenze § 8 Abs. 2 S. 11 EStG
 Z["bkv_freigrenze"] = eur(50)
 
+# Selbständige (unternehmer.html), Werte 2026
+def eur2(x):
+    """Cent-genau, kaufmännisch gerundet (51,415 → 51,42; Gleitkomma mit f-String ergäbe 51,41)"""
+    from decimal import Decimal, ROUND_HALF_UP
+    d = Decimal(str(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    return f"{d:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") + " €"
+# Freiwillige Rentenversicherung 2026: Mindest- und Höchstbeitrag laut DRV-Meldung vom 09.02.2026 (Rechtsprüfung 11.10.2026)
+Z["rv_frei_min"] = eur2(112.16)
+Z["rv_frei_max"] = eur2(1571.70)
+# Arbeitslosenversicherung auf Antrag (§ 28a, § 345b SGB III): Bemessung = Bezugsgröße, im Gründungszeitraum die Hälfte
+# Bezugsgröße 2026 3.955 €/Monat (TK, SV-Rechengrößen 2026); Beitragssatz 2,6 % ohne Primärbeleg (Rechtsprüfung 11.10.2026)
+BEZUGSGROESSE_2026 = 3955
+ALV_SATZ = 0.026
+Z["alv_beitrag"] = eur2(BEZUGSGROESSE_2026 * ALV_SATZ)
+Z["alv_gruender"] = eur2(round(BEZUGSGROESSE_2026 / 2 * ALV_SATZ, 6))
+
 if __name__ == "__main__":
     for k, v in Z.items():
         print(f"{k:20s} {v}")
