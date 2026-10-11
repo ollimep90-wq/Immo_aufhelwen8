@@ -1,0 +1,76 @@
+<title>Beratungs-App Demo</title>
+<link rel="stylesheet" href="css/app.css">
+<style>
+/* Startseite der Demo: nutzt die Farben und Bausteine der App (css/app.css), ergänzt nur das Raster der Einstiege. */
+.einstiege{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:8px 0 4px}
+.einstieg{display:flex;flex-direction:column;gap:6px;margin:0;min-width:0}
+.einstieg h3{margin:0} .einstieg p{margin:0;color:var(--mute);font-size:14px;flex:1}
+.einstieg button{align-self:flex-start;margin-top:8px}
+.rolle{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--blue)}
+.rundgang{padding-left:22px;margin:6px 0} .rundgang li{margin:8px 0}
+.zugang td:first-child{color:var(--mute);width:38%} .zugang code{font-size:14px;user-select:all}
+.grenzen{padding-left:20px;margin:6px 0} .grenzen li{margin:6px 0}
+h1{text-wrap:balance}
+</style>
+<div class="wrap" id="demo-start">
+  <div class="top"><div class="marke"><svg height="30" viewBox="0 0 60 60" aria-hidden="true"><path d="M30 4 L56 22 L4 22 Z" fill="#2E7D32"/><rect x="10" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="35" y="25" width="15" height="19" rx="2" fill="#7CC243"/><rect x="4" y="47" width="52" height="8" rx="2" fill="#2E7D32"/></svg><span>Ganzheitliche Finanzberatung</span></div></div>
+
+  <p class="eyebrow">Prototyp zum Anschauen · Stand 11.10.2026</p>
+  <h1>Die Beratungs-App zum Durchklicken</h1>
+  <p class="lead">Das ist die echte Oberfläche der App mit erfundenen Daten. Statt eines Servers läuft eine Nachbildung in deinem Browser. Nichts wird übertragen. Was du änderst, bleibt nur in diesem Browser.</p>
+
+  <h2>Einsteigen</h2>
+  <div class="einstiege">
+    <div class="card einstieg"><span class="rolle">Berater · Finanzanlagen</span><h3>Oliver</h3>
+      <p>Kundenakten, Netto-Rechnung, Budget, Rentenlücke, Risiko-Check, Kundenbericht freigeben, Aktenauszug.</p>
+      <button type="button" class="primary" data-als="oliver">Als Oliver öffnen</button></div>
+    <div class="card einstieg"><span class="rolle">Berater · Versicherungen</span><h3>Jan</h3>
+      <p>Sieht nur die Akten, denen er zugeordnet ist. Nur er kann die Absicherung bewerten.</p>
+      <button type="button" class="primary" data-als="jan">Als Jan öffnen</button></div>
+    <div class="card einstieg"><span class="rolle">Kundin</span><h3>Lena Muster</h3>
+      <p>Hat den Finanz-Check ausgefüllt. Ihr Finanzbericht ist freigegeben. Unter „Meine Daten“ kann sie alles herunterladen oder widerrufen.</p>
+      <button type="button" class="primary" data-als="lena">Als Lena öffnen</button></div>
+    <div class="card einstieg"><span class="rolle">Neuer Kunde</span><h3>Tom Beispiel</h3>
+      <p>Kommt über den Einladungslink, legt ein Passwort fest, willigt ein und füllt den Finanz-Check aus.</p>
+      <button type="button" class="quiet" id="einladung">Einladungslink öffnen</button></div>
+  </div>
+  <p class="hint">Oben auf jeder Seite der Demo wechselst du die Ansicht oder setzt alles auf den Anfang zurück.</p>
+
+  <h2>Vorschlag für einen Rundgang</h2>
+  <ol class="rundgang">
+    <li><b>Als Tom</b> die Einladung annehmen und den Finanz-Check ausfüllen (ca. 10 Minuten, Testwerte reichen).</li>
+    <li><b>Als Oliver</b> die Akte „Tom Beispiel“ öffnen. In „Haushalt &amp; Netto“, „Budget“ und „Vermögen &amp; Vorsorge“ jeweils „Übernehmen“ und „Speichern“ klicken.</li>
+    <li><b>Als Oliver</b> in „Familie Muster“ den Reiter „Kundenbericht“ ansehen und unter „Überblick“ den Aktenauszug fürs Archiv öffnen.</li>
+    <li><b>Als Jan</b> unter „Absicherung“ eine Einschätzung ändern. Oliver kann diesen Reiter nur lesen.</li>
+    <li><b>Als Lena</b> den Finanzbericht ansehen und unter „Meine Daten“ den Widerruf ausprobieren. Danach ist ihre Akte leer und gesperrt.</li>
+  </ol>
+
+  <div class="card">
+    <h2 style="margin-top:0">Über die Anmeldeseite</h2>
+    <p class="hint" style="margin-top:0">So sieht es aus, wenn man sich normal anmeldet. Berater richten beim ersten Mal die Zwei-Faktor-Anmeldung ein.</p>
+    <table class="zugang">
+      <tr><td>Oliver</td><td><code>oliver@beispiel.de</code></td></tr>
+      <tr><td>Jan</td><td><code>jan@beispiel.de</code></td></tr>
+      <tr><td>Lena</td><td><code>lena@beispiel.de</code></td></tr>
+      <tr><td>Passwort für alle</td><td><code>demo</code></td></tr>
+      <tr><td>Code vom Handy</td><td>In der Demo reicht jede 6-stellige Zahl, z. B. <code>123456</code>.</td></tr>
+    </table>
+    <div class="nav" style="justify-content:flex-start"><a class="btn quiet" href="anmeldung.html">Zur Anmeldeseite</a></div>
+  </div>
+
+  <div class="note">
+    <b>Was die Demo nicht zeigt</b>
+    <ul class="grenzen">
+      <li>Die Sicherheit des echten Servers fehlt: Passwörter sind nicht geschützt, Codes werden nicht geprüft, nichts ist verschlüsselt.</li>
+      <li>Drucken und Herunterladen gehen im Vorschaufenster nicht. Die Demo zeigt stattdessen die Druckansicht oder den Inhalt der Datei.</li>
+      <li>Sicherheitsabfragen wie „Wirklich löschen?“ bestätigt die Demo automatisch und blendet sie unten kurz ein.</li>
+      <li>Fristen wie die Löschung nach 12 Monaten laufen hier nicht ab.</li>
+      <li>Gelb markierte Platzhalter wie [Impressum] oder [Name GmbH] sind noch offen.</li>
+    </ul>
+  </div>
+</div>
+<script src="js/demo.js"></script>
+<script>
+document.querySelectorAll("[data-als]").forEach((b) => b.addEventListener("click", () => DEMO.als(b.dataset.als)));
+document.getElementById("einladung").addEventListener("click", () => DEMO.einladungOeffnen());
+</script>

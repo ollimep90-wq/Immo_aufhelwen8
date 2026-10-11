@@ -221,7 +221,7 @@
         ${feld("depot", "Depots und Fonds")}${feld("immobilien", "Immobilien (Verkehrswert)")}${feld("sonstverm", "Sonstiges Vermögen")}
         ${feld("schulden", "Kredite (Restschuld)")}${feld("av_kapital", 'Kapital fürs Alter heute <span class="hint">z. B. Riester, bAV-Wert</span>')}<div></div></div></div>
         <div class="card"><h2 style="margin-top:0">Rentenlücke</h2><div class="row3">
-        ${feld("rentenalter", "Rentenbeginn mit Alter")}${feld("gesetzl", 'Gesetzliche Rente netto <span class="hint">heutige Kaufkraft, Renteninformation</span>')}
+        ${feld("rentenalter", "Rentenbeginn mit Alter")}${feld("gesetzl", 'Gesetzliche Rente netto <span class="hint">heutige Kaufkraft. Aus dem Vorab-Check übernommen ist das die Angabe des Kunden, meist der Bruttobetrag aus der Renteninformation: vor dem Rechnen auf netto umstellen</span>')}
         ${feld("netto_basis", 'Netto heute <span class="hint">leer = Person 1 aus Haushalt</span>')}</div>
         <p class="hint">Gerechnet wird für eine Person (Standard: Person 1). Für Person 2 oder den Haushalt Netto und gesetzliche Renten hier passend eintragen.</p>
         <h3>Annahmen <span class="hint">leer = Standard wie in den Präsentationen</span></h3><div class="row3">
@@ -327,9 +327,15 @@
   /* ---------- Tabs: Knöpfe ---------- */
   /* ---------- Kundenbericht: Schnappschuss nur mit freigebbaren Werten ---------- */
   const THEMA = { bu: "Deine Arbeitskraft", grundfaehigkeit: "Deine Arbeitskraft", risikoleben: "Deine Familie, falls dir etwas passiert",
-    pkv: "Gesundheit und Krankenhaus", krankenzusatz: "Gesundheit und Krankenhaus", zahnzusatz: "Gesundheit und Krankenhaus", unfall: "Unfall",
+    pkv: "Deine Gesundheit", krankenzusatz: "Deine Gesundheit", zahnzusatz: "Deine Gesundheit", unfall: "Unfall",
     rechtsschutz: "Rechtsstreit", hausrat: "Deine Einrichtung", wohngebaeude: "Dein Haus", haftpflicht: "Schäden an anderen (Haftpflicht)",
     tierkranken: "Dein Haustier", tier_op: "Dein Haustier" };
+  /* Kundensprache für den Bericht (Außenwirkungsprüfung 11.10.2026): keine Aktenvermerke wie „Kunde lehnt ab“ */
+  const BEW_KUNDE = { passt: "passt so", pruefen: "schauen wir uns gemeinsam an", fehlt: "fehlt bisher", nicht_noetig: "brauchst du nicht", kunde_lehnt_ab: "möchtest du nicht" };
+  const ARTEN_KUNDE = Object.assign({}, ARTEN, { grundfaehigkeit: "Grundfähigkeitsversicherung", tierkranken: "Tier-Krankenversicherung", tier_op: "Tier-OP-Versicherung",
+    krankenzusatz: "Krankenzusatzversicherung", zahnzusatz: "Zahnzusatzversicherung", risikoleben: "Risikolebensversicherung", unfall: "Unfallversicherung",
+    rechtsschutz: "Rechtsschutzversicherung", hausrat: "Hausratversicherung", wohngebaeude: "Wohngebäudeversicherung", bu: "Berufsunfähigkeitsversicherung" });
+  const endlich = (x) => { const n = zahl(x); return n == null ? null : n; };
   function schnappschuss(text) {
     const h = daten("haushalt") || {}, hr = daten("haushalt") ? haushaltRechnung(h) : null, bIn = daten("budget"), va = vorab() || {};
     const av = daten("altersvorsorge") || {};
@@ -337,16 +343,20 @@
     if (bIn) {
       const b = budgetRechnung(bIn, hr);
       budget = { einnahmen: b.einnahmen, fixkosten: b.fixkosten, sparen: num(bIn.sparen), ueberschuss1: b.ueberschuss1, ueberschuss2: b.ueberschuss2,
-        sparquote: b.sparquote, reserve_monate: zahl(b.reserve_monate), ausgaben: FIX.map(([k, n]) => ({ name: n, betrag: num(bIn[k]) })) };
+        sparquote: b.sparquote, reserve_monate: endlich(b.reserve_monate), ausgaben: FIX.map(([k, n]) => ({ name: n, betrag: num(bIn[k]) })) };
     } else if (va.budget) {
       const fk = va.fixkosten && typeof va.fixkosten === "object" ? va.fixkosten : {};
       budget = { einnahmen: zahl(va.budget.einnahmen), fixkosten: zahl(va.fixkosten_summe), sparen: zahl(va.sparen), ueberschuss1: zahl(va.budget.ueberschuss1),
-        ueberschuss2: zahl(va.budget.ueberschuss2), sparquote: zahl(va.budget.sparquote), reserve_monate: zahl(va.budget.reserve_monate),
+        ueberschuss2: zahl(va.budget.ueberschuss2), sparquote: zahl(va.budget.sparquote), reserve_monate: endlich(va.budget.reserve_monate),
         ausgaben: FIX.map(([k, n]) => ({ name: n, betrag: zahl(fk[k]) })) };
     }
     const vs = daten("altersvorsorge") ? vorsorgeRechnung(av, h, hr) : null;
     const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: num(av.gesetzl), luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
-      rentenalter: num(av.rentenalter) || 67, annahmen: { rendite: vs.annahmen.rendite, kosten: vs.annahmen.kosten, inflation: vs.annahmen.inflation } } : null;
+      rentenalter: num(av.rentenalter) || 67, vorhanden: vs.vorhanden_real,
+      // gerechnet wird für Person 1, außer der Berater hat bewusst ein Haushaltsnetto eingetragen
+      gerechnet_fuer: (num(h.brutto2) || num(h.netto2)) && !num(av.netto_basis) ? (h.name1 || "Person 1") : "",
+      annahmen: { zielquote: vs.annahmen.zielquote, rendite: vs.annahmen.rendite, kosten: vs.annahmen.kosten, inflation: vs.annahmen.inflation,
+        entnahme_real: vs.annahmen.entnahme_real, rentendauer: vs.annahmen.rentendauer } } : null;
     const zd = daten("ziele");
     const ziele = zd ? [1, 2, 3, 4, 5].map((i) => ({ text: zd["z" + i], jahr: num(zd["zj" + i]) || null, betrag: num(zd["zb" + i]) || null })).filter((z) => z.text)
       : (Array.isArray(va.wuensche) ? va.wuensche.filter((w) => w && w.text).map((w) => ({ text: String(w.text), jahr: zahl(w.jahr) || null })) : []);
@@ -356,11 +366,13 @@
       if (!rk[k] && !ab["s_" + k]) return;
       const t = themen[THEMA[k]] = themen[THEMA[k]] || { name: THEMA[k], quote: -1, einschaetzung: [] };
       if (rk[k] && rk[k].quote > t.quote) { t.quote = rk[k].quote; t.ampel = rk[k].ampel; }
-      if (ab["s_" + k]) t.einschaetzung.push(ARTEN[k] + ": " + (BEW[ab["s_" + k]] || ""));
+      if (ab["s_" + k]) t.einschaetzung.push(ARTEN_KUNDE[k] + ": " + (BEW_KUNDE[ab["s_" + k]] || ""));
     });
     const absicherung = Object.values(themen).sort((a, z) => z.quote - a.quote).map((t) => ({ name: t.name, ampel: AMP(t.ampel), einschaetzung: t.einschaetzung.join(", ") }));
-    const vermoegen = { vermoegen: num(bIn && bIn.liquide) + num(av.depot) + num(av.immobilien) + num(av.sonstverm), schulden: num(av.schulden) };
-    return { erstellt: Date.now() / 1000, berater: ich.name, vorname: h.name1 || (va.person && va.person.vorname) || "",
+    const liquide = bIn ? num(bIn.liquide) : num(va.vermoegen && va.vermoegen.liquide);
+    const vermoegen = { vermoegen: liquide + num(av.depot) + num(av.immobilien) + num(av.sonstverm), schulden: num(av.schulden) };
+    const vers = (akte.berater || []).find((x) => x.bereich === "versicherung");
+    return { erstellt: Date.now() / 1000, berater: ich.name, ansprechpartner_versicherung: vers ? vers.name : "", vorname: h.name1 || (va.person && va.person.vorname) || "",
       budget, vorsorge, ziele, absicherung, vermoegen, naechste_schritte: text };
   }
   function berichtZeigen(ziel, snap) {

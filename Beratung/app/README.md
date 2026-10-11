@@ -53,6 +53,17 @@ python3 ../Privat/vorab-check/test_rechenkern.py  # Netto-Rechnung JS gegen Pyth
 
 Den Ablauf im Browser (Einladung, Einwilligung, Finanz-Check, Übernahme, Risiko-Check, Bewertung durch Jan) habe ich am 10.10.2026 mit Playwright geprüft. Das Testskript liegt nicht im Repo.
 
+## Klick-Demo ohne Server
+
+`demo/` baut aus der echten Oberfläche eine Demo zum Anschauen. Der Server ist dabei durch `demo/demo.js` ersetzt, die Daten sind erfunden (`demo/beispieldaten.json`).
+
+```
+python3 demo/baue_demo.py demo/beispieldaten.json /tmp/beratungs-demo
+```
+
+- Die Demo hat **keine Sicherheit**: Passwörter werden nicht geschützt, Codes werden nicht geprüft, nichts wird verschlüsselt.
+- Sie ist nur zum Ansehen gedacht und wird nicht mit ausgeliefert. Das Dockerfile kopiert nur `server/` und `web/`.
+
 ## Eine Quelle für Rechnungen und Fragen
 
 - **Netto, Budget, Risiko-Wertung:** `Privat/vorab-check/rechenkern.js`, kopiert über `tools/sync.py`.

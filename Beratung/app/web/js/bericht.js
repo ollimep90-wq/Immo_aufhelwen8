@@ -50,19 +50,19 @@
     const farbe = wert < 1 ? F.rot : wert < 3 ? F.gelb : F.gruen;
     return `<svg viewBox="0 0 ${W} 74" width="100%" role="img" aria-label="Notreserve in Monaten">
       <rect x="0" y="20" width="${W}" height="14" rx="7" fill="#EEF0F2"/>
-      <rect x="${s(3)}" y="20" width="${s(6) - s(3)}" height="14" fill="#DCEFD9"><title>Faustregel: 3 bis 6 Monate</title></rect>
+      <rect x="${s(3)}" y="20" width="${s(6) - s(3)}" height="14" fill="#DCEFD9"><title>Übliche Faustregel: 3 bis 6 Monate</title></rect>
       <rect x="0" y="20" width="${Math.max(6, s(wert)).toFixed(1)}" height="14" rx="7" fill="${farbe}"><title>${wert.toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</title></rect>
       ${[0, 3, 6, 9].map((v) => `<text x="${Math.min(W - 10, s(v)).toFixed(1)}" y="52" font-size="12" fill="${F.leise}" text-anchor="${v === 0 ? "start" : v === 9 ? "end" : "middle"}">${v}${v === 9 ? "+" : ""}</text>`).join("")}
-      <text x="${((s(3) + s(6)) / 2).toFixed(1)}" y="68" font-size="12" fill="${F.leise}" text-anchor="middle">Faustregel 3–6 Monate</text></svg>`;
+      <text x="${((s(3) + s(6)) / 2).toFixed(1)}" y="68" font-size="12" fill="${F.leise}" text-anchor="middle">Übliche Faustregel: 3–6 Monate</text></svg>`;
   }
 
   function renteSaeulen(v) {
     const w = zahl(v.wunsch), g = Math.min(zahl(v.gesetzlich), w), l = Math.max(0, w - g);
     if (!w) return "";
     const H = 220, s = (x) => x / w * (H - 30);
-    return `<svg viewBox="0 0 420 ${H + 20}" width="100%" style="max-width:420px" role="img" aria-label="Wunschrente, gesetzliche Rente und Lücke">
-      <rect x="40" y="${H - s(w)}" width="120" height="${s(w)}" rx="6" fill="${F.grau}"><title>Wunsch: ${eur(w)}</title></rect>
-      <text x="100" y="${H - s(w) / 2}" text-anchor="middle" font-size="13" font-weight="600" fill="${F.tinte}">Wunsch</text>
+    return `<svg viewBox="0 0 420 ${H + 20}" width="100%" style="max-width:420px" role="img" aria-label="Zielrente, gesetzliche Rente und Lücke">
+      <rect x="40" y="${H - s(w)}" width="120" height="${s(w)}" rx="6" fill="${F.grau}"><title>Ziel: ${eur(w)}</title></rect>
+      <text x="100" y="${H - s(w) / 2}" text-anchor="middle" font-size="13" font-weight="600" fill="${F.tinte}">Ziel</text>
       <text x="100" y="${H - s(w) / 2 + 18}" text-anchor="middle" font-size="14" font-weight="700" fill="${F.tinte}">${eur(w)}</text>
       <rect x="240" y="${H - s(g)}" width="120" height="${s(g)}" rx="6" fill="${F.fix}"><title>Gesetzliche Rente: ${eur(g)}</title></rect>
       ${s(g) > 40 ? `<text x="300" y="${H - s(g) / 2 + 5}" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">${eur(g)}</text>` : ""}
@@ -92,8 +92,8 @@
   function absicherung(liste) {
     if (!liste || !liste.length) return "";
     return `<table class="b-tab"><thead><tr><th>Bereich</th><th>Wie stark es dich treffen würde</th><th>Einschätzung</th></tr></thead><tbody>` +
-      liste.map((x) => { const s = STATUS[x.ampel] || ["–", F.grau, "○"];
-        return `<tr><td>${esc(x.name)}</td><td><span style="color:${s[1]}" aria-hidden="true">${s[2]}</span> ${s[0]}</td><td>${esc(x.einschaetzung || "im Gespräch")}</td></tr>`; }).join("") + "</tbody></table>";
+      liste.map((x) => { const s = STATUS[x.ampel] || ["keine Angabe", F.grau, "○"];
+        return `<tr><td>${esc(x.name)}</td><td><span style="color:${s[1]}" aria-hidden="true">${s[2]}</span> ${s[0]}</td><td>${esc(x.einschaetzung || "besprechen wir noch")}</td></tr>`; }).join("") + "</tbody></table>";
   }
 
   /* ---------- Bericht ---------- */
@@ -105,17 +105,20 @@
       <header class="b-titel"><div class="b-marke">${opt.marke || ""}</div>
         <p class="b-eyebrow">Dein Finanzbericht</p><h1>${esc(d.vorname ? d.vorname + ", so steht es um dein Geld" : "So steht es um dein Geld")}</h1>
         <p class="b-lead">Stand ${new Date(d.erstellt * 1000).toLocaleDateString("de-DE")} · erstellt von ${esc(d.berater)}</p></header>`;
-    if (d.ziele && d.ziele.length) h += `<section><h2>Deine Ziele</h2><p class="b-lead">Darauf richten wir deinen Plan aus.</p>${zeitstrahl(d.ziele, jahr)}</section>`;
-    if (b) h += `<section><h2>Dein Geld im Monat</h2><p class="b-lead">Von ${eur(b.einnahmen)} Einnahmen bleiben nach festen Ausgaben und Sparen <b>${eur(b.ueberschuss2)}</b> frei.</p>
+    if (d.ziele && d.ziele.length) h += `<section><h2>Deine Ziele</h2><p class="b-lead">Das ist dir wichtig. Daran messen wir die Zahlen unten.</p>${zeitstrahl(d.ziele, jahr)}</section>`;
+    if (b) h += `<section><h2>Dein Geld im Monat</h2><p class="b-lead">${zahl(b.ueberschuss2) >= 0 ? `Von ${eur(b.einnahmen)} Einnahmen bleiben nach festen Ausgaben und Sparen <b>${eur(b.ueberschuss2)}</b> frei.` : `Nach festen Ausgaben und Sparen fehlen im Monat rund <b>${eur(-zahl(b.ueberschuss2))}</b>.`}</p>
       ${geldBalken(b)}<div class="b-kacheln"><div><small>Sparquote</small><b>${pct(b.sparquote)}</b></div><div><small>Frei nach festen Ausgaben</small><b>${eur(b.ueberschuss1)}</b></div><div><small>Frei nach dem Sparen</small><b>${eur(b.ueberschuss2)}</b></div></div></section>`;
     if (b && b.ausgaben && b.ausgaben.some((x) => zahl(x.betrag) > 0)) h += `<section><h2>Wohin deine festen Ausgaben gehen</h2>${ausgabenBalken(b.ausgaben)}</section>`;
     if (b && b.reserve_monate != null) h += `<section><h2>Deine Notreserve</h2><p class="b-lead">Dein Konto und Tagesgeld reichen für rund <b>${zahl(b.reserve_monate).toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben.</p>${reserveSkala(b.reserve_monate)}</section>`;
-    if (m && (m.vermoegen || m.schulden)) h += `<section><h2>Was du schon hast</h2><div class="b-kacheln"><div><small>Vermögen</small><b>${eur(m.vermoegen)}</b></div><div><small>Kredite</small><b>${eur(m.schulden)}</b></div><div><small>Unterm Strich</small><b>${eur(zahl(m.vermoegen) - zahl(m.schulden))}</b></div></div></section>`;
-    if (v) h += `<section><h2>Dein Leben nach der Arbeit</h2><p class="b-lead">Gewünscht sind ${eur(v.wunsch)} im Monat in heutiger Kaufkraft. Die gesetzliche Rente deckt davon rund ${eur(v.gesetzlich)}.</p>
-      <div class="b-zwei">${renteSaeulen(v)}<div class="b-kacheln b-spalte"><div><small>Lücke pro Monat (heute)</small><b>${eur(v.luecke)}</b></div><div><small>Dafür nötiges Kapital mit ${v.rentenalter || 67}</small><b>${eur(v.kapital)}</b></div><div><small>Sparrate zum Start</small><b>${eur(v.sparrate)}</b><small>wächst jährlich mit der Inflation</small></div></div></div></section>`;
-    if (d.absicherung && d.absicherung.length) h += `<section><h2>Deine Absicherung</h2><p class="b-lead">Wie stark dich ein Ereignis laut deinen Antworten treffen würde, und die Einschätzung deines Versicherungsmaklers.</p>${absicherung(d.absicherung)}</section>`;
-    if (d.naechste_schritte) h += `<section class="b-schritte"><h2>Deine nächsten Schritte</h2>${esc(d.naechste_schritte).split(/\n+/).filter(Boolean).map((z) => `<p>✓ ${z}</p>`).join("")}</section>`;
-    h += `<footer class="b-fuss"><p>Dieser Bericht fasst deine Angaben und unsere Rechnungen zusammen. Alle Werte sind Näherungen und Rechenbeispiele auf Basis von Annahmen${v ? ` (Rendite ${(zahl(v.annahmen && v.annahmen.rendite) * 100).toLocaleString("de-DE")} % vor Kosten, Kosten ${(zahl(v.annahmen && v.annahmen.kosten) * 100).toLocaleString("de-DE")} %, Inflation ${(zahl(v.annahmen && v.annahmen.inflation) * 100).toLocaleString("de-DE")} %)` : ""}, keine Prognose. Geldanlagen können an Wert verlieren. Er ersetzt keine Geeignetheitserklärung und keine Rechts- oder Steuerberatung.</p></footer></article>`;
+    if (m && (m.vermoegen || m.schulden)) h += `<section><h2>Was du schon hast</h2><div class="b-kacheln"><div><small>Vermögen</small><b>${eur(m.vermoegen)}</b></div><div><small>Offene Kredite (Restschuld)</small><b>${eur(m.schulden)}</b></div><div><small>Unterm Strich</small><b>${eur(zahl(m.vermoegen) - zahl(m.schulden))}</b></div></div></section>`;
+    if (v) h += `<section><h2>Dein Leben nach der Arbeit</h2><p class="b-lead">Rechenbeispiel mit Annahmen (siehe unten), keine Prognose.${v.gerechnet_fuer ? (v.gerechnet_fuer === d.vorname ? " Gerechnet nur für dich" : ` Gerechnet nur für ${esc(v.gerechnet_fuer)}`) + ", die Rente der zweiten Person im Haushalt ist nicht enthalten." : ""}</p>
+      <p class="b-lead">Als Ziel rechnen wir mit ${eur(v.wunsch)} im Monat in heutiger Kaufkraft${v.annahmen && v.annahmen.zielquote ? `, das sind ${pct(v.annahmen.zielquote)} deines heutigen Nettos` : ""}. Deine gesetzliche Rente nach Abzügen deckt davon rund ${eur(v.gesetzlich)} (Schätzung auf Basis deiner Angaben).</p>
+      <div class="b-zwei">${renteSaeulen(v)}<div class="b-kacheln b-spalte"><div><small>Lücke pro Monat (heutige Kaufkraft)</small><b>${eur(v.luecke)}</b></div><div><small>Nötiges Kapital mit ${v.rentenalter || 67} (heutige Kaufkraft)</small><b>${eur(v.kapital)}</b></div>${zahl(v.vorhanden) > 0 ? `<div><small>Davon schon angespart (hochgerechnet)</small><b>${eur(v.vorhanden)}</b></div>` : ""}<div><small>${zahl(v.vorhanden) > 0 ? "Rechnerische Sparrate für den Rest" : "Rechnerische Sparrate"}</small><b>${eur(v.sparrate)}</b><small>Rechenbeispiel, steigt jährlich mit der Inflation</small></div></div></div></section>`;
+    if (d.absicherung && d.absicherung.length) h += `<section><h2>Deine Absicherung</h2><p class="b-lead">Wie stark dich ein Ereignis laut deinen Antworten treffen würde, und ${d.ansprechpartner_versicherung ? `die Einschätzung von ${esc(d.ansprechpartner_versicherung)}, deinem Ansprechpartner für Versicherungen` : "unsere erste Einschätzung"}.</p>${absicherung(d.absicherung)}</section>`;
+    if (d.naechste_schritte) h += `<section class="b-schritte"><h2>Deine nächsten Schritte</h2><ol>${esc(d.naechste_schritte).split(/\n+/).map((z) => z.trim()).filter(Boolean).map((z) => `<li>${z}</li>`).join("")}</ol></section>`;
+    const A = (v && v.annahmen) || {}, p1 = (x) => (zahl(x) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " %";
+    h += `<footer class="b-fuss"><p>Dieser Bericht fasst deine Angaben und unsere Rechnungen zusammen. Alle Werte sind Näherungen und Rechenbeispiele auf Basis von Annahmen${v ? ` (Ziel ${p1(A.zielquote)} vom heutigen Netto, Rendite ${p1(A.rendite)} vor Kosten, Kosten ${p1(A.kosten)}, Inflation ${p1(A.inflation)}, Auszahlung über ${zahl(A.rentendauer)} Jahre mit ${p1(A.entnahme_real)} realer Verzinsung)` : ""}, keine Prognose. Geldanlagen können an Wert verlieren.</p>
+      <p>Der Bericht ist keine Empfehlung für ein bestimmtes Produkt. Bevor du einen Vertrag abschließt, bekommst du die gesetzlich vorgeschriebenen Unterlagen und eine eigene Beratung. Die Einschätzungen zur Absicherung sind ein erster Überblick, keine Versicherungsberatung im Einzelfall. Der Bericht ersetzt keine Rechts- oder Steuerberatung.</p></footer></article>`;
     return h;
   }
 
@@ -133,7 +136,7 @@
   @media (max-width:600px){.b-zwei{grid-template-columns:1fr}}
   .b-tab{width:100%;border-collapse:collapse;font-size:14px} .b-tab th{text-align:left;color:${F.leise};font-size:12px;font-weight:600;padding:6px 4px;border-bottom:1px solid #E5E5EA}
   .b-tab td{padding:8px 4px;border-bottom:1px solid #F0F0F2}
-  .b-schritte p{margin:6px 0;font-weight:500} .b-liste{margin:8px 0 0;padding-left:18px}
+  .b-schritte ol{margin:6px 0 0;padding-left:22px} .b-schritte li{margin:6px 0;font-weight:500} .b-liste{margin:8px 0 0;padding-left:18px}
   .b-hinweis{color:${F.rot};font-size:13px} .b-fuss{border-top:1px solid #E5E5EA;padding-top:14px;color:${F.leise};font-size:11.5px}
   .bericht, .bericht *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @media print{ .bericht{max-width:none;padding:0;border-radius:0} .bericht section{padding:14px 0} }`;

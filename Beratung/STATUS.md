@@ -83,6 +83,17 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
 16. **Beratungs-App** (`app/`):
     - Gebaut: Zwei-Faktor-Anmeldung, Verschlüsselung, Löschung nach 12 Monaten ohne Aktivität, Archivauszug.
     - Hosting bei IONOS, offene Punkte in `app/BETRIEB.md`.
+    - **Kundenbericht „Dein Finanzbericht“:** Die Außenwirkung wurde am 11.10.2026 geprüft, die Befunde sind eingearbeitet.
+      - *Korrektur:* Vorher stand dort „Gewünscht sind … €“. Der Betrag ist aber eine Annahme (80 % vom Netto), nicht der Wunsch des Kunden. Jetzt heißt es „Als Ziel rechnen wir mit …“, und die Annahme wird genannt.
+      - *Korrektur:* Fehlte die Angabe zur Notreserve, zeigte der Bericht „0 Monate“. Jetzt entfällt der Abschnitt.
+      - *Korrektur:* Bei einem negativen Überschuss stand dort „bleiben −250 € frei“. Jetzt heißt es „fehlen im Monat rund 250 €“.
+      - *Korrektur:* Aktenvermerke wie „Kunde lehnt ab“ erschienen beim Kunden. Jetzt steht dort Kundensprache, z. B. „möchtest du nicht“.
+      - Die Sparrate berücksichtigt bereits Angespartes. Das ist jetzt als eigene Kachel ausgewiesen.
+      - Alle Annahmen der Rentenrechnung stehen in der Fußnote.
+      - Der Pflichthinweis ist ohne Fachbegriffe formuliert und erwähnt die Versicherungseinschätzung.
+      - Statt „deines Versicherungsmaklers“ steht dort der Name des zuständigen Ansprechpartners. **Offen:** Jans Status im Vermittlerregister prüfen (Makler, Vertreter oder Berater), bevor eine Statusbezeichnung verwendet wird.
+      - **Offen:** Im Vorab-Check geben Kunden die Rente meist brutto an (Renteninformation). Der Berater muss sie vor der Rechnung auf netto umstellen. Ein Hinweis dazu steht im Tab.
+    - **Klick-Demo** ohne Server, mit erfundenen Daten: `app/demo/`.
 14. **Gemeinsamer Auftritt:**
     - Die Namen sind aus der Unterzeile entfernt, die Fußzeilen lauten „… in Kooperation mit …“.
     - Die gemeinsame Marke bleibt. Klären: Risiko einer Außen-GbR (siehe Pitch).
