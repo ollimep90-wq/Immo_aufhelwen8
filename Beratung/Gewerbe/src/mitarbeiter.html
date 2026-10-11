@@ -15,7 +15,7 @@
 <section class="s">
   <div class="eyebrow">Worum es geht</div>
   <h1>Zwei Bausteine, die Mitarbeiter<br>im Alltag spüren.</h1>
-  <p class="sub">Beide laufen über deinen Betrieb, beide fördert der Staat steuerlich. Welche Form zu deinem Betrieb passt, hängt von Größe, Budget und Belegschaft ab.</p>
+  <p class="sub">Beide laufen über deinen Betrieb. Die bAV fördert der Staat steuerlich, die bKV kann als Sachbezug steuer- und beitragsfrei bleiben. Welche Form zu deinem Betrieb passt, hängt von Größe, Budget und Belegschaft ab.</p>
   <div class="row" style="margin-top:9mm">
     <div class="col tile" style="background:var(--blue-l)"><svg class="ic b"><use href="#i-sun"/></svg><h3>Betriebliche Altersversorgung (bAV)</h3><p>Ein Teil des Bruttolohns fließt in eine Altersversorgung, du legst einen Zuschuss dazu. Für Mitarbeiter ist das ein Anspruch, für dich eine Pflicht mit Gestaltungsspielraum.</p></div>
     <div class="col tile"><svg class="ic b"><use href="#i-pulse"/></svg><h3>Betriebliche Krankenversicherung (bKV)</h3><p>Du schließt für deine Mitarbeiter eine Zusatzversicherung ab, zum Beispiel für Zahnersatz, Vorsorge oder Brillen. Das spüren sie sofort, nicht erst im Alter.</p></div>
@@ -35,10 +35,10 @@
       <p style="font-size:10pt">Beispiel: Ein Mitarbeiter wandelt ⟦Z:bav_umw⟧ im Monat um.</p>
       <table style="margin-top:3mm;font-size:10pt;width:100%">
         <tr><td>Umgewandeltes Brutto</td><td class="n" style="text-align:right">⟦Z:bav_umw⟧</td></tr>
-        <tr><td>Dein Zuschuss, 15 %</td><td style="text-align:right">⟦Z:bav_zuschuss⟧</td></tr>
+        <tr><td>Dein Zuschuss, ⟦Z:bav_zuschuss_pct⟧</td><td style="text-align:right">⟦Z:bav_zuschuss⟧</td></tr>
         <tr><td><b>Beitrag zur Altersversorgung</b></td><td style="text-align:right"><b>⟦Z:bav_beitrag⟧</b></td></tr>
       </table>
-      <p class="fine" style="margin-top:3mm">Rechenbeispiel. Wie viel der Mitarbeiter netto weniger hat, hängt von seinem Gehalt, seiner Steuerklasse und seiner Krankenversicherung ab. Das rechnen wir für jeden einzeln. Im Alter sind die Leistungen in der Regel steuer- und beitragspflichtig.</p>
+      <p class="fine" style="margin-top:3mm">Rechenbeispiel, Lohn unter der Beitragsbemessungsgrenze angenommen. Wie viel der Mitarbeiter netto weniger hat, hängt von seinem Gehalt, seiner Steuerklasse und seiner Krankenversicherung ab. Das rechnen wir für jeden einzeln. Im Alter sind die Leistungen steuerpflichtig. Gesetzlich Krankenversicherte zahlen darauf außerdem Kranken- und Pflegeversicherungsbeiträge, in der Krankenversicherung mit einem Freibetrag.</p>
     </div>
   </div>
   ⟦FOOT⟧
@@ -50,20 +50,20 @@
   <h2>Was gilt, hängt an der Beitragsbemessungsgrenze.</h2>
   <p class="sub">Die Grenzen sind Prozentsätze der Beitragsbemessungsgrenze der Rentenversicherung, 2026 sind das ⟦Z:bbg_rv⟧ im Jahr. Sie ändern sich jedes Jahr.</p>
   <div class="row" style="margin-top:8mm">
-    <div class="col tile"><div class="big" style="font-size:30pt;color:var(--blue)">⟦Z:bav_anspruch_monat⟧</div><h3 style="margin-top:2mm">Anspruch des Mitarbeiters</h3><p>Bis zu 4 % der Grenze, also ⟦Z:bav_anspruch_jahr⟧ im Jahr, kann jeder Mitarbeiter umwandeln. Das kann ihm der Arbeitgeber nicht verwehren.</p><p class="fine" style="margin-top:2mm">§ 1a Abs. 1 BetrAVG</p></div>
-    <div class="col tile" style="background:var(--blue-l)"><div class="big" style="font-size:30pt;color:var(--blue)">⟦Z:bav_steuerfrei_monat⟧</div><h3 style="margin-top:2mm">Steuerfrei</h3><p>Bis zu 8 % der Grenze, also ⟦Z:bav_steuerfrei_jahr⟧ im Jahr, bleiben steuerfrei. Das gilt für Direktversicherung, Pensionskasse und Pensionsfonds.</p><p class="fine" style="margin-top:2mm">§ 3 Nr. 63 EStG</p></div>
-    <div class="col tile"><div class="big" style="font-size:30pt;color:var(--blue)">⟦Z:bav_svfrei_monat⟧</div><h3 style="margin-top:2mm">Sozialversicherungsfrei</h3><p>Davon bleiben bis zu 4 % der Grenze auch frei von Sozialbeiträgen. Nur dieser Teil spart Beiträge für dich und den Mitarbeiter.</p><p class="fine" style="margin-top:2mm">§ 1 Abs. 1 S. 1 Nr. 9 SvEV</p></div>
+    <div class="col tile"><div class="big" style="font-size:30pt;color:var(--blue)">⟦Z:bav_anspruch_monat⟧</div><h3 style="margin-top:2mm">Anspruch des Mitarbeiters</h3><p>Bis zu ⟦Z:bav_anspruch_pct⟧ der Grenze, also ⟦Z:bav_anspruch_jahr⟧ im Jahr, kann grundsätzlich jeder rentenversicherungspflichtige Mitarbeiter umwandeln. Den Weg kannst du vorgeben, ein Tarifvertrag kann Abweichendes regeln.</p><p class="fine" style="margin-top:2mm">§ 1a Abs. 1 BetrAVG</p></div>
+    <div class="col tile" style="background:var(--blue-l)"><div class="big" style="font-size:30pt;color:var(--blue)">⟦Z:bav_steuerfrei_monat⟧</div><h3 style="margin-top:2mm">Steuerfrei</h3><p>Bis zu ⟦Z:bav_steuerfrei_pct⟧ der Grenze, also ⟦Z:bav_steuerfrei_jahr⟧ im Jahr, bleiben steuerfrei. Das gilt für Direktversicherung, Pensionskasse und Pensionsfonds.</p><p class="fine" style="margin-top:2mm">§ 3 Nr. 63 EStG</p></div>
+    <div class="col tile"><div class="big" style="font-size:30pt;color:var(--blue)">⟦Z:bav_svfrei_monat⟧</div><h3 style="margin-top:2mm">Sozialversicherungsfrei</h3><p>Davon bleiben bis zu ⟦Z:bav_svfrei_pct⟧ der Grenze auch frei von Sozialbeiträgen. Nur dieser Teil spart Beiträge für dich und den Mitarbeiter.</p><p class="fine" style="margin-top:2mm">§ 1 Abs. 1 S. 1 Nr. 9 SvEV</p></div>
   </div>
-  <p class="fine" style="margin-top:5mm">Alle Beträge pro Monat, Stand 2026. Steuerfrei und sozialversicherungsfrei sind zwei verschiedene Rahmen.</p>
+  <p class="fine" style="margin-top:5mm">Große Zahlen pro Monat, Stand 2026. Steuerfrei und sozialversicherungsfrei sind zwei verschiedene Rahmen.</p>
   ⟦FOOT⟧
 </section>
 
 <!-- 5 Zuschuss -->
 <section class="s">
   <div class="eyebrow">bAV · Dein Pflichtzuschuss</div>
-  <h2>15 % Zuschuss, soweit du Beiträge sparst.</h2>
+  <h2>⟦Z:bav_zuschuss_pct⟧ Zuschuss, soweit du Beiträge sparst.</h2>
   <div class="row" style="margin-top:8mm">
-    <div class="col tile" style="background:var(--blue-l)"><svg class="ic b"><use href="#i-coin"/></svg><h3>Die Regel</h3><p>Wandelt ein Mitarbeiter Entgelt in eine Direktversicherung, Pensionskasse oder einen Pensionsfonds um, gibst du 15 % des umgewandelten Betrags dazu, soweit du dadurch Sozialbeiträge sparst.</p><p class="fine" style="margin-top:2mm">§ 1a Abs. 1a BetrAVG</p></div>
+    <div class="col tile" style="background:var(--blue-l)"><svg class="ic b"><use href="#i-coin"/></svg><h3>Die Regel</h3><p>Wandelt ein Mitarbeiter Entgelt in eine Direktversicherung, Pensionskasse oder einen Pensionsfonds um, gibst du ⟦Z:bav_zuschuss_pct⟧ des umgewandelten Betrags dazu, soweit du dadurch Sozialbeiträge sparst.</p><p class="fine" style="margin-top:2mm">§ 1a Abs. 1a BetrAVG</p></div>
     <div class="col tile"><svg class="ic b"><use href="#i-cycle"/></svg><h3>Seit wann</h3><p>Für Vereinbarungen ab 2019. Seit 2022 auch für Verträge, die schon vorher bestanden.</p><p class="fine" style="margin-top:2mm">§ 26a BetrAVG</p></div>
     <div class="col tile"><svg class="ic b"><use href="#i-clip"/></svg><h3>Ausnahmen</h3><p>Verdient der Mitarbeiter über der Beitragsbemessungsgrenze, sparst du weniger oder nichts, dann sinkt auch der Zuschuss. Ein Tarifvertrag kann Abweichendes regeln.</p></div>
   </div>
@@ -78,11 +78,11 @@
     <div class="col tile" style="padding:5mm 4mm;background:var(--blue-l)"><h3>Direktversicherung</h3><p>Versicherung auf das Leben des Mitarbeiters, abgeschlossen von dir.</p></div>
     <div class="col tile" style="padding:5mm 4mm;background:var(--blue-l)"><h3>Pensionskasse</h3><p>Eigene Versorgungseinrichtung, ähnlich einer Versicherung.</p></div>
     <div class="col tile" style="padding:5mm 4mm;background:var(--blue-l)"><h3>Pensionsfonds</h3><p>Mehr Spielraum bei der Kapitalanlage als die Pensionskasse.</p></div>
-    <div class="col tile" style="padding:5mm 4mm"><h3>Unterstützungskasse</h3><p>Eigene Einrichtung, oft genutzt für Beiträge über den steuerfreien Rahmen hinaus.</p></div>
+    <div class="col tile" style="padding:5mm 4mm"><h3>Unterstützungskasse</h3><p>Eigene Einrichtung. Beim Mitarbeiter erst bei Auszahlung steuerpflichtig, deshalb auch für höhere Beträge genutzt.</p></div>
     <div class="col tile" style="padding:5mm 4mm"><h3>Direktzusage</h3><p>Du zahlst die Rente später selbst aus dem Betrieb.</p></div>
   </div>
   <div class="row" style="margin-top:6mm">
-    <div class="col tile" style="background:var(--soft)"><h3>Du haftest für die Zusage</h3><p>Auch wenn ein Versicherer oder eine Kasse die Versorgung durchführt, stehst du als Arbeitgeber dafür ein, dass die zugesagte Leistung erbracht wird. Deshalb ist die Wahl von Weg, Anbieter und Tarif so wichtig.</p><p class="fine" style="margin-top:2mm">§ 1 Abs. 1 S. 3 BetrAVG. Die blau hinterlegten Wege sind steuerfrei nach § 3 Nr. 63 EStG.</p></div>
+    <div class="col tile" style="background:var(--soft)"><h3>Du haftest für die Zusage</h3><p>Auch wenn ein Versicherer oder eine Kasse die Versorgung durchführt, stehst du als Arbeitgeber dafür ein, dass die zugesagte Leistung erbracht wird. Deshalb ist die Wahl von Weg, Anbieter und Tarif so wichtig.</p><p class="fine" style="margin-top:2mm">§ 1 Abs. 1 S. 3 BetrAVG. Die blau hinterlegten Wege sind steuerfrei nach § 3 Nr. 63 EStG. Diese drei Wege und Rückdeckungen begleite ich. Direktzusage und Unterstützungskasse gestaltest du mit deinem Steuerberater oder einem Rentenberater.</p></div>
   </div>
   ⟦FOOT⟧
 </section>
@@ -92,8 +92,8 @@
   <div class="eyebrow">bAV · Förderung für niedrige Einkommen</div>
   <h2>Zahlst du selbst ein, gibt der Staat etwas zurück.</h2>
   <div class="row" style="margin-top:8mm">
-    <div class="col tile" style="background:var(--blue-l)"><svg class="ic b"><use href="#i-gift"/></svg><h3>Geringverdienerförderung 2026</h3><p>Zahlst du für Mitarbeiter mit bis zu ⟦Z:gv_grenze_monat⟧ Monatslohn mindestens ⟦Z:gv_mindest⟧ im Jahr zusätzlich ein, bekommst du 30 % davon über die Lohnsteuer zurück, höchstens ⟦Z:gv_foerder_max⟧ im Jahr.</p><p class="fine" style="margin-top:2mm">§ 100 EStG, Fassung 2026</p></div>
-    <div class="col tile"><svg class="ic b"><use href="#i-flag"/></svg><h3>Neu ab 2027</h3><p>Das Zweite Betriebsrentenstärkungsgesetz gilt seit Januar 2026. Ab 2027 wird diese Förderung ausgeweitet, die Einkommensgrenze steigt dann mit der Beitragsbemessungsgrenze. Die genauen Werte nennen wir, sobald sie feststehen.</p></div>
+    <div class="col tile" style="background:var(--blue-l)"><svg class="ic b"><use href="#i-gift"/></svg><h3>Geringverdienerförderung 2026</h3><p>Zahlst du für Mitarbeiter mit bis zu ⟦Z:gv_grenze_monat⟧ Monatslohn mindestens ⟦Z:gv_mindest⟧ im Jahr zusätzlich ein, ziehst du ⟦Z:gv_satz⟧ davon von der Lohnsteuer ab, die du abführst, höchstens ⟦Z:gv_foerder_max⟧ im Jahr. Das gilt für Direktversicherung, Pensionskasse und Pensionsfonds mit Tarifen, die die Abschlusskosten nicht zu Beginn verrechnen.</p><p class="fine" style="margin-top:2mm">§ 100 EStG, Fassung 2026</p></div>
+    <div class="col tile"><svg class="ic b"><use href="#i-flag"/></svg><h3>Neu ab 2027</h3><p>Mit dem Zweiten Betriebsrentenstärkungsgesetz soll diese Förderung ab 2027 ausgeweitet werden. Die genauen Werte nennen wir, sobald wir sie am Gesetzestext geprüft haben.</p></div>
   </div>
   ⟦FOOT⟧
 </section>
@@ -104,11 +104,11 @@
     <div style="width:120mm">
       <div class="eyebrow">Betriebliche Krankenversicherung</div>
       <h2>Ein Vorteil, den man<br>beim Zahnarzt merkt.</h2>
-      <p class="sub">Du schließt einen Gruppenvertrag ab und zahlst die Beiträge. Für den Mitarbeiter ist das ein Sachbezug: Bis ⟦Z:bkv_freigrenze⟧ im Monat bleibt er steuer- und beitragsfrei.</p>
+      <p class="sub">Du schließt einen Gruppenvertrag ab und zahlst die Beiträge. Für den Mitarbeiter ist das ein Sachbezug: Bis ⟦Z:bkv_freigrenze⟧ im Monat, zusammen mit allen anderen Sachbezügen, bleibt er steuer- und beitragsfrei.</p>
     </div>
     <div class="col">
       <div class="tile" style="background:var(--blue-l)"><h3>Damit es ein Sachbezug ist</h3><p>Du musst den Vertrag selbst abschließen und die Beiträge zahlen. Bekommt der Mitarbeiter stattdessen Geld oder kann er Geld wählen, ist es Lohn.</p><p class="fine" style="margin-top:2mm">BMF-Schreiben vom 15.03.2022</p></div>
-      <div class="tile" style="margin-top:4mm"><h3>Achtung Freigrenze</h3><p>Die ⟦Z:bkv_freigrenze⟧ gelten für alle Sachbezüge eines Monats zusammen, zum Beispiel auch für eine Gutscheinkarte. Wird die Grenze nur um einen Cent überschritten, ist der gesamte Betrag steuerpflichtig.</p><p class="fine" style="margin-top:2mm">§ 8 Abs. 2 S. 11 EStG</p></div>
+      <div class="tile" style="margin-top:4mm"><h3>Achtung Freigrenze</h3><p>Die ⟦Z:bkv_freigrenze⟧ gelten für alle Sachbezüge eines Monats zusammen, zum Beispiel auch für eine Gutscheinkarte. Wird die Grenze nur um einen Cent überschritten, ist der gesamte Betrag steuerpflichtig. Deshalb die Beiträge monatlich zahlen und die Details mit deinem Steuerberater klären.</p><p class="fine" style="margin-top:2mm">§ 8 Abs. 2 S. 11 EStG</p></div>
     </div>
   </div>
   ⟦FOOT⟧
@@ -124,8 +124,8 @@
       <p class="fine" style="margin-top:3mm">BAG, Urteile 3 AZR 807/11 (2014) und 3 AZR 206/18 (18.02.2020). Arbeitsrechtliche Fragen klärst du mit deinem Anwalt.</p>
     </div>
     <div class="col tile" style="background:var(--blue-l)">
-      <h3>Was ich dir dabei abnehme</h3>
-      <p>Ich erkläre deinen Mitarbeitern das Angebot, auf Wunsch einzeln oder in einer Runde, rechne für jeden aus, was netto passiert, und dokumentiere, wer was gewählt hat. So ist später nachvollziehbar, wer was erfahren und entschieden hat.</p>
+      <h3>Wie ich dich dabei unterstütze</h3>
+      <p>Ich erkläre deinen Mitarbeitern das Angebot, auf Wunsch einzeln oder in einer Runde, rechne für jeden aus, was netto passiert, und halte fest, wer was gewählt hat. Die Verantwortung als Arbeitgeber bleibt bei dir.</p>
     </div>
   </div>
   ⟦FOOT⟧
@@ -137,7 +137,7 @@
   <h2>Von der Idee zum laufenden Angebot</h2>
   <div class="row" style="margin-top:9mm;gap:4mm">
     <div class="col tile"><div class="big" style="font-size:26pt;color:var(--blue)">1</div><h3 style="margin-top:2mm">Bestand prüfen</h3><p>Was gibt es schon? Welche Verträge laufen, wer zahlt wie viel Zuschuss?</p></div>
-    <div class="col tile"><div class="big" style="font-size:26pt;color:var(--blue)">2</div><h3 style="margin-top:2mm">Rahmen festlegen</h3><p>Weg, Anbieter, Zuschuss, bKV-Budget. Schriftlich, damit alle gleich behandelt werden.</p></div>
+    <div class="col tile"><div class="big" style="font-size:26pt;color:var(--blue)">2</div><h3 style="margin-top:2mm">Rahmen festlegen</h3><p>Weg, Anbieter, Zuschuss, bKV-Budget. Die schriftliche Versorgungsregelung prüft dein Anwalt oder Steuerberater.</p></div>
     <div class="col tile"><div class="big" style="font-size:26pt;color:var(--blue)">3</div><h3 style="margin-top:2mm">Mitarbeiter beraten</h3><p>Einzeln, mit Netto-Rechnung, dokumentiert.</p></div>
     <div class="col tile"><div class="big" style="font-size:26pt;color:var(--blue)">4</div><h3 style="margin-top:2mm">Begleiten</h3><p>Neue Mitarbeiter, Austritte, neue Grenzwerte jedes Jahr.</p></div>
   </div>

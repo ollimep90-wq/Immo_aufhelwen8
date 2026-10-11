@@ -52,16 +52,18 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
    - Keine Webfonts, keine Cookies, kein lokaler Speicher.
    - Der Live-Build bricht ab, solange Platzhalter offen sind (`python3 build.py --live URL DS`).
    - Mit Jan zu klären: Gewichtung der Themen im Kurzcheck, vor allem Unfall.
-3. Den gleichen Satz für **Gewerbe und Unternehmen** erstellen.
+3. **Gewerbe und Unternehmen:** *Entwurf 11.10.2026* in `Gewerbe/` (5 Dokumente, du und Sie, Bauen mit `python3 build.py`, Zahlen nur aus `Gewerbe/zahlen.py`). Segmente A Selbständige, B GmbH-Geschäftsführer, C Arbeitgeber, vorher abgefragt (Entscheidung Oliver). Alle vier Prüfungen sind gelaufen, die Befunde eingearbeitet. Offen, bevor es an Kunden geht: Platzhalter in den Pflichtangaben (Punkt 5), § 34c-Erlaubnis und IHK-Bestätigung zu gewerblichen Darlehen, weitere Punkte in `Gewerbe/STAND.md`.
 4. ~~**§34i-Modell wählen:** Provision oder Honorar.~~ *Entschieden 11.10.2026: Provision.* Die Platzhalter in Decks und Pflichtangaben sind ersetzt („eine Provision von der Bank, die dir das Darlehen gibt“; Pflichtangabe: „eine Provision des Darlehensgebers“). Die Höhe wird vorab genannt. Bisheriger Stand zur Nachverfolgung:
    - Nach § 34i Abs. 5 GewO schließen sich Vermittlung und Honorarberatung aus, eine Wahl je Kunde ist nicht möglich.
    - *Korrektur 10.10.2026:* Die Decks sagten vorher „Provision der Bank oder, als Honorarberater, ein Honorar von dir, nie beides“. Das klang wie eine Wahl je Kunde und war deshalb falsch.
    - Jetzt steht dort der gelbe Platzhalter „[eine Provision der Bank]“, bis du entschieden hast.
-5. **Platzhalter:** Register-Nummern, IHK, Kontaktdaten.
+5. **Platzhalter:** Register-Nummern, IHK, Kontaktdaten. Sie stehen gelb in allen Kunden-PDFs (Privat und Gewerbe) und blockieren den Versand (Außenwirkungsprüfung 11.10.2026).
+5a. **Notreserve-Ampel für Selbständige:** Bedarfsanalysen Privat und Gewerbe: rot unter 1, grün ab 6 Monatsausgaben. App und Vorab-Check unterscheiden Selbständige noch nicht (grün ab 3). Zu entscheiden: in der App nachziehen?
+5b. *Korrektur 11.10.2026:* In der Bedarfsanalyse Privat stand für Selbständige „keine gesetzliche Rente“. Das stimmt nicht allgemein (Pflicht nach § 2 SGB VI, auf Antrag nach § 4 Abs. 2 SGB VI, freiwillig). Jetzt: „gesetzliche Rente prüfen“.
 6. **Name und Marke.**
 7. **DIN 77230:** Der Normtext lag nicht vor. Die Dokumente sagen deshalb „angelehnt“ und behaupten keine Konformität.
 8. **Alte Sie-Fassungen:** Kundenpräsentation und Gesprächsleitfaden in `Finanzanlagen/` sind teilweise durch die neuen Decks ersetzt. Seit 11.10.2026 gibt es zu den Privat-Decks 01–06 eigene `_Sie`-Fassungen (Punkt 16, „Anrede du/Sie“). Zu entscheiden: Können die alten Sie-Fassungen archiviert werden?
-9. **Jans Rückmeldung** zu `03_Risikoabsicherung` und zu seiner Rolle in den anderen Decks.
+9. **Jans Rückmeldung** zu `03_Risikoabsicherung`, zu den Gewerbe-Decks `03_Betrieb_absichern` und `05_Mitarbeiter_bAV_und_bKV` und zu seiner Rolle in den anderen Decks.
 10. **Masterarbeit:** Die Kapitel 3–7 sind noch „XXX“, Anhang A ist leer, und das Literaturverzeichnis enthält fremde Einträge (RFID, Industrie 4.0). Das ist für die Arbeit selbst wichtig, nicht für die Decks.
 11. **Vor Kundeneinsatz anwaltlich klären** (Fachanwalt Bank- und Kapitalmarktrecht):
     - **§ 17 PAngV** bei den Zinsbeispielen in `06_Immobilien`. Effektivzins, Nettodarlehensbetrag und der Hinweis auf die Grundschuld sind ergänzt. Ob ein repräsentatives Beispiel nötig ist, ist offen.
@@ -72,13 +74,13 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
     - Verrechnung der Kinderzulage.
     - Mindesteigenbeitrag (laut Prüfung 120 €/Jahr, nicht übernommen).
     - Umstellung der Riester-Verträge (Fundstelle im EStG n. F.).
-    - Förderberechtigung Selbständiger.
+    - ~~Förderberechtigung Selbständiger.~~ *Erledigt 11.10.2026:* ab 01.01.2027 förderberechtigt (§ 10a Abs. 1 S. 4 EStG n. F., Art. 2 Altersvorsorgereformgesetz vom 26.05.2026, BGBl. 2026 I Nr. 156, im BGBl gelesen). Wie Selbständige die Zulage beantragen, ist weiter offen.
 13. **USt beim ETF-Standarddepot:** „jeweils inkl. USt“ wurde am 10.10.2026 aus dem Pflichthinweis entfernt, weil es für die 0,5 % noch offen ist.
 15. **Gemeinsame GmbH (Entscheidung 10.10.2026, Name offen):**
     - Sie betreibt die App und ist die einzige Verantwortliche nach DSGVO.
     - **Anzupassen**, sobald Name und Erlaubnisse feststehen:
       - Pflichtangaben in `shared/brand.py`, denn die GmbH braucht eigene Erlaubnisse und Registernummern.
-      - Die Texte „zwei eigenständige Unternehmen in Kooperation“ in den Präsentationen und Fußzeilen.
+      - Die Texte „zwei eigenständige Unternehmen in Kooperation“ in den Präsentationen und Fußzeilen, auch in den Gewerbe-Decks und in `Gewerbe/build.py`.
       - Der Platzhalter `[Name GmbH]` in den Einwilligungen.
     - **Fachlich prüfen:** Gehen § 34h, § 34i und § 34d zusammen in einer GmbH? Ist Courtage mit § 34h Abs. 3 vereinbar?
     - **GwG (Entscheidung 11.10.2026: als Verpflichtete behandeln):**
@@ -127,7 +129,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
         - *Fehler behoben:* Der Dateiname wäre beim Speichern mitgeschickt worden.
       - **Direkte Kontoanbindung:** Konzept und offene Rechtsfragen in `app/KONTOANBINDUNG.md`. Noch nicht gebaut, weil zuerst die Rechtslage geklärt werden muss.
       - **Anrede du/Sie (Entscheidung Oliver, 11.10.2026: Schalter in Decks und App):**
-        - Decks: Zu den Privat-Dokumenten 01–06 gibt es je eine `_Sie`-Fassung (Dateiname mit `_Sie`). `07_Vorab-Check.html` gibt es nur in der du-Form; ob es noch gebraucht wird, ist offen (Punkt 2). Die Sätze stehen in `shared/sie.json`, der Build bricht bei du-Resten ab.
+        - Decks: Zu den Privat-Dokumenten 01–06 und den Gewerbe-Dokumenten 01–05 gibt es je eine `_Sie`-Fassung (Dateiname mit `_Sie`). `07_Vorab-Check.html` gibt es nur in der du-Form; ob es noch gebraucht wird, ist offen (Punkt 2). Die Sätze stehen in `shared/sie.json`, der Build bricht bei du-Resten ab.
         - App: Der Berater stellt die Anrede je Akte unter „Zugang & Daten“ ein. Standard ist du, Paare werden mit „ihr“ angesprochen, „Sie“ gilt für alle.
         - Der Kundenbereich wechselt dann auf `kunde_sie.html`, und neue Berichte erscheinen in der Sie-Form. Bereits freigegebene Berichte bleiben, wie sie sind. Freitexte prüft der Berater selbst, die App weist auf du-Formen hin.
         - Die Einstellung bleibt nach einem Widerruf erhalten, weil sie keine Angabe des Kunden ist. In der Selbstauskunft steht sie getrennt unter „einstellungen_berater“. Nach einem Widerruf ist sie nicht mehr änderbar.

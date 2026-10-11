@@ -76,5 +76,6 @@ for src, out, titel, titel_sie, art, foot, kunde in DOCS:
             kopf, rest = DECK_HEAD.split("</style>", 1)
             html = f'<!doctype html><html lang="de"><head><meta charset="utf-8"><title>{t}</title>{kopf}</style></head><body>{rest}{body}</body></html>'
         name = (out.replace("deinem", "Ihrem") if sie else out) + ("_Sie" if sie else "")
-        seiten = render(html, ROOT / f"{name}.pdf", t, forbid_tags=kunde)
+        autor = "Jan Schnichels, Endlich Besser Beraten" if foot == FOOT_JAN else "Oliver Rosenbaum"
+        seiten = render(html, ROOT / f"{name}.pdf", t, author=autor, forbid_tags=kunde)
         print(name, seiten, "Seiten")

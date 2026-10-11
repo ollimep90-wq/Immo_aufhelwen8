@@ -1,6 +1,6 @@
 # Gewerbe-Unterlagen: Stand
 
-**Entwurf vom 11.10.2026, noch nicht durch die Prüfung.** Nicht an Kunden geben.
+**Entwurf vom 11.10.2026.** Alle vier Prüfungen (Zahlen, Widersprüche, Außenwirkung, Recht) sind gelaufen, die Befunde eingearbeitet. Nicht an Kunden geben, bevor die Punkte unter „Vor dem Versand“ erledigt sind.
 
 | Dokument | Stand |
 |---|---|
@@ -29,4 +29,42 @@ Bauen: `python3 build.py` (du und Sie), Zahlen nur aus `zahlen.py`.
 - Altersvorsorgereformgesetz (BGBl. 2026 I Nr. 156): Selbständige förderberechtigt erst ab 01.01.2027.
 - Korrektur in zahlen.py: Der ALV-Beitrag in der Gründungsphase ergab mit Gleitkomma 51,41 €, richtig kaufmännisch gerundet 51,42 € (51,415 €).
 
-Prüfung vor Auslieferung (Auslieferungstor) läuft: Zahlen, Widersprüche, Außenwirkung, Recht.
+
+## Prüfung vom 11.10.2026: was geändert wurde
+
+- **Zahlen:** Prozentsätze (4, 8, 15, 30, 2,6 %) kommen jetzt aus `zahlen.py`. § 100 EStG und die freiwilligen RV-Beiträge werden hergeleitet, mit Kontrolle gegen die belegten Werte. Rundung kaufmännisch über Decimal (vorher Pythons round(), das 338,5 auf 338 gerundet hätte; bisher ohne Auswirkung).
+- **Recht:**
+  - Erwerbsminderung: Wartezeit und Ausnahmen ergänzt, Überschrift „meist“.
+  - Pflichtversicherung auf Antrag: unwiderruflich.
+  - Arbeitslosenversicherung: Vorversicherungszeit und Kündigung erst nach fünf Jahren ergänzt; Beitragssatz 2,6 % jetzt mit Primärbeleg (BA-Weisungen § 28a, 01/2026).
+  - bAV-Anspruch nur für rentenversicherungspflichtige Mitarbeiter. Geringverdienerförderung: Abzug von der Lohnsteuer, gilt nur für bestimmte Tarife. BRSG II nur noch „soll ab 2027“.
+  - bKV: monatliche Zahlung, alle Sachbezüge zusammen.
+  - D&O: Bedingungen, Ausschluss bei wissentlicher Pflichtverletzung, Mehrheitsgesellschafter.
+  - Unterversicherung nach § 75 VVG genauer. Haftung bei Personengesellschaften und typische persönliche Haftung des GmbH-Geschäftsführers ergänzt.
+- **Außenwirkung:**
+  - Keine angedeutete Haftungsentlastung des Arbeitgebers mehr.
+  - Risikohinweis Fonds/ETFs.
+  - „Finanzierung“ heißt jetzt „Finanzierung der privaten Immobilie“.
+  - Firmenvermögen nur Oliver, nur Fonds/ETFs; Vergütung dafür gesondert.
+  - Ergänzt: WealthKonzept-Hinweis, „Kein Mindestentgelt“, Datenschutzsatz.
+  - Festpreis nur für den Finanzplan.
+  - Kein Versprechen einer Notfallordner-Vorlage.
+  - Direktzusage und Unterstützungskasse beim Steuerberater bzw. Rentenberater. Versorgungsregelung prüft Anwalt oder Steuerberater.
+- **Widersprüche:**
+  - Notreserve-Ampel wie Privat (rot unter 1, grün ab 6).
+  - „Acht Bereiche“ statt „Sieben“.
+  - Altersvorsorgedepot wie im Privat-Deck benannt, Gesetz vom 26.05.2026.
+  - Lohnfortzahlung beim GmbH-Geschäftsführer.
+  - GwG-Pflichten für B und C im Ablauf.
+  - Jans Honorarberatung als „nicht vorgesehen“ markiert.
+  - PDF-Autor der Jan-Decks.
+
+## Vor dem Versand
+
+1. Platzhalter in den Pflichtangaben füllen (Register-Nummern, IHK, Kontakt Oliver), `shared/brand.py`.
+2. § 34c-Erlaubnis Oliver? Rechtslage ab 20.11.2026 von der zuständigen IHK bestätigen lassen.
+3. Rentenberater/DRV: Pflichtversicherung auf Antrag, GGF-Status, Nachweis des Erwerbsminderungsschutzes.
+4. Steuerberater: bKV (Fundstelle BMF 15.03.2022, jährliche Zahlung), Unterstützungskasse/Direktzusage, § 4e StBerG.
+5. BRSG II am Gesetzestext (BGBl. 2026 I Nr. 14) prüfen.
+6. Vergütung für Firmenvermögen festlegen; Entgeltfluss § 34h Abs. 3 (STATUS Punkt 11).
+7. Jans Rückmeldung zu 03 und 05.
