@@ -44,4 +44,9 @@ demo = demo.replace("/*SEED*/null", json.dumps(json.loads(seed.read_text()), ens
 demo = "".join(c if ord(c) < 128 else "\\u%04x" % ord(c) if ord(c) < 0x10000 else "\\u{%x}" % ord(c) for c in demo)
 (aus / "js" / "demo.js").write_text(demo)
 shutil.copy(HIER / "start.html", aus / "start.html")
+# Steuerzeichen in pdf.js (nur in Zeichenketten) als \xNN schreiben: bedeutungsgleich, und die Veröffentlichung nimmt die Datei an
+for f in (aus / "vendor").rglob("*.mjs"):
+    t = f.read_text(encoding="utf-8")
+    t = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", lambda m: "\\x%02x" % ord(m.group()), t)
+    f.write_text(t, encoding="utf-8")
 print("Demo gebaut:", aus, sum(f.stat().st_size for f in aus.rglob("*") if f.is_file()), "Bytes")
