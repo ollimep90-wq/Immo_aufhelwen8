@@ -52,7 +52,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
    - Keine Webfonts, keine Cookies, kein lokaler Speicher.
    - Der Live-Build bricht ab, solange Platzhalter offen sind (`python3 build.py --live URL DS`).
    - Mit Jan zu klären: Gewichtung der Themen im Kurzcheck, vor allem Unfall.
-3. **Gewerbe und Unternehmen:** *Entwurf 11.10.2026* in `Gewerbe/` (5 Dokumente, du und Sie, Bauen mit `python3 build.py`, Zahlen nur aus `Gewerbe/zahlen.py`). Segmente A Selbständige, B GmbH-Geschäftsführer, C Arbeitgeber, vorher abgefragt (Entscheidung Oliver). Alle vier Prüfungen sind gelaufen, die Befunde eingearbeitet. Offen, bevor es an Kunden geht: Platzhalter in den Pflichtangaben (Punkt 5), § 34c-Erlaubnis und IHK-Bestätigung zu gewerblichen Darlehen, weitere Punkte in `Gewerbe/STAND.md`.
+3. **Gewerbe und Unternehmen:** *Entwurf 11.10.2026* in `Gewerbe/` (5 Dokumente plus internes Konzept 06 zur pauschaldotierten Unterstützungskasse für Gesellschafter-Geschäftsführer, du und Sie, Bauen mit `python3 build.py`, Zahlen nur aus `Gewerbe/zahlen.py`). Segmente A Selbständige, B GmbH-Geschäftsführer, C Arbeitgeber, vorher abgefragt (Entscheidung Oliver). Alle vier Prüfungen sind gelaufen, die Befunde eingearbeitet. Offen, bevor es an Kunden geht: Platzhalter in den Pflichtangaben (Punkt 5), § 34c-Erlaubnis und IHK-Bestätigung zu gewerblichen Darlehen, weitere Punkte in `Gewerbe/STAND.md`.
 4. ~~**§34i-Modell wählen:** Provision oder Honorar.~~ *Entschieden 11.10.2026: Provision.* Die Platzhalter in Decks und Pflichtangaben sind ersetzt („eine Provision von der Bank, die dir das Darlehen gibt“; Pflichtangabe: „eine Provision des Darlehensgebers“). Die Höhe wird vorab genannt. Bisheriger Stand zur Nachverfolgung:
    - Nach § 34i Abs. 5 GewO schließen sich Vermittlung und Honorarberatung aus, eine Wahl je Kunde ist nicht möglich.
    - *Korrektur 10.10.2026:* Die Decks sagten vorher „Provision der Bank oder, als Honorarberater, ein Honorar von dir, nie beides“. Das klang wie eine Wahl je Kunde und war deshalb falsch.
@@ -63,11 +63,12 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
 6. **Name und Marke.**
 7. **DIN 77230:** Der Normtext lag nicht vor. Die Dokumente sagen deshalb „angelehnt“ und behaupten keine Konformität.
 8. **Alte Sie-Fassungen:** Kundenpräsentation und Gesprächsleitfaden in `Finanzanlagen/` sind teilweise durch die neuen Decks ersetzt. Seit 11.10.2026 gibt es zu den Privat-Decks 01–06 eigene `_Sie`-Fassungen (Punkt 16, „Anrede du/Sie“). Zu entscheiden: Können die alten Sie-Fassungen archiviert werden?
-9. **Jans Rückmeldung** zu `03_Risikoabsicherung`, zu den Gewerbe-Decks `03_Betrieb_absichern` und `05_Mitarbeiter_bAV_und_bKV` und zu seiner Rolle in den anderen Decks.
+9. **Jans Rückmeldung** zu `03_Risikoabsicherung`, zu den Gewerbe-Decks `03_Betrieb_absichern` und `05_Mitarbeiter_bAV_und_bKV`, zu Rückdeckung und Pensionsfonds in `04_Unternehmer` (Folien 7, 7a, 7b) und zu seiner Rolle in den anderen Decks.
 10. **Masterarbeit:** Die Kapitel 3–7 sind noch „XXX“, Anhang A ist leer, und das Literaturverzeichnis enthält fremde Einträge (RFID, Industrie 4.0). Das ist für die Arbeit selbst wichtig, nicht für die Decks.
 11. **Vor Kundeneinsatz anwaltlich klären** (Fachanwalt Bank- und Kapitalmarktrecht):
     - **§ 17 PAngV** bei den Zinsbeispielen in `06_Immobilien`. Effektivzins, Nettodarlehensbetrag und der Hinweis auf die Grundschuld sind ergänzt. Ob ein repräsentatives Beispiel nötig ist, ist offen.
     - **§ 34h Abs. 3 GewO:** Entgeltfluss beim Strategiedepot mit WealthKonzept und Erlaubnisumfang für die Vermittlung der Vermögensverwaltung.
+    - **Pauschaldotierte Unterstützungskasse:** Wer darf sie beraten und vermitteln (§ 34d trägt voraussichtlich nicht; § 5 und § 10 RDG; § 4e StBerG), Vergütung bei Oliver (§ 34h Abs. 3), Anlage des Kassenvermögens, Darlehen Kasse → GmbH. Siehe `Gewerbe/06_Konzept_Unterstuetzungskasse_GGF`. Dafür eher Anwalt für Gewerbe- und Berufsrecht.
 12. **Altersvorsorgedepot, noch an Primärquellen prüfen:**
     - Stichtag für den Bonus von 200 €.
     - Teilkapital 30 %.
@@ -82,7 +83,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
       - Pflichtangaben in `shared/brand.py`, denn die GmbH braucht eigene Erlaubnisse und Registernummern.
       - Die Texte „zwei eigenständige Unternehmen in Kooperation“ in den Präsentationen und Fußzeilen, auch in den Gewerbe-Decks und in `Gewerbe/build.py`.
       - Der Platzhalter `[Name GmbH]` in den Einwilligungen.
-    - **Fachlich prüfen:** Gehen § 34h, § 34i und § 34d zusammen in einer GmbH? Ist Courtage mit § 34h Abs. 3 vereinbar?
+    - **Fachlich prüfen:** Gehen § 34h, § 34i und § 34d zusammen in einer GmbH? Ist Courtage mit § 34h Abs. 3 vereinbar? Wo wird die Beratung zur Unterstützungskasse angesiedelt?
     - **GwG (Entscheidung 11.10.2026: als Verpflichtete behandeln):**
       - Pflichten, Grenzen und offene Fragen stehen in `GWG.md`.
       - In der App gibt es dafür den Reiter „Geldwäsche“ als Checkliste. Die Nachweise selbst kommen ins Archiv.
