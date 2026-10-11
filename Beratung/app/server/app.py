@@ -40,7 +40,7 @@ EMAIL_RE = re.compile(r"^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,30}$")
 # Einwilligungstext: Version und Wortlaut werden mit Hash gespeichert (Nachweis Art. 7 Abs. 1 DSGVO)
 EINWILLIGUNG_VERSION = "2026-10-v3"   # v3: eine Verantwortliche (gemeinsame GmbH)
 
-ABSCHNITTE_BERATER = {"haushalt", "einkuenfte", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen", "bericht"}
+ABSCHNITTE_BERATER = {"haushalt", "einkuenfte", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen", "bericht", "gwg"}
 # Keine Gesundheitsdaten speichern (Art. 9 DSGVO): Block 9 „Selbstbild“ des Prototyps wird nicht erfasst
 VERBOTENE_FELDER = re.compile(r"^q_p9_")
 ABSCHNITT_VERSICHERUNG = "absicherung_bewertung"

@@ -20,7 +20,7 @@
     ["SL", "Saarland"], ["SN", "Sachsen"], ["ST", "Sachsen-Anhalt"], ["SH", "Schleswig-Holstein"], ["TH", "Thüringen"]];
   const TABS = [["ueberblick", "Überblick", null], ["haushalt", "Haushalt & Netto", "haushalt"], ["einkuenfte", "Weitere Einkünfte", "einkuenfte"], ["budget", "Budget", "budget"],
     ["vorsorge", "Vermögen & Vorsorge", "altersvorsorge"], ["risiko", "Risiko-Check", "risiko"],
-    ["absicherung", "Absicherung", "absicherung_bewertung"], ["ziele", "Ziele & Notizen", "ziele"], ["bericht", "Kundenbericht", null], ["zugang", "Zugang & Daten", null]];
+    ["absicherung", "Absicherung", "absicherung_bewertung"], ["ziele", "Ziele & Notizen", "ziele"], ["bericht", "Kundenbericht", null], ["gwg", "Geldwäsche", "gwg"], ["zugang", "Zugang & Daten", null]];
 
   let ich = null, akte = null, tab = "ueberblick", fragenVoll = null, geaendert = false;
 
@@ -405,6 +405,25 @@
         <p class="hint" id="b-status">${b.freigegeben_am ? "Zuletzt freigegeben am " + datum(b.freigegeben_am) + ". Der Kunde sieht den Bericht in seinem Bereich." : akte.kunde ? "Noch nicht freigegeben." : "Freigeben geht, sobald der Kunde einen Zugang hat. Als PDF geht es jetzt schon."}</p></div>
         <div id="b-ansicht"></div>`;
     },
+    gwg() {
+      const box = (f, wert, text) => `<label style="font-weight:400;display:flex;gap:8px;align-items:flex-start;margin:6px 0"><input type="checkbox" data-f="${f}" value="${wert}" style="margin-top:4px"> <span>${text}</span></label>`;
+      return `<p class="info">Checkliste zu den Sorgfaltspflichten nach dem Geldwäschegesetz. Die Nachweise selbst (Ausweiskopie, Angaben nach § 11 GwG) gehören <b>nicht in die App</b>, sondern ins Archiv: Aufbewahrung 5 Jahre, Löschung spätestens nach 10 Jahren (§ 8 Abs. 4 GwG). Die App löscht Akten nach 12 Monaten und beim Widerruf.</p>
+        <div class="card"><h2 style="margin-top:0">Betroffene Sparten</h2>
+          ${box("sparten", "leben", "Lebens- oder Rentenversicherung, Unfallversicherung mit Beitragsrückgewähr (§ 2 Abs. 1 Nr. 8 GwG)")}
+          ${box("sparten", "anlage", "Honorar-Finanzanlagenberatung (§ 2 Abs. 1 Nr. 6 GwG, soweit erfasst, siehe GWG.md)")}
+          ${box("sparten", "andere", "Nur andere Sparten (Sach, Kranken, BU, Immobiliardarlehen): keine Pflicht aus dem GwG, Rechtsgrundlage für Ausweisdaten prüfen")}
+          <p class="hint">BU und Risikoleben: ob erfasst, ist noch zu klären (GWG.md).</p></div>
+        <div class="card"><h2 style="margin-top:0">Identifizierung (vor Begründung der Geschäftsbeziehung, § 11 GwG)</h2><div class="row3">
+          ${feld("g_datum", "Identifiziert am", "date")}
+          <div><label for="i_g_verfahren">Verfahren</label><select id="i_g_verfahren" data-f="g_verfahren"><option value="">–</option><option value="ausweis">Ausweis vor Ort (§ 12 Abs. 1 Nr. 1)</option><option value="eid">eID (Nr. 2)</option><option value="video">Video-Ident (nach BaFin-Rundschreiben 3/2017)</option><option value="dritter">Durch Versicherer (§ 17), Verantwortung bleibt bei uns</option></select></div>
+          ${feld("g_durch", "Durch", "text")}${feld("g_ablage", 'Abgelegt in <span class="hint">z. B. Maklerverwaltungsprogramm, Archivordner</span>', "text")}</div></div>
+        <div class="card"><h2 style="margin-top:0">Weitere Sorgfaltspflichten (§ 10 GwG)</h2><div class="row3">
+          ${seg("g_eigen", "Handelt auf eigene Rechnung?", [["ja", "Ja"], ["nein", "Nein, wirtschaftlich Berechtigten klären"]])}
+          ${seg("g_pep", "Politisch exponierte Person?", [["nein", "Nein"], ["ja", "Ja: verstärkte Sorgfalt"]])}
+          <div><label for="i_g_risiko">Risiko</label><select id="i_g_risiko" data-f="g_risiko"><option value="">–</option><option value="gering">gering (Anlage 1)</option><option value="normal">normal</option><option value="erhoeht">erhöht (Anlage 2, § 15)</option></select></div></div>
+          ${feld("g_zweck", "Zweck und Art der Geschäftsbeziehung", "text")}
+          <p class="hint">Bei Auffälligkeiten: Verdachtsmeldung über goAML (§ 43 GwG) an die FIU, nicht mit dem Kunden darüber sprechen (§ 47).</p></div>`;
+    },
     zugang() {
       const e = akte.einwilligung;
       return `<div class="card"><h2 style="margin-top:0">Kundenzugang</h2>${akte.kunde ? `<p>Aktiv: <b>${esc(akte.kunde.name)}</b> (${esc(akte.kunde.email)})</p>` :
@@ -666,6 +685,8 @@
     liquide: "Konto und Tagesgeld", netto_manuell: "Netto/Monat (manuell)", depot: "Depots und Fonds", immobilien: "Immobilien",
     sonstverm: "Sonstiges Vermögen", schulden: "Kredite (Restschuld)", av_kapital: "Kapital fürs Alter heute", rentenalter: "Rentenbeginn mit",
     gesetzl: "Gesetzliche Rente netto (von Hand)", gesetzl_brutto: "Gesetzliche Rente brutto, Hochrechnung bis Regelaltersgrenze", gesetzl_bisher: "Rente aus bisherigen Beiträgen", jahre45: "45 Versicherungsjahre bis Rentenbeginn",
+    sparten: "GwG: betroffene Sparten", g_datum: "GwG: identifiziert am", g_verfahren: "GwG: Verfahren", g_durch: "GwG: durch", g_ablage: "GwG: Nachweis abgelegt in",
+    g_eigen: "GwG: auf eigene Rechnung", g_pep: "GwG: politisch exponiert", g_risiko: "GwG: Risiko", g_zweck: "GwG: Zweck der Geschäftsbeziehung",
     rentenalter2: "Person 2: Rentenbeginn mit", gesetzl_brutto2: "Person 2: gesetzliche Rente brutto, Hochrechnung", gesetzl_bisher2: "Person 2: Rente aus bisherigen Beiträgen",
     jahre452: "Person 2: 45 Versicherungsjahre", pkv_alter2: "Person 2: PKV-Beitrag im Alter/Monat",
     partner_rente: "Rente Ehepartner brutto", pkv_alter: "PKV-Beitrag im Alter/Monat",
@@ -705,7 +726,7 @@
     if (vs) h += tabelle("Altersvorsorge (Rechenbeispiel, Annahmen)", { "Wunsch netto": eur(vs.wunsch), "Lücke heute": eur(vs.luecke), "Kapitalbedarf": eur(vs.kapital), "Sparrate (Start)": eur(vs.sparrate) });
     h += tabelle("Haushalt", d("haushalt"), LABEL) + tabelle("Weitere Einkünfte", d("einkuenfte"), LABEL) + tabelle("Budget (Eingaben)", d("budget"), LABEL) + tabelle("Vermögen und Vorsorge (Eingaben)", d("altersvorsorge"), LABEL)
       + tabelle("Risiko-Check: Betroffenheit laut Kunde", risiko, fragen) + tabelle("Absicherung: Bewertung durch Versicherungsmakler", abs)
-      + tabelle("Ziele und Notizen", d("ziele"), LABEL);
+      + tabelle("Ziele und Notizen", d("ziele"), LABEL) + tabelle("Geldwäsche: Sorgfaltspflichten (Checkliste)", d("gwg"), LABEL);
     if (ab.vorab) h += tabelle("Angaben des Kunden im Vorab-Check (Auswertung)", (() => { const v = d("vorab").auswertung || {}; const o = {};
       if (v.budget) { o["Einnahmen"] = eur(zahl(v.budget.einnahmen)); o["Überschuss II"] = eur(zahl(v.budget.ueberschuss2)); }
       if (Array.isArray(v.wuensche)) o["Wünsche"] = v.wuensche.map((w) => (w && w.text) || "").join("; ");

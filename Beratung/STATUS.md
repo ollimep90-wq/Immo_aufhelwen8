@@ -80,7 +80,10 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
       - Pflichtangaben in `shared/brand.py`, denn die GmbH braucht eigene Erlaubnisse und Registernummern.
       - Die Texte „zwei eigenständige Unternehmen in Kooperation“ in den Präsentationen und Fußzeilen.
       - Der Platzhalter `[Name GmbH]` in den Einwilligungen.
-    - **Fachlich prüfen:** Gehen § 34h, § 34i und § 34d zusammen in einer GmbH? Ist Courtage mit § 34h Abs. 3 vereinbar? Ist die GmbH Verpflichtete nach dem GwG?
+    - **Fachlich prüfen:** Gehen § 34h, § 34i und § 34d zusammen in einer GmbH? Ist Courtage mit § 34h Abs. 3 vereinbar?
+    - **GwG (Entscheidung 11.10.2026: als Verpflichtete behandeln):**
+      - Pflichten, Grenzen und offene Fragen stehen in `GWG.md`.
+      - In der App gibt es dafür den Reiter „Geldwäsche“ als Checkliste. Die Nachweise selbst kommen ins Archiv.
 16. **Beratungs-App** (`app/`):
     - Gebaut: Zwei-Faktor-Anmeldung, Verschlüsselung, Löschung nach 12 Monaten ohne Aktivität, Archivauszug.
     - Hosting bei IONOS, offene Punkte in `app/BETRIEB.md`.
