@@ -227,7 +227,211 @@
   "Dein erstes Bild": "Ihr erstes Bild",
   "Deine Notreserve": "Ihre Notreserve",
   "Deine Wünsche": "Ihre Wünsche",
-  "Wir duzen den Kunden, wenn es passt; die Sprechtexte sind in der Du-Form.": "Wir siezen den Kunden; die Sprechtexte sind in der Sie-Form."
+  "Wir duzen den Kunden, wenn es passt; die Sprechtexte sind in der Du-Form.": "Wir siezen den Kunden; die Sprechtexte sind in der Sie-Form.",
+  "Leg ein Passwort fest, dann kannst du deinen Finanz-Check ausfüllen und später wieder aufrufen.": "Legen Sie ein Passwort fest, dann können Sie Ihren Finanz-Check ausfüllen und später wieder aufrufen.",
+  "Du meldest dich später mit": "Sie melden sich später mit",
+  "Dein Finanzbericht ist da": "Ihr Finanzbericht ist da",
+  "Deine Zahlen aus unserem Gespräch, übersichtlich mit Grafiken.": "Ihre Zahlen aus unserem Gespräch, übersichtlich mit Grafiken.",
+  "Ein paar Fragen zu deinem Leben, deinem Geld und deinen Plänen, in etwa 15 Minuten. Schätzungen reichen völlig, jede Frage kannst du überspringen. Am Ende siehst du ein erstes Bild.": "Ein paar Fragen zu Ihrem Leben, Ihrem Geld und Ihren Plänen, in etwa 15 Minuten. Schätzungen reichen völlig, jede Frage können Sie überspringen. Am Ende sehen Sie ein erstes Bild.",
+  "Deine Daten": "Ihre Daten",
+  "Deine Antworten im Finanz-Check speichern wir erst, wenn du unten zustimmst, und dann jedes Mal, wenn du auf Weiter tippst. So können wir uns gut vorbereiten. Das Ergebnis ist eine erste Einschätzung, keine Beratung.": "Ihre Antworten im Finanz-Check speichern wir erst, wenn Sie unten zustimmen, und dann jedes Mal, wenn Sie auf Weiter tippen. So können wir uns gut vorbereiten. Das Ergebnis ist eine erste Einschätzung, keine Beratung.",
+  "Du hast eingewilligt. Hier kannst du deine Angaben herunterladen oder die Einwilligung widerrufen.": "Sie haben eingewilligt. Hier können Sie Ihre Angaben herunterladen oder die Einwilligung widerrufen."
  },
- "ersetzen": []
+ "ersetzen": [],
+ "js": {
+  "kunde_check.js": [
+   [
+    "const SIE_SEITE = false;",
+    "const SIE_SEITE = true;"
+   ],
+   [
+    "Trag dein Netto besser direkt ein.",
+    "Tragen Sie Ihr Netto besser direkt ein."
+   ],
+   [
+    "${d.person.vorname}, dein Finanz-Check",
+    "Ihr Finanz-Check"
+   ],
+   [
+    "\"Dein Finanz-Check\"",
+    "\"Ihr Finanz-Check\""
+   ],
+   [
+    " deiner Einnahmen",
+    " Ihrer Einnahmen"
+   ],
+   [
+    "netto aus deinem Brutto geschätzt (Rechengrößen 2026). Deine Gehaltsabrechnung kann abweichen.",
+    "netto aus Ihrem Brutto geschätzt (Rechengrößen 2026). Ihre Gehaltsabrechnung kann abweichen."
+   ],
+   [
+    "Dein Konto und Tagesgeld reichen für rund",
+    "Ihr Konto und Tagesgeld reichen für rund"
+   ],
+   [
+    "wenn du selbstständig bist, eher mehr.",
+    "wenn Sie selbstständig sind, eher mehr."
+   ],
+   [
+    "laut deinen Antworten:",
+    "laut Ihren Antworten:"
+   ],
+   [
+    "schaut sich Jan mit dir an",
+    "schaut sich Jan mit Ihnen an"
+   ],
+   [
+    "Deine Angaben sind bei uns. Wir melden uns bei dir für das Gespräch.",
+    "Ihre Angaben sind bei uns. Wir melden uns bei Ihnen für das Gespräch."
+   ],
+   [
+    "Bitte stimme zu, damit wir deine Angaben speichern können.",
+    "Bitte stimmen Sie zu, damit wir Ihre Angaben speichern können."
+   ],
+   [
+    "Hallo ${k.name}, schön, dass du da bist",
+    "Willkommen, schön, dass Sie da sind"
+   ],
+   [
+    "Dein Passwort braucht mindestens 10 Zeichen.",
+    "Ihr Passwort braucht mindestens 10 Zeichen."
+   ],
+   [
+    "Hast du schon ein Passwort festgelegt? Dann <a href=\"/\">melde dich hier an</a>. Sonst schicken wir dir gern einen neuen Link.",
+    "Haben Sie schon ein Passwort festgelegt? Dann <a href=\"/\">melden Sie sich hier an</a>. Sonst schicken wir Ihnen gern einen neuen Link."
+   ],
+   [
+    "Alle deine Angaben in der App werden dann gelöscht. Wenn du sie behalten willst, lade sie vorher herunter.",
+    "Alle Ihre Angaben in der App werden dann gelöscht. Wenn Sie sie behalten möchten, laden Sie sie vorher herunter."
+   ],
+   [
+    "Deine Angaben sind noch gespeichert. Bitte versuch es noch einmal oder schreib uns.",
+    "Ihre Angaben sind noch gespeichert. Bitte versuchen Sie es noch einmal oder schreiben Sie uns."
+   ],
+   [
+    "Du hast deine Einwilligung widerrufen. Deine Angaben sind gelöscht. Was du jetzt noch siehst, steht nur in diesem Browserfenster.",
+    "Sie haben Ihre Einwilligung widerrufen. Ihre Angaben sind gelöscht. Was Sie jetzt noch sehen, steht nur in diesem Browserfenster."
+   ],
+   [
+    "Widerrufen. Deine Angaben sind gelöscht.",
+    "Widerrufen. Ihre Angaben sind gelöscht."
+   ]
+  ],
+  "kontoauszug_ui.js": [
+   [
+    "Wähl die Umsätze der letzten drei Monate aus:",
+    "Wählen Sie die Umsätze der letzten drei Monate aus:"
+   ],
+   [
+    "<b>Deine Kontoauszüge bleiben auf deinem Gerät.</b>",
+    "<b>Ihre Kontoauszüge bleiben auf Ihrem Gerät.</b>"
+   ],
+   [
+    "die du unten übernimmst und speicherst",
+    "die Sie unten übernehmen und speichern"
+   ],
+   [
+    "Für gute Durchschnittswerte wähl bitte mindestens drei Monate aus.",
+    "Für gute Durchschnittswerte wählen Sie bitte mindestens drei Monate aus."
+   ],
+   [
+    "Bitte prüf unten, ob Ein- und Ausgänge stimmen.",
+    "Bitte prüfen Sie unten, ob Ein- und Ausgänge stimmen."
+   ],
+   [
+    "Du kannst die Werte unten noch ändern.",
+    "Sie können die Werte unten noch ändern."
+   ],
+   [
+    " Dein Netto ist eingetragen.",
+    " Ihr Netto ist eingetragen."
+   ],
+   [
+    " Dein Gehalt trag bitte im Schritt „Was reinkommt“ selbst ein.",
+    " Ihr Gehalt tragen Sie bitte im Schritt „Was reinkommt“ selbst ein."
+   ]
+  ],
+  "fragen.js": [
+   [
+    "\"Deine Arbeitskraft\"",
+    "\"Ihre Arbeitskraft\""
+   ],
+   [
+    "\"Deine Familie, falls dir etwas passiert\"",
+    "\"Ihre Familie, falls Ihnen etwas passiert\""
+   ],
+   [
+    "\"Absicherung deiner Kinder\"",
+    "\"Absicherung Ihrer Kinder\""
+   ],
+   [
+    "\"Deine Einrichtung (Hausrat)\"",
+    "\"Ihre Einrichtung (Hausrat)\""
+   ],
+   [
+    "\"Dein Haus (Wohngebäude)\"",
+    "\"Ihr Haus (Wohngebäude)\""
+   ],
+   [
+    "\"Dein Haustier\"",
+    "\"Ihr Haustier\""
+   ],
+   [
+    "Stell dir vor, du hast einen Bandscheibenvorfall und darfst 12 Monate nicht arbeiten. Wie wirkt sich das auf dein Einkommen und deinen Alltag aus?",
+    "Stellen Sie sich vor, Sie haben einen Bandscheibenvorfall und dürfen 12 Monate nicht arbeiten. Wie wirkt sich das auf Ihr Einkommen und Ihren Alltag aus?"
+   ],
+   [
+    "Stell dir vor, dein Sehvermögen verschlechtert sich stark und dein Beruf funktioniert so nicht mehr. Wie hart würde dich das treffen?",
+    "Stellen Sie sich vor, Ihr Sehvermögen verschlechtert sich stark und Ihr Beruf funktioniert so nicht mehr. Wie hart würde Sie das treffen?"
+   ],
+   [
+    "Stell dir vor, dein Körper „zieht die Notbremse“ und du kannst monatelang nicht arbeiten, etwa wegen Erschöpfung. Wie hart würde dich das finanziell treffen?",
+    "Stellen Sie sich vor, Ihr Körper „zieht die Notbremse“ und Sie können monatelang nicht arbeiten, etwa wegen Erschöpfung. Wie hart würde Sie das finanziell treffen?"
+   ],
+   [
+    "Stell dir vor, du kannst deinen heutigen Beruf nicht mehr ausüben und ein anderer Job bringt deutlich weniger ein. Wie hart würde dich das treffen?",
+    "Stellen Sie sich vor, Sie können Ihren heutigen Beruf nicht mehr ausüben und ein anderer Job bringt deutlich weniger ein. Wie hart würde Sie das treffen?"
+   ],
+   [
+    "Stell dir vor, dein Einkommen fällt weg, aber deine festen Ausgaben laufen weiter. Wie hart würde dich das treffen?",
+    "Stellen Sie sich vor, Ihr Einkommen fällt weg, aber Ihre festen Ausgaben laufen weiter. Wie hart würde Sie das treffen?"
+   ],
+   [
+    "Stell dir vor, dir passiert etwas und deine Familie müsste ohne dein Einkommen auskommen, Kredite inklusive. Wie hart würde es sie treffen?",
+    "Stellen Sie sich vor, Ihnen passiert etwas und Ihre Familie müsste ohne Ihr Einkommen auskommen, Kredite inklusive. Wie hart würde es sie treffen?"
+   ],
+   [
+    "Stell dir vor, dein Kind muss für mehrere Wochen ins Krankenhaus und du möchtest die ganze Zeit dabei sein. Wie stark würden dich die Zusatzkosten belasten?",
+    "Stellen Sie sich vor, Ihr Kind muss für mehrere Wochen ins Krankenhaus und Sie möchten die ganze Zeit dabei sein. Wie stark würden Sie die Zusatzkosten belasten?"
+   ],
+   [
+    "Stell dir vor, dein Kind hat nach einem Unfall dauerhafte Folgen und braucht Hilfsmittel oder Umbauten. Wie hart würde euch das finanziell treffen?",
+    "Stellen Sie sich vor, Ihr Kind hat nach einem Unfall dauerhafte Folgen und braucht Hilfsmittel oder Umbauten. Wie hart würde Sie das finanziell treffen?"
+   ],
+   [
+    "Stell dir vor, dein Tier braucht eine OP für 6.000 bis 10.000 €. Wie stark würde dich das belasten?",
+    "Stellen Sie sich vor, Ihr Tier braucht eine OP für 6.000 bis 10.000 €. Wie stark würde Sie das belasten?"
+   ],
+   [
+    "Stell dir vor, du verursachst aus Versehen einen Unfall, bei dem jemand schwer verletzt wird, und sollst Schadenersatz zahlen. Wie hart würde dich das treffen?",
+    "Stellen Sie sich vor, Sie verursachen aus Versehen einen Unfall, bei dem jemand schwer verletzt wird, und sollen Schadenersatz zahlen. Wie hart würde Sie das treffen?"
+   ],
+   [
+    "Stell dir vor, du gerätst in einen langen Streit mit Vermieter oder Arbeitgeber. Wie stark würden dich Anwalts- und Gerichtskosten belasten?",
+    "Stellen Sie sich vor, Sie geraten in einen langen Streit mit Vermieter oder Arbeitgeber. Wie stark würden Sie Anwalts- und Gerichtskosten belasten?"
+   ],
+   [
+    "Stell dir vor, ein Küchengerät fängt nachts Feuer und der Rauch zerstört Möbel, Kleidung und Elektronik. Wie hart würde es dich treffen, alles neu zu kaufen?",
+    "Stellen Sie sich vor, ein Küchengerät fängt nachts Feuer und der Rauch zerstört Möbel, Kleidung und Elektronik. Wie hart würde es Sie treffen, alles neu zu kaufen?"
+   ],
+   [
+    "Stell dir vor, Starkregen drückt Wasser in Keller oder Erdgeschoss. Wie hart würden dich Sanierung, Trocknung und Ersatz treffen?",
+    "Stellen Sie sich vor, Starkregen drückt Wasser in Keller oder Erdgeschoss. Wie hart würden Sie Sanierung, Trocknung und Ersatz treffen?"
+   ],
+   [
+    "Stell dir vor, ein Brand macht dein Haus monatelang unbewohnbar und du zahlst Miete und Kredit gleichzeitig. Wie hart würde dich das treffen?",
+    "Stellen Sie sich vor, ein Brand macht Ihr Haus monatelang unbewohnbar und Sie zahlen Miete und Kredit gleichzeitig. Wie hart würde Sie das treffen?"
+   ]
+  ]
+ }
 }

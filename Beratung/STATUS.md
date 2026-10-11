@@ -126,7 +126,13 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
         - Angebrochene Monate zählen nicht mit.
         - *Fehler behoben:* Der Dateiname wäre beim Speichern mitgeschickt worden.
       - **Direkte Kontoanbindung:** Konzept und offene Rechtsfragen in `app/KONTOANBINDUNG.md`. Noch nicht gebaut, weil zuerst die Rechtslage geklärt werden muss.
-    - **Klick-Demo** ohne Server, mit erfundenen Daten: `app/demo/`.
+      - **Anrede du/Sie (Entscheidung Oliver, 11.10.2026: Schalter in Decks und App):**
+        - Decks: Zu jedem Privat-Dokument gibt es eine `_Sie`-Fassung. Die Sätze stehen in `shared/sie.json`, der Build bricht bei du-Resten ab.
+        - App: Der Berater stellt die Anrede je Akte unter „Zugang & Daten“ ein. Standard ist du, Paare werden mit „ihr“ angesprochen, „Sie“ gilt für alle.
+        - Der Kundenbereich wechselt dann auf `kunde_sie.html`, und neue Berichte erscheinen in der Sie-Form. Bereits freigegebene Berichte bleiben, wie sie sind. Freitexte prüft der Berater selbst, die App weist auf du-Formen hin.
+        - Die Einstellung bleibt nach einem Widerruf erhalten, weil sie keine Angabe des Kunden ist.
+        - Geprüft am 11.10.2026: API-Test und Browsertest aller Schritte, ohne du-Reste.
+    - **Klick-Demo** ohne Server, mit erfundenen Daten: `app/demo/`. Die Akte „Tom Beispiel“ steht dort auf Sie.
 14. **Gemeinsamer Auftritt:**
     - Die Namen sind aus der Unterzeile entfernt, die Fußzeilen lauten „… in Kooperation mit …“.
     - Die gemeinsame Marke bleibt. Klären: Risiko einer Außen-GbR (siehe Pitch).

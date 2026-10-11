@@ -317,3 +317,22 @@ def test_admin_ist_zugleich_berater(umgebung):
     assert r.status_code == 200                                                                               # schreibt als Versicherung
     admin = client("admin@x.de")
     assert admin.put(f"/api/akten/{akte}/abschnitte/absicherung_bewertung", json={"daten": {"s_bu": "passt"}, "version": 1}, headers=H).status_code == 403
+
+
+def test_anrede_je_akte(umgebung):
+    oli = client("oliver@x.de")
+    akte = oli.post("/api/akten", json={"titel": "A"}, headers=H).json()["id"]
+    e = oli.post(f"/api/akten/{akte}/einladung", json={"email": "k@mail.de", "name": "Herr K"}, headers=H).json()
+    k = TestClient(appmod.app, base_url="https://testserver")
+    assert k.post("/api/einladung/pruefen", json={"token": e["token"]}, headers=H).json()["anrede"] == "du"   # Standard
+    assert oli.put(f"/api/akten/{akte}/abschnitte/einstellungen", json={"daten": {"anrede": "sie"}}, headers=H).status_code == 200
+    assert k.post("/api/einladung/pruefen", json={"token": e["token"]}, headers=H).json()["anrede"] == "sie"
+    assert k.post("/api/einladung/annehmen", json={"token": e["token"], "passwort": "kunde-passwort"}, headers=H).status_code == 200
+    assert k.get("/api/kunde/akte").json()["anrede"] == "sie"
+    # der Kunde kann die Einstellung nicht selbst schreiben
+    assert k.put("/api/kunde/einstellungen", json={"daten": {"anrede": "du"}}, headers=H).status_code in (403, 404, 405)
+    # Widerruf löscht die Angaben, die Anrede bleibt (sie ist keine Angabe des Kunden)
+    vers = k.get("/api/kunde/akte").json()["einwilligung_aktuell"]
+    assert k.post("/api/kunde/einwilligung", json={"text_version": vers, "text": "ok"}, headers=H).status_code == 200
+    assert k.post("/api/kunde/widerruf", headers=H).status_code == 200
+    assert k.get("/api/kunde/akte").json()["anrede"] == "sie"

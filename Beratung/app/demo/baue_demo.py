@@ -17,7 +17,7 @@ shutil.copytree(WEB, aus)
 def pfade(t):
     t = re.sub(r'<link rel="manifest"[^>]*>\n?', "", t)
     for alt, neu in [('"/css/', '"css/'), ('"/js/', '"js/'), ('"/img/', '"img/'), ('"/data/', '"data/'), ('"/vendor/', '"vendor/'),
-                     ('"/kunde.html', '"kunde.html'), ('"/berater.html', '"berater.html'),
+                     ('"/kunde.html', '"kunde.html'), ('"/kunde_sie.html', '"kunde_sie.html'), ('"/berater.html', '"berater.html'),
                      ('location.href = "/"', 'location.href = "anmeldung.html"'), ('href="/"', 'href="anmeldung.html"')]:
         t = t.replace(alt, neu)
     return t
@@ -27,7 +27,7 @@ for f in list(aus.rglob("*.html")) + list(aus.rglob("*.js")):
     if f.suffix == ".html" and "js/api.js" in t:
         t = t.replace('<script src="js/api.js"></script>', '<script src="js/demo.js"></script>\n<script src="js/api.js"></script>')
         t = re.sub(r"<title>([^<]*)</title>", r"<title>\1 · Demo</title>", t)
-    if f.name == "kunde_check.js":
+    if f.name in ("kunde_check.js", "kunde_check_sie.js"):
         alt = 'const m = location.hash.match(/einladung=([\\w-]+)/);'
         assert alt in t
         t = t.replace(alt, 'const m = location.hash.match(/einladung=([\\w-]+)/) || (window.DEMO && DEMO.offeneEinladung());')

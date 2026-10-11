@@ -3,8 +3,10 @@
 Ausgabe: web/kunde.html und web/js/kunde_check.js. Ersetzt werden nur Start (Einwilligung),
 Versand (Speichern über die API) und der Start der Seite. Jede Ersetzung wird geprüft.
 """
-import pathlib, re
+import pathlib, re, sys
 HIER = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(HIER.parent.parent / "shared"))
+import anrede  # noqa: E402  (du/Sie, Tabelle shared/sie.json)
 SRC = (HIER.parent / "Privat/vorab-check/vorab.html").read_text()
 KOPF = (HIER / "tools/kopf.html").read_text()
 MARKE = (HIER / "tools/marke.html").read_text()
@@ -112,4 +114,16 @@ html = KOPF.replace("%TITEL%", "Dein Finanz-Check") + f'''<div class="wrap">
 (HIER / "web/kunde.html").write_text(html)
 (HIER / "web/js/kunde_check.js").write_text("(function () {" + js + "\n})();\n")
 assert "onsubmit" not in html and "onclick" not in html, "Inline-Handler verstoßen gegen die CSP"
+
+# Sie-Fassung: gleiche Seite, Texte aus shared/sie.json; der Build bricht ab, wenn eine du-Stelle fehlt
+sie = anrede.pruefe(anrede.zu_sie(html), "kunde.html")
+sie = sie.replace('<script src="/js/kunde_check.js"></script>', '<script src="/js/kunde_check_sie.js"></script>')
+sie = sie.replace('<script src="/js/kontoauszug_ui.js"></script>', '<script src="/js/kontoauszug_ui_sie.js"></script>')
+sie = sie.replace('<script src="/js/fragen.js"></script>', '<script src="/js/fragen_sie.js"></script>')
+assert "kunde_check_sie.js" in sie and "kontoauszug_ui_sie.js" in sie and "fragen_sie.js" in sie
+(HIER / "web/kunde_sie.html").write_text(sie)
+for quelle, ziel in (("kunde_check.js", "kunde_check_sie.js"), ("kontoauszug_ui.js", "kontoauszug_ui_sie.js"), ("fragen.js", "fragen_sie.js")):
+    t = (HIER / "web/js" / quelle).read_text()
+    t = anrede.js_pruefe(anrede.js_zu_sie(t, quelle), quelle)
+    (HIER / "web/js" / ziel).write_text(t)
 print("kunde.html und kunde_check.js erzeugt")

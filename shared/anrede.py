@@ -59,6 +59,31 @@ def pruefe(html, name):
     return html
 
 
+IMPERATIV = re.compile(r"\b(Trag|trag|Wähl|wähl|Prüf|prüf|Lade|lade sie|Melde|melde dich|Schreib|schreib|Versuch|versuch|Bring|bring|Lass|lass uns|Frag|frag|Nimm|nimm|Leg|leg|Tipp auf|tipp auf|Stimme zu|stimme zu)\b")
+_LITERAL = re.compile(r'"((?:[^"\\\n]|\\.)*)"|\'((?:[^\'\\\n]|\\.)*)\'|`((?:[^`\\]|\\.)*)`', re.S)
+
+
+def js_zu_sie(js, datei):
+    """JavaScript-Texte des Kundenbereichs: Paare aus sie.json["js"][datei], jedes muss vorkommen."""
+    for alt, neu in TABELLE.get("js", {}).get(datei, []):
+        if alt not in js:
+            raise SystemExit(f"{datei}: Text für die Sie-Fassung nicht gefunden (sie.json anpassen): {alt}")
+        js = js.replace(alt, neu)
+    return js
+
+
+def js_pruefe(js, datei):
+    """Zeichenketten mit du-Form oder du-Imperativ, die nach der Umstellung noch übrig sind."""
+    r = []
+    for m in _LITERAL.finditer(js):
+        t = next(g for g in m.groups() if g is not None)
+        if (DU.search(t) or IMPERATIV.search(t)) and not any(x.search(t) for x in AUSNAHMEN):
+            r.append(t[:160])
+    if r:
+        raise SystemExit(f"{datei}: {len(r)} Texte ohne Sie-Fassung (sie.json „js“ ergänzen):\n  " + "\n  ".join(r))
+    return js
+
+
 if __name__ == "__main__" and sys.argv[1:2] == ["fehlend"]:
     for f in sys.argv[2:]:
         for t in reste(zu_sie(pathlib.Path(f).read_text())):

@@ -1,6 +1,7 @@
 
 /* ---- Ergänzung für die App: Einladung, Einwilligung, Speichern über die API ---- */
 const A = App.api;
+const SIE_SEITE = false;   // Sie-Fassung: kunde_sie.html mit kunde_check_sie.js (tools/baue_kunde.py)
 let version = null, eingewilligt = false, einwVersion = null;
 
 function formularLesen() {
@@ -78,6 +79,7 @@ function meineDatenZeigen() {
 
 async function ladeAkte() {
   const k = await A.get("/api/kunde/akte");
+  if ((k.anrede === "sie") !== SIE_SEITE) { location.replace((k.anrede === "sie" ? "/kunde_sie.html" : "/kunde.html") + location.hash); return; }
   einwVersion = k.einwilligung_aktuell;
   eingewilligt = !!(k.einwilligung && k.einwilligung.version === einwVersion);
   meineDatenZeigen();
@@ -93,6 +95,7 @@ async function start() {
   if (m) {
     try {
       const e = await A.post("/api/einladung/pruefen", { token: m[1] });
+      if ((e.anrede === "sie") !== SIE_SEITE) { location.replace((e.anrede === "sie" ? "/kunde_sie.html" : "/kunde.html") + location.hash); return; }
       $("einladung-titel").textContent = `Willkommen, ${e.name}`;
       $("einladung-email").value = e.email; $("einladung-email-text").textContent = e.email;
       $("einladung-box").hidden = false;

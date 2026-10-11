@@ -40,7 +40,7 @@ EMAIL_RE = re.compile(r"^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,30}$")
 # Einwilligungstext: Version und Wortlaut werden mit Hash gespeichert (Nachweis Art. 7 Abs. 1 DSGVO)
 EINWILLIGUNG_VERSION = "2026-10-v3"   # v3: eine Verantwortliche (gemeinsame GmbH)
 
-ABSCHNITTE_BERATER = {"haushalt", "einkuenfte", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen", "bericht", "gwg"}
+ABSCHNITTE_BERATER = {"haushalt", "einkuenfte", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen", "bericht", "gwg", "einstellungen"}
 # Keine Gesundheitsdaten speichern (Art. 9 DSGVO): Block 9 „Selbstbild“ des Prototyps wird nicht erfasst
 VERBOTENE_FELDER = re.compile(r"^q_p9_")
 ABSCHNITT_VERSICHERUNG = "absicherung_bewertung"
@@ -576,10 +576,10 @@ class TokenPruefung(BaseModel):
 def einladung_lesen(d: TokenPruefung, request: Request):
     # Token im Body statt im Pfad: landet nicht im Zugriffsprotokoll
     bremse("ip:" + ip(request), max_n=20)
-    e = DB.eins("SELECT name, email FROM einladungen WHERE token_hash=? AND ablauf>? AND benutzt IS NULL", h(d.token), time.time())
+    e = DB.eins("SELECT name, email, akte_id FROM einladungen WHERE token_hash=? AND ablauf>? AND benutzt IS NULL", h(d.token), time.time())
     if not e:
         raise HTTPException(404, "Die Einladung ist ungültig oder abgelaufen")
-    return e
+    return {"name": e["name"], "email": e["email"], "anrede": anrede(e["akte_id"])}
 
 
 @app.post("/api/einladung/annehmen")
@@ -605,6 +605,12 @@ def einladung_annehmen(d: Annahme, request: Request, resp: Response):
     return {"ok": True}
 
 
+def anrede(akte_id):
+    """Anrede im Kundenbereich: „du“ (Standard) oder „sie“, vom Berater je Akte eingestellt."""
+    e = DB.abschnitt(akte_id, "einstellungen")
+    return "sie" if e and isinstance(e["daten"], dict) and e["daten"].get("anrede") == "sie" else "du"
+
+
 def eigene_akte(u):
     a = DB.eins("SELECT * FROM akten WHERE kunde_id=?", u["id"])
     if not a:
@@ -623,7 +629,7 @@ def kunde_akte(u=Depends(nur("kunde"))):
     e = aktive_einwilligung(a["id"], u["id"])
     return {"name": u["name"], "email": u["email"], "vorab": DB.abschnitt(a["id"], ABSCHNITT_KUNDE),
             "einwilligung": {"version": e["text_version"], "zeit": e["zeit"]} if e else None,
-            "einwilligung_aktuell": EINWILLIGUNG_VERSION}
+            "einwilligung_aktuell": EINWILLIGUNG_VERSION, "anrede": anrede(a["id"])}
 
 
 @app.post("/api/kunde/einwilligung")
@@ -658,7 +664,8 @@ def kunde_widerruf(u=Depends(nur("kunde"))):
     a = eigene_akte(u)
     with DB.tx() as con:
         con.execute("UPDATE einwilligungen SET widerrufen=? WHERE akte_id=? AND user_id=? AND widerrufen IS NULL", (time.time(), a["id"], u["id"]))
-        con.execute("DELETE FROM abschnitte WHERE akte_id=?", (a["id"],))
+        # gelöscht werden alle Angaben; die Einstellung zur Anrede ist keine Angabe des Kunden und bleibt
+        con.execute("DELETE FROM abschnitte WHERE akte_id=? AND schluessel != 'einstellungen'", (a["id"],))
     DB.protokoll(u["id"], a["id"], "einwilligung widerrufen, alle angaben gelöscht")
     return {"ok": True}
 

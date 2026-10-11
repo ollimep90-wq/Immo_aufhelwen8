@@ -30,6 +30,7 @@
   const zahl = (x) => { const n = Number(x); return isFinite(n) ? n : null; };
   const monate = (x) => { const n = zahl(x); return n == null ? "–" : n.toLocaleString("de-DE", { maximumFractionDigits: 1 }); };
   const daten = (s) => (akte.abschnitte[s] && akte.abschnitte[s].daten) || null;
+  const anredeSie = () => (daten("einstellungen") || {}).anrede === "sie";
   const version = (s) => (akte.abschnitte[s] && akte.abschnitte[s].version) || null;
   const vorab = () => { const v = daten("vorab"); return v && v.auswertung; };
   const feld = (f, label, typ = "number", extra = "") =>
@@ -398,6 +399,7 @@
       return `<p class="info">Der Kundenbericht bereitet die Ergebnisse verständlich und mit Grafiken für den Kunden auf. Er enthält keine internen Notizen und keine einzelnen Risiko-Antworten.</p>
         <div class="card"><label for="schritte" style="margin-top:0">Nächste Schritte <span class="hint">sieht der Kunde; eine Zeile je Schritt. Keine Produkt- oder Anbieternamen (der Bericht ist keine Produktempfehlung). Empfehlungen zu Versicherungen nur von Jan.</span></label>
         <textarea id="schritte" maxlength="2000">${esc(b.naechste_schritte || "")}</textarea>
+        <p class="note" id="schritte-anrede" hidden>Die Akte steht auf „Sie“, im Text steht aber noch eine du-Form. Bitte prüfen.</p>
         <div class="nav" style="justify-content:flex-start"><button type="button" class="quiet" id="b-vorschau">Vorschau aktualisieren</button>
         <button type="button" class="quiet" id="b-druck">Drucken oder als PDF</button>
         <button type="button" class="quiet" id="b-thema" aria-pressed="false">Dunkle Darstellung</button>
@@ -431,6 +433,9 @@
         <div class="row">${feld("e_name", 'Vorname für die Anrede <span class="hint">sieht der Kunde</span>', "text")}${feld("e_email", "E-Mail", "email")}</div>
         <div class="nav" style="justify-content:flex-start"><button type="button" class="primary" id="einladen">Einladungslink erzeugen</button></div>
         <p id="einladung-link" class="info" hidden></p>`}
+        <div class="row"><div><label for="anrede-wahl">Anrede im Kundenbereich und im Bericht</label><select id="anrede-wahl">
+          <option value="du"${anredeSie() ? "" : " selected"}>du (Paare: ihr)</option><option value="sie"${anredeSie() ? " selected" : ""}>Sie</option></select></div>
+          <div style="align-self:end"><span id="anrede-status" class="hint" role="status"></span></div></div>
         <p>Einwilligung: ${e ? (e.widerrufen ? `<span class="err">widerrufen am ${datum(e.widerrufen)}</span>` : `erteilt am ${datum(e.zeit)} (Text ${esc(e.text_version)})`) : "keine"}</p></div>
         <div class="card"><h2 style="margin-top:0">Berater mit Zugriff</h2><table><tbody>${akte.berater.map((b) => `<tr><td>${esc(b.name)} <span class="badge">${esc(b.bereich || "")}</span></td>
         <td class="n">${akte.darf_verwalten && b.id !== akte.erstellt_von ? `<button type="button" class="ghost entziehen" data-id="${Number(b.id)}">Zugriff entziehen</button>` : ""}</td></tr>`).join("")}</tbody></table>
@@ -581,15 +586,18 @@
       if (rk[k] && rk[k].quote > t.quote) { t.quote = rk[k].quote; t.ampel = rk[k].ampel; }
       if (ab["s_" + k]) t.einschaetzung.push(ARTEN_KUNDE[k] + ": " + (BEW_KUNDE[ab["s_" + k]] || ""));
     });
-    // Paare werden mit „ihr“ angesprochen (gleiche Regel wie unten für paar)
+    // Paare werden mit „ihr“ angesprochen (gleiche Regel wie unten für paar); stellt der Berater „Sie“ ein, gilt „Sie“ für alle
     const ihr = ["partner", "verheiratet"].includes(h.familie) && (num(h.alter2) > 0 || num(h.brutto2) > 0 || num(h.netto2) > 0 || !!h.name2);
-    const plural = (t) => !ihr ? t : t.replace(/^Deine /, "Eure ").replace(/^Dein /, "Euer ").replace("falls dir etwas passiert", "falls einem von euch etwas passiert").replace(/brauchst du nicht/g, "braucht ihr nicht").replace(/möchtest du nicht/g, "möchtet ihr nicht");
+    const sie = anredeSie();
+    const plural = (t) => sie ? t.replace(/^Deine /, "Ihre ").replace(/^Dein /, "Ihr ").replace("falls dir etwas passiert", ihr ? "falls einem von Ihnen etwas passiert" : "falls Ihnen etwas passiert")
+        .replace(/brauchst du nicht/g, "brauchen Sie nicht").replace(/möchtest du nicht/g, "möchten Sie nicht")
+      : !ihr ? t : t.replace(/^Deine /, "Eure ").replace(/^Dein /, "Euer ").replace("falls dir etwas passiert", "falls einem von euch etwas passiert").replace(/brauchst du nicht/g, "braucht ihr nicht").replace(/möchtest du nicht/g, "möchtet ihr nicht");
     const absicherung = Object.values(themen).sort((a, z) => z.quote - a.quote).map((t) => ({ name: plural(t.name), ampel: AMP(t.ampel), einschaetzung: plural(t.einschaetzung.join(", ")) }));
     const liquide = bIn ? num(bIn.liquide) : num(va.vermoegen && va.vermoegen.liquide);
     const vermoegen = { vermoegen: liquide + num(av.depot) + num(av.immobilien) + num(av.sonstverm), schulden: num(av.schulden) };
     const vers = (akte.berater || []).find((x) => x.bereich === "versicherung");
     const paar = ["partner", "verheiratet"].includes(h.familie) && (num(h.alter2) > 0 || num(h.brutto2) > 0 || num(h.netto2) > 0 || !!h.name2);
-    return { erstellt: Date.now() / 1000, berater: ich.name, ansprechpartner_versicherung: vers ? vers.name : "", paar, vorname2: paar ? h.name2 || "" : "",
+    return { erstellt: Date.now() / 1000, berater: ich.name, ansprechpartner_versicherung: vers ? vers.name : "", paar, anrede: sie ? "sie" : "du", vorname2: paar ? h.name2 || "" : "",
       vorname: h.name1 || (va.person && va.person.vorname) || "",
       budget, vorsorge, ziele, absicherung, vermoegen, naechste_schritte: text };
   }
@@ -616,7 +624,10 @@
     bericht() {
       // vor jeder Vorschau/Freigabe frisch laden (z. B. Jans neue Bewertung)
       const auffrischen = async () => { try { const n = await api.get("/api/akten/" + akte.id); akte.abschnitte = n.abschnitte; } catch (e) { fehler(e.message); } };
-      const vorschau = async () => { await auffrischen(); berichtZeigen($("b-ansicht"), schnappschuss($("schritte").value.trim())); };
+      const DU_FORM = /\b([Dd]u|[Dd]ich|[Dd]ir|[Dd]ein(e[nmrs]?)?|ihr|[Ee]uch|[Ee]ure?[nmrs]?)\b/;
+      const anredeHinweis = () => { $("schritte-anrede").hidden = !(anredeSie() && DU_FORM.test($("schritte").value)); };
+      $("schritte").addEventListener("input", anredeHinweis); anredeHinweis();
+      const vorschau = async () => { await auffrischen(); anredeHinweis(); berichtZeigen($("b-ansicht"), schnappschuss($("schritte").value.trim())); };
       const themaKnopf = () => { $("b-thema").textContent = berichtDunkel ? "Helle Darstellung" : "Dunkle Darstellung"; $("b-thema").setAttribute("aria-pressed", String(berichtDunkel)); };
       themaKnopf();
       $("b-thema").addEventListener("click", () => { berichtDunkel = !berichtDunkel; themaKnopf(); vorschau(); });
@@ -642,6 +653,15 @@
     },
     ziele() { uebernehmen((va) => { const o = {}; (va.wuensche || []).forEach((w, i) => { o["z" + (i + 1)] = w.text; o["zj" + (i + 1)] = w.jahr || ""; }); if (va.sorge) o.notizen = "Sorge laut Vorab-Check: " + va.sorge; return o; }); },
     async zugang() {
+      $("anrede-wahl").addEventListener("change", async () => {
+        const d = Object.assign({}, daten("einstellungen") || {}, { anrede: $("anrede-wahl").value });
+        try {
+          const r = await api.put(`/api/akten/${akte.id}/abschnitte/einstellungen`, { daten: d, version: version("einstellungen") });
+          akte.abschnitte.einstellungen = { daten: d, version: r.version, geaendert: Date.now() / 1000 };
+          $("anrede-status").textContent = "Gespeichert. Der Kundenbereich und neue Berichte nutzen jetzt „" + (d.anrede === "sie" ? "Sie" : "du") + "“.";
+          fehler();
+        } catch (e) { fehler(e.message); }
+      });
       if ($("einladen")) $("einladen").addEventListener("click", async () => {
         const name = $("i_e_name").value.trim(), email = $("i_e_email").value.trim();
         if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { fehler("Bitte Name und gültige E-Mail angeben."); return; }

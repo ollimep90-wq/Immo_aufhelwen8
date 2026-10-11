@@ -50,7 +50,7 @@
   const zufall = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => "abcdefghijkmnpqrstuvwxyz23456789"[b % 32]).join("");
   function ich() {
     const s = st.sitzung; const u = s && s.stufe === "fertig" && user(s.uid);
-    if (!u) throw new F(401, "Bitte melde dich an.");
+    if (!u) throw new F(401, "Nicht angemeldet");
     return u;
   }
   function nur(...rollen) { const u = ich(); if (!rollen.includes(u.rolle)) throw new F(403, "Keine Berechtigung"); return u; }
@@ -93,7 +93,8 @@
     try { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return Array.from(new Uint8Array(h), (b) => b.toString(16).padStart(2, "0")).join(""); }
     catch (e) { return "in dieser Ansicht nicht verfügbar"; }
   }
-  const eigeneAkte = (u) => { const a = st.akten.find((x) => x.kunde_id === u.id); if (!a) throw new F(404, "Für deinen Zugang ist noch nichts angelegt. Bitte melde dich bei uns."); return a; };
+  const anrede = (akteId) => { const e = abschnitt(akteId, "einstellungen"); return e && e.daten && e.daten.anrede === "sie" ? "sie" : "du"; };
+  const eigeneAkte = (u) => { const a = st.akten.find((x) => x.kunde_id === u.id); if (!a) throw new F(404, "Für diesen Zugang ist noch nichts angelegt. Bitte bei uns melden."); return a; };
   const basis = () => location.pathname.replace(/[^/]*$/, "");
 
   /* ---------- Routen ---------- */
@@ -108,7 +109,7 @@
       return { schritt: st.sitzung.stufe, name: u.name };
     }
     if (m === "POST" && p === "/api/2fa/einrichten") {
-      if (!st.sitzung || st.sitzung.stufe !== "2fa_einrichten") throw new F(401, "Bitte melde dich erneut an.");
+      if (!st.sitzung || st.sitzung.stufe !== "2fa_einrichten") throw new F(401, "Bitte erneut anmelden.");
       return { geheimnis: GEHEIMNIS, uri: "otpauth://totp/Demo", qr: QR };
     }
     if (m === "POST" && p === "/api/2fa/bestaetigen") {
@@ -118,7 +119,7 @@
       return { wiederherstellungscodes: Array.from({ length: 10 }, () => zufall(4) + "-" + zufall(4) + "-" + zufall(4)), rolle: u.rolle };
     }
     if (m === "POST" && p === "/api/login/2fa") {
-      if (!st.sitzung || st.sitzung.stufe !== "2fa") throw new F(401, "Bitte melde dich erneut an.");
+      if (!st.sitzung || st.sitzung.stufe !== "2fa") throw new F(401, "Bitte erneut anmelden.");
       const c = String(d.code || "").trim();
       if (!/^\d{6}$/.test(c) && !/^\w{4}-\w{4}-\w{4}$/.test(c)) throw new F(401, "Der Code stimmt nicht. In der Demo reicht jede 6-stellige Zahl.");
       st.sitzung.stufe = "fertig"; return { rolle: user(st.sitzung.uid).rolle };
@@ -137,7 +138,7 @@
         .map((a) => Object.assign({}, a, { kunde_email: a.kunde_id && user(a.kunde_id) ? user(a.kunde_id).email : null,
           vorab_da: !!abschnitt(a.id, "vorab"), loeschung_am: a.geaendert + 365 * TAG }));
       if (m === "POST") {
-        const titel = String(d.titel || "").trim(); if (!titel) throw new F(422, "Bitte prüf deine Eingaben.");
+        const titel = String(d.titel || "").trim(); if (!titel) throw new F(422, "Bitte die Eingaben prüfen.");
         const id = st.naechste.akte++; st.akten.push({ id, titel, kunde_id: null, erstellt_von: u.id, erstellt: jetzt(), geaendert: jetzt() });
         st.akte_berater.push({ akte_id: id, user_id: u.id }); return { id };
       }
@@ -188,13 +189,13 @@
     }
     if (m === "POST" && p === "/api/einladung/pruefen") {
       const e = st.einladungen.find((x) => x.token === d.token && x.ablauf > jetzt());
-      if (!e) throw new F(404, "Die Einladung ist ungültig oder abgelaufen"); return { name: e.name, email: e.email };
+      if (!e) throw new F(404, "Die Einladung ist ungültig oder abgelaufen"); return { name: e.name, email: e.email, anrede: anrede(e.akte_id) };
     }
     if (m === "POST" && p === "/api/einladung/annehmen") {
       const e = st.einladungen.find((x) => x.token === d.token && x.ablauf > jetzt());
       if (!e) throw new F(404, "Die Einladung ist ungültig oder abgelaufen");
-      if (String(d.passwort || "").length < 10) throw new F(422, "Bitte prüf deine Eingaben.");
-      const a = akteById(e.akte_id); if (!a || a.kunde_id) throw new F(409, "Diese Einladung ist nicht mehr gültig. Bitte melde dich bei uns.");
+      if (String(d.passwort || "").length < 10) throw new F(422, "Bitte die Eingaben prüfen.");
+      const a = akteById(e.akte_id); if (!a || a.kunde_id) throw new F(409, "Diese Einladung ist nicht mehr gültig. Bitte bei uns melden.");
       const uid = st.naechste.user++;
       st.users.push({ id: uid, email: e.email, name: e.name, rolle: "kunde", bereich: null, pw: d.passwort, totp: false, aktiv: true });
       a.kunde_id = uid; st.einladungen = st.einladungen.filter((x) => x.akte_id !== a.id);
@@ -203,18 +204,18 @@
     if (p.indexOf("/api/kunde/") === 0) {
       const u = nur("kunde"), a = eigeneAkte(u);
       if (m === "GET" && p === "/api/kunde/akte") { const e = aktiveEinw(a.id, u.id);
-        return { name: u.name, email: u.email, vorab: abschnitt(a.id, "vorab"), einwilligung: e ? { version: e.text_version, zeit: e.zeit } : null, einwilligung_aktuell: EINW_VERSION }; }
+        return { name: u.name, email: u.email, vorab: abschnitt(a.id, "vorab"), einwilligung: e ? { version: e.text_version, zeit: e.zeit } : null, einwilligung_aktuell: EINW_VERSION, anrede: anrede(a.id) }; }
       if (m === "POST" && p === "/api/kunde/einwilligung") {
-        if (d.text_version !== EINW_VERSION) throw new F(409, "Der Einwilligungstext hat sich geändert. Bitte lade die Seite neu.");
+        if (d.text_version !== EINW_VERSION) throw new F(409, "Der Einwilligungstext hat sich geändert. Bitte die Seite neu laden.");
         st.einwilligungen.push({ akte_id: a.id, user_id: u.id, text_version: d.text_version, zeit: jetzt(), widerrufen: null }); return { ok: true };
       }
       if (m === "PUT" && p === "/api/kunde/vorab") {
         if (!aktiveEinw(a.id, u.id)) throw new F(403, "Ohne Einwilligung können wir nichts speichern");
-        return { version: speichernOder409(a.id, "vorab", d.daten, u.id, d.version, "Deine Angaben wurden inzwischen in einem anderen Fenster geändert. Bitte lade die Seite neu.") };
+        return { version: speichernOder409(a.id, "vorab", d.daten, u.id, d.version, "Die Angaben wurden inzwischen in einem anderen Fenster geändert. Bitte die Seite neu laden.") };
       }
       if (m === "POST" && p === "/api/kunde/widerruf") {
         st.einwilligungen.forEach((e) => { if (e.akte_id === a.id && e.user_id === u.id && !e.widerrufen) e.widerrufen = jetzt(); });
-        st.abschnitte = st.abschnitte.filter((x) => x.akte_id !== a.id); return { ok: true };
+        st.abschnitte = st.abschnitte.filter((x) => x.akte_id !== a.id || x.schluessel === "einstellungen"); return { ok: true };
       }
       if (m === "GET" && p === "/api/kunde/bericht") {
         const b = abschnitt(a.id, "bericht");
