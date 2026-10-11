@@ -399,7 +399,7 @@
       return `<p class="info">Der Kundenbericht bereitet die Ergebnisse verständlich und mit Grafiken für den Kunden auf. Er enthält keine internen Notizen und keine einzelnen Risiko-Antworten.</p>
         <div class="card"><label for="schritte" style="margin-top:0">Nächste Schritte <span class="hint">sieht der Kunde; eine Zeile je Schritt. Keine Produkt- oder Anbieternamen (der Bericht ist keine Produktempfehlung). Empfehlungen zu Versicherungen nur von Jan.</span></label>
         <textarea id="schritte" maxlength="2000">${esc(b.naechste_schritte || "")}</textarea>
-        <p class="note" id="schritte-anrede" hidden>Die Akte steht auf „Sie“, im Text steht aber noch eine du-Form. Bitte prüfen.</p>
+        <p class="note" id="schritte-anrede" hidden>Die Akte steht auf „Sie“, im Text steht aber vermutlich noch eine du-Form. Bitte prüfen.</p>
         <div class="nav" style="justify-content:flex-start"><button type="button" class="quiet" id="b-vorschau">Vorschau aktualisieren</button>
         <button type="button" class="quiet" id="b-druck">Drucken oder als PDF</button>
         <button type="button" class="quiet" id="b-thema" aria-pressed="false">Dunkle Darstellung</button>
@@ -532,6 +532,7 @@
 
   /* ---------- Tabs: Knöpfe ---------- */
   /* ---------- Kundenbericht: Schnappschuss nur mit freigebbaren Werten ---------- */
+  // Sie- und ihr-Formen entstehen in schnappschuss() (plural) aus genau diesen du-Texten: neue Themen dort mit abdecken
   const THEMA = { bu: "Deine Arbeitskraft", grundfaehigkeit: "Deine Arbeitskraft", risikoleben: "Deine Familie, falls dir etwas passiert",
     pkv: "Deine Gesundheit", krankenzusatz: "Deine Gesundheit", zahnzusatz: "Deine Gesundheit", unfall: "Unfall",
     rechtsschutz: "Rechtsstreit", hausrat: "Deine Einrichtung", wohngebaeude: "Dein Haus", haftpflicht: "Schäden an anderen (Haftpflicht)",
@@ -624,7 +625,7 @@
     bericht() {
       // vor jeder Vorschau/Freigabe frisch laden (z. B. Jans neue Bewertung)
       const auffrischen = async () => { try { const n = await api.get("/api/akten/" + akte.id); akte.abschnitte = n.abschnitte; } catch (e) { fehler(e.message); } };
-      const DU_FORM = /\b([Dd]u|[Dd]ich|[Dd]ir|[Dd]ein(e[nmrs]?)?|ihr|[Ee]uch|[Ee]ure?[nmrs]?)\b/;
+      const DU_FORM = /\b([Dd]u|[Dd]ich|[Dd]ir|[Dd]ein(e[nmrs]?)?|ihr|[Ee]uch|[Ee]uer|[Ee]ure[nmrs]?)\b/;
       const anredeHinweis = () => { $("schritte-anrede").hidden = !(anredeSie() && DU_FORM.test($("schritte").value)); };
       $("schritte").addEventListener("input", anredeHinweis); anredeHinweis();
       const vorschau = async () => { await auffrischen(); anredeHinweis(); berichtZeigen($("b-ansicht"), schnappschuss($("schritte").value.trim())); };
@@ -658,7 +659,7 @@
         try {
           const r = await api.put(`/api/akten/${akte.id}/abschnitte/einstellungen`, { daten: d, version: version("einstellungen") });
           akte.abschnitte.einstellungen = { daten: d, version: r.version, geaendert: Date.now() / 1000 };
-          $("anrede-status").textContent = "Gespeichert. Der Kundenbereich und neue Berichte nutzen jetzt „" + (d.anrede === "sie" ? "Sie" : "du") + "“.";
+          $("anrede-status").textContent = "Gespeichert. Der Kundenbereich und neue Berichte nutzen jetzt „" + (d.anrede === "sie" ? "Sie" : "du") + "“. Einen schon freigegebenen Bericht und die nächsten Schritte bitte anpassen und neu freigeben.";
           fehler();
         } catch (e) { fehler(e.message); }
       });

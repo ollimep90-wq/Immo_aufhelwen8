@@ -75,7 +75,7 @@ async def sicherheit(request: Request, call_next):
         except ValueError:
             laenge = MAX_BODY + 1
         if laenge > MAX_BODY or (laenge == 0 and request.headers.get("transfer-encoding")):
-            return JSONResponse({"detail": "Das ist zu viel Text auf einmal. Bitte kürze die Freitexte etwas."}, status_code=413)
+            return JSONResponse({"detail": "Das ist zu viel Text auf einmal. Bitte die Freitexte etwas kürzen."}, status_code=413)
     resp = await call_next(request)
     resp.headers["Content-Security-Policy"] = (
         "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
@@ -218,7 +218,7 @@ def pruefe_daten(daten):
     except (ValueError, RecursionError):
         raise HTTPException(422, "Bitte die Eingaben prüfen.")
     if len(js) > 200_000:
-        raise HTTPException(413, "Das ist zu viel Text auf einmal. Bitte kürze die Freitexte etwas.")
+        raise HTTPException(413, "Das ist zu viel Text auf einmal. Bitte die Freitexte etwas kürzen.")
 
 
 def speichern_oder_409(akte_id, schluessel, daten, user_id, version, meldung):

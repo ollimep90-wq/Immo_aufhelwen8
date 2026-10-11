@@ -272,7 +272,7 @@
     const box = document.getElementById("druck");
     if (box && box.innerHTML.trim() && document.body.classList.contains("druckmodus")) {
       const istBericht = !!box.querySelector(".bericht");
-      fenster(istBericht ? "Druckansicht: Dein Finanzbericht" : "Druckansicht: Aktenauszug fürs Archiv", box.innerHTML,
+      fenster(istBericht ? "Druckansicht: Finanzbericht" : "Druckansicht: Aktenauszug fürs Archiv", box.innerHTML,
         "In der echten App öffnet sich hier der Druckdialog. Dort wählst du „Als PDF speichern“.");
     } else hinweis("In der echten App öffnet sich hier der Druckdialog des Browsers.");
   };
