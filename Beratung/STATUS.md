@@ -95,6 +95,13 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
       - **Netto-Rente (11.10.2026):** Die App rechnet die gesetzliche Rente selbst von brutto (Renteninformation) auf netto um. Grundlage sind Kranken- und Pflegeversicherung der Rentner, der Besteuerungsanteil nach Rentenbeginn und der Tarif 2026. Die Regeln stehen in `Privat/vorab-check/QUELLEN.md`, die Rechtsprüfung läuft.
         - *Korrektur:* Vorher ging der Bruttobetrag des Kunden ungeprüft als netto in die Rechnung. Beispiel Lena: Die Lücke war mit 2.038 € zu klein. Richtig sind rund 2.260 €, weil von 1.500 € brutto rund 1.278 € netto bleiben.
       - Jan und Oliver sind Versicherungsmakler (§ 34d Abs. 1, Angabe Oliver 11.10.2026). Der Bericht nennt deshalb „deinen Versicherungsmakler“ mit Namen.
+      - **Vorzeitige Rente (11.10.2026):** Die App rechnet mit beiden Werten der Renteninformation fehlende Beitragsjahre und den Abschlag (§ 77 SGB VI) heraus.
+      - **Weitere Einkünfte (11.10.2026):** neuer Tab mit 6 Einträgen.
+        - Arten: Vermietung (pauschal oder EÜR), Kapitalerträge mit Günstigerprüfung, Betriebsrente, private Rente, Sonstiges.
+        - Fremdwährung mit EZB-Tageskurs.
+        - Die Einkünfte wirken heute aufs Netto und Budget, im Alter auf die Rentenlücke (Person 1). Quellen und Grenzen stehen in `Privat/vorab-check/QUELLEN.md`.
+        - *Korrektur:* Vorher hieß es in der Rentenrechnung „keine weiteren Einkünfte im Alter“, und Betriebsrenten fehlten ganz.
+      - *Fehler behoben:* Auf langen Seiten ging der erste Klick auf „Speichern“ direkt nach einer Eingabe ins Leere, weil die Leiste beim Fokuswechsel sprang.
     - **Klick-Demo** ohne Server, mit erfundenen Daten: `app/demo/`.
 14. **Gemeinsamer Auftritt:**
     - Die Namen sind aus der Unterzeile entfernt, die Fußzeilen lauten „… in Kooperation mit …“.

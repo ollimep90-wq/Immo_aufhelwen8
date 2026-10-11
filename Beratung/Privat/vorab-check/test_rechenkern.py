@@ -141,6 +141,44 @@ if __name__ == "__main__":
         j = json.loads(subprocess.check_output(["node", "-e", f"const R=require('{HIER/'rechenkern.js'}');console.log(JSON.stringify(R.renteVorzeitig({json.dumps(dict(bisher=bisher, hochrechnung=hoch, alter=alter, beginn_alter=beginn, versicherungsjahre_45=j45))})))"]))
         assert abs(j["brutto"] - vorzeitig(bisher, hoch, alter, beginn, j45)) < 0.01, (bisher, hoch, alter, beginn, j45, j)
     print("Vorzeitige Rente: 120 Fälle gleich")
+    # Weitere Einkünfte: eigene Abschrift (Abgeltung § 32d Abs. 1, Günstigerprüfung § 32d Abs. 6, Sparer-Pauschbetrag § 20 Abs. 9,
+    # Teilfreistellung § 20 InvStG, bAV-Beiträge § 226 Abs. 2 / § 248 SGB V, Ertragsanteil § 22 Nr. 1 S. 3 a bb EStG)
+    def st_tarif(zves, verh, kist):
+        if verh:
+            z = sum(zves); e = 2 * tarif_2026(z / 2); return e + soli(e, 40700) + e * kist
+        return sum(tarif_2026(z) + soli(tarif_2026(z), 20350) + tarif_2026(z) * kist for z in zves)
+    def py_mehr(basis, tarif, kapital, verh, kist):
+        tz = [max(0, b + t) for b, t in zip(basis, tarif)]
+        ohne, mit = st_tarif(basis, verh, kist), st_tarif(tz, verh, kist)
+        if verh: rest = [max(0, sum(kapital) - 1000 * len(basis))] + [0] * (len(basis) - 1)
+        else: rest = [max(0, k - 1000) for k in kapital]
+        abg = sum(rest) / (4 + kist) * (1 + 0.055 + kist)
+        tk = st_tarif([z + r for z, r in zip(tz, rest)], verh, kist) - mit
+        return mit - ohne + (min(abg, tk) if sum(rest) > 0 else 0)
+    n = 0
+    for b1, b2, t, k, verh, kist in itertools.product([0, 9000, 20000, 60000], [0, 15000], [0, 6000, -3000], [0, 800, 5000, 40000], [False, True], [0, 0.09]):
+        basis = [b1, b2] if b2 else [b1]; tarif = [t] + [0] * (len(basis) - 1); kap = [k] + [0] * (len(basis) - 1)
+        m = dict(basis=basis, tarif=tarif, kapital=kap, verheiratet=verh, kinder=0, kirche=kist > 0, bundesland="NW")
+        j = json.loads(subprocess.check_output(["node", "-e", f"const R=require('{HIER/'rechenkern.js'}');console.log(JSON.stringify(R.mehrsteuer({json.dumps(m)})))"]))
+        py = py_mehr(basis, tarif, kap, verh, kist)
+        assert abs(j["gesamt"] - py) < 0.02, (m, j, py); n += 1
+    print(f"Weitere Einkünfte, Mehrsteuer: {n} Fälle gleich")
+    def ek(e, z):
+        return json.loads(subprocess.check_output(["node", "-e", f"const R=require('{HIER/'rechenkern.js'}');console.log(JSON.stringify(R.einkunft({json.dumps(e)}, '{z}')))"]))
+    r = ek(dict(art="kapital", kapart="aktien", waehrung="USD", kurs=1.1206, betrag=1200), "heute")
+    assert abs(r["cash"] - 1200 / 1.1206) < 1e-6 and abs(r["kapital"] - 1200 / 1.1206) < 1e-6
+    r = ek(dict(art="kapital", kapart="aktienfonds", betrag=1800), "heute"); assert abs(r["kapital"] - 1260) < 1e-6
+    r = ek(dict(art="miete", modus="euer", miete=12000, kosten=1500, zinsen=3000, tilgung=4000, afa=2400), "heute")
+    assert r["tarif"] == 12000 - 1500 - 3000 - 2400 and r["cash"] == 12000 - 1500 - 3000 - 4000
+    r = ek(dict(art="miete", modus="pauschal", betrag=450, betrag_alter=900), "alter"); assert r["cash"] == r["tarif"] == 10800
+    r = ek(dict(art="bav", betrag=260), "heute"); assert not r["gilt"]
+    r = ek(dict(art="privatrente", betrag=500, beginn_alter=65), "alter"); assert r["tarif"] == 500 * 12 * 0.18
+    r = ek(dict(art="privatrente", betrag=500, beginn_alter=50), "alter"); assert r["fehler"] == "ertragsanteil"
+    r = ek(dict(art="kapital", waehrung="USD", betrag=100), "heute"); assert r["fehler"] == "kurs"
+    print("Einkunftsarten: Umrechnung, EÜR, Teilfreistellung, Ertragsanteil geprüft")
+    # Beispiel Günstigerprüfung: kleine Rente, Dividenden 6.000 €
+    j = json.loads(subprocess.check_output(["node", "-e", f"const R=require('{HIER/'rechenkern.js'}');console.log(JSON.stringify(R.mehrsteuer({{basis:[9000],tarif:[0],kapital:[6000],verheiratet:false,kinder:0}})))"]))
+    print("Beispiel zvE 9.000 € + 6.000 € Dividenden:", j)
     for b in (1500, 2200):
         r = js_rente(dict(brutto_monat=b, rentenbeginn_jahr=2051, kv="gkv", kinderlos=False))
         print(f"Beispiel {b} € brutto, Beginn 2051, GKV, Eltern: netto {r['netto_monat']} € (KV {r['kv_monat']}, PV {r['pv_monat']}, Steuer {r['steuer_monat']}, Anteil {r['besteuerungsanteil']:.3f})")

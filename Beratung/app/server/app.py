@@ -40,7 +40,7 @@ EMAIL_RE = re.compile(r"^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,30}$")
 # Einwilligungstext: Version und Wortlaut werden mit Hash gespeichert (Nachweis Art. 7 Abs. 1 DSGVO)
 EINWILLIGUNG_VERSION = "2026-10-v3"   # v3: eine Verantwortliche (gemeinsame GmbH)
 
-ABSCHNITTE_BERATER = {"haushalt", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen", "bericht"}
+ABSCHNITTE_BERATER = {"haushalt", "einkuenfte", "budget", "vermoegen", "altersvorsorge", "risiko", "ziele", "notizen", "bericht"}
 # Keine Gesundheitsdaten speichern (Art. 9 DSGVO): Block 9 „Selbstbild“ des Prototyps wird nicht erfasst
 VERBOTENE_FELDER = re.compile(r"^q_p9_")
 ABSCHNITT_VERSICHERUNG = "absicherung_bewertung"
@@ -372,6 +372,45 @@ def ich(u=Depends(nutzer)):
 
 
 # ---------- Verwaltung ----------
+
+# ---------- Wechselkurse (EZB-Referenzkurse, keine Kundendaten im Abruf) ----------
+
+EZB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+_kurse = {"zeit": 0.0, "daten": None}
+
+
+def ezb_kurse():
+    """Tageskurse der EZB, 6 Stunden zwischengespeichert. Format: Einheiten der Währung je 1 Euro."""
+    if _kurse["daten"] and time.time() - _kurse["zeit"] < 6 * 3600:
+        return _kurse["daten"]
+    import urllib.request
+    import xml.etree.ElementTree as ET
+    with urllib.request.urlopen(EZB_URL, timeout=8) as r:   # feste, vertrauenswürdige Adresse
+        roh = r.read(200_000)
+    if b"<!DOCTYPE" in roh or b"<!ENTITY" in roh:
+        raise ValueError("unerwartetes Format")
+    wurzel = ET.fromstring(roh)
+    tag, kurse = None, {}
+    for c in wurzel.iter():
+        if c.get("time"):
+            tag = c.get("time")
+        if c.get("currency") and c.get("rate"):
+            kurse[c.get("currency")[:3]] = float(c.get("rate"))
+    if not tag or not kurse:
+        raise ValueError("keine Kurse")
+    _kurse.update(zeit=time.time(), daten={"stand": tag, "quelle": "EZB-Referenzkurse", "kurse": kurse})
+    return _kurse["daten"]
+
+
+@app.get("/api/kurse")
+def kurse(u=Depends(nur("admin", "berater"))):
+    try:
+        return ezb_kurse()
+    except Exception:
+        if _kurse["daten"]:
+            return dict(_kurse["daten"], hinweis="EZB nicht erreichbar, letzter bekannter Stand")
+        raise HTTPException(503, "Die EZB-Kurse sind gerade nicht erreichbar. Bitte den Kurs von Hand eintragen.")
+
 
 @app.get("/api/berater")
 def berater_liste(u=Depends(nur("admin", "berater"))):

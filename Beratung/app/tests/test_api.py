@@ -283,3 +283,22 @@ def test_kundenbericht_nur_nach_freigabe(umgebung):
     oli.put(f"/api/akten/{akte}/abschnitte/bericht", json={"daten": {"schnappschuss": snap, "freigegeben_am": 1}, "version": 1}, headers=H)
     r = k.get("/api/kunde/bericht")
     assert r.status_code == 200 and r.json() == snap and "intern" not in r.text
+
+
+def test_weitere_einkuenfte_und_kurse(umgebung, monkeypatch):
+    oli = client("oliver@x.de")
+    akte = oli.post("/api/akten", json={"titel": "A"}, headers=H).json()["id"]
+    r = oli.put(f"/api/akten/{akte}/abschnitte/einkuenfte", json={"daten": {"we_art1": "miete", "we_betrag1": "400"}}, headers=H)
+    assert r.status_code == 200, r.text
+    # Kurse: ohne Anmeldung gesperrt; mit Anmeldung aus dem Zwischenspeicher, ohne Netz
+    assert TestClient(appmod.app, base_url="https://testserver").get("/api/kurse").status_code == 401
+    monkeypatch.setitem(appmod._kurse, "daten", {"stand": "2026-10-09", "quelle": "EZB-Referenzkurse", "kurse": {"USD": 1.1206}})
+    monkeypatch.setitem(appmod._kurse, "zeit", time.time())
+    assert oli.get("/api/kurse").json()["kurse"]["USD"] == 1.1206
+    def kaputt():
+        raise OSError("kein Netz")
+    monkeypatch.setitem(appmod._kurse, "zeit", 0)
+    import urllib.request
+    monkeypatch.setattr(urllib.request, "urlopen", lambda *a, **k: kaputt())
+    r = oli.get("/api/kurse").json()
+    assert r["kurse"]["USD"] == 1.1206 and "letzter bekannter Stand" in r["hinweis"]

@@ -64,3 +64,32 @@ Stand 11.10.2026. Geprüft mit dem Prüfagenten für Recht und Förderung am 11.
   - Besteuerungsanteil auf die ganze Rente, obwohl der Rentenfreibetrag in Euro festgeschrieben wird.
   - Keine weiteren Einkünfte im Alter.
   - Verheiratet ohne Angabe der Partnerrente: gleich hohe Einkünfte beider.
+
+## Weitere Einkünfte (Beratungs-App, Tab „Weitere Einkünfte“)
+
+Stand 11.10.2026. Geprüft mit dem Prüfagenten für Recht und Förderung, Wortlaute über buzer.de (nicht amtlich). Vor Verwendung am amtlichen Text prüfen.
+
+- **Vermietung (§ 21 EStG):** Der Überschuss aus Einnahmen minus Werbungskosten geht in den Tarif. Die Tilgung ist nicht absetzbar.
+  - **Pauschal** (Entscheidung Oliver, 11.10.2026): Überschuss nach laufenden Kosten und Bankrate. Er gilt vereinfachend auch als steuerlicher Gewinn.
+  - **EÜR:** Für die Steuer zählen Miete minus Kosten, Zinsen und AfA. Für das Budget zählen Miete minus Kosten, Zinsen und Tilgung.
+- **Kapitalerträge:**
+  - Abgeltungsteuer 25 % (§ 32d Abs. 1). Bei Kirchensteuer gilt (e − 4q)/(4 + k). Darauf kommt der Soli ohne Freigrenze.
+  - Sparer-Pauschbetrag 1.000 €, verheiratet 2.000 € (§ 20 Abs. 9).
+  - Teilfreistellung (§ 20 InvStG): Aktienfonds 30 %, Mischfonds 15 %, Immobilienfonds 60 %, Immobilienfonds Ausland 80 %.
+  - **Günstigerprüfung** (§ 32d Abs. 6, Entscheidung Oliver, 11.10.2026): Die App nimmt automatisch den niedrigeren Wert aus Abgeltungsteuer und persönlichem Satz.
+  - Nicht berücksichtigt: ausländische Quellensteuer.
+- **Betriebsrente** (Direktversicherung, Pensionskasse, Pensionsfonds):
+  - Steuer: voll steuerpflichtig (§ 22 Nr. 5 EStG).
+  - Krankenversicherung: 14,6 % plus Zusatzbeitrag über dem Freibetrag von 197,75 €/Monat (§ 226 Abs. 2, § 248 SGB V).
+  - Pflegeversicherung: voller Satz auf den ganzen Betrag ab der Freigrenze von 197,75 €.
+  - Die 197,75 € sind 1/20 der Bezugsgröße 2026 von 3.955 €. Belegt ist das nur über Sekundärquellen.
+  - Nicht gerechnet: Direktzusage und Unterstützungskasse (§ 19 EStG, Versorgungsfreibetrag).
+- **Private Rente:** Besteuert wird der Ertragsanteil nach § 22 Nr. 1 S. 3 a bb EStG. Die Tabelle für 55 bis 70 Jahre ist geprüft, außerhalb dieses Bereichs wird der Wert von Hand eingetragen. In der KVdR ist sie beitragsfrei.
+- **KVdR:** Miete, Kapitalerträge und private Renten sind beitragsfrei (§ 237 SGB V). Freiwillig Versicherte, zum Beispiel hauptberuflich Selbständige (§ 5 Abs. 5 SGB V), zahlen auf alles (§ 240). Das rechnet die App nicht, sie gibt einen Hinweis.
+- **Fremdwährung** (Entscheidung Oliver, 11.10.2026: aktueller Kurs):
+  - Umgerechnet wird mit dem EZB-Referenzkurs des Tages. Der Server ruft ihn bei der EZB ab und speichert ihn 6 Stunden zwischen; Kundendaten werden dabei nicht übertragen. Der Berater kann den Kurs überschreiben.
+  - Steuerlich wird vereinfacht so gerechnet, als wären die Einkünfte in Deutschland voll steuerpflichtig. Die App weist auf das DBA, auf den Progressionsvorbehalt (Drittstaaten ja, EU/EWR nein, § 32b Abs. 1 S. 2 Nr. 3) und auf die Anrechnung hin.
+- **Offen für Steuerberater:**
+  - Soli-Freigrenze bei Veranlagung nach § 32d Abs. 4.
+  - Quellensteuer bei Fonds.
+  - Steuerliche Umrechnungskurse.

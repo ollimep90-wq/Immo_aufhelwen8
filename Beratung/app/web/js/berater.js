@@ -18,7 +18,7 @@
   const LAENDER = [["BW", "Baden-Württemberg"], ["BY", "Bayern"], ["BE", "Berlin"], ["BB", "Brandenburg"], ["HB", "Bremen"], ["HH", "Hamburg"],
     ["HE", "Hessen"], ["MV", "Mecklenburg-Vorpommern"], ["NI", "Niedersachsen"], ["NW", "Nordrhein-Westfalen"], ["RP", "Rheinland-Pfalz"],
     ["SL", "Saarland"], ["SN", "Sachsen"], ["ST", "Sachsen-Anhalt"], ["SH", "Schleswig-Holstein"], ["TH", "Thüringen"]];
-  const TABS = [["ueberblick", "Überblick", null], ["haushalt", "Haushalt & Netto", "haushalt"], ["budget", "Budget", "budget"],
+  const TABS = [["ueberblick", "Überblick", null], ["haushalt", "Haushalt & Netto", "haushalt"], ["einkuenfte", "Weitere Einkünfte", "einkuenfte"], ["budget", "Budget", "budget"],
     ["vorsorge", "Vermögen & Vorsorge", "altersvorsorge"], ["risiko", "Risiko-Check", "risiko"],
     ["absicherung", "Absicherung", "absicherung_bewertung"], ["ziele", "Ziele & Notizen", "ziele"], ["bericht", "Kundenbericht", null], ["zugang", "Zugang & Daten", null]];
 
@@ -41,8 +41,48 @@
   const datum = (t) => t ? new Date(t * 1000).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) : "–";
 
   /* ---------- Rechnungen aus den Abschnitten ---------- */
-  function haushaltRechnung(h) {
+  /* ---------- Weitere Einkünfte ---------- */
+  const EK_ARTEN = [["", "–"], ["miete", "Vermietung"], ["kapital", "Kapitalerträge (Dividenden, Zinsen, Fonds)"], ["bav", "Betriebsrente"],
+    ["privatrente", "Private Rentenversicherung"], ["sonstig_st", "Sonstiges, steuerpflichtig"], ["sonstig_frei", "Sonstiges, steuerfrei"]];
+  const EK_SLOTS = [1, 2, 3, 4, 5, 6];
+  let KURSE = null, kurseFehler = "";
+  async function kurseLaden() {
+    if (KURSE) return;
+    try { KURSE = await api.get("/api/kurse"); kurseFehler = ""; } catch (e) { kurseFehler = e.message; }
+  }
+  function ekKurs(d, i) {
+    const w = d["we_wae" + i] || "EUR";
+    if (w === "EUR") return 1;
+    if (num(d["we_kurs" + i]) > 0) return num(d["we_kurs" + i]);
+    return KURSE && KURSE.kurse && KURSE.kurse[w] ? KURSE.kurse[w] : null;
+  }
+  function ekEintrag(d, i) {
+    const t = (k) => d["we_" + k + i];
+    return { art: t("art"), person: t("person") || "1", wann: t("wann") || undefined, waehrung: t("wae") || "EUR", kurs: ekKurs(d, i),
+      modus: t("modus") || "pauschal", betrag: num(t("betrag")), betrag_alter: t("betrag_alter") === "" || t("betrag_alter") == null ? null : num(t("betrag_alter")),
+      miete: num(t("miete")), kosten: num(t("kosten")), zinsen: num(t("zinsen")), tilgung: num(t("tilgung")), afa: num(t("afa")),
+      kapart: t("kapart") || "aktien", beginn_alter: num(t("beginn")), ertragsanteil: t("ea") === "" || t("ea") == null ? null : num(t("ea")) };
+  }
+  /* Summen je Person (Index 0/1) zum Zeitpunkt heute|alter */
+  function weitereSumme(d, zeitpunkt) {
+    const s = [0, 1].map(() => ({ cash: 0, tarif: 0, kapital: 0, bav_monat: 0 })), fehler = [];
+    if (!d) return { s, fehler, anzahl: 0 };
+    let anzahl = 0;
+    EK_SLOTS.forEach((i) => {
+      if (!d["we_art" + i]) return;
+      const e = ekEintrag(d, i), r = R.einkunft(e, zeitpunkt);
+      if (r.fehler === "kurs") fehler.push(`Eintrag ${i}: Kurs für ${e.waehrung} fehlt`);
+      if (r.fehler === "ertragsanteil") fehler.push(`Eintrag ${i}: Ertragsanteil für Rentenbeginn mit ${e.beginn_alter || "?"} bitte von Hand eintragen`);
+      if (!r.gilt) return;
+      anzahl++;
+      const x = s[e.person === "2" ? 1 : 0];
+      x.cash += r.cash; x.tarif += r.tarif; x.kapital += r.kapital; x.bav_monat += r.bav_monat;
+    });
+    return { s, fehler, anzahl };
+  }
+  function haushaltRechnung(h, ek) {
     if (!h) return null;
+    if (ek === undefined) ek = akte ? daten("einkuenfte") : null;
     const pers = [1, 2].map((i) => ({ brutto: num(h["brutto" + i]), kv: h["kv" + i] || "gkv", pkv_eigenanteil_monat: num(h["pkv" + i]),
       zusatzbeitrag: h["zb" + i] ? num(h["zb" + i]) / 100 : undefined, alter: num(h["alter" + i]) || 40,
       kinder_u25: num(h.kinder_u25), eltern: num(h.kinder_u25) > 0 || h.eltern === "ja", sachsen: h.land === "SN" }));
@@ -50,7 +90,20 @@
     const r = brutto.length ? R.nettoHaushalt({ personen: brutto, verheiratet: h.familie === "verheiratet", kinder: num(h.kinder_u25),
       kirche: h.kirche === "ja", bundesland: h.land, alleinerziehend: h.familie === "allein" && num(h.kinder_u25) > 0 }) : null;
     const nettoDirekt = num(h.netto1) + num(h.netto2);
-    return { rechnung: r, netto_monat: (r ? r.netto_monat : 0) + nettoDirekt, kindergeld: num(h.kinder_kg) * R.P2026.kindergeld_monat };
+    // weitere Einkünfte heute: Zufluss minus Mehrsteuer (zvE aus der Lohnrechnung; bei Netto von Hand: zvE unbekannt, 0 angenommen)
+    let weitere = null;
+    const ws = weitereSumme(ek, "heute");
+    if (ws.anzahl) {
+      const zve = pers.map((p) => { const k = brutto.indexOf(p); return r && k >= 0 ? r.personen[k].zve : 0; });
+      const n = zve[1] || ws.s[1].cash || ws.s[1].kapital || num(h.brutto2) ? 2 : 1;
+      const ms = R.mehrsteuer({ basis: zve.slice(0, n), tarif: ws.s.slice(0, n).map((x) => x.tarif), kapital: ws.s.slice(0, n).map((x) => x.kapital),
+        verheiratet: h.familie === "verheiratet", kinder: num(h.kinder_u25), kirche: h.kirche === "ja", bundesland: h.land });
+      const cash = ws.s[0].cash + ws.s[1].cash;
+      weitere = { cash_monat: cash / 12, steuer_monat: ms.gesamt / 12, netto_monat: (cash - ms.gesamt) / 12, verfahren: ms.verfahren, fehler: ws.fehler,
+        ohne_lohnrechnung: !r && nettoDirekt > 0 };
+    }
+    return { rechnung: r, netto_monat: (r ? r.netto_monat : 0) + nettoDirekt + (weitere ? weitere.netto_monat : 0), netto_lohn_monat: (r ? r.netto_monat : 0) + nettoDirekt,
+      weitere, kindergeld: num(h.kinder_kg) * R.P2026.kindergeld_monat };
   }
   function budgetRechnung(b, hr) {
     if (!b) return null;
@@ -59,7 +112,7 @@
       kindergeld_monat: hr ? hr.kindergeld : 0, sonstige_einnahmen: num(b.sonstige), fixkosten: fk, sparen: num(b.sparen), liquide: num(b.liquide) }));
   }
   /* Gesetzliche Rente netto aus brutto (Renteninformation), Regeln 2026, Person 1 */
-  function renteNetto(v, h) {
+  function renteNetto(v, h, ek) {
     if (!v || !(num(v.gesetzl_brutto) > 0)) return null;
     h = h || {};
     const alter = num(h.alter1) || num(v.alter);
@@ -73,7 +126,7 @@
     return Object.assign({ rentenbeginn_jahr: beginn, vorzeitig: vz, rag67, beginn_alter: beginnAlter, hochrechnung: num(v.gesetzl_brutto) }, R.nettoRente({ brutto_monat: brutto, rentenbeginn_jahr: beginn,
       kv: h.kv1 === "pkv" ? "pkv" : "gkv", zusatzbeitrag: h.zb1 ? num(h.zb1) / 100 : undefined, pkv_beitrag_monat: num(v.pkv_alter),
       kinderlos: !(num(h.kinder_u25) > 0 || h.eltern === "ja"), verheiratet: h.familie === "verheiratet",
-      partner_brutto_monat: num(v.partner_rente), kirche: h.kirche === "ja", bundesland: h.land }));
+      partner_brutto_monat: num(v.partner_rente), kirche: h.kirche === "ja", bundesland: h.land, weitere: weitereSumme(ek === undefined ? (akte ? daten("einkuenfte") : null) : ek, "alter").s[0] }));
   }
   function vorsorgeRechnung(v, h, hr) {
     if (!v) return null;
@@ -133,6 +186,15 @@
     $("akte-titel").textContent = akte.titel;
     history.replaceState(null, "", "/berater.html#akte=" + id);
     zeigeTab(neuerTab || tab);
+    // Wechselkurse im Hintergrund laden; danach Währungsliste ergänzen und den Tab neu rechnen
+    if (!KURSE) kurseLaden().then(() => {
+      if (KURSE && KURSE.kurse) document.querySelectorAll('select[data-f^="we_wae"]').forEach((sel) => {
+        Object.keys(KURSE.kurse).sort().forEach((w) => { if (![...sel.options].some((o) => o.value === w)) sel.add(new Option(w, w)); });
+        const gespeichert = (daten("einkuenfte") || {})[sel.dataset.f];
+        if (!geaendert && gespeichert) sel.value = gespeichert;
+      });
+      if (akte) (NACH[tab] || (() => {}))();
+    });
   }
 
   function zeigeTab(t) {
@@ -226,11 +288,34 @@
         <div class="card"><h2 style="margin-top:0">Netto (Schätzung)</h2><div id="netto-erg"></div>
         <p class="hint">Jahresrechnung mit Rechengrößen 2026, ohne Steuerklassen III/V, Freibeträge, Minijob. Unverheiratete werden einzeln gerechnet.</p></div>`;
     },
+    einkuenfte() {
+      const sel = (f, label, opt, fuer) => `<div data-fuer="${fuer || ""}"><label for="i_${f}">${label}</label><select id="i_${f}" data-f="${f}">${opt.map(([w, t]) => `<option value="${w}">${t}</option>`).join("")}</select></div>`;
+      const fw = (f, label, fuer, typ) => feld(f, label, typ).replace("<div>", `<div data-fuer="${fuer}">`);
+      const waehrungen = Array.from(new Set(["EUR", "USD", "CHF", "GBP", "DKK", "SEK", "NOK", "PLN", "CZK", "HUF", "JPY", "CAD", "AUD", "TRY"].concat(KURSE && KURSE.kurse ? Object.keys(KURSE.kurse).sort() : []))).map((w) => [w, w]);
+      const slot = (i) => `<div class="card ek" data-i="${i}"><h2 style="margin-top:0">Einkunft ${i}</h2><div class="row3">
+        ${sel("we_art" + i, "Art", EK_ARTEN)}${fw("we_name" + i, "Bezeichnung", "alle", "text")}
+        ${sel("we_person" + i, "Gehört zu", [["1", "Person 1"], ["2", "Person 2"]], "alle")}
+        ${sel("we_wann" + i, "Wann", [["", "Standard"], ["beide", "heute und im Alter"], ["heute", "nur heute"], ["alter", "nur im Alter"]], "alle")}
+        ${sel("we_wae" + i, "Währung", waehrungen, "alle")}${fw("we_kurs" + i, 'Kurs je 1 € <span class="hint" id="kurs-hint' + i + '">leer = EZB-Referenzkurs</span>', "fremd")}
+        ${sel("we_modus" + i, "Erfassung", [["pauschal", "pauschal: Überschuss nach Kosten und Bankrate"], ["euer", "Einnahmen-Überschuss-Rechnung (Jahr)"]], "miete")}
+        ${sel("we_kapart" + i, "Art der Erträge", [["aktien", "Dividenden aus Einzelaktien"], ["zinsen", "Zinsen"], ["aktienfonds", "Aktienfonds (30 % steuerfrei)"], ["mischfonds", "Mischfonds (15 %)"], ["immofonds", "Immobilienfonds (60 %)"], ["immofonds_ausland", "Immobilienfonds Ausland (80 %)"]], "kapital")}
+        ${fw("we_betrag" + i, '<span id="betrag-label' + i + '">Betrag</span>', "betrag")}
+        ${fw("we_betrag_alter" + i, 'Betrag im Alter pro Monat <span class="hint">leer = wie heute; bei Miete z. B. nach Tilgung</span>', "alterbetrag")}
+        ${fw("we_beginn" + i, "Rentenbeginn mit Alter", "privatrente")}${fw("we_ea" + i, 'Ertragsanteil % <span class="hint">leer = laut Tabelle (55–70)</span>', "privatrente")}
+        ${fw("we_miete" + i, "Mieteinnahmen im Jahr (kalt)", "euer")}${fw("we_kosten" + i, 'Laufende Kosten im Jahr <span class="hint">nicht umlagefähig, Verwaltung, Instandhaltung</span>', "euer")}
+        ${fw("we_zinsen" + i, "Schuldzinsen im Jahr", "euer")}${fw("we_tilgung" + i, 'Tilgung im Jahr <span class="hint">nur fürs Budget, steuerlich nicht absetzbar</span>', "euer")}
+        ${fw("we_afa" + i, 'Abschreibung (AfA) im Jahr <span class="hint">Gebäudeanteil × 2 % (Baujahr 1925–2022), 2,5 % (vor 1925), 3 % (ab 2023)</span>', "euer")}
+        </div><p class="hint ek-hinweis" id="ek-hinweis${i}"></p></div>`;
+      return `<p class="info">Alles, was neben Lohn und gesetzlicher Rente hereinkommt. Heute fließt es ins Netto und ins Budget, im Alter in die Rentenlücke (Person 1).
+        Fremde Währungen werden mit dem EZB-Referenzkurs umgerechnet <span id="kurs-stand"></span>.</p>` + EK_SLOTS.map(slot).join("") +
+        `<div class="card"><h2 style="margin-top:0">Ergebnis</h2><div class="kpi" id="ek-erg"></div><div id="ek-fehler" class="err"></div>
+        <p class="hint">Miete und Kapitalerträge sind in der Krankenversicherung der Rentner beitragsfrei. Wer freiwillig gesetzlich versichert ist (z. B. hauptberuflich Selbständige), zahlt darauf Beiträge. Das rechnet die App nicht.</p></div>`;
+    },
     budget() {
       return uebernehmenKnopf("Aus dem Vorab-Check übernehmen") + `<div class="card"><h2 style="margin-top:0">Feste Ausgaben pro Monat</h2><div class="row3">
         ${FIX.map(([k, n]) => feld(k, n)).join("")}</div></div>
         <div class="card"><h2 style="margin-top:0">Sparen und Reserve</h2><div class="row3">
-        ${feld("sonstige", "Weitere Einnahmen im Monat")}${feld("sparen", "Sparraten im Monat")}${feld("liquide", "Konto und Tagesgeld")}</div>
+        ${feld("sonstige", 'Weitere Einnahmen im Monat <span class="hint">nur, was nicht im Tab Weitere Einkünfte steht</span>')}${feld("sparen", "Sparraten im Monat")}${feld("liquide", "Konto und Tagesgeld")}</div>
         <div class="row3">${feld("netto_manuell", 'Netto im Monat <span class="hint">nur wenn im Tab Haushalt leer</span>')}</div></div>
         <div class="card"><h2 style="margin-top:0">Ergebnis</h2><div class="kpi" id="budget-erg"></div></div>`;
     },
@@ -319,13 +404,50 @@
   const BEW = { passt: "passt", pruefen: "prüfen", fehlt: "fehlt", nicht_noetig: "nicht nötig", kunde_lehnt_ab: "Kunde lehnt ab" };
 
   /* ---------- Tabs: Berechnung nach jeder Eingabe ---------- */
+  const BETRAG_LABEL = { miete: "Überschuss pro Monat nach laufenden Kosten und Bankrate", kapital: "Erträge im Jahr (brutto)", bav: "Brutto pro Monat",
+    privatrente: "Brutto pro Monat", sonstig_st: "Pro Monat (steuerpflichtig)", sonstig_frei: "Pro Monat" };
+  const EK_HINWEIS = {
+    miete: "Pauschal gilt der Überschuss auch als steuerlicher Gewinn. Tatsächlich ist die Tilgung nicht absetzbar und die Abschreibung schon. Für eine genaue Steuer die Einnahmen-Überschuss-Rechnung wählen.",
+    kapital: "Die App vergleicht Abgeltungsteuer und persönlichen Steuersatz (Günstigerprüfung) und nimmt den günstigeren. Ausländische Quellensteuer ist nicht berücksichtigt.",
+    bav: "Gemeint sind Direktversicherung, Pensionskasse und Pensionsfonds: voll steuerpflichtig, Krankenversicherung mit vollem Satz über 197,75 € Freibetrag, Pflege ab 197,75 € auf den ganzen Betrag. Für Direktzusage und Unterstützungskasse gilt der Versorgungsfreibetrag, den die App nicht rechnet.",
+    privatrente: "Steuerpflichtig ist nur der Ertragsanteil. In der Krankenversicherung der Rentner beitragsfrei.",
+    sonstig_st: "Wird mit dem persönlichen Steuersatz besteuert. Bei Selbständigkeit fallen gegebenenfalls Kranken- und Pflegebeiträge an, die die App nicht rechnet.",
+    sonstig_frei: "Geht nur ins Budget, ohne Steuer."
+  };
   const NACH = {
+    einkuenfte() {
+      const d = lies($("inhalt"));
+      // nur ändern, was sich ändert: sonst verschiebt sich beim Verlassen eines Feldes das Layout und ein Klick geht verloren
+      const text = (el, t) => { if (el.textContent !== t) el.textContent = t; };
+      const html = (el, t) => { if (el.dataset.html !== t) { el.dataset.html = t; el.innerHTML = t; } };
+      text($("kurs-stand"), KURSE ? `(Stand ${KURSE.stand}${KURSE.hinweis ? ", " + KURSE.hinweis : ""})` : kurseFehler ? "(" + kurseFehler + ")" : "");
+      EK_SLOTS.forEach((i) => {
+        const art = d["we_art" + i], fremd = (d["we_wae" + i] || "EUR") !== "EUR", modus = d["we_modus" + i] || "pauschal";
+        const karte = document.querySelector(`.ek[data-i="${i}"]`);
+        karte.querySelectorAll("[data-fuer]").forEach((el) => {
+          const f = el.dataset.fuer;
+          const verbergen = !art ? f !== "" : f === "" ? false : f === "alle" ? false : f === "fremd" ? !fremd : f === "betrag" ? art === "miete" && modus === "euer"
+            : f === "alterbetrag" ? false : f === "euer" ? !(art === "miete" && modus === "euer") : f !== art;
+          if (el.hidden !== verbergen) el.hidden = verbergen;
+        });
+        if (art) text($("betrag-label" + i), BETRAG_LABEL[art] || "Betrag");
+        if (fremd && KURSE && KURSE.kurse && KURSE.kurse[d["we_wae" + i]]) text($("kurs-hint" + i), `leer = EZB ${KURSE.kurse[d["we_wae" + i]].toLocaleString("de-DE")} (${KURSE.stand})`);
+        text($("ek-hinweis" + i), !art ? "" : (EK_HINWEIS[art] || "") + (fremd ? " Fremdwährung: vereinfacht als in Deutschland voll steuerpflichtig gerechnet. Tatsächlich besteuert bei Mieten meist der Staat, in dem die Immobilie liegt; Deutschland stellt die Einkünfte dann frei (bei Drittstaaten mit, bei EU/EWR ohne Progressionsvorbehalt) oder rechnet die ausländische Steuer an. Das Ergebnis kann deutlich abweichen, steuerliche Beratung empfohlen." : ""));
+      });
+      const h = daten("haushalt"), hr = h ? haushaltRechnung(h, d) : null, w = hr && hr.weitere, wa = weitereSumme(d, "alter");
+      html($("ek-erg"), !h ? "<div><small>Für die Steuer bitte zuerst den Tab Haushalt ausfüllen.</small></div>" : w ? `<div><small>Heute: Zufluss</small><b>${eur(w.cash_monat)}</b><small>pro Monat</small></div>
+        <div><small>Heute: Mehrsteuer</small><b>${eur(w.steuer_monat)}</b><small>${w.verfahren === "tarif" ? "Kapital: persönlicher Satz günstiger" : w.verfahren === "abgeltung" ? "Kapital: Abgeltungsteuer" : ""}</small></div>
+        <div><small>Heute: netto zusätzlich</small><b>${eur(w.netto_monat)}</b></div>
+        <div><small>Im Alter (Person 1): Zufluss</small><b>${eur(wa.s[0].cash / 12)}</b><small>Steuer und Abgaben im Tab Vorsorge</small></div>`
+        : `<div><small>Heute keine weiteren Einkünfte</small><b>–</b></div><div><small>Im Alter (Person 1): Zufluss</small><b>${eur(wa.s[0].cash / 12)}</b></div>`);
+      text($("ek-fehler"), (w && w.ohne_lohnrechnung ? "Netto wurde von Hand eingetragen: Die Mehrsteuer ist ohne Lohn gerechnet und daher zu niedrig. " : "") + weitereSumme(d, "heute").fehler.concat(wa.fehler).filter((x, i, a) => a.indexOf(x) === i).join(". "));
+    },
     haushalt() {
       const hr = haushaltRechnung(lies($("inhalt")));
       const r = hr && hr.rechnung;
       $("netto-erg").innerHTML = (r ? `<table><thead><tr><th>Person</th><th class="n">Brutto</th><th class="n">Sozialabgaben</th><th class="n">Lohnsteuer</th><th class="n">Soli + KiSt</th><th class="n">Netto/Monat</th></tr></thead><tbody>` +
         r.personen.map((p, i) => `<tr><td>${i + 1}</td><td class="n">${eur(p.brutto)}</td><td class="n">${eur(p.sozialabgaben)}</td><td class="n">${eur(p.est)}</td><td class="n">${eur(p.soli + p.kist)}</td><td class="n"><b>${eur(p.netto_monat)}</b></td></tr>`).join("") + "</tbody></table>" : "") +
-        `<div class="kpi" style="margin-top:10px"><div><small>Haushaltsnetto</small><b>${eur(hr ? hr.netto_monat : 0)}</b></div><div><small>Kindergeld</small><b>${eur(hr ? hr.kindergeld : 0)}</b></div></div>`;
+        `<div class="kpi" style="margin-top:10px"><div><small>Haushaltsnetto${hr && hr.weitere ? " inkl. weiterer Einkünfte" : ""}</small><b>${eur(hr ? hr.netto_monat : 0)}</b>${hr && hr.weitere ? `<small>Lohn ${eur(hr.netto_lohn_monat)} + weitere ${eur(hr.weitere.netto_monat)}</small>` : ""}</div><div><small>Kindergeld</small><b>${eur(hr ? hr.kindergeld : 0)}</b></div></div>`;
     },
     budget() {
       const b = budgetRechnung(lies($("inhalt")), haushaltRechnung(daten("haushalt")));
@@ -337,10 +459,11 @@
     vorsorge() {
       const h = daten("haushalt"), ein = lies($("inhalt")), vs = vorsorgeRechnung(ein, h, haushaltRechnung(h)), rn = renteNetto(ein, h);
       $("rente-netto").hidden = !(num(ein.gesetzl_brutto) > 0);
-      $("rente-netto").innerHTML = rn ? `<b>Gesetzliche Rente netto: ${eur(rn.netto_monat)}</b> im Monat (heutige Kaufkraft)<br>
-        <span class="small">${eur(rn.brutto_monat)} brutto − Krankenversicherung ${eur(rn.kv_monat)} − Pflegeversicherung ${eur(rn.pv_monat)}${rn.zuschuss_monat ? " + Zuschuss der Rentenversicherung " + eur(rn.zuschuss_monat) : ""} − Steuern ${eur(rn.steuer_monat)}.
+      $("rente-netto").innerHTML = rn ? `<b>Gesetzliche Rente netto: ${eur(rn.rente_netto_monat)}</b> im Monat (heutige Kaufkraft)${rn.weitere_cash_monat ? `<br><b>Weitere Einkünfte im Alter netto: ${eur(rn.weitere_cash_monat - rn.weitere_sv_monat - rn.weitere_steuer_monat)}</b>
+        <span class="small">(${eur(rn.weitere_cash_monat)} Zufluss${rn.weitere_sv_monat ? " − Kranken- und Pflegeversicherung auf die Betriebsrente " + eur(rn.weitere_sv_monat) : ""} − Mehrsteuer ${eur(rn.weitere_steuer_monat)}${rn.kapital_verfahren === "tarif" ? "; Kapitalerträge mit persönlichem Satz, weil günstiger" : rn.kapital_verfahren === "abgeltung" ? "; Kapitalerträge mit Abgeltungsteuer" : ""})</span>` : ""}<br>
+        <span class="small">${eur(rn.brutto_monat)} brutto − Krankenversicherung ${eur(rn.kv_monat)} − Pflegeversicherung ${eur(rn.pv_monat)}${rn.zuschuss_monat ? " + Zuschuss der Rentenversicherung " + eur(rn.zuschuss_monat) : ""} − Steuern ${eur(rn.steuer_monat - rn.weitere_steuer_monat)}.
         Rentenbeginn ${rn.rentenbeginn_jahr}, steuerpflichtig ${(rn.besteuerungsanteil * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} %. Regeln 2026 (Krankenversicherung, Zusatzbeitrag und Kirchensteuer laut Tab Haushalt, Person 1; ohne Zusatzbeitrag im Haushalt gilt der Durchschnitt 2,9 %).
-        Annahmen: Pflichtversicherung in der Krankenversicherung der Rentner, keine weiteren Einkünfte im Alter. Betriebsrenten sind nicht enthalten. Der Rentenfreibetrag bleibt in Euro gleich, deshalb steigt die Steuer im Rentenverlauf etwas; der Wert gilt für den Rentenbeginn.</span>
+        Annahmen: Pflichtversicherung in der Krankenversicherung der Rentner. Weitere Einkünfte laut Tab Weitere Einkünfte, nur Person 1. Der Rentenfreibetrag bleibt in Euro gleich, deshalb steigt die Steuer im Rentenverlauf etwas; der Wert gilt für den Rentenbeginn.</span>
         ${rn.vorzeitig ? `<br><span class="small">Beginn mit ${rn.beginn_alter} statt 67: Aus ${eur(rn.hochrechnung)} Hochrechnung werden ${eur(rn.vorzeitig.brutto_ohne_abschlag)} (weniger Beitragsjahre, gleichmäßiger Zuwachs angenommen), nach ${(rn.vorzeitig.abschlag * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} % Abschlag ${eur(rn.vorzeitig.brutto)} brutto. Der Abschlag gilt lebenslang (§ 77 SGB VI).</span>
           ${rn.vorzeitig.zulaessig ? "" : '<br><span class="small" style="color:var(--red)">Eine Altersrente vor 63 gibt es regulär nicht (Ausnahme: schwerbehinderte Menschen, § 37 SGB VI). Bitte den Rentenbeginn prüfen.</span>'}
           ${rn.beginn_alter < 65 || ein.jahre45 !== "ja" ? '<br><span class="small">Vorausgesetzt sind 35 Jahre Wartezeit (§ 36 SGB VI). Mit 45 Jahren gibt es die Rente ab 65 ohne Abschlag (§ 38 SGB VI).</span>' : ""}`
@@ -388,7 +511,7 @@
     }
     const vs = daten("altersvorsorge") ? vorsorgeRechnung(av, h, hr) : null;
     const rn = renteNetto(av, h);
-    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: rn ? rn.netto_monat : num(av.gesetzl), gesetzlich_brutto: rn ? rn.brutto_monat : null, vorzeitig: rn && rn.vorzeitig ? { abschlag: rn.vorzeitig.abschlag, beginn_alter: rn.beginn_alter } : null, luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
+    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: rn ? rn.rente_netto_monat : num(av.gesetzl), weitere: rn && rn.weitere_cash_monat ? Math.round((rn.weitere_cash_monat - rn.weitere_sv_monat - rn.weitere_steuer_monat) * 100) / 100 : 0, gesetzlich_brutto: rn ? rn.brutto_monat : null, vorzeitig: rn && rn.vorzeitig ? { abschlag: rn.vorzeitig.abschlag, beginn_alter: rn.beginn_alter } : null, luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
       rentenalter: num(av.rentenalter) || 67, vorhanden: vs.vorhanden_real,
       // gerechnet wird für Person 1, außer der Berater hat bewusst ein Haushaltsnetto eingetragen
       gerechnet_fuer: (num(h.brutto2) || num(h.netto2)) && !num(av.netto_basis) ? (h.name1 || "Person 1") : "",
@@ -500,7 +623,11 @@
     liquide: "Konto und Tagesgeld", netto_manuell: "Netto/Monat (manuell)", depot: "Depots und Fonds", immobilien: "Immobilien",
     sonstverm: "Sonstiges Vermögen", schulden: "Kredite (Restschuld)", av_kapital: "Kapital fürs Alter heute", rentenalter: "Rentenbeginn mit",
     gesetzl: "Gesetzliche Rente netto (von Hand)", gesetzl_brutto: "Gesetzliche Rente brutto, Hochrechnung bis Regelaltersgrenze", gesetzl_bisher: "Rente aus bisherigen Beiträgen", jahre45: "45 Versicherungsjahre bis Rentenbeginn",
-    partner_rente: "Rente Ehepartner brutto", pkv_alter: "PKV-Beitrag im Alter/Monat", netto_basis: "Netto heute (Rentenrechnung)", zielquote: "Ziel in % vom Netto", rendite: "Rendite vor Kosten %",
+    partner_rente: "Rente Ehepartner brutto", pkv_alter: "PKV-Beitrag im Alter/Monat",
+    ...Object.fromEntries([1, 2, 3, 4, 5, 6].flatMap((i) => [["we_art", "Art"], ["we_name", "Bezeichnung"], ["we_person", "Person"], ["we_wann", "Wann"], ["we_wae", "Währung"],
+      ["we_kurs", "Kurs je 1 €"], ["we_modus", "Erfassung"], ["we_kapart", "Art der Erträge"], ["we_betrag", "Betrag"], ["we_betrag_alter", "Betrag im Alter/Monat"],
+      ["we_beginn", "Rentenbeginn mit"], ["we_ea", "Ertragsanteil %"], ["we_miete", "Mieteinnahmen/Jahr"], ["we_kosten", "Laufende Kosten/Jahr"],
+      ["we_zinsen", "Schuldzinsen/Jahr"], ["we_tilgung", "Tilgung/Jahr"], ["we_afa", "AfA/Jahr"]].map(([k, n]) => [k + i, "Einkunft " + i + ": " + n]))), netto_basis: "Netto heute (Rentenrechnung)", zielquote: "Ziel in % vom Netto", rendite: "Rendite vor Kosten %",
     kosten: "Kosten %", inflation: "Inflation %", entnahme: "Reale Rendite Auszahlung %", rentendauer: "Auszahlungsdauer Jahre", notizen: "Notizen"
   }, Object.fromEntries(FIX), Object.fromEntries([1, 2].flatMap((i) => [["name" + i, "Person " + i + ": Name"], ["alter" + i, "Person " + i + ": Alter"],
     ["brutto" + i, "Person " + i + ": Brutto/Jahr"], ["kv" + i, "Person " + i + ": Krankenversicherung"], ["zb" + i, "Person " + i + ": Zusatzbeitrag %"],
@@ -531,7 +658,7 @@
     if (b) h += tabelle("Budget (Ergebnis)", { "Einnahmen": eur(b.einnahmen), "Feste Ausgaben": eur(b.fixkosten), "Überschuss I": eur(b.ueberschuss1) + " (" + pct(b.quote1) + ")",
       "Sparquote": pct(b.sparquote), "Überschuss II": eur(b.ueberschuss2) + " (" + pct(b.quote2) + ")", "Notreserve": monate(b.reserve_monate) + " Monate" });
     if (vs) h += tabelle("Altersvorsorge (Rechenbeispiel, Annahmen)", { "Wunsch netto": eur(vs.wunsch), "Lücke heute": eur(vs.luecke), "Kapitalbedarf": eur(vs.kapital), "Sparrate (Start)": eur(vs.sparrate) });
-    h += tabelle("Haushalt", d("haushalt"), LABEL) + tabelle("Budget (Eingaben)", d("budget"), LABEL) + tabelle("Vermögen und Vorsorge (Eingaben)", d("altersvorsorge"), LABEL)
+    h += tabelle("Haushalt", d("haushalt"), LABEL) + tabelle("Weitere Einkünfte", d("einkuenfte"), LABEL) + tabelle("Budget (Eingaben)", d("budget"), LABEL) + tabelle("Vermögen und Vorsorge (Eingaben)", d("altersvorsorge"), LABEL)
       + tabelle("Risiko-Check: Betroffenheit laut Kunde", risiko, fragen) + tabelle("Absicherung: Bewertung durch Versicherungsmakler", abs)
       + tabelle("Ziele und Notizen", d("ziele"), LABEL);
     if (ab.vorab) h += tabelle("Angaben des Kunden im Vorab-Check (Auswertung)", (() => { const v = d("vorab").auswertung || {}; const o = {};
@@ -558,6 +685,9 @@
 
   /* ---------- Start ---------- */
   $("speichern").addEventListener("click", speichern);
+  // Kein Fokuswechsel beim Klicken: Sonst springt die Leiste unten auf langen Seiten beim Verlassen des Feldes,
+  // und der Klick geht ins Leere (im Browser beobachtet am 11.10.2026). Tastatur bleibt unverändert.
+  $("speichern").addEventListener("mousedown", (e) => e.preventDefault());
   // Eingaben einmalig überwachen (nicht je Tab neu anmelden)
   $("inhalt").addEventListener("input", (ev) => {
     const abschnitt = TABS.find(([k]) => k === tab)[2];

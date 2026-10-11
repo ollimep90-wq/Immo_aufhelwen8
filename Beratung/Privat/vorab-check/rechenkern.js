@@ -31,7 +31,12 @@
     rv_satz: 0.186, av_satz: 0.026,
     vsp_grenze_sonstige: 1900,
     // Renten (Quellen: QUELLEN.md, Abschnitt Netto-Rente)
-    rente: { wk_pauschbetrag: 102, anteil_basisjahr: 2023, anteil_basis: 0.825, anteil_schritt: 0.005 }
+    rente: { wk_pauschbetrag: 102, anteil_basisjahr: 2023, anteil_basis: 0.825, anteil_schritt: 0.005 },
+    // Weitere Einkünfte (Quellen: QUELLEN.md, Abschnitt Weitere Einkünfte)
+    kapital: { satz: 0.25, sparer: 1000, teilfreistellung: { aktien: 0, zinsen: 0, aktienfonds: 0.3, mischfonds: 0.15, immofonds: 0.6, immofonds_ausland: 0.8 } },
+    bav: { kv_freibetrag_monat: 197.75, pv_freigrenze_monat: 197.75 },
+    // Ertragsanteil private Leibrente nach Alter bei Rentenbeginn (§ 22 Nr. 1 S. 3 a bb EStG), geprüft für 55–70
+    ertragsanteil: { 55: 26, 56: 26, 57: 25, 58: 24, 59: 23, 60: 22, 61: 22, 62: 21, 63: 20, 64: 19, 65: 18, 66: 18, 67: 17, 68: 16, 69: 15, 70: 15 }
   };
 
   const r2 = (x) => Math.round(x * 100) / 100;
@@ -128,6 +133,83 @@
     return { personen: out, netto_jahr: r2(netto_jahr), netto_monat: r2(netto_jahr / 12) };
   }
 
+  /* ---------- Weitere Einkünfte ----------
+   * Einkunft je Eintrag, in Euro je Jahr. zeitpunkt: "heute" | "alter".
+   * e: {art, person, waehrung, kurs (Einheiten je 1 €, EZB-Schreibweise), wann: heute|beide|alter,
+   *     modus (miete: pauschal|euer), betrag (Monat; Kapital: Jahr), betrag_alter (Monat, optional),
+   *     miete, kosten, zinsen, tilgung, afa (Jahr, EÜR), kapart, beginn_alter (private Rente)}
+   * Ergebnis: cash (Zufluss nach Kosten und Kreditrate), tarif (im Steuertarif), kapital (steuerpflichtig nach
+   * Teilfreistellung, vor Sparer-Pauschbetrag), bav_monat (Betriebsrente brutto für KV/PV). */
+  function einkunft(e, zeitpunkt, p) {
+    p = p || P2026;
+    const leer = { cash: 0, tarif: 0, kapital: 0, bav_monat: 0, gilt: false };
+    const wann = e.wann || (e.art === "bav" || e.art === "privatrente" ? "alter" : "beide");
+    if (!(wann === "beide" || wann === zeitpunkt)) return leer;
+    const kurs = e.waehrung && e.waehrung !== "EUR" ? e.kurs : 1;
+    if (!(kurs > 0)) return Object.assign(leer, { fehler: "kurs" });
+    const eur = (x) => (Number(x) || 0) / kurs;
+    const imAlter = zeitpunkt === "alter" && e.betrag_alter != null && e.betrag_alter !== "";
+    const r = { cash: 0, tarif: 0, kapital: 0, bav_monat: 0, gilt: true };
+    if (e.art === "miete") {
+      if (imAlter) { r.cash = r.tarif = eur(e.betrag_alter) * 12; r.annahme = "alter_pauschal"; }
+      else if (e.modus === "euer") {
+        r.tarif = eur(e.miete) - eur(e.kosten) - eur(e.zinsen) - eur(e.afa);
+        r.cash = eur(e.miete) - eur(e.kosten) - eur(e.zinsen) - eur(e.tilgung);
+      } else { r.cash = r.tarif = eur(e.betrag) * 12; r.annahme = "pauschal"; }
+    } else if (e.art === "kapital") {
+      const b = imAlter ? eur(e.betrag_alter) * 12 : eur(e.betrag);
+      r.cash = b; r.kapital = b * (1 - (p.kapital.teilfreistellung[e.kapart] || 0));
+    } else if (e.art === "bav") {
+      const m = eur(imAlter ? e.betrag_alter : e.betrag);
+      r.cash = r.tarif = m * 12; r.bav_monat = m;
+    } else if (e.art === "privatrente") {
+      const m = eur(imAlter ? e.betrag_alter : e.betrag);
+      const a = Math.round(Number(e.beginn_alter) || 67);
+      const ea = e.ertragsanteil != null && e.ertragsanteil !== "" ? Number(e.ertragsanteil) : p.ertragsanteil[a];
+      r.cash = m * 12;
+      if (ea == null || !isFinite(ea)) { r.fehler = "ertragsanteil"; r.tarif = m * 12; r.ertragsanteil = 100; }
+      else { r.tarif = m * 12 * ea / 100; r.ertragsanteil = ea; }
+    } else if (e.art === "sonstig_st") { r.cash = r.tarif = eur(imAlter ? e.betrag_alter : e.betrag) * 12; }
+    else if (e.art === "sonstig_frei") { r.cash = eur(imAlter ? e.betrag_alter : e.betrag) * 12; }
+    else return leer;
+    return r;
+  }
+
+  /* Steuer auf zvE (Tarif, Soli, KiSt) wie in nettoHaushalt, für 1–2 Personen */
+  function steuerTarif(zves, verh, kinder, kist, p) {
+    const kfb = (kinder || 0) * p.kinderfreibetrag;
+    const soliVon = (e, fg) => (e > fg ? Math.min(e * p.soli.satz, (e - fg) * p.soli.milderung) : 0);
+    if (verh) {
+      const z = zves.reduce((a, x) => a + x, 0), e = est(z, true, p), ek = est(Math.max(0, z - kfb), true, p);
+      return e + soliVon(ek, 2 * p.soli.freigrenze) + ek * kist;
+    }
+    return zves.reduce((a, z) => { const e = est(z, false, p), ek = est(Math.max(0, z - kfb / 2), false, p);
+      return a + e + soliVon(ek, p.soli.freigrenze) + ek * kist; }, 0);
+  }
+
+  /* Mehrsteuer durch weitere Einkünfte, Jahreswerte.
+   * basis: zvE je Person ohne die weiteren Einkünfte; tarif/kapital: je Person.
+   * Kapitalerträge: Abgeltungsteuer oder, wenn günstiger, Tarif (Günstigerprüfung § 32d Abs. 6 EStG). */
+  function mehrsteuer(m, p) {
+    p = p || P2026;
+    const kist = m.kirche ? (p.kist[m.bundesland] || p.kist.sonst) : 0;
+    const n = m.basis.length, tz = m.basis.map((z, i) => Math.max(0, z + (m.tarif[i] || 0)));
+    const ohne = steuerTarif(m.basis, m.verheiratet, m.kinder, kist, p), mitTarif = steuerTarif(tz, m.verheiratet, m.kinder, kist, p);
+    // Sparer-Pauschbetrag je Person, bei Zusammenveranlagung gemeinsam
+    const kap = m.basis.map((_, i) => m.kapital[i] || 0);
+    let rest;
+    if (m.verheiratet) { const k = Math.max(0, kap.reduce((a, x) => a + x, 0) - n * p.kapital.sparer); rest = kap.map((x, i) => (i === 0 ? k : 0)); }
+    else rest = kap.map((x) => Math.max(0, x - p.kapital.sparer));
+    const summeRest = rest.reduce((a, x) => a + x, 0);
+    const ast = summeRest / (4 + kist) * (4 * p.kapital.satz);
+    const abgeltung = ast * (1 + p.soli.satz + kist);
+    const tarifMitKap = steuerTarif(tz.map((z, i) => z + rest[i]), m.verheiratet, m.kinder, kist, p) - mitTarif;
+    const guenstiger = summeRest > 0 && tarifMitKap < abgeltung;
+    const kapSteuer = summeRest > 0 ? Math.min(abgeltung, tarifMitKap) : 0;
+    return { tarif: r2(mitTarif - ohne), kapital: r2(kapSteuer), verfahren: summeRest > 0 ? (guenstiger ? "tarif" : "abgeltung") : null,
+             gesamt: r2(mitTarif - ohne + kapSteuer) };
+  }
+
   /* Netto-Rente aus der gesetzlichen Bruttorente (Renteninformation), Jahreswerte in heutiger Kaufkraft.
    * NÄHERUNG mit den Rechengrößen 2026: Steuertarif 2026 auf heutige Beträge, Besteuerungsanteil auf die
    * ganze Rente (der Rentenfreibetrag wird in Wirklichkeit in Euro festgeschrieben), keine weiteren Einkünfte.
@@ -155,27 +237,34 @@
     const zve = Math.max(0, brutto * 12 * anteil - p.rente.wk_pauschbetrag - p.sonderausgaben_pauschbetrag - a.vorsorge);
     return { a, anteil, zve };
   }
+  /* w (optional): weitere Einkünfte im Alter für diese Person, Jahreswerte {cash, tarif, kapital, bav_monat}.
+   * Betriebsrente: KV voller Satz über dem Freibetrag, PV voller Satz ab der Freigrenze (nur gesetzlich versichert).
+   * Miete und Kapitalerträge sind in der KVdR beitragsfrei. Bei Splitting mit Partnerrente wird die Steuer auf die
+   * Renten nach zvE-Anteil verteilt; die Mehrsteuer der weiteren Einkünfte trägt ganz diese Person. */
   function nettoRente(e, p) {
     p = p || P2026;
-    const brutto = Math.max(0, e.brutto_monat || 0);
+    const brutto = Math.max(0, e.brutto_monat || 0), w = e.weitere || {};
     const ich = renteZve(e, brutto, p);
     const kist = e.kirche ? (p.kist[e.bundesland] || p.kist.sonst) : 0;
-    let est, soli;
+    const zb = e.zusatzbeitrag != null ? e.zusatzbeitrag : p.zusatzbeitrag_schnitt;
+    const bav = Math.max(0, w.bav_monat || 0);
+    const kvBav = e.kv === "pkv" ? 0 : Math.max(0, bav - p.bav.kv_freibetrag_monat) * (p.kv_satz + zb) * 12;
+    const pvBav = e.kv === "pkv" || bav <= p.bav.pv_freigrenze_monat ? 0 : bav * (p.pv_satz + (e.kinderlos ? p.pv_kinderlos : 0)) * 12;
     const partner = e.verheiratet && e.partner_brutto_monat > 0 ? renteZve(e, e.partner_brutto_monat, p) : null;
-    if (partner) {
-      const z = ich.zve + partner.zve, gesamt = est_(z, true, p), fg = 2 * p.soli.freigrenze;
-      const s = gesamt > fg ? Math.min(gesamt * p.soli.satz, (gesamt - fg) * p.soli.milderung) : 0;
-      const anteil = z > 0 ? ich.zve / z : 0.5;
-      est = gesamt * anteil; soli = s * anteil;
-    } else {
-      est = tarif(ich.zve, p);
-      soli = est > p.soli.freigrenze ? Math.min(est * p.soli.satz, (est - p.soli.freigrenze) * p.soli.milderung) : 0;
-    }
-    const k = est * kist;
+    const basis = partner ? [ich.zve, partner.zve] : [ich.zve];
+    const grund = steuerTarif(basis, !!partner, 0, kist, p);
+    const anteil = partner ? (ich.zve + partner.zve > 0 ? ich.zve / (ich.zve + partner.zve) : 0.5) : 1;
+    // weitere Einkünfte: im Tarif abzüglich der KV/PV auf die Betriebsrente (Vorsorgeaufwand)
+    const ms = mehrsteuer({ basis, tarif: [(w.tarif || 0) - kvBav - pvBav], kapital: [w.kapital || 0], verheiratet: !!partner, kinder: 0,
+      kirche: e.kirche, bundesland: e.bundesland }, p);
+    const steuer = grund * anteil + ms.gesamt;
     const a = ich.a, j = brutto * 12;
-    const netto = j - a.kv - a.pv + a.zuschuss - est - soli - k;
+    const netto = j - a.kv - a.pv + a.zuschuss - steuer + (w.cash || 0) - kvBav - pvBav;
     return { brutto_monat: r2(brutto), kv_monat: r2(a.kv / 12), pv_monat: r2(a.pv / 12), zuschuss_monat: r2(a.zuschuss / 12),
-             steuer_monat: r2((est + soli + k) / 12), besteuerungsanteil: ich.anteil, zve: r2(ich.zve),
+             steuer_monat: r2(steuer / 12), besteuerungsanteil: ich.anteil, zve: r2(ich.zve),
+             rente_netto_monat: r2((j - a.kv - a.pv + a.zuschuss - grund * anteil) / 12),
+             weitere_cash_monat: r2((w.cash || 0) / 12), weitere_sv_monat: r2((kvBav + pvBav) / 12), weitere_steuer_monat: r2(ms.gesamt / 12),
+             kapital_verfahren: ms.verfahren,
              netto_monat: r2(netto / 12), unvollstaendig: e.kv === "pkv" && !(e.pkv_beitrag_monat > 0) };
   }
   const est_ = (zve, verh, p) => est(zve, verh, p);
@@ -239,7 +328,7 @@
     };
   }
 
-  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, renteVorzeitig, risikoAuswertung, budget };
+  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, renteVorzeitig, einkunft, steuerTarif, mehrsteuer, risikoAuswertung, budget };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Rechenkern = api;
 })(this);

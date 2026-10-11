@@ -57,7 +57,7 @@
   }
 
   function renteSaeulen(v) {
-    const w = zahl(v.wunsch), g = Math.min(zahl(v.gesetzlich), w), l = Math.max(0, w - g);
+    const w = zahl(v.wunsch), g = Math.min(zahl(v.gesetzlich), w), we = Math.min(Math.max(0, zahl(v.weitere)), w - g), l = Math.max(0, w - g - we);
     if (!w) return "";
     const H = 220, s = (x) => x / w * (H - 30);
     return `<svg viewBox="0 0 420 ${H + 20}" width="100%" style="max-width:420px" role="img" aria-label="Zielrente, gesetzliche Rente und Lücke">
@@ -66,9 +66,11 @@
       <text x="100" y="${H - s(w) / 2 + 18}" text-anchor="middle" font-size="14" font-weight="700" fill="${F.tinte}">${eur(w)}</text>
       <rect x="240" y="${H - s(g)}" width="120" height="${s(g)}" rx="6" fill="${F.fix}"><title>Gesetzliche Rente: ${eur(g)}</title></rect>
       ${s(g) > 40 ? `<text x="300" y="${H - s(g) / 2 + 5}" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">${eur(g)}</text>` : ""}
+      ${we > 0 ? `<rect x="240" y="${H - s(g) - s(we)}" width="120" height="${Math.max(0, s(we) - 2)}" rx="6" fill="${F.spar}"><title>Weitere Einkünfte: ${eur(we)}</title></rect>
+      ${s(we) > 40 ? `<text x="300" y="${H - s(g) - s(we) / 2 + 5}" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">${eur(we)}</text>` : ""}` : ""}
       ${l > 0 ? `<rect x="240" y="${H - s(w)}" width="120" height="${Math.max(0, s(l) - 2)}" rx="6" fill="${F.rot}"><title>Lücke: ${eur(l)}</title></rect>
       ${s(l) > 40 ? `<text x="300" y="${H - s(w) + s(l) / 2 + 5}" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Lücke ${eur(l)}</text>` : ""}` : ""}
-      <text x="300" y="${H + 16}" text-anchor="middle" font-size="12" fill="${F.leise}">Gesetzliche Rente + Lücke</text></svg>`;
+      <text x="300" y="${H + 16}" text-anchor="middle" font-size="12" fill="${F.leise}">${we > 0 ? "Rente + weitere Einkünfte + Lücke" : "Gesetzliche Rente + Lücke"}</text></svg>`;
   }
 
   function zeitstrahl(ziele, jahrHeute) {
@@ -112,7 +114,7 @@
     if (b && b.reserve_monate != null) h += `<section><h2>Deine Notreserve</h2><p class="b-lead">Dein Konto und Tagesgeld reichen für rund <b>${zahl(b.reserve_monate).toLocaleString("de-DE", { maximumFractionDigits: 1 })} Monate</b> feste Ausgaben.</p>${reserveSkala(b.reserve_monate)}</section>`;
     if (m && (m.vermoegen || m.schulden)) h += `<section><h2>Was du schon hast</h2><div class="b-kacheln"><div><small>Vermögen</small><b>${eur(m.vermoegen)}</b></div><div><small>Offene Kredite (Restschuld)</small><b>${eur(m.schulden)}</b></div><div><small>Unterm Strich</small><b>${eur(zahl(m.vermoegen) - zahl(m.schulden))}</b></div></div></section>`;
     if (v) h += `<section><h2>Dein Leben nach der Arbeit</h2><p class="b-lead">Rechenbeispiel mit Annahmen (siehe unten), keine Prognose.${v.gerechnet_fuer ? (v.gerechnet_fuer === d.vorname ? " Gerechnet nur für dich" : ` Gerechnet nur für ${esc(v.gerechnet_fuer)}`) + ", die Rente der zweiten Person im Haushalt ist nicht enthalten." : ""}</p>
-      <p class="b-lead">Als Ziel rechnen wir mit ${eur(v.wunsch)} im Monat in heutiger Kaufkraft${v.annahmen && v.annahmen.zielquote ? `, das sind ${pct(v.annahmen.zielquote)} deines heutigen Nettos` : ""}. ${v.gesetzlich_brutto ? `Von deiner gesetzlichen Rente (${v.vorzeitig ? `bei Beginn mit ${zahl(v.vorzeitig.beginn_alter)}, mit weniger Beitragsjahren und ${(zahl(v.vorzeitig.abschlag) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} % Abschlag rund` : "laut Renteninformation"} ${eur(v.gesetzlich_brutto)} brutto) bleiben nach Kranken- und Pflegeversicherung und Steuern rund ${eur(v.gesetzlich)}.` : `Deine gesetzliche Rente nach Abzügen deckt davon rund ${eur(v.gesetzlich)} (Schätzung auf Basis deiner Angaben).`}</p>
+      <p class="b-lead">Als Ziel rechnen wir mit ${eur(v.wunsch)} im Monat in heutiger Kaufkraft${v.annahmen && v.annahmen.zielquote ? `, das sind ${pct(v.annahmen.zielquote)} deines heutigen Nettos` : ""}. ${v.gesetzlich_brutto ? `Von deiner gesetzlichen Rente (${v.vorzeitig ? `bei Beginn mit ${zahl(v.vorzeitig.beginn_alter)}, mit weniger Beitragsjahren und ${(zahl(v.vorzeitig.abschlag) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} % Abschlag rund` : "laut Renteninformation"} ${eur(v.gesetzlich_brutto)} brutto) bleiben nach Kranken- und Pflegeversicherung und Steuern rund ${eur(v.gesetzlich)}.${zahl(v.weitere) > 0 ? ` Dazu kommen weitere Einkünfte, zum Beispiel aus Vermietung oder Kapital, mit rund ${eur(v.weitere)} netto.` : ""}` : `Deine gesetzliche Rente nach Abzügen deckt davon rund ${eur(v.gesetzlich)} (Schätzung auf Basis deiner Angaben).`}</p>
       <div class="b-zwei">${renteSaeulen(v)}<div class="b-kacheln b-spalte"><div><small>Lücke pro Monat (heutige Kaufkraft)</small><b>${eur(v.luecke)}</b></div><div><small>Nötiges Kapital mit ${v.rentenalter || 67} (heutige Kaufkraft)</small><b>${eur(v.kapital)}</b></div>${zahl(v.vorhanden) > 0 ? `<div><small>Davon schon angespart (hochgerechnet)</small><b>${eur(v.vorhanden)}</b></div>` : ""}<div><small>${zahl(v.vorhanden) > 0 ? "Rechnerische Sparrate für den Rest" : "Rechnerische Sparrate"}</small><b>${eur(v.sparrate)}</b><small>Rechenbeispiel, steigt jährlich mit der Inflation</small></div></div></div></section>`;
     if (d.absicherung && d.absicherung.length) h += `<section><h2>Deine Absicherung</h2><p class="b-lead">Wie stark dich ein Ereignis laut deinen Antworten treffen würde, und ${d.ansprechpartner_versicherung ? `die Einschätzung deines Versicherungsmaklers ${esc(d.ansprechpartner_versicherung)}` : "unsere erste Einschätzung"}.</p>${absicherung(d.absicherung)}</section>`;
     if (d.naechste_schritte) h += `<section class="b-schritte"><h2>Deine nächsten Schritte</h2><ol>${esc(d.naechste_schritte).split(/\n+/).map((z) => z.trim()).filter(Boolean).map((z) => `<li>${z}</li>`).join("")}</ol></section>`;

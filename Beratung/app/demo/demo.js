@@ -125,6 +125,9 @@
     }
     if (m === "POST" && p === "/api/logout") { st.sitzung = null; return { ok: true }; }
     if (m === "GET" && p === "/api/ich") { const u = ich(); return { id: u.id, email: u.email, name: u.name, rolle: u.rolle, bereich: u.bereich }; }
+    if (m === "GET" && p === "/api/kurse") { nur("admin", "berater");
+      return { stand: "2026-10-09", quelle: "EZB-Referenzkurse", hinweis: "Demo: fest hinterlegter Stand",
+        kurse: { USD: 1.1206, JPY: 177.34, CZK: 24.369, DKK: 7.4751, GBP: 0.84763, HUF: 365.08, PLN: 4.3835, SEK: 11.1675, CHF: 0.9313, NOK: 10.7155, TRY: 55.1033, AUD: 1.6052 } }; }
     if (m === "GET" && p === "/api/berater") { nur("admin", "berater");
       return st.users.filter((u) => u.aktiv && (u.rolle === "berater" || u.rolle === "admin")).map((u) => ({ id: u.id, name: u.name, email: u.email, bereich: u.bereich })); }
     if (p === "/api/akten") {
