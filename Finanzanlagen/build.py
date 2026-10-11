@@ -1,4 +1,4 @@
-"""Baut die drei PDFs der ganzheitlichen Finanzberatung aus src/*.html.
+"""Baut das Konzept-PDF der ganzheitlichen Finanzberatung aus src/*.html.
 
 Platzhalter ⟦…⟧ werden hier befüllt, damit Fakten an einer Stelle stehen.
 Aufruf: python3 build.py
@@ -161,18 +161,15 @@ REPL = {"⟦AVFAKTEN⟧": AVFAKTEN, "⟦PFLICHTEN⟧": PFLICHTEN, "⟦GANTT⟧":
         "⟦AVKUNDE⟧": AVKUNDE, "⟦KONTAKT-OLIVER⟧": KONTAKT_OLIVER, "⟦PFLICHTHINWEIS⟧": PFLICHTHINWEIS,
         "⟦AVTABELLE⟧": AVKONZEPT_TABELLE, "⟦RIESTERNOTE⟧": RIESTERNOTE, "⟦R⟧": R, "⟦A⟧": A}
 
-DOCS = {"konzept": "Konzept_Ganzheitliche_Finanzberatung", "kunde": "Kundenpraesentation_Ganzheitliche_Beratung",
-        "leitfaden": "Gespraechsleitfaden_Bedarfsanalyse"}
-TITLES = {"konzept": "Konzept Ganzheitliche Finanzberatung", "kunde": "Ganzheitliche Finanzberatung",
-          "leitfaden": "Gesprächsleitfaden Bedarfsanalyse"}
+# Kundenpräsentation und Gesprächsleitfaden sind seit 11.10.2026 archiviert (Archiv/README.md)
+DOCS = {"konzept": "Konzept_Ganzheitliche_Finanzberatung"}
+TITLES = {"konzept": "Konzept Ganzheitliche Finanzberatung"}
 
 for key, out in DOCS.items():
     html = (ROOT / "src" / f"{key}.html").read_text()
     for k, v in REPL.items():
         html = html.replace(k, v)
     assert "⟦" not in html, (key, html[html.index("⟦"):html.index("⟦") + 40])
-    if key == "kunde":
-        assert 'class="tag' not in html, "interner Prüfvermerk im Kunden-PDF"
     tmp = ROOT / "src" / f"_{key}.built.html"
     tmp.write_text(html)
     pdf = ROOT / f"{out}.pdf"

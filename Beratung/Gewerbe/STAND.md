@@ -25,7 +25,7 @@ Bauen: `python3 build.py` (du und Sie), Zahlen nur aus `zahlen.py`.
 
 ## Aus der Rechtsprüfung Selbständige und Erlaubnisse (11.10.2026)
 
-- Gewerbliche Darlehen: bis 19.11.2026 § 34c-Erlaubnis nötig, ab 20.11.2026 gestrichen (BGBl. 2026 I Nr. 139). Nicht angeboten, bis die IHK es bestätigt.
+- Gewerbliche Darlehen: bis 19.11.2026 § 34c-Erlaubnis nötig, ab 20.11.2026 gestrichen (BGBl. 2026 I Nr. 139). Oliver hat die Erlaubnis nach § 34c Abs. 1 S. 1 Nr. 2 (Angabe Oliver 11.10.2026). Ob gewerbliche Darlehen angeboten werden, ist noch nicht entschieden. *Korrektur:* Vorher stand hier „Nicht angeboten, bis die IHK es bestätigt“, weil die Erlaubnis nicht bekannt war. Sie stand allerdings schon im Pitch (`Kooperation/pitch.html`, „§34c Nr. 2 Darlehen“) und wurde dort übersehen.
 - § 4e StBerG seit 01.09.2026: Reichweite für Finanzberater ungeklärt.
 - Altersvorsorgereformgesetz (BGBl. 2026 I Nr. 156): Selbständige förderberechtigt erst ab 01.01.2027.
 - Korrektur in zahlen.py: Der ALV-Beitrag in der Gründungsphase ergab mit Gleitkomma 51,41 €, richtig kaufmännisch gerundet 51,42 € (51,415 €).
@@ -63,7 +63,7 @@ Bauen: `python3 build.py` (du und Sie), Zahlen nur aus `zahlen.py`.
 ## Vor dem Versand
 
 1. Platzhalter in den Pflichtangaben füllen (Register-Nummern, IHK, Kontakt Oliver), `shared/brand.py`.
-2. § 34c-Erlaubnis Oliver? Rechtslage ab 20.11.2026 von der zuständigen IHK bestätigen lassen.
+2. ~~§ 34c-Erlaubnis Oliver?~~ *Erledigt 11.10.2026:* vorhanden (Abs. 1 S. 1 Nr. 2). Offen: Werden gewerbliche Darlehen angeboten? Rechtslage ab 20.11.2026 von der zuständigen IHK bestätigen lassen.
 3. Rentenberater/DRV: Pflichtversicherung auf Antrag, GGF-Status, Nachweis des Erwerbsminderungsschutzes.
 4. Steuerberater: bKV (Fundstelle BMF 15.03.2022, jährliche Zahlung), Unterstützungskasse/Direktzusage, § 4e StBerG.
 5. BRSG II am Gesetzestext (BGBl. 2026 I Nr. 14) prüfen.

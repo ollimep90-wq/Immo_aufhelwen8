@@ -1,4 +1,4 @@
-# Ganzheitliche Finanzberatung – Stand 09.10.2026 (nach Endprüfung)
+# Ganzheitliche Finanzberatung – Stand 11.10.2026 (Endprüfung 09.10.2026, seitdem Nachträge)
 
 Arbeitstitel, Name und Marke der gemeinsamen Gesellschaft stehen noch nicht fest.
 Kein „Rosenbaum Finanzberatung“-Branding mehr.
@@ -8,10 +8,8 @@ Kein „Rosenbaum Finanzberatung“-Branding mehr.
 | Datei | Inhalt |
 |---|---|
 | `Konzept_Ganzheitliche_Finanzberatung.pdf` | internes Konzept, 24 Seiten |
-| `Kundenpraesentation_Ganzheitliche_Beratung.pdf` | Kundenpräsentation, 17 Folien (noch nicht versandfertig) |
-| `Gespraechsleitfaden_Bedarfsanalyse.pdf` | Gesprächsleitfaden mit Erfassungsbogen, 14 Seiten |
-| `leitfaden_interaktiv.html` | interaktiver Leitfaden, veröffentlicht unter https://claude.ai/artifact/8PEx1U7qHEJynfq8kDsrRW (privat) |
-| `src/*.html`, `build.py`, `assets/` | Quellen; PDFs neu bauen mit `python3 build.py` |
+| `Archiv/` | seit 11.10.2026: alte Kundenpräsentation, Gesprächsleitfaden und interaktiver Leitfaden (Sie), ersetzt durch die Decks in `Beratung/Privat/` und die App, siehe `Archiv/README.md` |
+| `src/konzept.html`, `build.py`, `assets/` | Quellen; PDF neu bauen mit `python3 build.py` |
 | `../Kooperation/pitch.pdf` | Kooperations-Pitch für Jan |
 
 ## Getroffene Entscheidungen (Angaben Oliver)
@@ -45,7 +43,7 @@ Kein „Rosenbaum Finanzberatung“-Branding mehr.
 4. **Platzhalter:** Registernummern, IHK, Kontaktdaten Oliver, Höhe der Darlehensprovision.
 5. **Edelmetalle:** Partnerhändler, Vergütung, Aufteilung Jan/Oliver.
 6. **Name und Marke:** Marken-, Register- und Domainprüfung; IHK-Anfrage zur Firmierung.
-7. **Feedback von Jan** zu Konzept, Präsentation und Leitfaden.
+7. **Feedback von Jan** zum Konzept; zu den Decks siehe `Beratung/STATUS.md` Punkt 9. (Präsentation und Leitfaden sind seit 11.10.2026 archiviert.)
 8. **Vor dem Start prüfen:** Anwalt (Vergütungsvereinbarung, Erstinformation, Abo-AGB), Steuerberater (USt), IHK.
 
 ## Rechenbasis
