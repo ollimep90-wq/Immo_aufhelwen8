@@ -49,7 +49,10 @@ Stand 11.10.2026. Geprüft mit dem Prüfagenten für Recht und Förderung am 11.
   - Gerechnet wird die Pflichtversicherung in der KVdR. Wer die Vorversicherungszeit nicht erfüllt, ist freiwillig versichert und zahlt anders.
   - Betriebsrenten und Versorgungsbezüge sind nicht enthalten.
   - Die Nettorente gilt für den Rentenbeginn. Später ist sie etwas zu hoch, weil der Rentenfreibetrag in Euro festgeschrieben ist.
-  - Die Renteninformation rechnet bis zur Regelaltersgrenze. Bei früherem Beginn fehlen Entgeltpunkte, und es gilt ein Abschlag von 0,3 % je Monat (§ 77 SGB VI). Die App weist darauf hin, rechnet es aber noch nicht.
+  - Die Renteninformation rechnet bis zur Regelaltersgrenze. Bei früherem Beginn fehlen Entgeltpunkte, und es gilt ein Abschlag von 0,3 % je Monat (§ 77 SGB VI). Seit 11.10.2026 rechnet die App das selbst, wenn beide Werte der Renteninformation eingetragen sind:
+    - Rente aus den bisherigen Beiträgen plus gleichmäßiger Zuwachs bis zum gewünschten Beginn. Das ist dieselbe Annahme, die die Renteninformation für die Hochrechnung trifft.
+    - Danach ein Abschlag von 0,3 % je Monat vor 67, höchstens 14,4 %. Mit 45 Versicherungsjahren entfällt er ab 65 (§ 38 SGB VI).
+    - Nur für Jahrgänge ab 1964 (Regelaltersgrenze 67). Für ältere Jahrgänge gibt die App einen Hinweis aus.
 
 - KV der Rentner: 14,6 % + Zusatzbeitrag, davon trägt der Rentner die Hälfte (§ 247, § 249a SGB V).
 - PV: voller Satz 3,6 % trägt der Rentner, kinderlos +0,6 Punkte (§ 59 Abs. 1, § 55 SGB XI). Kinderabschläge gelten nur für Kinder unter 25 und sind deshalb nicht angesetzt (Annahme: bei Rentenbeginn keine Kinder unter 25).

@@ -180,6 +180,22 @@
   }
   const est_ = (zve, verh, p) => est(zve, verh, p);
 
+  /* Vorzeitige Altersrente aus den zwei Werten der Renteninformation.
+   * bisher: Rente aus den bisherigen Beiträgen; hochrechnung: Rente bei Beiträgen bis zur Regelaltersgrenze.
+   * Annahme wie in der Renteninformation: gleichmäßiger Zuwachs je Jahr bis zur Regelaltersgrenze.
+   * Abschlag 0,3 % je Monat vor der Regelaltersgrenze, höchstens 48 Monate (§ 77 Abs. 2 SGB VI).
+   * Frühestens mit 63 bei 35 Jahren Wartezeit (§ 36); mit 45 Jahren ab 65 ohne Abschlag (§ 38). */
+  function renteVorzeitig(e) {
+    const rag = e.regelaltersgrenze || 67, alter = e.alter, beginn = e.beginn_alter;
+    const hoch = e.hochrechnung, bisher = e.bisher;
+    if (!(beginn < rag) || !(alter < rag)) return { brutto: hoch, brutto_ohne_abschlag: hoch, abschlag: 0, monate: 0, zulaessig: true };
+    const zuwachs = (hoch - bisher) / (rag - alter);
+    const ohne = beginn <= alter ? bisher : bisher + zuwachs * (beginn - alter);
+    const monate = Math.round((rag - beginn) * 12);
+    const abschlag = e.versicherungsjahre_45 && beginn >= 65 ? 0 : Math.min(monate, 48) * 0.003;
+    return { brutto: r2(ohne * (1 - abschlag)), brutto_ohne_abschlag: r2(ohne), abschlag, monate, zulaessig: beginn >= 63 };
+  }
+
   /* Risiko-Kurzcheck. antworten: {frageId: 0..4 | null (trifft nicht zu)}
    * fragen: [{id, block, gewichte:{art: 0..3}}]. Wertung wie im Excel-Prototyp:
    * je Block Mittelwert(gewicht × punkte) / Mittelwert(gewicht × 4), über Blöcke summiert. */
@@ -223,7 +239,7 @@
     };
   }
 
-  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, risikoAuswertung, budget };
+  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, renteVorzeitig, risikoAuswertung, budget };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Rechenkern = api;
 })(this);

@@ -450,6 +450,18 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
   const est_ = (zve, verh, p) => est(zve, verh, p);
 
   
+  function renteVorzeitig(e) {
+    const rag = e.regelaltersgrenze || 67, alter = e.alter, beginn = e.beginn_alter;
+    const hoch = e.hochrechnung, bisher = e.bisher;
+    if (!(beginn < rag) || !(alter < rag)) return { brutto: hoch, brutto_ohne_abschlag: hoch, abschlag: 0, monate: 0, zulaessig: true };
+    const zuwachs = (hoch - bisher) / (rag - alter);
+    const ohne = beginn <= alter ? bisher : bisher + zuwachs * (beginn - alter);
+    const monate = Math.round((rag - beginn) * 12);
+    const abschlag = e.versicherungsjahre_45 && beginn >= 65 ? 0 : Math.min(monate, 48) * 0.003;
+    return { brutto: r2(ohne * (1 - abschlag)), brutto_ohne_abschlag: r2(ohne), abschlag, monate, zulaessig: beginn >= 63 };
+  }
+
+  
   function risikoAuswertung(fragen, antworten) {
     const proBlock = {};
     fragen.forEach((f) => {
@@ -490,7 +502,7 @@ footer{color:var(--mute);font-size:12px;margin-top:30px}
     };
   }
 
-  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, risikoAuswertung, budget };
+  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, renteVorzeitig, risikoAuswertung, budget };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Rechenkern = api;
 })(this);

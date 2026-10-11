@@ -64,8 +64,13 @@
     h = h || {};
     const alter = num(h.alter1) || num(v.alter);
     if (!alter) return null;
-    const beginn = new Date().getFullYear() + Math.max(0, (num(v.rentenalter) || 67) - alter);
-    return Object.assign({ rentenbeginn_jahr: beginn }, R.nettoRente({ brutto_monat: num(v.gesetzl_brutto), rentenbeginn_jahr: beginn,
+    const jahr = new Date().getFullYear(), beginnAlter = num(v.rentenalter) || 67, beginn = jahr + Math.max(0, beginnAlter - alter);
+    // Regelaltersgrenze 67 gilt für Jahrgänge ab 1964 (§ 35 SGB VI); ältere: § 235 SGB VI, hier nicht automatisch
+    const rag67 = jahr - alter >= 1964;
+    const vz = rag67 && beginnAlter < 67 && num(v.gesetzl_bisher) > 0
+      ? R.renteVorzeitig({ bisher: num(v.gesetzl_bisher), hochrechnung: num(v.gesetzl_brutto), alter, beginn_alter: beginnAlter, versicherungsjahre_45: v.jahre45 === "ja" }) : null;
+    const brutto = vz ? vz.brutto : num(v.gesetzl_brutto);
+    return Object.assign({ rentenbeginn_jahr: beginn, vorzeitig: vz, rag67, beginn_alter: beginnAlter, hochrechnung: num(v.gesetzl_brutto) }, R.nettoRente({ brutto_monat: brutto, rentenbeginn_jahr: beginn,
       kv: h.kv1 === "pkv" ? "pkv" : "gkv", zusatzbeitrag: h.zb1 ? num(h.zb1) / 100 : undefined, pkv_beitrag_monat: num(v.pkv_alter),
       kinderlos: !(num(h.kinder_u25) > 0 || h.eltern === "ja"), verheiratet: h.familie === "verheiratet",
       partner_brutto_monat: num(v.partner_rente), kirche: h.kirche === "ja", bundesland: h.land }));
@@ -234,7 +239,9 @@
         ${feld("depot", "Depots und Fonds")}${feld("immobilien", "Immobilien (Verkehrswert)")}${feld("sonstverm", "Sonstiges Vermögen")}
         ${feld("schulden", "Kredite (Restschuld)")}${feld("av_kapital", 'Kapital fürs Alter heute <span class="hint">z. B. Riester, bAV-Wert</span>')}<div></div></div></div>
         <div class="card"><h2 style="margin-top:0">Rentenlücke</h2><div class="row3">
-        ${feld("rentenalter", "Rentenbeginn mit Alter")}${feld("gesetzl_brutto", 'Gesetzliche Rente brutto <span class="hint">Betrag aus der Renteninformation</span>')}
+        ${feld("rentenalter", "Rentenbeginn mit Alter")}${feld("gesetzl_brutto", 'Gesetzliche Rente brutto, Hochrechnung <span class="hint">Renteninformation: bei Beiträgen bis zur Regelaltersgrenze</span>')}
+        ${feld("gesetzl_bisher", 'Rente aus bisherigen Beiträgen <span class="hint">Renteninformation: bislang erreichte Anwartschaft; nötig bei Beginn vor 67</span>')}
+        ${seg("jahre45", "45 Versicherungsjahre bis Rentenbeginn?", [["ja", "Ja"], ["nein", "Nein"]])}
         ${feld("netto_basis", 'Netto heute <span class="hint">leer = Person 1 aus Haushalt</span>')}
         ${feld("partner_rente", 'Rente Ehepartner brutto <span class="hint">nur verheiratet, für das Splitting; leer = gleich hohe Einkünfte angenommen</span>')}
         ${feld("pkv_alter", 'PKV-Beitrag im Alter/Monat <span class="hint">nur privat versichert</span>')}
@@ -334,7 +341,11 @@
         <span class="small">${eur(rn.brutto_monat)} brutto − Krankenversicherung ${eur(rn.kv_monat)} − Pflegeversicherung ${eur(rn.pv_monat)}${rn.zuschuss_monat ? " + Zuschuss der Rentenversicherung " + eur(rn.zuschuss_monat) : ""} − Steuern ${eur(rn.steuer_monat)}.
         Rentenbeginn ${rn.rentenbeginn_jahr}, steuerpflichtig ${(rn.besteuerungsanteil * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} %. Regeln 2026 (Krankenversicherung, Zusatzbeitrag und Kirchensteuer laut Tab Haushalt, Person 1; ohne Zusatzbeitrag im Haushalt gilt der Durchschnitt 2,9 %).
         Annahmen: Pflichtversicherung in der Krankenversicherung der Rentner, keine weiteren Einkünfte im Alter. Betriebsrenten sind nicht enthalten. Der Rentenfreibetrag bleibt in Euro gleich, deshalb steigt die Steuer im Rentenverlauf etwas; der Wert gilt für den Rentenbeginn.</span>
-        ${(num(ein.rentenalter) || 67) < 67 ? `<br><span class="small" style="color:var(--red)">Rentenbeginn vor 67: Die Renteninformation rechnet bis zur Regelaltersgrenze. Bei Beginn mit ${num(ein.rentenalter)} fehlen Beitragsjahre, und es gilt ein lebenslanger Abschlag von 0,3 % je Monat (höchstens 14,4 %, § 77 SGB VI). Frühestens mit 63 und 35 Jahren Wartezeit (§ 36 SGB VI). Bitte den Bruttobetrag entsprechend verringern, die App rechnet das noch nicht.</span>` : ""}
+        ${rn.vorzeitig ? `<br><span class="small">Beginn mit ${rn.beginn_alter} statt 67: Aus ${eur(rn.hochrechnung)} Hochrechnung werden ${eur(rn.vorzeitig.brutto_ohne_abschlag)} (weniger Beitragsjahre, gleichmäßiger Zuwachs angenommen), nach ${(rn.vorzeitig.abschlag * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} % Abschlag ${eur(rn.vorzeitig.brutto)} brutto. Der Abschlag gilt lebenslang (§ 77 SGB VI).</span>
+          ${rn.vorzeitig.zulaessig ? "" : '<br><span class="small" style="color:var(--red)">Eine Altersrente vor 63 gibt es regulär nicht (Ausnahme: schwerbehinderte Menschen, § 37 SGB VI). Bitte den Rentenbeginn prüfen.</span>'}
+          ${rn.beginn_alter < 65 || ein.jahre45 !== "ja" ? '<br><span class="small">Vorausgesetzt sind 35 Jahre Wartezeit (§ 36 SGB VI). Mit 45 Jahren gibt es die Rente ab 65 ohne Abschlag (§ 38 SGB VI).</span>' : ""}`
+        : rn.beginn_alter < 67 && !rn.rag67 ? '<br><span class="small" style="color:var(--red)">Jahrgang vor 1964: Die Regelaltersgrenze liegt unter 67 (§ 235 SGB VI). Vorzeitige Rente hier bitte von Hand rechnen.</span>'
+        : rn.beginn_alter < 67 ? '<br><span class="small" style="color:var(--red)">Rentenbeginn vor 67: Bitte die Rente aus bisherigen Beiträgen eintragen. Erst dann rechnet die App die fehlenden Beitragsjahre und den Abschlag heraus.</span>' : ""}
         ${rn.unvollstaendig ? '<br><span class="small" style="color:var(--red)">Privat versichert: Bitte den PKV-Beitrag im Alter eintragen, sonst fehlt er in der Rechnung.</span>' : ""}`
         : num(ein.gesetzl_brutto) > 0 ? "Für die Netto-Rechnung fehlt das Alter (Tab Haushalt)." : "";
       $("vorsorge-erg").innerHTML = vs ? `<div><small>Wunsch</small><b>${eur(vs.wunsch)}</b></div><div><small>Lücke heute</small><b>${eur(vs.luecke)}</b><small>nominal ${eur(vs.luecke_nominal)}</small></div>
@@ -377,7 +388,7 @@
     }
     const vs = daten("altersvorsorge") ? vorsorgeRechnung(av, h, hr) : null;
     const rn = renteNetto(av, h);
-    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: rn ? rn.netto_monat : num(av.gesetzl), gesetzlich_brutto: rn ? rn.brutto_monat : null, luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
+    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: rn ? rn.netto_monat : num(av.gesetzl), gesetzlich_brutto: rn ? rn.brutto_monat : null, vorzeitig: rn && rn.vorzeitig ? { abschlag: rn.vorzeitig.abschlag, beginn_alter: rn.beginn_alter } : null, luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
       rentenalter: num(av.rentenalter) || 67, vorhanden: vs.vorhanden_real,
       // gerechnet wird für Person 1, außer der Berater hat bewusst ein Haushaltsnetto eingetragen
       gerechnet_fuer: (num(h.brutto2) || num(h.netto2)) && !num(av.netto_basis) ? (h.name1 || "Person 1") : "",
@@ -488,7 +499,7 @@
     wohnen: "Wohnen", land: "Bundesland", kirche: "Kirchensteuer", sonstige: "Weitere Einnahmen/Monat", sparen: "Sparraten/Monat",
     liquide: "Konto und Tagesgeld", netto_manuell: "Netto/Monat (manuell)", depot: "Depots und Fonds", immobilien: "Immobilien",
     sonstverm: "Sonstiges Vermögen", schulden: "Kredite (Restschuld)", av_kapital: "Kapital fürs Alter heute", rentenalter: "Rentenbeginn mit",
-    gesetzl: "Gesetzliche Rente netto (von Hand)", gesetzl_brutto: "Gesetzliche Rente brutto (Renteninformation)",
+    gesetzl: "Gesetzliche Rente netto (von Hand)", gesetzl_brutto: "Gesetzliche Rente brutto, Hochrechnung bis Regelaltersgrenze", gesetzl_bisher: "Rente aus bisherigen Beiträgen", jahre45: "45 Versicherungsjahre bis Rentenbeginn",
     partner_rente: "Rente Ehepartner brutto", pkv_alter: "PKV-Beitrag im Alter/Monat", netto_basis: "Netto heute (Rentenrechnung)", zielquote: "Ziel in % vom Netto", rendite: "Rendite vor Kosten %",
     kosten: "Kosten %", inflation: "Inflation %", entnahme: "Reale Rendite Auszahlung %", rentendauer: "Auszahlungsdauer Jahre", notizen: "Notizen"
   }, Object.fromEntries(FIX), Object.fromEntries([1, 2].flatMap((i) => [["name" + i, "Person " + i + ": Name"], ["alter" + i, "Person " + i + ": Alter"],

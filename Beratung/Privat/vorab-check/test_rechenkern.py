@@ -131,6 +131,16 @@ if __name__ == "__main__":
         j = js_rente(f)["netto_monat"]
         maxr = max(maxr, abs(py - j)); assert abs(py - j) < 0.01, (f, py, j)
     print(f"{len(RENTEN)} Rentenfälle, größte Abweichung JS/Python {maxr:.4f} €")
+    # Vorzeitige Rente: eigene Rechnung
+    def vorzeitig(bisher, hoch, alter, beginn, j45=False, rag=67):
+        if beginn >= rag or alter >= rag: return hoch
+        ohne = bisher + (hoch - bisher) / (rag - alter) * max(0, beginn - alter)
+        ab = 0 if (j45 and beginn >= 65) else min(round((rag - beginn) * 12), 48) * 0.003
+        return round(ohne * (1 - ab), 2)
+    for bisher, hoch, alter, beginn, j45 in itertools.product([600, 900], [1500, 2100], [30, 38, 55], [63, 64, 65, 66, 67], [False, True]):
+        j = json.loads(subprocess.check_output(["node", "-e", f"const R=require('{HIER/'rechenkern.js'}');console.log(JSON.stringify(R.renteVorzeitig({json.dumps(dict(bisher=bisher, hochrechnung=hoch, alter=alter, beginn_alter=beginn, versicherungsjahre_45=j45))})))"]))
+        assert abs(j["brutto"] - vorzeitig(bisher, hoch, alter, beginn, j45)) < 0.01, (bisher, hoch, alter, beginn, j45, j)
+    print("Vorzeitige Rente: 120 Fälle gleich")
     for b in (1500, 2200):
         r = js_rente(dict(brutto_monat=b, rentenbeginn_jahr=2051, kv="gkv", kinderlos=False))
         print(f"Beispiel {b} € brutto, Beginn 2051, GKV, Eltern: netto {r['netto_monat']} € (KV {r['kv_monat']}, PV {r['pv_monat']}, Steuer {r['steuer_monat']}, Anteil {r['besteuerungsanteil']:.3f})")
