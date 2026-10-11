@@ -29,7 +29,9 @@
     pv_satz: 0.036, pv_an_sachsen_plus: 0.005, pv_kinderlos: 0.006,
     pv_abschlag_je_kind: 0.0025, pv_abschlag_max_kinder: 5,
     rv_satz: 0.186, av_satz: 0.026,
-    vsp_grenze_sonstige: 1900
+    vsp_grenze_sonstige: 1900,
+    // Renten (Quellen: QUELLEN.md, Abschnitt Netto-Rente)
+    rente: { wk_pauschbetrag: 102, anteil_basisjahr: 2023, anteil_basis: 0.825, anteil_schritt: 0.005 }
   };
 
   const r2 = (x) => Math.round(x * 100) / 100;
@@ -126,6 +128,58 @@
     return { personen: out, netto_jahr: r2(netto_jahr), netto_monat: r2(netto_jahr / 12) };
   }
 
+  /* Netto-Rente aus der gesetzlichen Bruttorente (Renteninformation), Jahreswerte in heutiger Kaufkraft.
+   * NÄHERUNG mit den Rechengrößen 2026: Steuertarif 2026 auf heutige Beträge, Besteuerungsanteil auf die
+   * ganze Rente (der Rentenfreibetrag wird in Wirklichkeit in Euro festgeschrieben), keine weiteren Einkünfte.
+   * e: {brutto_monat, rentenbeginn_jahr, kv:'gkv'|'pkv', zusatzbeitrag, pkv_beitrag_monat, kinderlos,
+   *     verheiratet, partner_brutto_monat (optional), kirche, bundesland}
+   * Verheiratet ohne Partnerrente: Grundtarif je Person, d. h. Annahme gleich hoher Einkünfte beider. */
+  function besteuerungsanteil(jahr, p) {
+    const r = (p || P2026).rente;
+    return Math.min(1, Math.max(r.anteil_basis, r.anteil_basis + r.anteil_schritt * (jahr - r.anteil_basisjahr)));
+  }
+  function renteAbgaben(e, brutto, p) {
+    const j = brutto * 12, zb = e.zusatzbeitrag != null ? e.zusatzbeitrag : p.zusatzbeitrag_schnitt;
+    if (e.kv === "pkv") {
+      const pkv = (e.pkv_beitrag_monat || 0) * 12;
+      const zuschuss = Math.min(j * (p.kv_satz + p.zusatzbeitrag_schnitt) / 2, pkv / 2);
+      return { kv: pkv, pv: 0, zuschuss, vorsorge: Math.max(0, pkv - zuschuss) };
+    }
+    const kv = j * (p.kv_satz + zb) / 2;
+    const pv = j * (p.pv_satz + (e.kinderlos ? p.pv_kinderlos : 0));
+    return { kv, pv, zuschuss: 0, vorsorge: kv + pv };
+  }
+  function renteZve(e, brutto, p) {
+    const a = renteAbgaben(e, brutto, p);
+    const anteil = besteuerungsanteil(e.rentenbeginn_jahr, p);
+    const zve = Math.max(0, brutto * 12 * anteil - p.rente.wk_pauschbetrag - p.sonderausgaben_pauschbetrag - a.vorsorge);
+    return { a, anteil, zve };
+  }
+  function nettoRente(e, p) {
+    p = p || P2026;
+    const brutto = Math.max(0, e.brutto_monat || 0);
+    const ich = renteZve(e, brutto, p);
+    const kist = e.kirche ? (p.kist[e.bundesland] || p.kist.sonst) : 0;
+    let est, soli;
+    const partner = e.verheiratet && e.partner_brutto_monat > 0 ? renteZve(e, e.partner_brutto_monat, p) : null;
+    if (partner) {
+      const z = ich.zve + partner.zve, gesamt = est_(z, true, p), fg = 2 * p.soli.freigrenze;
+      const s = gesamt > fg ? Math.min(gesamt * p.soli.satz, (gesamt - fg) * p.soli.milderung) : 0;
+      const anteil = z > 0 ? ich.zve / z : 0.5;
+      est = gesamt * anteil; soli = s * anteil;
+    } else {
+      est = tarif(ich.zve, p);
+      soli = est > p.soli.freigrenze ? Math.min(est * p.soli.satz, (est - p.soli.freigrenze) * p.soli.milderung) : 0;
+    }
+    const k = est * kist;
+    const a = ich.a, j = brutto * 12;
+    const netto = j - a.kv - a.pv + a.zuschuss - est - soli - k;
+    return { brutto_monat: r2(brutto), kv_monat: r2(a.kv / 12), pv_monat: r2(a.pv / 12), zuschuss_monat: r2(a.zuschuss / 12),
+             steuer_monat: r2((est + soli + k) / 12), besteuerungsanteil: ich.anteil, zve: r2(ich.zve),
+             netto_monat: r2(netto / 12), unvollstaendig: e.kv === "pkv" && !(e.pkv_beitrag_monat > 0) };
+  }
+  const est_ = (zve, verh, p) => est(zve, verh, p);
+
   /* Risiko-Kurzcheck. antworten: {frageId: 0..4 | null (trifft nicht zu)}
    * fragen: [{id, block, gewichte:{art: 0..3}}]. Wertung wie im Excel-Prototyp:
    * je Block Mittelwert(gewicht × punkte) / Mittelwert(gewicht × 4), über Blöcke summiert. */
@@ -169,7 +223,7 @@
     };
   }
 
-  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, risikoAuswertung, budget };
+  const api = { P2026, tarif, est, sozialabgaben, nettoHaushalt, besteuerungsanteil, nettoRente, risikoAuswertung, budget };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.Rechenkern = api;
 })(this);

@@ -37,3 +37,18 @@ Der Rechenkern betrachtet nur das ganze Jahr. Er bildet nicht ab:
 - Günstigerprüfung Kinderfreibetrag gegen Kindergeld: nicht gerechnet, nur als Hinweis.
 - Übergangsbereich und Minijob: nicht abgebildet. Unter 24.000 € Jahresbrutto erscheint ein Hinweis.
 - **Jährlich neu:** Werte für 2027 nach dem neuen Programmablaufplan (erscheint üblicherweise im November).
+
+## Netto-Rente (Beratungs-App, Tab „Vermögen & Vorsorge“)
+
+Stand 11.10.2026. Die Rechtsprüfung der Werte läuft, Ergebnis wird hier nachgetragen.
+
+- KV der Rentner: 14,6 % + Zusatzbeitrag, davon trägt der Rentner die Hälfte (§ 247, § 249a SGB V).
+- PV: voller Satz 3,6 % trägt der Rentner, kinderlos +0,6 Punkte (§ 59 Abs. 1, § 55 SGB XI). Kinderabschläge gelten nur für Kinder unter 25 und sind deshalb nicht angesetzt (Annahme: bei Rentenbeginn keine Kinder unter 25).
+- PKV: Zuschuss der Rentenversicherung (§ 106 SGB VI), steuerfrei (§ 3 Nr. 14 EStG). Den PKV-Beitrag im Alter trägt der Berater ein.
+- Besteuerungsanteil: 82,5 % bei Rentenbeginn 2023, +0,5 Punkte je Jahr, 100 % ab 2058 (§ 22 Nr. 1 S. 3 a aa EStG i. d. F. Wachstumschancengesetz).
+- Werbungskosten-Pauschbetrag 102 € (§ 9a S. 1 Nr. 3 EStG), Sonderausgaben-Pauschbetrag 36 € (§ 10c EStG), KV/PV als Vorsorgeaufwendungen (§ 10 Abs. 1 Nr. 3 EStG).
+- **Vereinfachungen (Annahmen):**
+  - Tarif 2026 auf Beträge in heutiger Kaufkraft.
+  - Besteuerungsanteil auf die ganze Rente, obwohl der Rentenfreibetrag in Euro festgeschrieben wird.
+  - Keine weiteren Einkünfte im Alter.
+  - Verheiratet ohne Angabe der Partnerrente: gleich hohe Einkünfte beider.

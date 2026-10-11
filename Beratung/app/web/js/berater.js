@@ -58,15 +58,28 @@
     return Object.assign({ fixkosten: fk }, R.budget({ netto_monat: hr ? hr.netto_monat : num(b.netto_manuell),
       kindergeld_monat: hr ? hr.kindergeld : 0, sonstige_einnahmen: num(b.sonstige), fixkosten: fk, sparen: num(b.sparen), liquide: num(b.liquide) }));
   }
+  /* Gesetzliche Rente netto aus brutto (Renteninformation), Regeln 2026, Person 1 */
+  function renteNetto(v, h) {
+    if (!v || !(num(v.gesetzl_brutto) > 0)) return null;
+    h = h || {};
+    const alter = num(h.alter1) || num(v.alter);
+    if (!alter) return null;
+    const beginn = new Date().getFullYear() + Math.max(0, (num(v.rentenalter) || 67) - alter);
+    return Object.assign({ rentenbeginn_jahr: beginn }, R.nettoRente({ brutto_monat: num(v.gesetzl_brutto), rentenbeginn_jahr: beginn,
+      kv: h.kv1 === "pkv" ? "pkv" : "gkv", zusatzbeitrag: h.zb1 ? num(h.zb1) / 100 : undefined, pkv_beitrag_monat: num(v.pkv_alter),
+      kinderlos: !(num(h.kinder_u25) > 0 || h.eltern === "ja"), verheiratet: h.familie === "verheiratet",
+      partner_brutto_monat: num(v.partner_rente), kirche: h.kirche === "ja", bundesland: h.land }));
+  }
   function vorsorgeRechnung(v, h, hr) {
     if (!v) return null;
     const alter = num(h && h.alter1) || num(v.alter);
     const jahre = Math.max(0, (num(v.rentenalter) || 67) - alter);
+    const rn = renteNetto(v, h);
     if (!jahre) return null;
     // Standard: Person 1 (die gesetzliche Rente ist eine Einzelangabe); Haushalt nur bewusst über netto_basis
     const p1 = hr && hr.rechnung && hr.rechnung.personen[0];
     const netto = num(v.netto_basis) || (h && num(h.netto1)) || (p1 ? p1.netto_monat : 0);
-    return V.rentenluecke({ netto, gesetzl_netto: num(v.gesetzl), jahre_bis_rente: jahre, vorhanden: num(v.av_kapital) },
+    return V.rentenluecke({ netto, gesetzl_netto: rn ? rn.netto_monat : num(v.gesetzl), jahre_bis_rente: jahre, vorhanden: num(v.av_kapital) },
       { zielquote: num(v.zielquote) / 100 || V.STANDARD.zielquote, rendite: v.rendite !== "" && v.rendite != null ? num(v.rendite) / 100 : V.STANDARD.rendite,
         kosten: v.kosten !== "" && v.kosten != null ? num(v.kosten) / 100 : V.STANDARD.kosten, inflation: v.inflation !== "" && v.inflation != null ? num(v.inflation) / 100 : V.STANDARD.inflation,
         entnahme_real: v.entnahme !== "" && v.entnahme != null ? num(v.entnahme) / 100 : V.STANDARD.entnahme_real, rentendauer: num(v.rentendauer) || V.STANDARD.rentendauer });
@@ -221,14 +234,18 @@
         ${feld("depot", "Depots und Fonds")}${feld("immobilien", "Immobilien (Verkehrswert)")}${feld("sonstverm", "Sonstiges Vermögen")}
         ${feld("schulden", "Kredite (Restschuld)")}${feld("av_kapital", 'Kapital fürs Alter heute <span class="hint">z. B. Riester, bAV-Wert</span>')}<div></div></div></div>
         <div class="card"><h2 style="margin-top:0">Rentenlücke</h2><div class="row3">
-        ${feld("rentenalter", "Rentenbeginn mit Alter")}${feld("gesetzl", 'Gesetzliche Rente netto <span class="hint">heutige Kaufkraft. Aus dem Vorab-Check übernommen ist das die Angabe des Kunden, meist der Bruttobetrag aus der Renteninformation: vor dem Rechnen auf netto umstellen</span>')}
-        ${feld("netto_basis", 'Netto heute <span class="hint">leer = Person 1 aus Haushalt</span>')}</div>
+        ${feld("rentenalter", "Rentenbeginn mit Alter")}${feld("gesetzl_brutto", 'Gesetzliche Rente brutto <span class="hint">Betrag aus der Renteninformation</span>')}
+        ${feld("netto_basis", 'Netto heute <span class="hint">leer = Person 1 aus Haushalt</span>')}
+        ${feld("partner_rente", 'Rente Ehepartner brutto <span class="hint">nur verheiratet, für das Splitting; leer = gleich hohe Einkünfte angenommen</span>')}
+        ${feld("pkv_alter", 'PKV-Beitrag im Alter/Monat <span class="hint">nur privat versichert</span>')}
+        ${feld("gesetzl", 'Gesetzliche Rente netto <span class="hint">nur von Hand, wenn brutto leer</span>')}</div>
+        <div class="info" id="rente-netto" style="margin-top:10px"></div>
         <p class="hint">Gerechnet wird für eine Person (Standard: Person 1). Für Person 2 oder den Haushalt Netto und gesetzliche Renten hier passend eintragen.</p>
         <h3>Annahmen <span class="hint">leer = Standard wie in den Präsentationen</span></h3><div class="row3">
         ${feld("zielquote", "Ziel in % vom Netto (80)")}${feld("rendite", "Rendite vor Kosten % (6)")}${feld("kosten", "Kosten % (1,3)")}
         ${feld("inflation", "Inflation % (2)")}${feld("entnahme", "Reale Rendite in der Auszahlung % (1)")}${feld("rentendauer", "Auszahlungsdauer Jahre (25)")}</div>
         <div class="kpi" id="vorsorge-erg" style="margin-top:12px"></div>
-        <p class="hint">Rechenbeispiel in heutiger Kaufkraft, ohne Steuern und Sozialabgaben. Annahmen, keine Prognose.</p></div>`;
+        <p class="hint">Rechenbeispiel in heutiger Kaufkraft. Die Netto-Rente folgt den Regeln von 2026; Kapital und Sparrate sind ohne Steuern auf Erträge gerechnet. Annahmen, keine Prognose.</p></div>`;
     },
     risiko() {
       const k = filterKontext();
@@ -311,7 +328,13 @@
         <div><small>Notreserve</small><b><span class="amp ${AMP(b.reserve_ampel)}"></span>${monate(b.reserve_monate)} Monate</b></div>` : "";
     },
     vorsorge() {
-      const h = daten("haushalt"), vs = vorsorgeRechnung(lies($("inhalt")), h, haushaltRechnung(h));
+      const h = daten("haushalt"), ein = lies($("inhalt")), vs = vorsorgeRechnung(ein, h, haushaltRechnung(h)), rn = renteNetto(ein, h);
+      $("rente-netto").hidden = !(num(ein.gesetzl_brutto) > 0);
+      $("rente-netto").innerHTML = rn ? `<b>Gesetzliche Rente netto: ${eur(rn.netto_monat)}</b> im Monat (heutige Kaufkraft)<br>
+        <span class="small">${eur(rn.brutto_monat)} brutto − Krankenversicherung ${eur(rn.kv_monat)} − Pflegeversicherung ${eur(rn.pv_monat)}${rn.zuschuss_monat ? " + Zuschuss der Rentenversicherung " + eur(rn.zuschuss_monat) : ""} − Steuern ${eur(rn.steuer_monat)}.
+        Rentenbeginn ${rn.rentenbeginn_jahr}, steuerpflichtig ${(rn.besteuerungsanteil * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} %. Regeln 2026 (Krankenversicherung und Kirchensteuer laut Tab Haushalt, Person 1).</span>
+        ${rn.unvollstaendig ? '<br><span class="small" style="color:var(--red)">Privat versichert: Bitte den PKV-Beitrag im Alter eintragen, sonst fehlt er in der Rechnung.</span>' : ""}`
+        : num(ein.gesetzl_brutto) > 0 ? "Für die Netto-Rechnung fehlt das Alter (Tab Haushalt)." : "";
       $("vorsorge-erg").innerHTML = vs ? `<div><small>Wunsch</small><b>${eur(vs.wunsch)}</b></div><div><small>Lücke heute</small><b>${eur(vs.luecke)}</b><small>nominal ${eur(vs.luecke_nominal)}</small></div>
         <div><small>Kapitalbedarf</small><b>${eur(vs.kapital)}</b></div><div><small>Davon gedeckt</small><b>${eur(vs.vorhanden_real)}</b></div>
         <div><small>Sparrate</small><b>${eur(vs.sparrate)}</b><small>real ${(vs.real_anspar * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} % p. a.</small></div>` : '<div><small>Für die Rechnung fehlen Alter (Tab Haushalt) oder Rentenbeginn.</small></div>';
@@ -351,7 +374,8 @@
         ausgaben: FIX.map(([k, n]) => ({ name: n, betrag: zahl(fk[k]) })) };
     }
     const vs = daten("altersvorsorge") ? vorsorgeRechnung(av, h, hr) : null;
-    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: num(av.gesetzl), luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
+    const rn = renteNetto(av, h);
+    const vorsorge = vs ? { wunsch: vs.wunsch, gesetzlich: rn ? rn.netto_monat : num(av.gesetzl), gesetzlich_brutto: rn ? rn.brutto_monat : null, luecke: vs.luecke, kapital: vs.kapital, sparrate: vs.sparrate,
       rentenalter: num(av.rentenalter) || 67, vorhanden: vs.vorhanden_real,
       // gerechnet wird für Person 1, außer der Berater hat bewusst ein Haushaltsnetto eingetragen
       gerechnet_fuer: (num(h.brutto2) || num(h.netto2)) && !num(av.netto_basis) ? (h.name1 || "Person 1") : "",
@@ -393,7 +417,7 @@
       return o; }); },
     budget() { uebernehmen((va) => Object.assign({}, va.fixkosten, { sparen: va.sparen, liquide: va.vermoegen && va.vermoegen.liquide, sonstige: va.einkommen && va.einkommen.sonstige })); },
     vorsorge() { uebernehmen((va) => ({ depot: va.vermoegen && va.vermoegen.depot, sonstverm: va.vermoegen && va.vermoegen.sonstiges,
-      schulden: va.vermoegen && va.vermoegen.schulden, gesetzl: va.vermoegen && va.vermoegen.rente_erwartet, rentenalter: va.ruhestand_alter })); },
+      schulden: va.vermoegen && va.vermoegen.schulden, gesetzl_brutto: va.vermoegen && va.vermoegen.rente_erwartet, rentenalter: va.ruhestand_alter })); },
     bericht() {
       // vor jeder Vorschau/Freigabe frisch laden (z. B. Jans neue Bewertung)
       const auffrischen = async () => { try { const n = await api.get("/api/akten/" + akte.id); akte.abschnitte = n.abschnitte; } catch (e) { fehler(e.message); } };
@@ -462,7 +486,8 @@
     wohnen: "Wohnen", land: "Bundesland", kirche: "Kirchensteuer", sonstige: "Weitere Einnahmen/Monat", sparen: "Sparraten/Monat",
     liquide: "Konto und Tagesgeld", netto_manuell: "Netto/Monat (manuell)", depot: "Depots und Fonds", immobilien: "Immobilien",
     sonstverm: "Sonstiges Vermögen", schulden: "Kredite (Restschuld)", av_kapital: "Kapital fürs Alter heute", rentenalter: "Rentenbeginn mit",
-    gesetzl: "Gesetzliche Rente netto", netto_basis: "Netto heute (Rentenrechnung)", zielquote: "Ziel in % vom Netto", rendite: "Rendite vor Kosten %",
+    gesetzl: "Gesetzliche Rente netto (von Hand)", gesetzl_brutto: "Gesetzliche Rente brutto (Renteninformation)",
+    partner_rente: "Rente Ehepartner brutto", pkv_alter: "PKV-Beitrag im Alter/Monat", netto_basis: "Netto heute (Rentenrechnung)", zielquote: "Ziel in % vom Netto", rendite: "Rendite vor Kosten %",
     kosten: "Kosten %", inflation: "Inflation %", entnahme: "Reale Rendite Auszahlung %", rentendauer: "Auszahlungsdauer Jahre", notizen: "Notizen"
   }, Object.fromEntries(FIX), Object.fromEntries([1, 2].flatMap((i) => [["name" + i, "Person " + i + ": Name"], ["alter" + i, "Person " + i + ": Alter"],
     ["brutto" + i, "Person " + i + ": Brutto/Jahr"], ["kv" + i, "Person " + i + ": Krankenversicherung"], ["zb" + i, "Person " + i + ": Zusatzbeitrag %"],

@@ -74,6 +74,43 @@ for b1, k, eltern in itertools.product([20000, 45000, 90000], [0, 1, 2], [False,
     FAELLE.append(dict(personen=[dict(brutto=b1, kv="gkv", alter=50, kinder_u25=k, eltern=eltern)], verheiratet=False,
                        kinder=k, kirche=False, bundesland="NW", alleinerziehend=k > 0))
 
+# Netto-Rente: eigene Abschrift der Regeln (KVdR § 247/§ 249a SGB V, PV § 59 SGB XI, PKV-Zuschuss § 106 SGB VI,
+# Besteuerungsanteil § 22 Nr. 1 S. 3 a aa EStG i. d. F. Wachstumschancengesetz, § 9a S. 1 Nr. 3, § 10c EStG)
+def anteil(jahr):
+    return min(1.0, max(0.825, 0.825 + 0.005 * (jahr - 2023)))
+
+def rente_zve(b, jahr, kv="gkv", zb=0.029, pkv=0, kinderlos=False):
+    j = b * 12
+    if kv == "pkv":
+        beitrag = pkv * 12; zu = min(j * (0.146 + 0.029) / 2, beitrag / 2)
+        abz = dict(kv=beitrag, pv=0, zu=zu); vsp = max(0, beitrag - zu)
+    else:
+        k = j * (0.146 + zb) / 2; pv = j * (0.036 + (0.006 if kinderlos else 0))
+        abz = dict(kv=k, pv=pv, zu=0); vsp = k + pv
+    return max(0, j * anteil(jahr) - 102 - 36 - vsp), abz
+
+def netto_rente(b, jahr, verh=False, partner=0, kirche=False, land="NW", **kw):
+    z, abz = rente_zve(b, jahr, **kw)
+    kist = (0.08 if land in ("BY", "BW") else 0.09) if kirche else 0
+    if verh and partner > 0:
+        z2, _ = rente_zve(partner, jahr, **kw)
+        g = 2 * tarif_2026((z + z2) / 2); s = soli(g, 40700); a = z / (z + z2) if z + z2 > 0 else 0.5
+        e, so = g * a, s * a
+    else:
+        e = tarif_2026(z); so = soli(e, 20350)
+    return (b * 12 - abz["kv"] - abz["pv"] + abz["zu"] - e - so - e * kist) / 12
+
+def js_rente(fall):
+    code = f"""const R=require('{HIER/'rechenkern.js'}');
+console.log(JSON.stringify(R.nettoRente({json.dumps(fall)})));"""
+    return json.loads(subprocess.check_output(["node", "-e", code]))
+
+RENTEN = []
+for b, jahr, kv, kinderlos, verh, partner, kirche in itertools.product(
+        [0, 800, 1500, 2200, 3500], [2030, 2045, 2058, 2070], ["gkv", "pkv"], [False, True], [False, True], [0, 900], [False, True]):
+    RENTEN.append(dict(brutto_monat=b, rentenbeginn_jahr=jahr, kv=kv, zusatzbeitrag=0.029, pkv_beitrag_monat=650 if kv == "pkv" else 0,
+                       kinderlos=kinderlos, verheiratet=verh, partner_brutto_monat=partner, kirche=kirche, bundesland="NW"))
+
 if __name__ == "__main__":
     # Tarif stetig an den Zonengrenzen
     for g in (12348, 17799, 69878, 277825):
@@ -86,3 +123,14 @@ if __name__ == "__main__":
         maxdiff = max(maxdiff, abs(py - j))
         assert abs(py - j) < 0.05, (f, py, j)
     print(f"{len(FAELLE)} Fälle, größte Abweichung JS/Python {maxdiff:.4f} €")
+    assert anteil(2023) == 0.825 and anteil(2058) == 1.0 and anteil(2026) == 0.84
+    maxr = 0
+    for f in RENTEN:
+        py = netto_rente(f["brutto_monat"], f["rentenbeginn_jahr"], f["verheiratet"], f["partner_brutto_monat"], f["kirche"], f["bundesland"],
+                         kv=f["kv"], zb=f["zusatzbeitrag"], pkv=f["pkv_beitrag_monat"], kinderlos=f["kinderlos"])
+        j = js_rente(f)["netto_monat"]
+        maxr = max(maxr, abs(py - j)); assert abs(py - j) < 0.01, (f, py, j)
+    print(f"{len(RENTEN)} Rentenfälle, größte Abweichung JS/Python {maxr:.4f} €")
+    for b in (1500, 2200):
+        r = js_rente(dict(brutto_monat=b, rentenbeginn_jahr=2051, kv="gkv", kinderlos=False))
+        print(f"Beispiel {b} € brutto, Beginn 2051, GKV, Eltern: netto {r['netto_monat']} € (KV {r['kv_monat']}, PV {r['pv_monat']}, Steuer {r['steuer_monat']}, Anteil {r['besteuerungsanteil']:.3f})")

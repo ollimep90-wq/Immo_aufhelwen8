@@ -92,7 +92,9 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
       - Alle Annahmen der Rentenrechnung stehen in der Fußnote.
       - Der Pflichthinweis ist ohne Fachbegriffe formuliert und erwähnt die Versicherungseinschätzung.
       - Statt „deines Versicherungsmaklers“ steht dort der Name des zuständigen Ansprechpartners. **Offen:** Jans Status im Vermittlerregister prüfen (Makler, Vertreter oder Berater), bevor eine Statusbezeichnung verwendet wird.
-      - **Offen:** Im Vorab-Check geben Kunden die Rente meist brutto an (Renteninformation). Der Berater muss sie vor der Rechnung auf netto umstellen. Ein Hinweis dazu steht im Tab.
+      - **Netto-Rente (11.10.2026):** Die App rechnet die gesetzliche Rente selbst von brutto (Renteninformation) auf netto um. Grundlage sind Kranken- und Pflegeversicherung der Rentner, der Besteuerungsanteil nach Rentenbeginn und der Tarif 2026. Die Regeln stehen in `Privat/vorab-check/QUELLEN.md`, die Rechtsprüfung läuft.
+        - *Korrektur:* Vorher ging der Bruttobetrag des Kunden ungeprüft als netto in die Rechnung. Beispiel Lena: Die Lücke war mit 2.038 € zu klein. Richtig sind rund 2.260 €, weil von 1.500 € brutto rund 1.278 € netto bleiben.
+      - Jan und Oliver sind Versicherungsmakler (§ 34d Abs. 1, Angabe Oliver 11.10.2026). Der Bericht nennt deshalb „deinen Versicherungsmakler“ mit Namen.
     - **Klick-Demo** ohne Server, mit erfundenen Daten: `app/demo/`.
 14. **Gemeinsamer Auftritt:**
     - Die Namen sind aus der Unterzeile entfernt, die Fußzeilen lauten „… in Kooperation mit …“.
