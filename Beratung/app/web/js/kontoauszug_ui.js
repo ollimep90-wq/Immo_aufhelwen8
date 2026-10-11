@@ -45,8 +45,8 @@
     let buchungen = [], zuordnung = {}, auswertung = null, meldungen = [];
     ziel.innerHTML = `<div class="card ka">
       <h2 style="margin-top:0">Schneller: Kontoauszüge einlesen</h2>
-      <p class="hint" style="margin-top:0">Lade die Umsätze der letzten drei Monate hoch: als CSV-Datei aus dem Online-Banking, als CAMT-Datei (XML) oder als PDF-Kontoauszug. Mehrere Dateien gehen auch.</p>
-      <p class="hint"><b>Deine Kontoauszüge bleiben auf deinem Gerät.</b> Die Auswertung passiert nur hier im Browser. Zu uns gehen nur die Monatssummen, die du unten übernimmst, keine einzelnen Buchungen.</p>
+      <p class="hint" style="margin-top:0">Wähl die Umsätze der letzten drei Monate aus: als CSV-Datei aus dem Online-Banking, als CAMT-Datei (XML) oder als PDF-Kontoauszug. Mehrere Dateien gehen auch.</p>
+      <p class="hint"><b>Deine Kontoauszüge bleiben auf deinem Gerät.</b> Wir lesen sie nur hier im Browser aus. Bei uns kommen nur die Monatssummen an, die du unten übernimmst und speicherst, keine einzelnen Buchungen.</p>
       <label class="btn quiet ka-datei">Dateien auswählen<input type="file" id="ka-dateien" multiple accept=".csv,.txt,.xml,.pdf,text/csv,application/pdf,application/xml" hidden></label>
       <div id="ka-status" class="hint" role="status"></div>
       <div id="ka-ergebnis"></div>
@@ -60,7 +60,7 @@
       const optionen = (sel) => Object.entries(K.BEREICHE).map(([k, n]) => `<option value="${k}"${k === sel ? " selected" : ""}>${esc(n)}</option>`).join("");
       $("ka-ergebnis").innerHTML = `
         <p><b>${a.gesamt} Buchungen</b> vom ${tag(a.von)} bis ${tag(a.bis)}. Gerechnet wird mit ${a.monate} ${a.monate === 1 ? "Monat" : "vollen Monaten"}.</p>
-        ${a.kurz ? '<p class="note">Das ist weniger als ein Monat. Für gute Durchschnittswerte lade bitte mindestens drei Monate hoch.</p>' : ""}
+        ${a.kurz ? '<p class="note">Das ist weniger als ein Monat. Für gute Durchschnittswerte wähl bitte mindestens drei Monate aus.</p>' : ""}
         ${a.ausgelassen && a.ausgelassen.length ? `<p class="note">Nicht vollständig enthalten und deshalb nicht mitgerechnet: ${a.ausgelassen.map((m) => m.split("-").reverse().join("/")).join(" und ")} (${a.gesamt - a.anzahl} Buchungen). So zählen Miete und Gehalt genau einmal je Monat.</p>` : ""}
         ${a.unsicher ? `<p class="note">${a.unsicher} Buchungen im PDF ohne erkennbares Vorzeichen. Bitte prüf unten, ob Ein- und Ausgänge stimmen.</p>` : ""}
         ${meldungen.length ? `<p class="err">${meldungen.map(esc).join("<br>")}</p>` : ""}
@@ -80,7 +80,8 @@
         auswertung = K.auswerten(buchungen, zuordnung); zeichne();
         const d = ziel.querySelector("details"); if (d) d.open = true;
       }));
-      $("ka-uebernehmen").addEventListener("click", () => { opt.anwenden(Object.assign({}, auswertung.monat), auswertung); $("ka-status").textContent = "Übernommen. Du kannst die Werte unten noch ändern."; });
+      $("ka-uebernehmen").addEventListener("click", () => { const r = opt.anwenden(Object.assign({}, auswertung.monat), auswertung) || {};
+        $("ka-status").textContent = "Übernommen: Ausgaben, Sparen und weitere Einnahmen. Du kannst die Werte unten noch ändern." + (r.gehalt ? " Dein Netto ist eingetragen." : " Dein Gehalt trag bitte im Schritt „Was reinkommt“ selbst ein."); });
       $("ka-verwerfen").addEventListener("click", () => { buchungen = []; zuordnung = {}; auswertung = null; meldungen = []; $("ka-dateien").value = ""; $("ka-status").textContent = "Verworfen."; zeichne(); });
     }
 

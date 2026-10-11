@@ -396,7 +396,7 @@
     bericht() {
       const b = daten("bericht") || {};
       return `<p class="info">Der Kundenbericht bereitet die Ergebnisse verständlich und mit Grafiken für den Kunden auf. Er enthält keine internen Notizen und keine einzelnen Risiko-Antworten.</p>
-        <div class="card"><label for="schritte" style="margin-top:0">Nächste Schritte <span class="hint">sieht der Kunde; eine Zeile je Schritt. Empfehlungen zu Versicherungen nur von Jan.</span></label>
+        <div class="card"><label for="schritte" style="margin-top:0">Nächste Schritte <span class="hint">sieht der Kunde; eine Zeile je Schritt. Keine Produkt- oder Anbieternamen (der Bericht ist keine Produktempfehlung). Empfehlungen zu Versicherungen nur von Jan.</span></label>
         <textarea id="schritte" maxlength="2000">${esc(b.naechste_schritte || "")}</textarea>
         <div class="nav" style="justify-content:flex-start"><button type="button" class="quiet" id="b-vorschau">Vorschau aktualisieren</button>
         <button type="button" class="quiet" id="b-druck">Drucken oder als PDF</button>
@@ -562,11 +562,16 @@
       if (rk[k] && rk[k].quote > t.quote) { t.quote = rk[k].quote; t.ampel = rk[k].ampel; }
       if (ab["s_" + k]) t.einschaetzung.push(ARTEN_KUNDE[k] + ": " + (BEW_KUNDE[ab["s_" + k]] || ""));
     });
-    const absicherung = Object.values(themen).sort((a, z) => z.quote - a.quote).map((t) => ({ name: t.name, ampel: AMP(t.ampel), einschaetzung: t.einschaetzung.join(", ") }));
+    // Paare werden mit „ihr“ angesprochen (gleiche Regel wie unten für paar)
+    const ihr = ["partner", "verheiratet"].includes(h.familie) && (num(h.alter2) > 0 || num(h.brutto2) > 0 || num(h.netto2) > 0 || !!h.name2);
+    const plural = (t) => !ihr ? t : t.replace(/^Deine /, "Eure ").replace(/^Dein /, "Euer ").replace("falls dir etwas passiert", "falls einem von euch etwas passiert").replace(/brauchst du nicht/g, "braucht ihr nicht").replace(/möchtest du nicht/g, "möchtet ihr nicht");
+    const absicherung = Object.values(themen).sort((a, z) => z.quote - a.quote).map((t) => ({ name: plural(t.name), ampel: AMP(t.ampel), einschaetzung: plural(t.einschaetzung.join(", ")) }));
     const liquide = bIn ? num(bIn.liquide) : num(va.vermoegen && va.vermoegen.liquide);
     const vermoegen = { vermoegen: liquide + num(av.depot) + num(av.immobilien) + num(av.sonstverm), schulden: num(av.schulden) };
     const vers = (akte.berater || []).find((x) => x.bereich === "versicherung");
-    return { erstellt: Date.now() / 1000, berater: ich.name, ansprechpartner_versicherung: vers ? vers.name : "", vorname: h.name1 || (va.person && va.person.vorname) || "",
+    const paar = ["partner", "verheiratet"].includes(h.familie) && (num(h.alter2) > 0 || num(h.brutto2) > 0 || num(h.netto2) > 0 || !!h.name2);
+    return { erstellt: Date.now() / 1000, berater: ich.name, ansprechpartner_versicherung: vers ? vers.name : "", paar, vorname2: paar ? h.name2 || "" : "",
+      vorname: h.name1 || (va.person && va.person.vorname) || "",
       budget, vorsorge, ziele, absicherung, vermoegen, naechste_schritte: text };
   }
   let berichtDunkel = Bericht.standardDunkel();

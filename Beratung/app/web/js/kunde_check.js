@@ -197,7 +197,7 @@ let version = null, eingewilligt = false, einwVersion = null;
 function formularLesen() {
   const o = { felder: {}, radios: {}, hat: [] };
   document.querySelectorAll("#f input, #f select, #f textarea").forEach((e) => {
-    if (e.id === "einwilligung" || e.closest("#kontoauszug")) return;   // Kontoauszug-Bereich bleibt im Browser
+    if (e.id === "einwilligung" || e.type === "file" || e.closest("#kontoauszug")) return;   // Kontoauszug-Bereich bleibt im Browser
     if (e.type === "radio") { if (e.checked) o.radios[e.name] = e.value; }
     else if (e.type === "checkbox") { if (e.name === "hat" && e.checked) o.hat.push(e.value); }
     else if (e.id) o.felder[e.id] = e.value;
@@ -206,7 +206,7 @@ function formularLesen() {
 }
 function formularSetzen(o) {
   if (!o) return;
-  Object.entries(o.felder || {}).forEach(([id, v]) => { const e = $(id); if (e) e.value = v; });
+  Object.entries(o.felder || {}).forEach(([id, v]) => { const e = $(id); if (e && e.type !== "file") e.value = v; });
   Object.entries(o.radios || {}).forEach(([n, v]) => {
     if (n.startsWith("r_")) return;   // Risikofragen werden beim Aufbau gesetzt
     const e = document.querySelector(`input[name="${n}"][value="${v}"]`); if (e) e.checked = true;
@@ -345,7 +345,8 @@ KontoauszugUI.einbauen($("kontoauszug"), { anwenden(m) {
   // Gehalt nur übernehmen, wenn es eindeutig ist: allein, Netto gewählt, Feld noch leer
   const allein = document.querySelector('input[name="familie"][value="single"]');
   const netto = document.querySelector('input[name="eart1"][value="netto"]');
-  if (allein && allein.checked && netto && netto.checked && !$("betrag1").value) setze("betrag1", m.gehalt);
+  if (allein && allein.checked && netto && netto.checked && !$("betrag1").value && m.gehalt > 0) { setze("betrag1", m.gehalt); return { gehalt: true }; }
+  return { gehalt: false };
 } });
 
 let berichtDaten = null, berichtDunkel = Bericht.standardDunkel();

@@ -111,6 +111,17 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
         - Farbiger gestaltet: Kopfband, Farbmarken je Abschnitt, getönte Kacheln, nummerierte nächste Schritte.
         - Hell oder dunkel wählbar, auch als PDF. Das dunkle PDF hat keinen weißen Rand.
         - Die dunklen Diagrammfarben sind mit dem Palette-Validator geprüft.
+      - **Kundenbericht als Geschichte (11.10.2026):**
+        - Aufbau: „Auf einen Blick“, dann die drei Kapitel „Wo du stehst“, „Wo du hinwillst“ (mit Vision Board) und „Wie du dahin kommst“ (mit Weg).
+        - Paare werden mit „ihr“ angesprochen.
+        - Die Außenwirkung ist geprüft.
+        - *Korrektur:* Ein Punkt „Jeden Monat X € zurücklegen“ im Weg wirkte wie eine Sparempfehlung und ist entfernt.
+      - **Kontoauszüge einlesen (11.10.2026):**
+        - Formate: CSV, CAMT (XML) und PDF.
+        - Alles läuft nur im Browser, gespeichert werden nur übernommene Monatssummen.
+        - Angebrochene Monate zählen nicht mit.
+        - *Fehler behoben:* Der Dateiname wäre beim Speichern mitgeschickt worden.
+      - **Direkte Kontoanbindung:** Konzept und offene Rechtsfragen in `app/KONTOANBINDUNG.md`. Noch nicht gebaut, weil zuerst die Rechtslage geklärt werden muss.
     - **Klick-Demo** ohne Server, mit erfundenen Daten: `app/demo/`.
 14. **Gemeinsamer Auftritt:**
     - Die Namen sind aus der Unterzeile entfernt, die Fußzeilen lauten „… in Kooperation mit …“.
