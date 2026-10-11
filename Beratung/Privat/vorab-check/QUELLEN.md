@@ -40,7 +40,16 @@ Der Rechenkern betrachtet nur das ganze Jahr. Er bildet nicht ab:
 
 ## Netto-Rente (Beratungs-App, Tab „Vermögen & Vorsorge“)
 
-Stand 11.10.2026. Die Rechtsprüfung der Werte läuft, Ergebnis wird hier nachgetragen.
+Stand 11.10.2026. Geprüft mit dem Prüfagenten für Recht und Förderung am 11.10.2026: Alle Werte stimmen. Normtexte über dejure.org, weil gesetze-im-internet.de nicht erreichbar war; vor Verwendung am amtlichen Text prüfen.
+
+- Der PV-Satz von 3,6 % beruht auf der Pflegeversicherungsbeitragssatz-Anpassungsverordnung 2025 (BGBl. 2024 I Nr. 446) nach § 55 Abs. 1 S. 2, Abs. 1a SGB XI. Der Gesetzestext selbst nennt noch 3,4 %.
+- Der durchschnittliche Zusatzbeitrag 2026 von 2,9 % ist festgelegt nach § 242a SGB V (BAnz AT 10.11.2025 B7). Für Rentner gilt aber der Satz der eigenen Kasse. Die App nimmt ihn aus dem Tab Haushalt.
+- **Beobachten:** Der Referentenentwurf zum Pflegeneuordnungsgesetz vom 5.6.2026 sieht vor, den Kinderlosenzuschlag ab 2027 auf 0,7 Punkte zu erhöhen. Stand Juli 2026 ist das nicht beschlossen.
+- **Grenzen:**
+  - Gerechnet wird die Pflichtversicherung in der KVdR. Wer die Vorversicherungszeit nicht erfüllt, ist freiwillig versichert und zahlt anders.
+  - Betriebsrenten und Versorgungsbezüge sind nicht enthalten.
+  - Die Nettorente gilt für den Rentenbeginn. Später ist sie etwas zu hoch, weil der Rentenfreibetrag in Euro festgeschrieben ist.
+  - Die Renteninformation rechnet bis zur Regelaltersgrenze. Bei früherem Beginn fehlen Entgeltpunkte, und es gilt ein Abschlag von 0,3 % je Monat (§ 77 SGB VI). Die App weist darauf hin, rechnet es aber noch nicht.
 
 - KV der Rentner: 14,6 % + Zusatzbeitrag, davon trägt der Rentner die Hälfte (§ 247, § 249a SGB V).
 - PV: voller Satz 3,6 % trägt der Rentner, kinderlos +0,6 Punkte (§ 59 Abs. 1, § 55 SGB XI). Kinderabschläge gelten nur für Kinder unter 25 und sind deshalb nicht angesetzt (Annahme: bei Rentenbeginn keine Kinder unter 25).
