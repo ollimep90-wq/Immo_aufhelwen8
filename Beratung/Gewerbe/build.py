@@ -23,6 +23,7 @@ BASE_CSS = '<link rel="stylesheet" href="../../Finanzanlagen/assets/base.css">'
 FOOT_KUNDE = "Ganzheitliche Finanzberatung · Oliver Rosenbaum in Kooperation mit Endlich Besser Beraten"
 FOOT_JAN = "Ganzheitliche Finanzberatung · Jan Schnichels, Endlich Besser Beraten, in Kooperation mit Oliver Rosenbaum"
 FOOT_INTERN = "Bedarfsanalyse Gewerbe · intern"
+FOOT_PUK = "Konzept Unterstützungskasse · intern"
 
 TOKENS = {
     "⟦MARKE_HELL⟧": marke("#FFFFFF", "#9BD77F", "ZWEI EIGENSTÄNDIGE PARTNER IN KOOPERATION", 64),
@@ -41,6 +42,7 @@ DOCS = [
     ("betrieb", "03_Betrieb_absichern", "Betrieb absichern", "Betrieb absichern", "deck", FOOT_JAN, True),
     ("unternehmer", "04_Unternehmer_absichern_und_vorsorgen", "Unternehmer: absichern und vorsorgen", "Unternehmer: absichern und vorsorgen", "deck", FOOT_KUNDE, True),
     ("mitarbeiter", "05_Mitarbeiter_bAV_und_bKV", "Mitarbeiter: betriebliche Altersversorgung und Krankenversicherung", "Mitarbeiter: betriebliche Altersversorgung und Krankenversicherung", "deck", FOOT_JAN, True),
+    ("puk", "06_Konzept_Unterstuetzungskasse_GGF", "Konzept pauschaldotierte Unterstützungskasse", "Konzept pauschaldotierte Unterstützungskasse", "doc", FOOT_PUK, False),
 ]
 
 

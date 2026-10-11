@@ -9,6 +9,7 @@
 | 03 Betrieb absichern (Jan) | Entwurf, du und Sie |
 | 04 Unternehmer: absichern und vorsorgen | Entwurf, du und Sie |
 | 05 Mitarbeiter: bAV und bKV (Jan) | Entwurf, du und Sie. Rechtswerte 2026 aus der Prüfung vom 11.10.2026, Beträge in `zahlen.py` gerechnet |
+| 06 Konzept pauschaldotierte Unterstützungskasse (intern) | Entwurf 11.10.2026, für Gesellschafter-Geschäftsführer und Neuordnung von Pensionszusagen (Entscheidung Oliver). Prüfung läuft. |
 
 Segmente (Entscheidung Oliver: alles abdecken, vorher abfragen): A Selbständige/Freiberufler, B GmbH mit Gesellschafter-Geschäftsführer, C Arbeitgeber. Keine Basisrente.
 
@@ -68,3 +69,10 @@ Bauen: `python3 build.py` (du und Sie), Zahlen nur aus `zahlen.py`.
 5. BRSG II am Gesetzestext (BGBl. 2026 I Nr. 14) prüfen.
 6. Vergütung für Firmenvermögen festlegen; Entgeltfluss § 34h Abs. 3 (STATUS Punkt 11).
 7. Jans Rückmeldung zu 03 und 05.
+
+## Pauschaldotierte Unterstützungskasse (Wunsch Oliver, 11.10.2026)
+
+- Olivers Einschätzung: bAV im Versicherungsmantel ist meist die schlechteste Wahl, die pauschaldotierte Unterstützungskasse flexibel und gut. Entscheidungen dazu: Zielgruppe Gesellschafter-Geschäftsführer und Neuordnung von Pensionszusagen, sachlicher Vergleich beim Kunden, Rolle erst rechtlich klären.
+- Rechtsprüfung 11.10.2026: Vorteile bei Liquidität, Flexibilität und Kosten sind belegt. Die pauschale These „schlechteste Wahl“ ist nicht belegt. Beim beherrschenden GGF gibt es keinen PSV-Schutz, mit Darlehen hängt die Versorgung an der GmbH. Erdiente Anwartschaften lassen sich nicht in einem Schritt in die pauschaldotierte Kasse übertragen.
+- Umgesetzt: Konzept 06 (intern), zwei Folien in Deck 04 (Wege über die GmbH, Pensionszusage neu ordnen), Fragen und Erlaubnisgrenze in der Bedarfsanalyse.
+- Offen: Erlaubnis und Vergütung, Kooperationspartner (Rentenberater/Kassen-Anbieter, Gutachter), Absicherungsmodell für den beherrschenden GGF.

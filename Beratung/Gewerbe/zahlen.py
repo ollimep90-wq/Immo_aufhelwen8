@@ -91,6 +91,27 @@ Z["alv_satz"] = pct(ALV_SATZ)
 Z["alv_beitrag"] = eur2(BEZUGSGROESSE_2026 * ALV_SATZ)
 Z["alv_gruender"] = eur2(BEZUGSGROESSE_2026 / 2 * ALV_SATZ)
 
+# Pauschaldotierte Unterstützungskasse (puk.html, unternehmer.html), § 4d Abs. 1 S. 1 Nr. 1 EStG und § 10 Abs. 3 Nr. 3 BetrAVG
+# (Rechtsprüfung 11.10.2026, dejure.org / gesetze-im-internet.de)
+PUK_POLSTER = Decimal("0.25")           # Zuwendung je Leistungsanwärter: 25 % der Jahresaltersrente pro Jahr (Buchst. b)
+PUK_POLSTER_NUR_RISIKO = Decimal("0.06")  # 6 %, wenn nur Invaliditäts- oder Hinterbliebenenversorgung zugesagt
+PUK_VERMOEGEN_FAKTOR = 8                # zulässiges Kassenvermögen: 8-Fache der Zuwendungen nach Buchst. b (plus Deckungskapital Rentner)
+PSV_FAKTOR_UKASSE = 20                  # PSV-Bemessung U-Kasse: 20-Fache der Zuwendungen nach Buchst. b
+PSV_SATZ_2025 = Decimal("0.0012")       # PSVaG-Beitragssatz 2025: 1,2 ‰ (Satz 2026 wird Anfang November 2026 festgesetzt)
+# Rechenbeispiel, Annahme: zugesagte Jahresaltersrente 12.000 € für einen Leistungsanwärter
+PUK_RENTE_JAHR = Decimal(12000)
+puk_zuwendung = PUK_RENTE_JAHR * PUK_POLSTER
+Z["puk_polster_pct"] = pct(PUK_POLSTER)
+Z["puk_polster_risiko_pct"] = pct(PUK_POLSTER_NUR_RISIKO)
+Z["puk_faktor"] = str(PUK_VERMOEGEN_FAKTOR)
+Z["puk_psv_faktor"] = str(PSV_FAKTOR_UKASSE)
+Z["puk_rente_jahr"] = eur(PUK_RENTE_JAHR)
+Z["puk_zuwendung"] = eur(puk_zuwendung)
+Z["puk_kassenvermoegen_max"] = eur(puk_zuwendung * PUK_VERMOEGEN_FAKTOR)
+Z["puk_psv_basis"] = eur(puk_zuwendung * PSV_FAKTOR_UKASSE)
+Z["psv_satz_2025"] = f"{PSV_SATZ_2025 * 1000:f}".rstrip("0").rstrip(".").replace(".", ",") + " ‰"
+Z["puk_psv_beitrag_2025"] = eur2(puk_zuwendung * PSV_FAKTOR_UKASSE * PSV_SATZ_2025)
+
 # Kontrolle gegen die belegten Werte (Rechtsprüfungen vom 11.10.2026, BA-Weisungen § 28a, DRV 09.02.2026)
 assert Z["rv_frei_min"] == "112,16 €" and Z["rv_frei_max"] == "1.571,70 €"
 assert Z["alv_beitrag"] == "102,83 €" and Z["alv_gruender"] == "51,42 €"
