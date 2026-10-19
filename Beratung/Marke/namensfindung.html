@@ -1,0 +1,345 @@
+<title>Namensfindung Finanzberatung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;600&family=Lexend:wght@300;700&family=Nunito:wght@800&family=Red+Hat+Display:wght@400;800&family=Sora:wght@300;700&display=swap">
+<style>
+/* Layout: eine Spalte, je Name ein Bogen mit hellem Logo, dunklem Logo und App-Icon nebeneinander */
+:root {
+  --bg: #F6F7F8; --surface: #FFFFFF; --fg: #17202A; --muted: #5B6573; --line: #DDE2E8; --mark: #0E4F5C;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161B; --surface: #1A2028; --fg: #E8ECF0; --muted: #A1AAB6; --line: #2B333D; --mark: #7FC4CF; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12161B; --surface: #1A2028; --fg: #E8ECF0; --muted: #A1AAB6; --line: #2B333D; --mark: #7FC4CF; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 40px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { display: grid; gap: 10px; margin-bottom: 32px; max-width: 68ch; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; margin: 0; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); }
+.list { display: grid; gap: 28px; }
+.entry { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 18px; }
+.head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.rank { font-size: 13px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.head h2 { margin: 0; font-size: 22px; }
+.pick { font-size: 12px; font-weight: 600; color: var(--mark); border: 1px solid var(--mark); border-radius: 99px; padding: 1px 10px; }
+.boards { display: grid; grid-template-columns: 1fr 1fr 150px; gap: 12px; }
+.tile { border-radius: 10px; display: grid; place-items: center; padding: 26px 18px; min-height: 150px; }
+.tile svg { width: 100%; max-width: 340px; height: auto; }
+.tile.app { padding: 18px; }
+.tile.app svg { width: 104px; }
+.info { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.info div { min-width: 0; }
+.info h3 { margin: 0 0 4px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.info p { margin: 0; }
+.claim { font-style: italic; }
+footer { margin-top: 32px; color: var(--muted); max-width: 72ch; display: grid; gap: 8px; }
+footer h2 { font-size: 16px; color: var(--fg); margin: 0; }
+footer ol { margin: 0; padding-left: 20px; }
+@media (max-width: 760px) {
+  .boards { grid-template-columns: 1fr; }
+  .tile.app { justify-items: start; }
+  .info { grid-template-columns: 1fr; }
+}
+
+/* Markenfarben je Entwurf (bewusst fest, die Kacheln haben eigene Hintergründe) */
+.lk { --p: #0E4F5C; --a: #FF6B4A; --dk: #0B2E36; }
+.ks { --p: #13294B; --a: #F2B705; --dk: #0D1C33; }
+.kr { --p: #173A33; --a: #E0607E; --dk: #0F2622; }
+.lc { --p: #0B1F3A; --a: #C8963E; --dk: #091526; }
+.kf { --p: #1B6F5E; --a: #FF9F43; --dk: #0F3D34; }
+.fl { --p: #102A43; --a: #D7263D; --dk: #0A1C2E; }
+.fs { --p: #1D3557; --a: #2A9D8F; --dk: #12223A; }
+.tile.light { background: #FFFFFF; color: var(--p); box-shadow: inset 0 0 0 1px #E3E7EC; }
+.tile.dark { background: var(--dk); color: #FFFFFF; }
+.tile.app { background: var(--bg); }
+.acc { fill: var(--a); }
+.acc-s { stroke: var(--a); }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Gemeinsame GmbH · Namensfindung · Stand 19.10.2026</span>
+    <h1>Sieben Namen, sieben Logo-Entwürfe</h1>
+    <p>Aus allen bisher genannten Namen sind die ersten fünf meine besten, sortiert nach meiner Empfehlung. Finlot und Finstat sind auf Wunsch ergänzt. Die Logos sind erste Entwürfe, damit ihr die Wirkung vergleichen könnt. Ein fertiges Corporate Design ist das nicht, und markenrechtlich ist noch nichts geprüft.</p>
+  </header>
+
+  <div class="list">
+
+    <!-- 1 Lifekurs -->
+    <article class="entry lk">
+      <div class="head"><span class="rank">Platz 1</span><h2>Lifekurs</h2><span class="pick">Meine Empfehlung</span></div>
+      <div class="boards">
+        <div class="tile light"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Lifekurs, hell">
+          <g transform="translate(6 8)">
+            <path d="M8 56 C 22 56, 18 34, 32 32 S 44 12, 56 10" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+            <circle cx="8" cy="56" r="5" fill="currentColor"/><circle cx="32" cy="32" r="5" fill="currentColor"/>
+            <circle cx="56" cy="10" r="7.5" class="acc"/>
+          </g>
+          <text x="84" y="53" font-family="Lexend, sans-serif" font-size="38" fill="currentColor"><tspan font-weight="300">life</tspan><tspan font-weight="700">kurs</tspan></text>
+        </svg></div>
+        <div class="tile dark"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Lifekurs, dunkel">
+          <g transform="translate(6 8)">
+            <path d="M8 56 C 22 56, 18 34, 32 32 S 44 12, 56 10" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+            <circle cx="8" cy="56" r="5" fill="currentColor"/><circle cx="32" cy="32" r="5" fill="currentColor"/>
+            <circle cx="56" cy="10" r="7.5" class="acc"/>
+          </g>
+          <text x="84" y="53" font-family="Lexend, sans-serif" font-size="38" fill="currentColor"><tspan font-weight="300">life</tspan><tspan font-weight="700">kurs</tspan></text>
+        </svg></div>
+        <div class="tile app"><svg viewBox="0 0 96 96" role="img" aria-label="App-Icon Lifekurs">
+          <rect width="96" height="96" rx="22" fill="var(--p)"/>
+          <g transform="translate(16 16)">
+            <path d="M8 56 C 22 56, 18 34, 32 32 S 44 12, 56 10" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="8" cy="56" r="5.5" fill="#fff"/><circle cx="32" cy="32" r="5.5" fill="#fff"/>
+            <circle cx="56" cy="10" r="8" class="acc"/>
+          </g>
+        </svg></div>
+      </div>
+      <div class="info">
+        <div><h3>Idee</h3><p>Der Kunde zeichnet seine Lebensroute, die Punkte sind seine Meilensteine, der rote Punkt ist das Ziel. Ihr haltet den Kurs dorthin. Jedes Alter versteht den Namen sofort.</p></div>
+        <div><h3>Claim</h3><p class="claim">Du setzt das Ziel. Wir halten Kurs.</p></div>
+        <div><h3>Prüfung 19.10.2026</h3><p>lifekurs.de und lifekurs.com frei. Websuche ohne Treffer zum Namen. Achtung: „Life“ ist bei Versicherern verbreitet (Swiss Life, Standard Life), ähnlich auch LIFE Finanzservice GmbH (AT).</p></div>
+      </div>
+    </article>
+
+    <!-- 2 Klarschiff -->
+    <article class="entry ks">
+      <div class="head"><span class="rank">Platz 2</span><h2>Klarschiff</h2></div>
+      <div class="boards">
+        <div class="tile light"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Klarschiff, hell">
+          <g transform="translate(4 6)">
+            <path d="M31 4 L31 42 L10 42 Z" fill="currentColor"/>
+            <path d="M36 12 L36 42 L54 42 Z" class="acc"/>
+            <path d="M6 47 L60 47 L52 57 L14 57 Z" fill="currentColor"/>
+            <path d="M2 66 q 8 -6 16 0 t 16 0 t 16 0 t 16 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <text x="80" y="52" font-family="'Bricolage Grotesque', sans-serif" font-weight="800" font-size="37" fill="currentColor">Klarschiff</text>
+        </svg></div>
+        <div class="tile dark"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Klarschiff, dunkel">
+          <g transform="translate(4 6)">
+            <path d="M31 4 L31 42 L10 42 Z" fill="currentColor"/>
+            <path d="M36 12 L36 42 L54 42 Z" class="acc"/>
+            <path d="M6 47 L60 47 L52 57 L14 57 Z" fill="currentColor"/>
+            <path d="M2 66 q 8 -6 16 0 t 16 0 t 16 0 t 16 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <text x="80" y="52" font-family="'Bricolage Grotesque', sans-serif" font-weight="800" font-size="37" fill="currentColor">Klarschiff</text>
+        </svg></div>
+        <div class="tile app"><svg viewBox="0 0 96 96" role="img" aria-label="App-Icon Klarschiff">
+          <rect width="96" height="96" rx="22" fill="var(--p)"/>
+          <g transform="translate(15 14)">
+            <path d="M31 4 L31 42 L10 42 Z" fill="#fff"/>
+            <path d="M36 12 L36 42 L54 42 Z" class="acc"/>
+            <path d="M6 47 L60 47 L52 57 L14 57 Z" fill="#fff"/>
+            <path d="M2 66 q 8 -6 16 0 t 16 0 t 16 0 t 16 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          </g>
+        </svg></div>
+      </div>
+      <div class="info">
+        <div><h3>Idee</h3><p>„Klar Schiff machen“ kennt jeder: aufräumen, Ordnung schaffen, bereit zum Auslaufen. Das Boot, das ihr für den Kunden steuert, steckt direkt im Namen.</p></div>
+        <div><h3>Claim</h3><p class="claim">Klarschiff. Für dein Geld.</p></div>
+        <div><h3>Prüfung 19.10.2026</h3><p>klarschiff.de vergeben (Nutzer nicht geprüft), klarschiff-finanzen.de frei. Keine Finanzfirma gefunden. Der Wortteil „klar“ ist in der Branche häufig (Finanzklar GmbH).</p></div>
+      </div>
+    </article>
+
+    <!-- 3 Kursrose -->
+    <article class="entry kr">
+      <div class="head"><span class="rank">Platz 3</span><h2>Kursrose</h2></div>
+      <div class="boards">
+        <div class="tile light"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Kursrose, hell">
+          <g transform="translate(4 8)">
+            <g opacity=".55"><path d="M32 32 L44 20 L36 32 Z" fill="currentColor"/><path d="M32 32 L44 44 L32 36 Z" fill="currentColor"/><path d="M32 32 L20 44 L28 32 Z" fill="currentColor"/><path d="M32 32 L20 20 L32 28 Z" fill="currentColor"/></g>
+            <path d="M32 2 L37 27 L32 32 Z" class="acc"/><path d="M32 2 L27 27 L32 32 Z" class="acc" opacity=".75"/>
+            <path d="M62 32 L37 37 L32 32 Z" fill="currentColor"/><path d="M62 32 L37 27 L32 32 Z" fill="currentColor" opacity=".7"/>
+            <path d="M32 62 L27 37 L32 32 Z" fill="currentColor"/><path d="M32 62 L37 37 L32 32 Z" fill="currentColor" opacity=".7"/>
+            <path d="M2 32 L27 27 L32 32 Z" fill="currentColor"/><path d="M2 32 L27 37 L32 32 Z" fill="currentColor" opacity=".7"/>
+          </g>
+          <text x="82" y="53" font-family="Fraunces, Georgia, serif" font-weight="600" font-size="39" fill="currentColor">Kursrose</text>
+        </svg></div>
+        <div class="tile dark"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Kursrose, dunkel">
+          <g transform="translate(4 8)">
+            <g opacity=".55"><path d="M32 32 L44 20 L36 32 Z" fill="currentColor"/><path d="M32 32 L44 44 L32 36 Z" fill="currentColor"/><path d="M32 32 L20 44 L28 32 Z" fill="currentColor"/><path d="M32 32 L20 20 L32 28 Z" fill="currentColor"/></g>
+            <path d="M32 2 L37 27 L32 32 Z" class="acc"/><path d="M32 2 L27 27 L32 32 Z" class="acc" opacity=".75"/>
+            <path d="M62 32 L37 37 L32 32 Z" fill="currentColor"/><path d="M62 32 L37 27 L32 32 Z" fill="currentColor" opacity=".7"/>
+            <path d="M32 62 L27 37 L32 32 Z" fill="currentColor"/><path d="M32 62 L37 37 L32 32 Z" fill="currentColor" opacity=".7"/>
+            <path d="M2 32 L27 27 L32 32 Z" fill="currentColor"/><path d="M2 32 L27 37 L32 32 Z" fill="currentColor" opacity=".7"/>
+          </g>
+          <text x="82" y="53" font-family="Fraunces, Georgia, serif" font-weight="600" font-size="39" fill="currentColor">Kursrose</text>
+        </svg></div>
+        <div class="tile app"><svg viewBox="0 0 96 96" role="img" aria-label="App-Icon Kursrose">
+          <rect width="96" height="96" rx="22" fill="var(--p)"/>
+          <g transform="translate(16 16)" color="#fff">
+            <g opacity=".55"><path d="M32 32 L44 20 L36 32 Z" fill="currentColor"/><path d="M32 32 L44 44 L32 36 Z" fill="currentColor"/><path d="M32 32 L20 44 L28 32 Z" fill="currentColor"/><path d="M32 32 L20 20 L32 28 Z" fill="currentColor"/></g>
+            <path d="M32 2 L37 27 L32 32 Z" class="acc"/><path d="M32 2 L27 27 L32 32 Z" class="acc" opacity=".75"/>
+            <path d="M62 32 L37 37 L32 32 Z" fill="currentColor"/><path d="M62 32 L37 27 L32 32 Z" fill="currentColor" opacity=".7"/>
+            <path d="M32 62 L27 37 L32 32 Z" fill="currentColor"/><path d="M32 62 L37 37 L32 32 Z" fill="currentColor" opacity=".7"/>
+            <path d="M2 32 L27 27 L32 32 Z" fill="currentColor"/><path d="M2 32 L27 37 L32 32 Z" fill="currentColor" opacity=".7"/>
+          </g>
+        </svg></div>
+      </div>
+      <div class="info">
+        <div><h3>Idee</h3><p>Die Kompassrose zeigt die Richtung, die Nordspitze in Rosé ist das Ziel des Kunden. Wirkt hochwertig und ruhig, eher Privatbank als App.</p></div>
+        <div><h3>Claim</h3><p class="claim">Dein Leben. Dein Kurs.</p></div>
+        <div><h3>Prüfung 19.10.2026</h3><p>kursrose.de frei. Keine Firma dieses Namens gefunden. Entfernt ähnlich: Krose GmbH &amp; Co. KG, Industrieversicherungsmakler in Bremen.</p></div>
+      </div>
+    </article>
+
+    <!-- 4 LifeCaptain -->
+    <article class="entry lc">
+      <div class="head"><span class="rank">Platz 4</span><h2>LifeCaptain</h2></div>
+      <div class="boards">
+        <div class="tile light"><svg viewBox="0 0 330 80" role="img" aria-label="Logo LifeCaptain, hell">
+          <g transform="translate(6 8)" stroke-linecap="round">
+            <g stroke="currentColor" stroke-width="4"><line x1="32" y1="4" x2="32" y2="60"/><line x1="4" y1="32" x2="60" y2="32"/><line x1="12.2" y1="12.2" x2="51.8" y2="51.8"/><line x1="51.8" y1="12.2" x2="12.2" y2="51.8"/></g>
+            <circle cx="32" cy="32" r="19" fill="none" stroke="currentColor" stroke-width="5"/>
+            <circle cx="32" cy="32" r="7" class="acc"/>
+          </g>
+          <text x="82" y="53" font-family="Archivo, sans-serif" font-size="36" fill="currentColor"><tspan font-weight="500">Life</tspan><tspan font-weight="800">Captain</tspan></text>
+        </svg></div>
+        <div class="tile dark"><svg viewBox="0 0 330 80" role="img" aria-label="Logo LifeCaptain, dunkel">
+          <g transform="translate(6 8)" stroke-linecap="round">
+            <g stroke="currentColor" stroke-width="4"><line x1="32" y1="4" x2="32" y2="60"/><line x1="4" y1="32" x2="60" y2="32"/><line x1="12.2" y1="12.2" x2="51.8" y2="51.8"/><line x1="51.8" y1="12.2" x2="12.2" y2="51.8"/></g>
+            <circle cx="32" cy="32" r="19" fill="none" stroke="currentColor" stroke-width="5"/>
+            <circle cx="32" cy="32" r="7" class="acc"/>
+          </g>
+          <text x="82" y="53" font-family="Archivo, sans-serif" font-size="36" fill="currentColor"><tspan font-weight="500">Life</tspan><tspan font-weight="800">Captain</tspan></text>
+        </svg></div>
+        <div class="tile app"><svg viewBox="0 0 96 96" role="img" aria-label="App-Icon LifeCaptain">
+          <rect width="96" height="96" rx="22" fill="var(--p)"/>
+          <g transform="translate(16 16)" stroke-linecap="round">
+            <g stroke="#fff" stroke-width="4"><line x1="32" y1="4" x2="32" y2="60"/><line x1="4" y1="32" x2="60" y2="32"/><line x1="12.2" y1="12.2" x2="51.8" y2="51.8"/><line x1="51.8" y1="12.2" x2="12.2" y2="51.8"/></g>
+            <circle cx="32" cy="32" r="19" fill="none" stroke="#fff" stroke-width="5"/>
+            <circle cx="32" cy="32" r="7" class="acc"/>
+          </g>
+        </svg></div>
+      </div>
+      <div class="info">
+        <div><h3>Idee</h3><p>Das Steuerrad: Ihr steuert das Boot, der Kunde gibt die Richtung vor. Messing und Marineblau wirken solide, der Name hat ein Augenzwinkern.</p></div>
+        <div><h3>Claim</h3><p class="claim">Du bestimmst das Ziel. Wir steuern.</p></div>
+        <div><h3>Prüfung 19.10.2026</h3><p>lifecaptain.de frei, .com vergeben. Websuche ohne Treffer zum Namen. „Life“ wie bei Platz 1 im Versicherungsmarkt verbreitet.</p></div>
+      </div>
+    </article>
+
+    <!-- 5 Kopffrei -->
+    <article class="entry kf">
+      <div class="head"><span class="rank">Platz 5</span><h2>Kopffrei</h2></div>
+      <div class="boards">
+        <div class="tile light"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Kopffrei, hell">
+          <g transform="translate(4 8)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M40.5 25.3 A17 17 0 1 1 23.5 25.3" stroke="currentColor" stroke-width="5"/>
+            <circle cx="32" cy="12" r="6.5" class="acc" stroke="none"/><circle cx="44" cy="4" r="3.5" class="acc" stroke="none"/>
+          </g>
+          <text x="80" y="52" font-family="Nunito, sans-serif" font-weight="800" font-size="39" fill="currentColor">kopffrei</text>
+        </svg></div>
+        <div class="tile dark"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Kopffrei, dunkel">
+          <g transform="translate(4 8)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M40.5 25.3 A17 17 0 1 1 23.5 25.3" stroke="currentColor" stroke-width="5"/>
+            <circle cx="32" cy="12" r="6.5" class="acc" stroke="none"/><circle cx="44" cy="4" r="3.5" class="acc" stroke="none"/>
+          </g>
+          <text x="80" y="52" font-family="Nunito, sans-serif" font-weight="800" font-size="39" fill="currentColor">kopffrei</text>
+        </svg></div>
+        <div class="tile app"><svg viewBox="0 0 96 96" role="img" aria-label="App-Icon Kopffrei">
+          <rect width="96" height="96" rx="22" fill="var(--p)"/>
+          <g transform="translate(16 16)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M40.5 25.3 A17 17 0 1 1 23.5 25.3" stroke="#fff" stroke-width="5"/>
+            <circle cx="32" cy="12" r="6.5" class="acc" stroke="none"/><circle cx="44" cy="4" r="3.5" class="acc" stroke="none"/>
+          </g>
+        </svg></div>
+      </div>
+      <div class="info">
+        <div><h3>Idee</h3><p>Der Kreis ist der Kopf, oben ist er offen, und die Gedanken steigen frei auf. Der Kunde hat den Kopf frei für sein Leben, ihr kümmert euch um das Setup.</p></div>
+        <div><h3>Claim</h3><p class="claim">Kopffrei leben. Wir machen den Rest.</p></div>
+        <div><h3>Prüfung 19.10.2026</h3><p>kopffrei.de vergeben (Nutzer nicht geprüft), kopffrei-finanz.de frei. Keine Finanzfirma gefunden.</p></div>
+      </div>
+    </article>
+
+    <!-- Finlot -->
+    <article class="entry fl">
+      <div class="head"><span class="rank">Auf Wunsch</span><h2>Finlot</h2></div>
+      <div class="boards">
+        <div class="tile light"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Finlot, hell">
+          <g transform="translate(6 8)" stroke-linejoin="round">
+            <line x1="12" y1="4" x2="12" y2="60" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            <rect x="14" y="8" width="40" height="28" fill="#fff" stroke="currentColor" stroke-width="3"/>
+            <rect x="34" y="8" width="20" height="28" class="acc" stroke="currentColor" stroke-width="3"/>
+            <path d="M24 54 q 7 -5 14 0 t 14 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <text x="84" y="53" font-family="Sora, sans-serif" font-size="39" fill="currentColor"><tspan font-weight="300">fin</tspan><tspan font-weight="700">lot</tspan></text>
+        </svg></div>
+        <div class="tile dark"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Finlot, dunkel">
+          <g transform="translate(6 8)" stroke-linejoin="round">
+            <line x1="12" y1="4" x2="12" y2="60" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            <rect x="14" y="8" width="40" height="28" fill="#fff" stroke="currentColor" stroke-width="3"/>
+            <rect x="34" y="8" width="20" height="28" class="acc" stroke="currentColor" stroke-width="3"/>
+            <path d="M24 54 q 7 -5 14 0 t 14 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <text x="84" y="53" font-family="Sora, sans-serif" font-size="39" fill="currentColor"><tspan font-weight="300">fin</tspan><tspan font-weight="700">lot</tspan></text>
+        </svg></div>
+        <div class="tile app"><svg viewBox="0 0 96 96" role="img" aria-label="App-Icon Finlot">
+          <rect width="96" height="96" rx="22" fill="var(--p)"/>
+          <g transform="translate(16 16)" stroke-linejoin="round">
+            <line x1="12" y1="4" x2="12" y2="60" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+            <rect x="14" y="8" width="40" height="28" fill="#fff" stroke="#fff" stroke-width="3"/>
+            <rect x="34" y="8" width="20" height="28" class="acc" stroke="#fff" stroke-width="3"/>
+            <path d="M24 54 q 7 -5 14 0 t 14 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          </g>
+        </svg></div>
+      </div>
+      <div class="info">
+        <div><h3>Idee</h3><p>Kurz für Finanzlotse. Das Zeichen ist die Signalflagge „H“, weiß und rot: Sie bedeutet in der Seefahrt „Ich habe einen Lotsen an Bord“.</p></div>
+        <div><h3>Claim</h3><p class="claim">Wir lotsen dich ans Ziel.</p></div>
+        <div><h3>Prüfung 19.10.2026</h3><p>finlot.de frei, .com vergeben. Websuche ohne Treffer zum Namen, ähnlich nur Finloc (Gerätefinanzierung, Kanada) und FinList GmbH (Berlin, Finanzierung von Gewerbeimmobilien). „Finanzlotse“ selbst ist belegt (VR-Banken, Fonds Finanz). „Lot“ erklärt sich nicht von selbst, der Claim muss den Lotsen liefern.</p></div>
+      </div>
+    </article>
+
+    <!-- Finstat -->
+    <article class="entry fs">
+      <div class="head"><span class="rank">Auf Wunsch</span><h2>Finstat</h2></div>
+      <div class="boards">
+        <div class="tile light"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Finstat, hell">
+          <g transform="translate(6 8)" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M4 58 L60 58 L32 10 Z"/>
+            <path d="M18 34 L46 34 M18 34 L32 58 L46 34"/>
+            <circle cx="32" cy="10" r="6.5" class="acc" stroke="none"/>
+          </g>
+          <text x="84" y="53" font-family="'Red Hat Display', sans-serif" font-size="39" fill="currentColor"><tspan font-weight="400">fin</tspan><tspan font-weight="800">stat</tspan></text>
+        </svg></div>
+        <div class="tile dark"><svg viewBox="0 0 330 80" role="img" aria-label="Logo Finstat, dunkel">
+          <g transform="translate(6 8)" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M4 58 L60 58 L32 10 Z"/>
+            <path d="M18 34 L46 34 M18 34 L32 58 L46 34"/>
+            <circle cx="32" cy="10" r="6.5" class="acc" stroke="none"/>
+          </g>
+          <text x="84" y="53" font-family="'Red Hat Display', sans-serif" font-size="39" fill="currentColor"><tspan font-weight="400">fin</tspan><tspan font-weight="800">stat</tspan></text>
+        </svg></div>
+        <div class="tile app"><svg viewBox="0 0 96 96" role="img" aria-label="App-Icon Finstat">
+          <rect width="96" height="96" rx="22" fill="var(--p)"/>
+          <g transform="translate(16 16)" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M4 58 L60 58 L32 10 Z"/>
+            <path d="M18 34 L46 34 M18 34 L32 58 L46 34"/>
+            <circle cx="32" cy="10" r="6.5" class="acc" stroke="none"/>
+          </g>
+        </svg></div>
+      </div>
+      <div class="info">
+        <div><h3>Idee</h3><p>Kurz für Finanzstatik. Das Zeichen ist ein Fachwerk aus Dreiecken, die stabilste Form im Bau. Oben an der Spitze sitzt das Ziel.</p></div>
+        <div><h3>Claim</h3><p class="claim">Damit dein Plan trägt.</p></div>
+        <div><h3>Prüfung 19.10.2026</h3><p>finstat.de und finstat.com vergeben. FinStat ist ein bekanntes Firmendaten-Portal in der Slowakei und Tschechien (finstat.sk, seit 2012). Ausweichname <b>Finstatik</b>: .de und .com frei, Websuche ohne Treffer. Das Logo funktioniert mit beiden Schreibweisen.</p></div>
+      </div>
+    </article>
+  </div>
+
+  <footer>
+    <h2>Was die Prüfung abdeckt und was noch fehlt</h2>
+    <p>Geprüft wurden die Domains bei DENIC und Verisign sowie eine Websuche nach Firmen und Marken. Die Markenregister (DPMA, EUIPO) waren von hier aus nicht erreichbar. „Nichts gefunden“ heißt deshalb nicht „frei“.</p>
+    <ol>
+      <li>Zwei Favoriten wählen und die Domains sichern.</li>
+      <li>Registerrecherche durch einen Markenanwalt, Klassen 35, 36 und 45.</li>
+      <li>Firmierung mit der IHK abstimmen, zum Beispiel „Lifekurs GmbH“.</li>
+      <li>Das gewählte Logo von einem Designer ausarbeiten lassen: Schrift lizenzieren, Feinschliff, Gestaltungsregeln.</li>
+    </ol>
+  </footer>
+</div>

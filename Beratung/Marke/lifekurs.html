@@ -1,0 +1,163 @@
+<title>Lifekurs Logo-Entwürfe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap">
+<style>
+/* Layout: bewusst nur dunkel (Markenwelt Schwarz/Neongrün). Je Variante eine Zeile mit Kacheln schwarz, weiß, App-Icon */
+:root {
+  --ink: #0A0B0A; --panel: #141614; --line: #262A25; --paper: #F4F6F1; --muted: #9CA597;
+  --neon: #B5FF3B; --neon-dim: #7DB51F;
+  --f: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+body { background: var(--ink); color: var(--paper); font-family: var(--f); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1060px; margin: 0 auto; padding-block: 40px 60px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+h1 { font-size: clamp(28px, 4.5vw, 42px); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin: 8px 0 10px; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 66ch; margin: 0 0 32px; }
+
+/* Wortmarke */
+.mark { display: inline-flex; align-items: center; gap: .32em; font-weight: 800; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+.mark svg { height: 1.05em; width: auto; flex: none; }
+.mark .k { color: var(--neon); }
+.on-paper .mark { color: var(--ink); }
+.on-paper .mark .k { color: var(--ink); }
+
+.hero { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: clamp(28px, 6vw, 64px) clamp(20px, 5vw, 56px); display: grid; gap: 18px; margin-bottom: 40px; }
+.hero .mark { font-size: clamp(44px, 9vw, 92px); }
+.hero .claim { font-size: clamp(17px, 2.4vw, 22px); color: var(--muted); }
+.hero .claim b { color: var(--paper); font-weight: 600; }
+.tag { justify-self: start; font-size: 12px; font-weight: 600; color: var(--ink); background: var(--neon); border-radius: 99px; padding: 3px 12px; }
+
+.variants { display: grid; gap: 30px; }
+.v { display: grid; gap: 14px; }
+.v-head { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.v-head h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+.v-head span { color: var(--muted); font-size: 13px; }
+.v p { margin: 0; color: var(--muted); max-width: 70ch; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr 150px; gap: 12px; }
+.tile { border-radius: 12px; display: grid; place-items: center; min-height: 150px; padding: 24px 16px; }
+.tile .mark { font-size: clamp(30px, 4.2vw, 42px); }
+.t-black { background: #000; border: 1px solid var(--line); }
+.t-paper { background: var(--paper); }
+.t-app { background: var(--panel); border: 1px solid var(--line); }
+.app { width: 96px; height: 96px; border-radius: 22px; background: #000; display: grid; place-items: center; box-shadow: 0 0 0 1px var(--line); }
+.app svg { width: 52px; height: 52px; }
+
+/* Anwendung */
+.apply { display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; margin-top: 40px; }
+.card { aspect-ratio: 85 / 55; max-width: 100%; border-radius: 12px; background: #000; border: 1px solid var(--line); padding: 7% 8%; display: grid; align-content: space-between; }
+.card .mark { font-size: clamp(24px, 3.6vw, 34px); }
+.card small { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.card small b { color: var(--paper); font-weight: 600; }
+.phone { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.phone .bar { display: flex; justify-content: space-between; align-items: center; }
+.phone .bar .mark { font-size: 22px; }
+.phone .btn { background: var(--neon); color: var(--ink); font-weight: 800; border-radius: 10px; padding: 10px 14px; text-align: center; }
+.phone .row { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 10px; }
+.phone .row b { color: var(--paper); font-variant-numeric: tabular-nums; }
+.phone .ex { font-size: 11px; color: var(--muted); }
+
+.notes { margin-top: 40px; color: var(--muted); max-width: 72ch; display: grid; gap: 8px; }
+.notes h2 { color: var(--paper); font-size: 16px; margin: 0; }
+.notes ul { margin: 0; padding-left: 20px; }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; box-shadow: 0 0 0 1px var(--line); }
+
+@media (max-width: 760px) {
+  .tiles, .apply { grid-template-columns: 1fr; }
+  .t-app { justify-items: start; padding-left: 24px; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- A: Kurs-K. Stamm plus Vorwärts-Pfeil -->
+    <symbol id="k-a" viewBox="0 0 64 64"><rect x="8" y="6" width="12" height="52" rx="2.5" fill="currentColor"/><path d="M30 8 L52 32 L30 56" fill="none" stroke="var(--neon)" stroke-width="12" stroke-linejoin="miter" stroke-linecap="square"/></symbol>
+    <!-- B: Routen-L mit Ziel -->
+    <symbol id="k-b" viewBox="0 0 64 64"><path d="M14 8 V40 Q14 50 24 50 H40" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/><circle cx="52" cy="50" r="8" fill="var(--neon)"/></symbol>
+    <!-- C: Kompassnadel -->
+    <symbol id="k-c" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" stroke="currentColor" stroke-width="5"/><path d="M32 32 L46 18 L36 36 Z" fill="var(--neon)"/><path d="M32 32 L18 46 L28 28 Z" fill="currentColor"/><path d="M32 32 L46 18 L28 28 Z" fill="var(--neon)"/><path d="M32 32 L18 46 L36 36 Z" fill="currentColor" opacity=".55"/></symbol>
+    <!-- D: Wegpunkte als Treppe nach oben -->
+    <symbol id="k-d" viewBox="0 0 64 64"><path d="M8 54 H24 V38 H40 V22 H50" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/><path d="M44 10 L58 22 L44 34 Z" fill="var(--neon)"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <span class="eyebrow">Lifekurs · Logo-Überarbeitung · Entwurf 19.10.2026</span>
+  <h1>Lifekurs in Schwarz und Neongrün</h1>
+  <p class="lead">Vier Zeichen, eine gemeinsame Wortmarke. Die Grundfarben sind Schwarz und ein eigenes Neongrün, die Schrift ist kräftig und kompakt. Oben steht meine Empfehlung, darunter alle Varianten auf Schwarz, auf Weiß und als App-Icon.</p>
+
+  <section class="hero" aria-label="Empfehlung">
+    <span class="tag">Empfehlung: Variante A</span>
+    <div class="mark" style="color:var(--paper)"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#k-a"/></svg><span>life<span class="k">kurs</span></span></div>
+    <div class="claim"><b>Du setzt das Ziel.</b> Wir halten Kurs.</div>
+  </section>
+
+  <div class="variants">
+    <section class="v">
+      <div class="v-head"><h2>A · Kurs-K</h2><span>Empfehlung</span></div>
+      <p>Ein K aus Stamm und Vorwärts-Pfeil: Es steht für „Kurs“ und für „nach vorn“. Das Zeichen ist sehr einfach und bleibt auch als 16-Pixel-Favicon erkennbar.</p>
+      <div class="tiles">
+        <div class="tile t-black"><div class="mark" style="color:var(--paper)"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#k-a"/></svg><span>life<span class="k">kurs</span></span></div></div>
+        <div class="tile t-paper on-paper"><div class="mark"><svg viewBox="0 0 64 64" aria-hidden="true" style="background:var(--ink);border-radius:8px;padding:.08em;box-sizing:content-box;color:var(--paper)"><use href="#k-a"/></svg><span>lifekurs</span></div></div>
+        <div class="tile t-app"><div class="app" style="color:var(--paper)"><svg viewBox="0 0 64 64" role="img" aria-label="App-Icon Variante A"><use href="#k-a"/></svg></div></div>
+      </div>
+    </section>
+
+    <section class="v">
+      <div class="v-head"><h2>B · Route</h2></div>
+      <p>Das L ist die Lebensroute mit einer Kurve, der grüne Punkt ist das Ziel. Wirkt freundlich und ruhig.</p>
+      <div class="tiles">
+        <div class="tile t-black"><div class="mark" style="color:var(--paper)"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#k-b"/></svg><span>life<span class="k">kurs</span></span></div></div>
+        <div class="tile t-paper on-paper"><div class="mark"><svg viewBox="0 0 64 64" aria-hidden="true" style="background:var(--ink);border-radius:8px;padding:.08em;box-sizing:content-box;color:var(--paper)"><use href="#k-b"/></svg><span>lifekurs</span></div></div>
+        <div class="tile t-app"><div class="app" style="color:var(--paper)"><svg viewBox="0 0 64 64" role="img" aria-label="App-Icon Variante B"><use href="#k-b"/></svg></div></div>
+      </div>
+    </section>
+
+    <section class="v">
+      <div class="v-head"><h2>C · Kompass</h2></div>
+      <p>Eine Kompassnadel zeigt nach rechts oben, die grüne Spitze ist die Richtung. Ein klassisches Bild, als Zeichen aber etwas verbreiteter.</p>
+      <div class="tiles">
+        <div class="tile t-black"><div class="mark" style="color:var(--paper)"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#k-c"/></svg><span>life<span class="k">kurs</span></span></div></div>
+        <div class="tile t-paper on-paper"><div class="mark"><svg viewBox="0 0 64 64" aria-hidden="true" style="background:var(--ink);border-radius:8px;padding:.08em;box-sizing:content-box;color:var(--paper)"><use href="#k-c"/></svg><span>lifekurs</span></div></div>
+        <div class="tile t-app"><div class="app" style="color:var(--paper)"><svg viewBox="0 0 64 64" role="img" aria-label="App-Icon Variante C"><use href="#k-c"/></svg></div></div>
+      </div>
+    </section>
+
+    <section class="v">
+      <div class="v-head"><h2>D · Meilensteine</h2></div>
+      <p>Eine Treppe aus Wegpunkten, die nach oben zum Ziel führt. Sie erzählt die Meilensteine am deutlichsten, ähnelt aber einem Kurschart.</p>
+      <div class="tiles">
+        <div class="tile t-black"><div class="mark" style="color:var(--paper)"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#k-d"/></svg><span>life<span class="k">kurs</span></span></div></div>
+        <div class="tile t-paper on-paper"><div class="mark"><svg viewBox="0 0 64 64" aria-hidden="true" style="background:var(--ink);border-radius:8px;padding:.08em;box-sizing:content-box;color:var(--paper)"><use href="#k-d"/></svg><span>lifekurs</span></div></div>
+        <div class="tile t-app"><div class="app" style="color:var(--paper)"><svg viewBox="0 0 64 64" role="img" aria-label="App-Icon Variante D"><use href="#k-d"/></svg></div></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="apply" aria-label="Anwendungsbeispiele mit Variante A">
+    <div class="card">
+      <div class="mark" style="color:var(--paper)"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#k-a"/></svg><span>life<span class="k">kurs</span></span></div>
+      <small><b>Oliver Rosenbaum</b><br>Finanzanlagen · Immobilienfinanzierung<br>Visitenkarte, Beispiel</small>
+    </div>
+    <div class="phone">
+      <div class="bar"><div class="mark" style="color:var(--paper)"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#k-a"/></svg><span>life<span class="k">kurs</span></span></div><span class="ex">App, Beispiel</span></div>
+      <div class="row"><span>Nächster Meilenstein</span><b>Eigenheim 2031</b></div>
+      <div class="row"><span>Kurs</span><b>auf Plan</b></div>
+      <div class="btn">Termin vereinbaren</div>
+      <span class="ex">Beispielinhalte, keine echten Kundendaten.</span>
+    </div>
+  </div>
+
+  <section class="notes">
+    <h2>Farben und Hinweise</h2>
+    <ul>
+      <li><span class="sw" style="background:#0A0B0A"></span>Schwarz #0A0B0A · <span class="sw" style="background:#B5FF3B"></span>Neongrün #B5FF3B · <span class="sw" style="background:#F4F6F1"></span>Hell #F4F6F1</li>
+      <li>Auf Weiß steht das Grün nie als Schrift, weil es dort zu wenig Kontrast hat. Das Zeichen sitzt dann auf einer schwarzen Fläche.</li>
+      <li>Das Grün ist ein eigener Ton, kein übernommener Farbwert von Smartbroker. Weil ihr in derselben Branche seid, sollte das fertige Logo sich in Farbe und Form klar unterscheiden. Das prüft am besten der Markenanwalt mit.</li>
+      <li>Die Schrift ist Plus Jakarta Sans (frei, Open Font License). Für das fertige Logo sollte ein Designer die Buchstaben nachzeichnen und als Vektordatei liefern.</li>
+    </ul>
+  </section>
+</div>

@@ -1,6 +1,6 @@
 # Ganzheitliche Finanzberatung – Stand 11.10.2026 (Endprüfung 09.10.2026, seitdem Nachträge)
 
-Arbeitstitel, Name und Marke der gemeinsamen Gesellschaft stehen noch nicht fest.
+Name der gemeinsamen Gesellschaft: Lifekurs GmbH (Entscheidung 19.10.2026, siehe `Beratung/Marke/README.md`). Das Konzept-PDF verwendet noch den Arbeitstitel.
 Kein „Rosenbaum Finanzberatung“-Branding mehr.
 
 ## Dateien
@@ -42,7 +42,7 @@ Kein „Rosenbaum Finanzberatung“-Branding mehr.
 3. ~~**§34i-Modell** wählen (Vermittlung oder Honorarberatung).~~ *Erledigt 11.10.2026: Provision.*
 4. **Platzhalter:** Registernummern, IHK, Kontaktdaten Oliver, Höhe der Darlehensprovision.
 5. **Edelmetalle:** Partnerhändler, Vergütung, Aufteilung Jan/Oliver.
-6. **Name und Marke:** Marken-, Register- und Domainprüfung; IHK-Anfrage zur Firmierung.
+6. **Name und Marke:** *Name entschieden 19.10.2026: Lifekurs GmbH.* Offen: Marken-, Register- und Domainprüfung sowie die IHK-Anfrage zur Firmierung.
 7. **Feedback von Jan** zum Konzept; zu den Decks siehe `Beratung/STATUS.md` Punkt 9. (Präsentation und Leitfaden sind seit 11.10.2026 archiviert.)
 8. **Vor dem Start prüfen:** Anwalt (Vergütungsvereinbarung, Erstinformation, Abo-AGB), Steuerberater (USt), IHK.
 

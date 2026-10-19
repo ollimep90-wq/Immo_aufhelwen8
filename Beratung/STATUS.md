@@ -1,6 +1,6 @@
 # Beratungskonzept — Stand
 
-Stand: 11.10.2026. Arbeitstitel „Ganzheitliche Finanzberatung“. Der endgültige Name ist noch offen.
+Stand: 11.10.2026. Name: **Lifekurs GmbH** (Entscheidung Oliver 19.10.2026, vorher Arbeitstitel „Ganzheitliche Finanzberatung“). Markenrecht und Firmierung sind noch nicht geprüft, siehe `Marke/README.md`. In den Unterlagen steht der Name noch nicht.
 
 ## Was es gibt (Privatkunden)
 
@@ -60,7 +60,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
 5. **Platzhalter:** Register-Nummern, IHK, Kontaktdaten. Sie stehen gelb in allen Kunden-PDFs (Privat und Gewerbe) und blockieren den Versand (Außenwirkungsprüfung 11.10.2026).
 5a. **Notreserve-Ampel für Selbständige:** Bedarfsanalysen Privat und Gewerbe: rot unter 1, grün ab 6 Monatsausgaben. App und Vorab-Check unterscheiden Selbständige noch nicht (grün ab 3). Zu entscheiden: in der App nachziehen?
 5b. *Korrektur 11.10.2026:* In der Bedarfsanalyse Privat stand für Selbständige „keine gesetzliche Rente“. Das stimmt nicht allgemein (Pflicht nach § 2 SGB VI, auf Antrag nach § 4 Abs. 2 SGB VI, freiwillig). Jetzt: „gesetzliche Rente prüfen“.
-6. **Name und Marke.**
+6. **Name und Marke:** *Entschieden 19.10.2026: Lifekurs GmbH.* Offen sind Zeichen und Claim, die Registerprüfung durch einen Markenanwalt, die IHK-Firmierung und die Domains. Details in `Marke/README.md`.
 7. **DIN 77230:** Der Normtext lag nicht vor. Die Dokumente sagen deshalb „angelehnt“ und behaupten keine Konformität.
 8. ~~**Alte Sie-Fassungen**~~ *Erledigt 11.10.2026 (Entscheidung Oliver):* Kundenpräsentation, Gesprächsleitfaden und interaktiver Leitfaden liegen in `Finanzanlagen/Archiv/`. Ersetzt durch die Privat-Decks 01–06 mit `_Sie`-Fassungen und die App. Vorher offen: ob die alten Sie-Fassungen neben den neuen Decks weiter gebraucht werden.
 9. **Jans Rückmeldung** zu `03_Risikoabsicherung`, zu den Gewerbe-Decks `03_Betrieb_absichern` und `05_Mitarbeiter_bAV_und_bKV`, zu Rückdeckung und Pensionsfonds in `04_Unternehmer` (Folien 7, 7a, 7b) und zu seiner Rolle in den anderen Decks.
@@ -77,7 +77,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
     - Umstellung der Riester-Verträge (Fundstelle im EStG n. F.).
     - ~~Förderberechtigung Selbständiger.~~ *Erledigt 11.10.2026:* ab 01.01.2027 förderberechtigt (§ 10a Abs. 1 S. 4 EStG n. F., Art. 2 Altersvorsorgereformgesetz vom 26.05.2026, BGBl. 2026 I Nr. 156, im BGBl gelesen). Wie Selbständige die Zulage beantragen, ist weiter offen.
 13. **USt beim ETF-Standarddepot:** „jeweils inkl. USt“ wurde am 10.10.2026 aus dem Pflichthinweis entfernt, weil es für die 0,5 % noch offen ist.
-15. **Gemeinsame GmbH (Entscheidung 10.10.2026, Name offen):**
+15. **Gemeinsame GmbH (Entscheidung 10.10.2026, Name seit 19.10.2026: Lifekurs GmbH):**
     - Sie betreibt die App und ist die einzige Verantwortliche nach DSGVO.
     - **Anzupassen**, sobald Name und Erlaubnisse feststehen:
       - Pflichtangaben in `shared/brand.py`, denn die GmbH braucht eigene Erlaubnisse und Registernummern.
