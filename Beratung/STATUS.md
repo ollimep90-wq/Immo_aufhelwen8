@@ -78,6 +78,7 @@ Alle Werte sind gekennzeichnet und gelten als Beispiel, nicht als Prognose.
     - ~~Förderberechtigung Selbständiger.~~ *Erledigt 11.10.2026:* ab 01.01.2027 förderberechtigt (§ 10a Abs. 1 S. 4 EStG n. F., Art. 2 Altersvorsorgereformgesetz vom 26.05.2026, BGBl. 2026 I Nr. 156, im BGBl gelesen). Wie Selbständige die Zulage beantragen, ist weiter offen.
 13. **USt beim ETF-Standarddepot:** „jeweils inkl. USt“ wurde am 10.10.2026 aus dem Pflichthinweis entfernt, weil es für die 0,5 % noch offen ist.
 15. **Gemeinsame GmbH (Entscheidung 10.10.2026, Name seit 19.10.2026: Lifekurs GmbH):**
+    - **Struktur (Entscheidung 19.10.2026):** Je eine Holding für Oliver und Jan. Die Holdings halten je 50 % an der Lifekurs GmbH und an einer gemeinsamen VV-GmbH, jede Holding hält außerdem 100 % an einer eigenen VV-GmbH. Die eigenen VV-GmbHs weichen vom Pitch ab, der sie zurückgestellt hatte. Details und Reihenfolge stehen in `Gruendung.md`.
     - Sie betreibt die App und ist die einzige Verantwortliche nach DSGVO.
     - **Anzupassen**, sobald Name und Erlaubnisse feststehen:
       - Pflichtangaben in `shared/brand.py`, denn die GmbH braucht eigene Erlaubnisse und Registernummern.
