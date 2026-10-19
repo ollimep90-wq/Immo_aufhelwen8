@@ -53,12 +53,32 @@ Das sind sechs Gesellschaften. Außer „Lifekurs GmbH“ ist noch kein Name ent
 
 ## 3. Rechtliche Eckpunkte
 
-- **Stammkapital:** mindestens 25.000 € je GmbH (§ 5 Abs. 1 GmbHG). Bei einer Bargründung muss vor der Anmeldung mindestens die Hälfte des Mindeststammkapitals eingezahlt sein (§ 7 Abs. 2 GmbHG). *Gesetz*
-- **UG (haftungsbeschränkt):** möglich ab 1 € Stammkapital. Ein Viertel des Jahresüberschusses muss in eine Rücklage fließen (§ 5a GmbHG). Ob das für die VVs sinnvoll ist, entscheidet der Steuerberater. *Gesetz, Eignung ist eine Einschätzung*
-- **Musterprotokoll:** nur mit höchstens drei Gesellschaftern und einem Geschäftsführer (§ 2 Abs. 1a GmbHG). Mit zwei Geschäftsführern geht es deshalb nicht. Ob die Lifekurs GmbH zwei bekommt, ist offen (Abschnitt 5). Wegen der Gesellschaftervereinbarung braucht es ohnehin einen individuellen Vertrag. *Gesetz und Schlussfolgerung*
-- **Holding:** Gewinnausschüttungen und Veräußerungsgewinne aus Beteiligungen an Kapitalgesellschaften bleiben in einer Kapitalgesellschaft weitgehend steuerfrei (§ 8b KStG). Mindestbeteiligung und Höhe prüft der Steuerberater. *Gesetz, Anwendung ist eine Einschätzung*
-- **VV-GmbH mit Immobilien:** Eine Gesellschaft, die ausschließlich eigenen Grundbesitz verwaltet, kann die erweiterte Kürzung bei der Gewerbesteuer nutzen (§ 9 Nr. 1 S. 2 GewStG). Die Voraussetzungen sind streng, und schon schädliche Nebentätigkeiten können sie kippen. *Gesetz, Anwendung ist eine Einschätzung*
-- **„Vermögensverwaltung“ oder „Asset Management“ im Namen:** Davon rate ich ab. Ihr seid in der Finanzbranche, und ein solcher Name kann nach Finanzportfolioverwaltung für Dritte klingen, für die eine KWG-Erlaubnis nötig ist. „Assets“ allein halte ich für unkritisch. Die IHK soll es mitprüfen. *Einschätzung*
+Die Rechtsprüfung vom 19.10.2026 hat die Normen teils an der Primärquelle (gesetze-im-internet.de, dejure.org) gelesen, teils aus dem Gedächtnisstand bewertet, das ist jeweils markiert. Steuerliche Aussagen geben den Stand 10/2026 wieder und sind vor Verwendung zu prüfen.
+
+- **Stammkapital:** mindestens 25.000 € je GmbH (§ 5 Abs. 1 GmbHG). Vor der Anmeldung müssen auf jeden Geschäftsanteil mindestens ein Viertel und insgesamt mindestens die Hälfte des Mindeststammkapitals eingezahlt sein (§ 7 Abs. 2 GmbHG). Bei 50:50 zahlt also jede Holding mindestens ein Viertel ihres Anteils ein, zusammen mindestens 12.500 €. Sacheinlagen müssen vollständig geleistet sein (§ 7 Abs. 3). *Gesetz, Primärquelle*
+- **UG (haftungsbeschränkt):** möglich ab 1 € Stammkapital, dafür mit Einschränkungen (§ 5a GmbHG). Ob das für die eigenen VVs passt, entscheidet der Steuerberater (Abschnitt 2 Nr. 1). *Gesetz, Primärquelle; Eignung ist eine Einschätzung*
+  - Das Stammkapital muss vor der Anmeldung voll eingezahlt sein.
+  - **Sacheinlagen sind ausgeschlossen.** Immobilien oder Anteile lassen sich also nicht einbringen.
+  - Ein Viertel des Jahresüberschusses (gemindert um den Verlustvortrag) fließt in die Rücklage.
+  - Die Firma muss „UG (haftungsbeschränkt)“ heißen, nicht „GmbH“.
+- **Musterprotokoll:** Es ist nur mit höchstens drei Gesellschaftern und einem Geschäftsführer möglich, und abweichende Bestimmungen sind nicht erlaubt (§ 2 Abs. 1a GmbHG). Für die Lifekurs GmbH und die gemeinsame VV passt es deshalb nicht, weil Regeln zur Auflösung eines Patts und zum Ausscheiden in die Satzung gehören. Ob es bei den Holdings passt, wenn Gesellschafter juristische Personen sind, klärt der Notar. *Gesetz, Primärquelle; Folgerung ist eine Schlussfolgerung*
+- **§ 30 HGB:** Die Firma muss sich deutlich von allen in einem Register eingetragenen Firmen am selben Ort bzw. in derselben Gemeinde unterscheiden. Gegen gleiche Namen anderswo und gegen Marken schützt § 30 nicht, das klärt der Markenanwalt. *Gesetz, Primärquelle*
+- **Holding (§ 8b KStG):** Dividenden und Veräußerungsgewinne aus Beteiligungen an Kapitalgesellschaften sind in der Holding steuerfrei. 5 % gelten aber als nicht abziehbare Betriebsausgaben, effektiv sind also 95 % frei (§ 8b Abs. 3 und 5). Bei Dividenden gilt das nur ab 10 % Beteiligung zu Beginn des Kalenderjahres (§ 8b Abs. 4). Bei der Gewerbesteuer verlangt die Kürzung mindestens 15 % zu Beginn des Erhebungszeitraums (§ 9 Nr. 2a GewStG). Mit 50 % und 100 % ist beides erfüllt. *Gesetz, Primärquelle; Stand 10/2026, vor Verwendung prüfen*
+- **VV-GmbH mit Immobilien (§ 9 Nr. 1 S. 2 GewStG, erweiterte Kürzung):** Eine Gesellschaft, die nur eigenen Grundbesitz (und eigenes Kapitalvermögen) verwaltet, kann von der Gewerbesteuer weitgehend frei sein. Die Norm wurde 2021 und 2024 geändert, vor Verwendung prüfen. *Gesetz, Primärquelle; Anwendung ist eine Einschätzung*
+  - Unschädlich: Strom aus erneuerbaren Energien oder Ladestationen bis 20 % der Mieteinnahmen, an Endverbraucher nur an Mieter. Das ist wichtig für PV.
+  - Unschädlich: andere Leistungen an Mieter bis 5 %.
+  - **Schädlich:** Der Grundbesitz dient dem Gewerbebetrieb eines Gesellschafters (S. 5 Nr. 1). Eine Vermietung innerhalb der Gruppe, etwa an die Holding oder an die Lifekurs GmbH, muss deshalb vorher geprüft werden.
+  - **Schädlich:** stille Reserven aus Grundbesitz, der in den letzten drei Jahren unter dem Teilwert eingebracht wurde (S. 5 Nr. 2).
+  - **Schädlich:** gewerblicher Grundstückshandel (Gedächtnisstand).
+- **Befreiung von § 181 BGB:** Sie wird in der Satzung geregelt bzw. ermöglicht und ins Handelsregister eingetragen. Nötig ist sie hier vor allem für Geschäfte zwischen Holding und Tochter, bei denen dieselbe Person auf beiden Seiten steht. Bei der Ein-Personen-Holding gilt zusätzlich § 35 Abs. 3 GmbHG. *Gedächtnisstand*
+- **Transparenzregister:** Jede der Gesellschaften muss ihre wirtschaftlich Berechtigten melden (§ 20 Abs. 1 GwG). Seit 01.08.2021 ersetzt der Handelsregistereintrag diese Meldung nicht mehr. Bei der Lifekurs GmbH und der gemeinsamen VV sind das Oliver und Jan mittelbar. Ab wann genau gemeldet werden muss, steht in den FAQ des Bundesverwaltungsamts und wurde nicht an der Primärquelle geprüft. *Gesetz; Zeitpunkt offen*
+- **Erlaubnisse:** Jede Erlaubnis gilt nur für ihren Inhaber, die Lifekurs GmbH braucht deshalb eigene. Die Sachkunde kann sie über beschäftigte Personen mit Leitungsverantwortung nachweisen (§ 34d Abs. 5 Nr. 4 GewO). Ins Vermittlerregister müssen nur §§ 34d, 34f, 34h und 34i (§ 11a Abs. 1 GewO), nicht § 34c. Eine Pflicht-Berufshaftpflicht haben §§ 34d, 34f, 34h und 34i, bei § 34c nur Wohnimmobilienverwalter (Gedächtnisstand). *Gesetz, teils Primärquelle*
+- **Zur Erlaubnisfrage in Abschnitt 2 Nr. 2:** Das Gesetz beantwortet sie schon weitgehend. Bewerten muss sie trotzdem der Fachanwalt. *Gesetz, Primärquelle*
+  - Wer nach § 34h berät, darf kein Gewerbe nach § 34f ausüben (§ 34h Abs. 2).
+  - Nach § 34h Abs. 3 vergütet nur der Anleger. Zuwendungen Dritter darf der Berater nicht annehmen, außer das Produkt ist ohne sie nicht erhältlich, dann gibt er sie vollständig weiter. **Courtage ist damit im Grundsatz nicht vereinbar**, soweit es um die Tätigkeit nach § 34h geht. Wie das in einer GmbH zusammen mit § 34d wirkt, ist strittig und für den Fachanwalt.
+  - Versicherungsmakler und Versicherungsberater schließen sich aus (§ 34d Abs. 3).
+- **„Vermögensverwaltung“ oder „Asset Management“ im Namen:** Davon rate ich ab. Ausdrücklich geschützt sind diese Begriffe nicht, geschützt sind etwa „Bank“ (§ 39 KWG) und „Kapitalverwaltungsgesellschaft“ (§ 3 KAGB). Ein solcher Name kann aber nach Finanzportfolioverwaltung für Dritte klingen, und die braucht eine Erlaubnis nach KWG bzw. WpIG. Das Irreführungsverbot greift (§ 18 Abs. 2 HGB). „Assets“ allein halte ich für unkritisch, die IHK soll es bestätigen. *Einschätzung*
+- **Offen und unsicher:** Die gemeinsame VV bündelt das Geld von zwei Anlegern. Ob sie deshalb ein Investmentvermögen im Sinne des KAGB sein könnte, ist zu klären. Für Joint Ventures gibt es nach der Auslegung der BaFin eine Ausnahme. Das gehört zum Fachanwalt für Aufsichtsrecht. *offen*
 
 ## 4. Reihenfolge
 
@@ -67,13 +87,13 @@ Das sind sechs Gesellschaften. Außer „Lifekurs GmbH“ ist noch kein Name ent
 2. Firmierung (IHK), Handelsregister, Marke und Domains.
 3. Verträge entwerfen lassen.
 4. **Zuerst die Holdings gründen** (Notar), ihre Konten eröffnen und das Kapital einzahlen.
-5. **Danach gründen die Holdings** die Lifekurs GmbH und die gemeinsame VV-GmbH (je 50 %) sowie jede ihre eigene VV-GmbH (100 %). Ob der Notar alles in einem Termin nacheinander beurkundet, klärt ihr mit ihm.
+5. **Nach Eintragung der Holdings gründen die Holdings** die Lifekurs GmbH und die gemeinsame VV-GmbH (je 50 %) sowie jede ihre eigene VV-GmbH (100 %). Eine noch nicht eingetragene Vor-GmbH kann nach herrschender Meinung zwar schon gründen (Gedächtnisstand). Praktisch spricht aber vieles für das Abwarten: Die Gesellschafterliste braucht die Registernummer der Holding, Banken verlangen für das Konto der Tochter einen Registerauszug, und die Haftung in der Gründungsphase bleibt sonst länger offen. Ein gemeinsamer Termin für alles geht nur, wenn der Notar es ausdrücklich empfiehlt.
 6. Pro Gesellschaft: Geschäftskonto, Einzahlung, Anmeldung zum Handelsregister durch den Notar, Eintragung.
 7. Nach der Eintragung, pro Gesellschaft:
    - steuerliche Erfassung beim Finanzamt (ELSTER)
    - Transparenzregister
    - Gewerbeanmeldung, wo nötig
-8. **Lifekurs GmbH:** eigene Erlaubnisse beantragen. Die persönlichen Erlaubnisse von Oliver und Jan gelten nicht für die GmbH. Dazu kommen die Berufshaftpflicht auf die GmbH und die Registrierung im Vermittlerregister. Beraten und vermitteln darf die GmbH erst danach.
+8. **Lifekurs GmbH:** eigene Erlaubnisse beantragen. Die persönlichen Erlaubnisse von Oliver und Jan gelten nicht für die GmbH. Dazu kommen die Berufshaftpflicht der GmbH und ihre Eintragung ins Vermittlerregister, beides für §§ 34d, 34h und 34i (nicht für § 34c). Beraten und vermitteln darf die GmbH erst danach.
 9. Erst danach den Namen in die Unterlagen übernehmen:
    - `shared/brand.py`
    - Fußzeilen
