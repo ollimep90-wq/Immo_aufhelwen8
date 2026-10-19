@@ -138,4 +138,17 @@ Die Rechtsprüfung vom 19.10.2026 hat die Normen teils an der Primärquelle (ges
 - **VVs mit Immobilien:** Mit der erweiterten Kürzung fällt kaum Gewerbesteuer an, der Sitz ist nahezu egal. Die **Grundsteuer** richtet sich nach dem Ort der Immobilie, nicht nach dem Sitz (Grundsteuer B 2026: Kall 793 v.H., Nettersheim 680 v.H., aus denselben Haushaltssatzungen).
 - **VVs nur mit Wertpapieren:** Die erweiterte Kürzung greift nicht, die volle Gewerbesteuer am Ort der Geschäftsleitung fällt an. Das muss der Steuerberater prüfen.
 
+**Rechenbeispiel Leverkusen (Frage Oliver, 19.10.2026):**
+- Hebesatz 2026 **250 %**, laut mehreren Vergleichsseiten übereinstimmend (z. B. [finanz-rechner-hub.de](https://finanz-rechner-hub.de/steuer/gewerbesteuer/leverkusen/)). Die Satzung selbst ist nicht gelesen.
+- Laut einer einzelnen Quelle sieht das Haushaltssicherungskonzept 290 % für 2029 vor ([rheinside-realestate.de](https://rheinside-realestate.de/aktuelles/gewerbesteuer-hebesaetze-koeln-rhein-berg-leverkusen)), nicht geprüft.
+- Annahmen: Gewinn = Gewerbeertrag (keine Hinzurechnungen), die gesamte Betriebsstätte liegt in Leverkusen, Körperschaftsteuer 15 % plus Soli = 15,825 %. Gerechnet mit Python.
+
+| Gewinn | KSt+Soli | GewSt Kall (515 %) | GewSt Leverkusen (250 %) | Ersparnis bei 250 % | Ersparnis bei 290 % |
+|---|---|---|---|---|---|
+| 100.000 € | 15.825 € | 18.025 € | 8.750 € | 9.275 € | 7.875 € |
+| 200.000 € | 31.650 € | 36.050 € | 17.500 € | 18.550 € | 15.750 € |
+| 300.000 € | 47.475 € | 54.075 € | 26.250 € | 27.825 € | 23.625 € |
+
+Gesamtbelastung: Kall 33,85 %, Leverkusen 24,575 %. Die Ersparnis entsteht nur, wenn die GmbH dort eine **echte Betriebsstätte** hat. Bleibt Jans Büro in Kall eine Betriebsstätte, wird nach Löhnen zerlegt, und es spart nur der Leverkusener Anteil. Gegenzurechnen sind Miete und Fahrten. Der Kundenempfang läge dann außerhalb der Region.
+
 Beide Gemeinden haben ihre Hebesätze zur Haushaltskonsolidierung erhöht. Das kann wieder passieren. Vor dem Notartermin den Stand 2027 abfragen.
