@@ -103,9 +103,37 @@ Die Rechtsprüfung vom 19.10.2026 hat die Normen teils an der Primärquelle (ges
 ## 5. Offen
 
 - Namen der Holdings und VV-GmbHs (Vorschläge oben). Bei der gemeinsamen VV: „Asset“ oder „Assets“.
-- Sitz der Gesellschaften. Davon hängen das zuständige Registergericht, die IHK und die Gewerbesteuer ab.
+- Sitz der Gesellschaften, siehe Abschnitt 6.
 - Wer führt welche Gesellschaft?
 - Kommt die PV-GmbH unter Jans Holding?
 - Gelten Vesting und Bestandskauf aus dem Pitch weiter?
 - Auf Helwen 8 bleibt laut Entscheidung ein privater Erwerb und wird nicht in eine VV-GmbH eingebracht. Der Pitch warnt selbst vor einer späteren Einbringung (Grunderwerbsteuer, privates Veräußerungsgeschäft).
 - Kapitalausstattung je Gesellschaft.
+
+## 6. Sitz und Gewerbesteuer (Stand 19.10.2026)
+
+**Hebesätze 2026, aus den Haushaltssatzungen 2026 gelesen:**
+| Gemeinde | Gewerbesteuer 2026 | 2025 | Quelle |
+|---|---|---|---|
+| Kall | 515 v.H. | 515 v.H. | [Haushaltsplan 2026 der Gemeinde Kall](https://www.kall.de/politik/finanzen/haushaltsplaene/Haushaltsplan-2026-Final.pdf), Haushaltssatzung § 6 |
+| Nettersheim | 515 v.H. | 465 v.H. | [Bekanntmachung Haushaltssatzung 2026](https://www.nettersheim.de/fileadmin/user_upload/nettersheim/documents/FBI/Gemeindeblatt/OEffentliche_Bekanntmachungen/2026/2.2.oeffentliche_Bekanntmachung_Haushaltssatzung_2026.pdf) (7. Änderungssatzung vom 16.12.2025) |
+
+*Korrektur der Annahme:* Bis 2025 war Nettersheim mit 465 v.H. günstiger als Kall. **Seit 01.01.2026 liegen beide gleich bei 515 v.H.** Vergleichsportale nennen für Nettersheim noch 433 % oder 445 %, beides ist veraltet. Bei einer GmbH (ohne Freibetrag) sind das 3,5 % × 515 % = **18,025 %** des Gewerbeertrags. Mit 465 % wären es 16,275 % gewesen (gerechnet mit Python).
+
+**Wo die Gewerbesteuer anfällt:**
+- Sie richtet sich nach der **Betriebsstätte**, nicht nach dem Satzungssitz (§ 4 GewStG). Auch der Ort der Geschäftsleitung ist eine Betriebsstätte (§ 12 AO).
+- Hat die Lifekurs GmbH Betriebsstätten in Kall (Jans Büro) und Zingsheim (Olivers Büro), wird der Messbetrag nach den dort gezahlten Arbeitslöhnen zerlegt (§§ 28, 29 GewStG). Löhne über 50.000 € je Arbeitnehmer zählen nur bis 50.000 € (§ 31 Abs. 4 GewStG, Gedächtnisstand).
+- Ein Sitz in einer günstigeren Gemeinde ohne echte Betriebsstätte dort bringt nichts. Solange ihr in Kall und Zingsheim arbeitet, fällt die Steuer dort an.
+
+**Optionen:**
+1. **Sitz Kall (Jans Büro), Zingsheim als zweite Betriebsstätte.** Das ist meine Empfehlung. Kall ist die Adresse mit Kundenempfang, also für Impressum, Pflichtangaben und Besuche. Steuerlich ist der Unterschied 2026 null, es fällt nur eine Zerlegungserklärung an.
+2. **Sitz Nettersheim/Zingsheim.** Steuerlich gleich. Die Kundenadresse wäre aber ein Büro ohne Kundenempfang.
+3. **Eine Betriebsstätte statt zwei.** Gibt es Olivers Büro für die Lifekurs GmbH nicht (er arbeitet z. B. aus dem eigenen Einzelunternehmen oder nur von Kall aus), entfällt die Zerlegung. Ob ein Homeoffice oder ein privat gemietetes Büro eine Betriebsstätte der GmbH ist, hängt an der Verfügungsmacht. Das muss der Steuerberater beurteilen. *Einschätzung*
+4. **Echte Betriebsstätte in einer Gemeinde mit niedrigerem Hebesatz.** Das lohnt sich nur, wenn dort wirklich gearbeitet wird, und betrifft nur den Lohnanteil dort. Für euch eher theoretisch.
+
+**Die übrigen Gesellschaften:**
+- **Holdings:** Geschäftsleitung jeweils am Wohnort, also Oliver in Nettersheim und Jan in Kall. Dividenden aus der Lifekurs GmbH und den VVs sind gewerbesteuerlich weitgehend gekürzt (§ 9 Nr. 2a GewStG, ab 15 %), es bleiben die 5 % nach § 8b KStG. Der Sitz spielt deshalb kaum eine Rolle.
+- **VVs mit Immobilien:** Mit der erweiterten Kürzung fällt kaum Gewerbesteuer an, der Sitz ist nahezu egal. Die **Grundsteuer** richtet sich nach dem Ort der Immobilie, nicht nach dem Sitz (Grundsteuer B 2026: Kall 793 v.H., Nettersheim 680 v.H., aus denselben Haushaltssatzungen).
+- **VVs nur mit Wertpapieren:** Die erweiterte Kürzung greift nicht, die volle Gewerbesteuer am Ort der Geschäftsleitung fällt an. Das muss der Steuerberater prüfen.
+
+Beide Gemeinden haben ihre Hebesätze zur Haushaltskonsolidierung erhöht. Das kann wieder passieren. Vor dem Notartermin den Stand 2027 abfragen.
