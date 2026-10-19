@@ -152,3 +152,7 @@ Die Rechtsprüfung vom 19.10.2026 hat die Normen teils an der Primärquelle (ges
 Gesamtbelastung: Kall 33,85 %, Leverkusen 24,575 %. Die Ersparnis entsteht nur, wenn die GmbH dort eine **echte Betriebsstätte** hat. Bleibt Jans Büro in Kall eine Betriebsstätte, wird nach Löhnen zerlegt, und es spart nur der Leverkusener Anteil. Gegenzurechnen sind Miete und Fahrten. Der Kundenempfang läge dann außerhalb der Region.
 
 Beide Gemeinden haben ihre Hebesätze zur Haushaltskonsolidierung erhöht. Das kann wieder passieren. Vor dem Notartermin den Stand 2027 abfragen.
+
+## 7. Checkliste
+
+Abhakbare Fassung dieser Datei, Stand 19.10.2026, als privates Artifact: https://claude.ai/artifact/BgxgrdDR3DXXnhvax17C4Q
